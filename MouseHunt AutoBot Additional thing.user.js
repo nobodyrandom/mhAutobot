@@ -34,11 +34,11 @@ var STATE = {
     lastjournal:  0
 }
 
-if (localStorage.getItem('NOB-data') == null || localStorage.getItem('NOB-data') == undefined) {
+if (localStorage.getItem('NOB_data') == null || localStorage.getItem('NOB_data') == undefined) {
     NOBhtmlFetch();
-    var STATE = localStorage.getItem('NOB-data');
+    var STATE = localStorage.getItem('NOB_data');
 } else {
-    var STATE = localStorage.getItem('NOB-data');
+    var STATE = localStorage.getItem('NOB_data');
 }
 
 var LOCATION_TIMERS = [
@@ -189,7 +189,7 @@ function MapRequest(handleData) {
                 console.log(output);
                 mapRequestFailed = true;
                 NOBhtmlFetch();
-                output = localStorage.getItem('NOB-data');
+                output = localStorage.getItem('NOB_data');
                 GDoc(output, "user");
                 return JSON.parse(output);
             }
@@ -214,7 +214,7 @@ function MapRequest(handleData) {
 var mapRequestFailed = false;
 unsafeWindow.NOBscript = function(qqEvent) {
     var NOBhasPuzzle = user.has_puzzle;
-    var NOBdata = localStorage.getItem('NOB-data');
+    var NOBdata = localStorage.getItem('NOB_data');
     if(NOBhasPuzzle == false && NOBdata != null || NOBdata != undefined){
         if (mapRequestFailed == undefined || mapRequestFailed == false || mapRequestFailed == null){
             MapRequest(function(output) {
@@ -225,7 +225,7 @@ unsafeWindow.NOBscript = function(qqEvent) {
                     console.log(output);
                     mapRequestFailed = true;
                     NOBhtmlFetch();
-                    output = localStorage.getItem('NOB-data');
+                    output = localStorage.getItem('NOB_data');
                     GDoc(output, "user");
                 }
             });
@@ -233,7 +233,7 @@ unsafeWindow.NOBscript = function(qqEvent) {
         } else {
             console.log("Map fetch failed using USER data from html");
             NOBhtmlFetch();
-            var output = localStorage.getItem('NOB-data');
+            var output = localStorage.getItem('NOB_data');
             GDoc(output, "user");
         }
         //console.log(NOBoutput);
