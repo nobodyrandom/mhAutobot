@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot
 // @author      nobodyrandom
-// @version    	1.291
+// @version    	1.292
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application in Facebook with MouseHunt version 3.0 (Longtail) supported and many other features. REVAMPED VERSION of ORIGINAL
 // @require     https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=22954
 // @namespace   https://greasyfork.org/users/6398
@@ -1255,7 +1255,7 @@ function embedTimer(targetPage)
                     timerDivElement.appendChild (loadLinkToUpdate);
                     loadLinkToUpdate.addEventListener ("click", NOBscript, false);
                     
-                    text = document.createTextNode(' \~ <a href="https://docs.google.com/spreadsheet/ccc?key=0Ag_KH_nuVUjbdGtldjJkWUJ4V1ZpUDVwd1FVM0RTM1E#gid=5">Click to go to GDoc</a>');
+                    text = document.createTextNode(' &#126; <a href="https://docs.google.com/spreadsheet/ccc?key=0Ag_KH_nuVUjbdGtldjJkWUJ4V1ZpUDVwd1FVM0RTM1E#gid=5">Click to go to GDoc</a>');
                     timerDivElement.appendChild (text);
                     
                     timersElementToggle = null;
