@@ -1256,10 +1256,10 @@ function embedTimer(targetPage)
                     text = null;
                     loadLinkToUpdateDiv.appendChild (loadLinkToUpdate);
                     timerDivElement.appendChild (loadLinkToUpdateDiv);
-                    loadLinkToUpdate.addEventListener ("click", NOBscript, false);
+                    loadLinkToUpdate.addEventListener ('click', NOBscript, false);
                     
                     text = document.createTextNode(' &#126; <a href="https://docs.google.com/spreadsheet/ccc?key=0Ag_KH_nuVUjbdGtldjJkWUJ4V1ZpUDVwd1FVM0RTM1E#gid=5">Click to go to GDoc</a>');
-                    timerDivElement.appendChild (loadLinkToUpdateDiv);
+                    loadLinkToUpdateDiv.appendChild (text);
                     
                     text = null;
                     loadLinkToUpdateDiv = null;
