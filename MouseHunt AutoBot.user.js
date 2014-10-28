@@ -1246,18 +1246,22 @@ function embedTimer(targetPage)
                     
                     timerDivElement.appendChild(document.createElement('br'));
                     
+                    var loadLinkToUpdateDiv = document.createElement ('div');
+                    loadLinkToUpdateDiv.setAttribute('id', 'gDocArea');
                     var loadLinkToUpdate = document.createElement ('a');
                     text = document.createTextNode('Click to submit to GDoc');
                     loadLinkToUpdate.href = '#';
                    	loadLinkToUpdate.setAttribute('id', 'gDocLink');
                     loadLinkToUpdate.appendChild (text);
                     text = null;
-                    timerDivElement.appendChild (loadLinkToUpdate);
+                    loadLinkToUpdateDiv.appendChild (loadLinkToUpdate);
+                    timerDivElement.appendChild (loadLinkToUpdateDiv);
                     loadLinkToUpdate.addEventListener ("click", NOBscript, false);
                     
                     text = document.createTextNode(' &#126; <a href="https://docs.google.com/spreadsheet/ccc?key=0Ag_KH_nuVUjbdGtldjJkWUJ4V1ZpUDVwd1FVM0RTM1E#gid=5">Click to go to GDoc</a>');
-                    timerDivElement.appendChild (text);
+                    timerDivElement.appendChild (loadLinkToUpdateDiv);
                     
+                    loadLinkToUpdateDiv = null;
                     timersElementToggle = null;
                     loadTimersElement = null;
                     loadLinkToUpdate = null;
