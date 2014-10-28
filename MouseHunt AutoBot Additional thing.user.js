@@ -253,12 +253,15 @@ function createClockArea(){
     var parent = document.getElementById('loadTimersElement');
     var otherChild = document.getElementById('gDocLink');
     var child = [];
-    
-    for (i = 0; i<LOCATION_TIMERS.length; i++)
+    var text;
+	
+    for (i = 0; i<LOCATION_TIMERS.length; i++) {
         child[i] = document.createElement('div');
-		
-	for (i = 0; i<LOCATION_TIMERS.length; i++)
 		child[i].setAttribute("id", "NOB" + LOCATION_TIMERS[i][0]);
+		text = '<span id="text_' + LOCATION_TIMERS[i][0]+ '">';
+		child[i].innerHTML = text;
+	}
+	
     /*child[0].setAttribute("id","NOB" + LOCATION_TIMERS[3][0]);
     child[1].setAttribute("id","NOB" + LOCATION_TIMERS[0][0]);
     child[2].setAttribute("id","NOB" + LOCATION_TIMERS[1][0]);
