@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot Additional thing
 // @author      nobodyrandom
-// @version    	1.0.002
+// @version    	1.0.003
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
 // @include		http://www.mousehuntgame.com/*
@@ -298,11 +298,11 @@ function NOBcalculateTIME(){
         // var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec";
         var url = LOCATION_TIMERS[4][1].url;
         NOBajaxGet(url, function(text){
-            // console.log(JSON.parse(text));
+            console.log(JSON.parse(text));
             // text = JSON.parse(text);
-            var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
+            // var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
             // child.innerHTML = "Relic hunter now in: " + text.location + " \~ Next move time: " + UpdateTimer(text.next_move,true);
-			child.innerHTML = text;
+			// child.innerHTML = text;
         });
     }
     
