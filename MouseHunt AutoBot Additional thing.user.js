@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot Additional thing
 // @author      nobodyrandom
-// @version    	1.0.003
+// @version    	1.0.004
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
 // @include		http://www.mousehuntgame.com/*
@@ -306,7 +306,7 @@ function NOBcalculateTIME(){
         });
     }
     
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < 3; i++) {
         var CurrentName = -1;
         var CurrentBreakdown = 0;
         var TotalBreakdown = 0;
