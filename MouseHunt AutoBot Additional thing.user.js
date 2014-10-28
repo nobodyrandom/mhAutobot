@@ -254,14 +254,16 @@ function createClockArea(){
     var otherChild = document.getElementById('gDocLink');
     var child = [];
     
-    var i = 0;
     for (i = 0; i<LOCATION_TIMERS.length; i++)
         child[i] = document.createElement('div');
-    child[0].setAttribute("id","NOB" + LOCATION_TIMERS[3][0]);
+		
+	for (i = 0; i<LOCATION_TIMERS.length; i++)
+		child[i].setAttribute("id", "NOB" + LOCATION_TIMERS[i][0]);
+    /*child[0].setAttribute("id","NOB" + LOCATION_TIMERS[3][0]);
     child[1].setAttribute("id","NOB" + LOCATION_TIMERS[0][0]);
     child[2].setAttribute("id","NOB" + LOCATION_TIMERS[1][0]);
     child[3].setAttribute("id","NOB" + LOCATION_TIMERS[2][0]);
-    child[4].setAttribute("id","NOB" + LOCATION_TIMERS[4][0]);
+    child[4].setAttribute("id","NOB" + LOCATION_TIMERS[4][0]);*/
     
     for (i=0; i<LOCATION_TIMERS.length; i++)
         parent.insertBefore(child[i], parent.firstChild);
