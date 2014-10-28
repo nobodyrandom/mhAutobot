@@ -1,7 +1,7 @@
 MouseHunt Autobot REVAMP
 =========
 
-Original version made and owned by Ooi Keng Siang
+Original version made and owned by Ooi [Keng Siang]
 (http://userscripts-mirror.org/scripts/show/78731.html)
 
 To install this version, please use [greasyFork](https://greasyfork.org/en/scripts/6092-mousehunt-autobot)
