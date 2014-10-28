@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot Additional thing
-// @author      Me
+// @author      nobodyrandom
 // @version    	0.1
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
