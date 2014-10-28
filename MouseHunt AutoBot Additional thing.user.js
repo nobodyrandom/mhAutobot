@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot Additional thing
 // @author      nobodyrandom
-// @version    	1.0.001
+// @version    	1.0.002
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
 // @include		http://www.mousehuntgame.com/*
@@ -258,7 +258,7 @@ function createClockArea(){
     for (i = 0; i<LOCATION_TIMERS.length; i++) {
         child[i] = document.createElement('div');
 		child[i].setAttribute("id", "NOB" + LOCATION_TIMERS[i][0]);
-		text = '<span id="text_' + LOCATION_TIMERS[i][0]+ '">';
+		text = '<span id="text_' + LOCATION_TIMERS[i][0] + '">';
 		child[i].innerHTML = text;
 	}
 	
@@ -291,6 +291,18 @@ function NOBcalculateTIME(){
             text = JSON.parse(text);
             var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
             child.innerHTML = "Relic hunter now in: " + text.location + " \~ Next move time: " + UpdateTimer(text.next_move,true);
+        });
+    }
+	
+	if (typeof LOCATION_TIMERS[4][1].url != 'undefined' || LOCATION_TIMERS[4][1].url != 'undefined') {
+        // var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec";
+        var url = LOCATION_TIMERS[4][1].url;
+        NOBajaxGet(url, function(text){
+            // console.log(JSON.parse(text));
+            // text = JSON.parse(text);
+            var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
+            // child.innerHTML = "Relic hunter now in: " + text.location + " \~ Next move time: " + UpdateTimer(text.next_move,true);
+			child.innerHTML = text;
         });
     }
     
