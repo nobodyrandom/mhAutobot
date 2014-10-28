@@ -1,4 +1,6 @@
-mhAutobot
+MouseHunt Autobot REVAMP
 =========
 
-Test
+Original version made and owned by Ooi Keng Siang
+(http://userscripts-mirror.org/scripts/show/78731.html)
+
