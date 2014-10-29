@@ -1,15 +1,23 @@
 {
   "manifest_version": 2,
 
-  "name": "One-click Kittens",
-  "description": "This extension demonstrates a 'browser action' with kittens.",
-  "version": "1.0",
+  "name": "MouseHunt AutoBot REVAMP",
+  "description": "An advance user script to automate sounding the hunter horn in MouseHunt application in Facebook with MouseHunt version 3.0 (Longtail) supported and many other features. REVAMPED VERSION of ORIGINAL",
+  "version": "0.0.1",
 
   "browser_action": {
     "default_icon": "icon.png",
     "default_popup": "popup.html"
   },
   "permissions": [
-    "https://secure.flickr.com/"
+    "http://mousehuntgame.com/*",
+    "https://mousehuntgame.com/*",
+	"http://www.mousehuntgame.com/*",
+	"https://www.mousehuntgame.com/*",
+	"http://apps.facebook.com/mousehunt/*",
+	"https://apps.facebook.com/mousehunt/*",
+	"http://hi5.com/friend/games/MouseHunt*",
+	"http://mousehunt.hi5.hitgrab.com/*",
+	"https://secure.flickr.com/"
   ]
 }
