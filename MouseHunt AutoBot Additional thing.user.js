@@ -284,7 +284,7 @@ function NOBcalculateTIME(){
     var CurrentTime = currentTimeStamp();
     //for (i = 0; i < 4; i++) {
     if (typeof LOCATION_TIMERS[3][1].url != 'undefined' || LOCATION_TIMERS[3][1].url != 'undefined') {
-        var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec";
+        var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=relic";
         // url = LOCATION_TIMERS[3][1].url;
         NOBajaxGet(url, function(text){
             // console.log(JSON.parse(text));
@@ -295,8 +295,8 @@ function NOBcalculateTIME(){
     }
 	
 	if (typeof LOCATION_TIMERS[4][1].url != 'undefined' || LOCATION_TIMERS[4][1].url != 'undefined') {
-        // var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec";
-        var url = LOCATION_TIMERS[4][1].url;
+        var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=toxic";
+        // var url = LOCATION_TIMERS[4][1].url;
         NOBajaxGet(url, function(text){
             console.log(JSON.parse(text));
             // text = JSON.parse(text);
