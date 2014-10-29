@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot Additional thing
 // @author      nobodyrandom
-// @version    	1.1.003
+// @version    	1.1.010
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
 // @include		http://www.mousehuntgame.com/*
@@ -302,7 +302,19 @@ function NOBcalculateTIME(){
             text = JSON.parse(text);
             var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
             // child.innerHTML = "Relic hunter now in: " + text.location + " \~ Next move time: " + UpdateTimer(text.next_move,true);
-			child.innerHTML = "Toxic spill is now " + text.level + (100 - text.percent) + '%';
+			if (text.level == 'Closed'){
+				text.level.color = 'red';
+			} else {
+				text.level.color = 'green';
+			}
+			
+			if (text.percent < 0){
+				text.percent = '';
+			} else {
+				text.percent = ' ~ ' + (100 - text.percent) + '% left';
+			}
+			
+			child.innerHTML = 'Toxic spill is now - <font color="' + text.level.color + '">' + text.level + '</font>' + text.percent;
         });
     }
     
