@@ -9,6 +9,7 @@ Note: this version of the code includes two separate files which should automati
 
 *****
 Report all bugs to [gitHub](https://github.com/nobodyrandom/mhAutobot/issues) or email me @ <iamnobodyrandom@yahoo.com>   
+A sidenote ~ Since I am creating this version pretty actively, updates will come in from a 5 mins interval up to a weekly interval. Please make sure you update your instal frequently       
 Changelog - [gitHub](https://github.com/nobodyrandom/mhAutobot/commits/master)
 *****
 >Additional features added:
