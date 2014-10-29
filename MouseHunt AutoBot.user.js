@@ -1231,7 +1231,7 @@ function embedTimer(targetPage)
                     }
                     
                     var timersElementToggle = document.createElement('a');
-                    var text = document.createTextNode('Click to show timers');
+                    var text = document.createTextNode('Click to toggle timers');
                     timersElementToggle.href = '#';
                     timersElementToggle.setAttribute('id', 'timersElementToggle');
                     timersElementToggle.appendChild (text);
