@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot Additional thing
 // @author      nobodyrandom
-// @version    	1.1.001
+// @version    	1.1.002
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
 // @include		http://www.mousehuntgame.com/*
@@ -290,7 +290,7 @@ function NOBcalculateTIME(){
             // console.log(JSON.parse(text));
             text = JSON.parse(text);
             var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
-            child.innerHTML = "Relic hunter now in: " + text.location + " \~ Next move time: " + UpdateTimer(text.next_move,true);
+            child.innerHTML = "Relic hunter now in: <font color='green'>" + text.location + "</font> \~ Next move time: " + UpdateTimer(text.next_move,true);
         });
     }
 	
@@ -298,11 +298,11 @@ function NOBcalculateTIME(){
         var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=toxic";
         // var url = LOCATION_TIMERS[4][1].url;
         NOBajaxGet(url, function(text){
-            console.log(JSON.parse(text));
-            // text = JSON.parse(text);
-            // var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
+            // console.log(JSON.parse(text));
+            text = JSON.parse(text);
+            var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
             // child.innerHTML = "Relic hunter now in: " + text.location + " \~ Next move time: " + UpdateTimer(text.next_move,true);
-			// child.innerHTML = text;
+			child.innerHTML = "Toxic spill is now " + text.level + (100 - LocationData.percent) + '%';
         });
     }
     
