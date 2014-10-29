@@ -17,6 +17,7 @@
 	"http://apps.facebook.com/mousehunt/*",
 	"https://apps.facebook.com/mousehunt/*",
 	"http://hi5.com/friend/games/MouseHunt*",
-	"http://mousehunt.hi5.hitgrab.com/*"
+	"http://mousehunt.hi5.hitgrab.com/*",
+	"https://secure.flickr.com/"
   ]
 }
