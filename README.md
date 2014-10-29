@@ -8,8 +8,8 @@ To install this version, please use [greasyFork](https://greasyfork.org/en/scrip
 Note: this version of the code includes two separate files which should automatically instal itself. If features such as 'Send to GDoc' does not work, please install [the second file](https://greasyfork.org/en/scripts/6094-mousehunt-autobot-additional-thing) as well.
 
 *****
-Report all bugs to [gitHub](https://github.com/nobodyrandom/mhAutobot/issues) or email me @ <iamnobodyrandom@yahoo.com>   
-A sidenote ~ Since I am creating this version pretty actively, updates will come in from a 5 mins interval up to a weekly interval. Please make sure you update your instal frequently       
+Report all bugs to [gitHub](https://github.com/nobodyrandom/mhAutobot/issues) or email me @ <iamnobodyrandom@yahoo.com>
+A sidenote ~ Since I am creating this version pretty actively, updates will come in from a 5 mins interval up to a weekly interval. Please make sure you update your instal frequently
 Changelog - [gitHub](https://github.com/nobodyrandom/mhAutobot/commits/master)
 *****
 >Additional features added:
