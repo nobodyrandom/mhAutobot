@@ -303,9 +303,9 @@ function NOBcalculateTIME(){
             var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
             // child.innerHTML = "Relic hunter now in: " + text.location + " \~ Next move time: " + UpdateTimer(text.next_move,true);
 			if (text.level == 'Closed'){
-				text.level.color = 'red';
+				text.level += {color:'red', state:text.level};
 			} else {
-				text.level.color = 'green';
+				text.level += {color:'green', state:text.level};
 			}
 			
 			if (text.percent < 0){
@@ -314,7 +314,7 @@ function NOBcalculateTIME(){
 				text.percent = ' ~ ' + (100 - text.percent) + '% left';
 			}
 			
-			child.innerHTML = 'Toxic spill is now - <font color="' + text.level.color + '">' + text.level + '</font>' + text.percent;
+			child.innerHTML = 'Toxic spill is now - <font color="' + text.level.color + '">' + text.level.state + '</font>' + text.percent;
         });
     }
     
