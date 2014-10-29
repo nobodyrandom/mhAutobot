@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot Additional thing
 // @author      nobodyrandom
-// @version    	1.1.015
+// @version    	1.1.016
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
 // @include		http://www.mousehuntgame.com/*
@@ -303,9 +303,9 @@ function NOBcalculateTIME(){
             var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
             // child.innerHTML = "Relic hunter now in: " + text.location + " \~ Next move time: " + UpdateTimer(text.next_move,true);
 			if (text.level == 'Closed'){
-				text.level += {color:'red', state:text.level};
+				text.level = {color:'red', state:text.level};
 			} else {
-				text.level += {color:'green', state:text.level};
+				text.level = {color:'green', state:text.level};
 			}
 			
 			if (text.percent < 0){
