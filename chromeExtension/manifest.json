@@ -23,6 +23,7 @@
 	"https://secure.flickr.com/",
 	"activeTab",
 	"tabs",
-	"unlimitedStorage"
+	"unlimitedStorage",
+	"storage"
   ]
 }
