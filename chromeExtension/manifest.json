@@ -8,7 +8,12 @@
   
   "content_scripts": [
 	{
-	  "matches": ["http://mousehuntgame.com/*",
+	  "matches": [
+	  "*://*.mousehuntgame.com/*",
+	  "*://mousehuntgame.com/*"
+	  ],
+	  "include_globs": [
+	  "http://mousehuntgame.com/*",
 	  "https://mousehuntgame.com/*",
 	  "http://www.mousehuntgame.com/*",
 	  "https://www.mousehuntgame.com/*",
