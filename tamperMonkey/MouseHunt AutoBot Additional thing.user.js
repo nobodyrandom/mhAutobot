@@ -50,6 +50,7 @@ var LOCATION_TIMERS = [
 ];
 
 var NOBhasPuzzle = user.has_puzzle;
+var NOBclockLoaded = false;
 NOBhtmlFetch();
 
 // SETTING BASE VARS DONE ******************************* INIT AJAX CALLS AND INIT CALLS
@@ -274,7 +275,7 @@ function createClockArea(){
 
 function clockTick(){
     NOBcalculateTime();
-    setTimeout(clockTick(), /* 10*60* */ 1000);
+    setTimeout(clockTick(), 10*60*1000);
 }
 
 function updateTime(){
@@ -282,86 +283,92 @@ function updateTime(){
 }
 
 function NOBcalculateTIME(){
-    var CurrentTime = currentTimeStamp();
-    //for (i = 0; i < 4; i++) {
-    if (typeof LOCATION_TIMERS[3][1].url != 'undefined' || LOCATION_TIMERS[3][1].url != 'undefined') {
-        var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=relic";
-        // url = LOCATION_TIMERS[3][1].url;
-        NOBajaxGet(url, function(text){
-            // console.log(JSON.parse(text));
-            text = JSON.parse(text);
-            var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
-            child.innerHTML = "Relic hunter now in: <font color='green'>" + text.location + "</font> \~ Next move time: " + UpdateTimer(text.next_move,true);
-        });
-    }
+	if (!NOBclockLoaded){
+		var CurrentTime = currentTimeStamp();
+		//for (i = 0; i < 4; i++) {
+		if (typeof LOCATION_TIMERS[3][1].url != 'undefined' || LOCATION_TIMERS[3][1].url != 'undefined') {
+			var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=relic";
+			// url = LOCATION_TIMERS[3][1].url;
+			NOBajaxGet(url, function(text){
+				// console.log(JSON.parse(text));
+				text = JSON.parse(text);
+				var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
+				child.innerHTML = "Relic hunter now in: <font color='green'>" + text.location + "</font> \~ Next move time: " + UpdateTimer(text.next_move,true);
+			});
+		}
 	
-	if (typeof LOCATION_TIMERS[4][1].url != 'undefined' || LOCATION_TIMERS[4][1].url != 'undefined') {
-        var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=toxic";
-        // var url = LOCATION_TIMERS[4][1].url;
-        NOBajaxGet(url, function(text){
-            // console.log(JSON.parse(text));
-            text = JSON.parse(text);
-            var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
-            // child.innerHTML = "Relic hunter now in: " + text.location + " \~ Next move time: " + UpdateTimer(text.next_move,true);
-			if (text.level == 'Closed'){
-				text.level = {color:'red', state:text.level};
-			} else {
-				text.level = {color:'green', state:text.level};
-			}
+		if (typeof LOCATION_TIMERS[4][1].url != 'undefined' || LOCATION_TIMERS[4][1].url != 'undefined') {
+			var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=toxic";
+			// var url = LOCATION_TIMERS[4][1].url;
+			NOBajaxGet(url, function(text){
+				// console.log(JSON.parse(text));
+				text = JSON.parse(text);
+				var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
+				// child.innerHTML = "Relic hunter now in: " + text.location + " \~ Next move time: " + UpdateTimer(text.next_move,true);
+				if (text.level == 'Closed'){
+					text.level = {color:'red', state:text.level};
+				} else {
+					text.level = {color:'green', state:text.level};
+				}
 			
-			if (text.percent < 0){
-				text.percent = '';
-			} else {
-				text.percent = ' ~ ' + (100 - text.percent) + '% left';
-			}
+				if (text.percent < 0){
+					text.percent = '';
+				} else {
+					text.percent = ' ~ ' + (100 - text.percent) + '% left';
+				}
 			
-			child.innerHTML = 'Toxic spill is now - <font color="' + text.level.color + '">' + text.level.state + '</font>' + text.percent;
-        });
-    }
-    
-    for (i = 0; i < 3; i++) {
-        var CurrentName = -1;
-        var CurrentBreakdown = 0;
-        var TotalBreakdown = 0;
-        var iCount2;
-        
-        for (iCount2 = 0; iCount2 < LOCATION_TIMERS[i][1].breakdown.length; iCount2++)
-            TotalBreakdown += LOCATION_TIMERS[i][1].breakdown[iCount2];
-        
-        var CurrentValue = Math.floor((CurrentTime - LOCATION_TIMERS[i][1].first) / LOCATION_TIMERS[i][1].length) % TotalBreakdown;
-        
-        for (iCount2 = 0; iCount2 < LOCATION_TIMERS[i][1].breakdown.length && CurrentName == -1; iCount2++)
-        {
-            CurrentBreakdown += LOCATION_TIMERS[i][1].breakdown[iCount2];
-            
-            if (CurrentValue < CurrentBreakdown)
-            {
-                CurrentName = iCount2;
-            }
-        }
-        
-        var SeasonLength = (LOCATION_TIMERS[i][1].length * LOCATION_TIMERS[i][1].breakdown[CurrentName]);
-        var CurrentTimer = (CurrentTime - LOCATION_TIMERS[i][1].first);
-        var SeasonRemaining = 0;
-        
-        while (CurrentTimer > 0)
-        {
-            for (iCount2 = 0; iCount2 < LOCATION_TIMERS[i][1].breakdown.length && CurrentTimer > 0; iCount2++)
-            {
-                SeasonRemaining = CurrentTimer;
-                CurrentTimer -= (LOCATION_TIMERS[i][1].length * LOCATION_TIMERS[i][1].breakdown[iCount2])
-            }
-        }
-        
-        SeasonRemaining = SeasonLength - SeasonRemaining;
-        
-        var seasonalDiv = document.getElementById('NOB' + LOCATION_TIMERS[i][0]);
-        seasonalDiv.innerHTML += LOCATION_TIMERS[i][0] + ': <font color="' + LOCATION_TIMERS[i][1].color[CurrentName] + '">' + LOCATION_TIMERS[i][1].name[CurrentName] + '</font>';
-        if (LOCATION_TIMERS[i][1].effective != null)
-        {
-            seasonalDiv.innerHTML += ' (' + LOCATION_TIMERS[i][1].effective[CurrentName] + ')';
-        }
-        
-        seasonalDiv.innerHTML += ' ~ For ' + UpdateTimer(SeasonRemaining, true);
+				child.innerHTML = 'Toxic spill is now - <font color="' + text.level.color + '">' + text.level.state + '</font>' + text.percent;
+			});
+		}
+	
+		for (i = 0; i < 3; i++) {
+			var CurrentName = -1;
+			var CurrentBreakdown = 0;
+			var TotalBreakdown = 0;
+			var iCount2;
+		
+			for (iCount2 = 0; iCount2 < LOCATION_TIMERS[i][1].breakdown.length; iCount2++)
+				TotalBreakdown += LOCATION_TIMERS[i][1].breakdown[iCount2];
+		
+			var CurrentValue = Math.floor((CurrentTime - LOCATION_TIMERS[i][1].first) / LOCATION_TIMERS[i][1].length) % TotalBreakdown;
+		
+			for (iCount2 = 0; iCount2 < LOCATION_TIMERS[i][1].breakdown.length && CurrentName == -1; iCount2++)
+			{
+				CurrentBreakdown += LOCATION_TIMERS[i][1].breakdown[iCount2];
+			
+				if (CurrentValue < CurrentBreakdown)
+				{
+					CurrentName = iCount2;
+				}
+			}
+		
+			var SeasonLength = (LOCATION_TIMERS[i][1].length * LOCATION_TIMERS[i][1].breakdown[CurrentName]);
+			var CurrentTimer = (CurrentTime - LOCATION_TIMERS[i][1].first);
+			var SeasonRemaining = 0;
+		
+			while (CurrentTimer > 0)
+			{
+				for (iCount2 = 0; iCount2 < LOCATION_TIMERS[i][1].breakdown.length && CurrentTimer > 0; iCount2++)
+				{
+					SeasonRemaining = CurrentTimer;
+					CurrentTimer -= (LOCATION_TIMERS[i][1].length * LOCATION_TIMERS[i][1].breakdown[iCount2])
+				}
+			}
+		
+			SeasonRemaining = SeasonLength - SeasonRemaining;
+		
+			var seasonalDiv = document.getElementById('NOB' + LOCATION_TIMERS[i][0]);
+			seasonalDiv.innerHTML += LOCATION_TIMERS[i][0] + ': <font color="' + LOCATION_TIMERS[i][1].color[CurrentName] + '">' + LOCATION_TIMERS[i][1].name[CurrentName] + '</font>';
+			if (LOCATION_TIMERS[i][1].effective != null)
+			{
+				seasonalDiv.innerHTML += ' (' + LOCATION_TIMERS[i][1].effective[CurrentName] + ')';
+			}
+		
+			seasonalDiv.innerHTML += ' ~ For ' + UpdateTimer(SeasonRemaining, true);
+		}
+	
+		NOBclockLoaded = true;
+    } else {
+    	updateTime();
     }
 }
