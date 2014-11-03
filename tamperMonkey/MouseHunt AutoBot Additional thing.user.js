@@ -353,13 +353,15 @@ function NOBcalculateTIME(){
 			SeasonRemaining = SeasonLength - SeasonRemaining;
 		
 			var seasonalDiv = document.getElementById('NOB' + LOCATION_TIMERS[i][0]);
-			seasonalDiv.innerHTML += LOCATION_TIMERS[i][0] + ': <font color="' + LOCATION_TIMERS[i][1].color[CurrentName] + '">' + LOCATION_TIMERS[i][1].name[CurrentName] + '</font>';
+			var content = "";
+			content += LOCATION_TIMERS[i][0] + ': <font color="' + LOCATION_TIMERS[i][1].color[CurrentName] + '">' + LOCATION_TIMERS[i][1].name[CurrentName] + '</font>';
 			if (LOCATION_TIMERS[i][1].effective != null)
 			{
-				seasonalDiv.innerHTML += ' (' + LOCATION_TIMERS[i][1].effective[CurrentName] + ')';
+				content += ' (' + LOCATION_TIMERS[i][1].effective[CurrentName] + ')';
 			}
 		
-			seasonalDiv.innerHTML += ' ~ For ' + UpdateTimer(SeasonRemaining, true);
+			content += ' ~ For ' + UpdateTimer(SeasonRemaining, true);
+			seasonalDiv.innerHTML = content;
 		}
 	
 		// NOBclockLoaded = true;
