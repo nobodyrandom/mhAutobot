@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot Additional thing
 // @author      nobodyrandom
-// @version    	1.1.019
+// @version    	1.1.100
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
 // @include		http://www.mousehuntgame.com/*
@@ -59,8 +59,7 @@ $(window).load(function(e) {
     var NOBhasPuzzle = user.has_puzzle;
     if (NOBhasPuzzle == false) {
         createClockArea();
-        NOBcalculateTIME();
-        NOBcalculateTIME();
+        clockTick();
     }
 });
 
@@ -270,7 +269,7 @@ function createClockArea(){
 
 function clockTick(){
     NOBcalculateTime();
-    setTimeout(clockTick(), 10*60*1000);
+    setTimeout(clockTick(), 2*60*1000);
 }
 
 function updateTime(){
