@@ -11,7 +11,7 @@ To check development progress on the chrome extension version, check [GitHub](ht
 *****
 Report all bugs to [GitHub](https://github.com/nobodyrandom/mhAutobot/issues) or email me @ <iamnobodyrandom@yahoo.com>   
 >	A sidenote ~ Since I am creating this version pretty actively, updates will come in from a 5 mins interval up to a weekly interval. Please make sure you update your install frequently   
->	#####Want to contribute to the code or have ideas? Email me \^.\^
+>	Want to contribute to the code or have ideas? Email me \^.\^
 
 Changelog - [GitHub](https://github.com/nobodyrandom/mhAutobot/commits/master)
 *****
