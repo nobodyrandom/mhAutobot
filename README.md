@@ -11,11 +11,12 @@ To check development progress on the chrome extension version, check [GitHub](ht
 *****
 Report all bugs to [GitHub](https://github.com/nobodyrandom/mhAutobot/issues) or email me @ <iamnobodyrandom@yahoo.com>   
 >	A sidenote ~ Since I am creating this version pretty actively, updates will come in from a 5 mins interval up to a weekly interval. Please make sure you update your install frequently   
+>	#####Want to contribute to the code or have ideas? Email me \^.\^
 
 Changelog - [GitHub](https://github.com/nobodyrandom/mhAutobot/commits/master)
 *****
 > Additional features added:
->*	LG -> [Google Drive](https://docs.google.com/spreadsheet/ccc?key=0Ag_KH_nuVUjbdGtldjJkWUJ4V1ZpUDVwd1FVM0RTM1E&usp=sharing) with run forecasting
+>*	Living Garden Spreadsheet -> [Google Drive](https://docs.google.com/spreadsheet/ccc?key=0Ag_KH_nuVUjbdGtldjJkWUJ4V1ZpUDVwd1FVM0RTM1E&usp=sharing) with run forecasting
 >*	(TODO: write up a instruction manual for the GDoc, but it should be pretty self explanatory)
 >*	Area clocks
 >*	Auto Kings Reward popup (check the settings)
