@@ -10,7 +10,10 @@
 	{
 	  "matches": [
 	  "*://*.mousehuntgame.com/*",
-	  "*://mousehuntgame.com/*"
+	  "*://mousehuntgame.com/*",
+	  "*://apps.facebook.com/mousehunt/*",
+	  "*://hi5.com/friend/games/MouseHunt*",
+	  "*://mousehunt.hi5.hitgrab.com/*"
 	  ],
 	  "include_globs": [
 	  "http://mousehuntgame.com/*",
@@ -19,7 +22,7 @@
 	  "https://www.mousehuntgame.com/*",
 	  "http://apps.facebook.com/mousehunt/*",
 	  "https://apps.facebook.com/mousehunt/*",
-	  "http://hi5.com/friend/games/MouseHunt*",
+	  "http://hi5.com/friend/games/MouseHunt/*",
 	  "http://mousehunt.hi5.hitgrab.com/*"
 	  ],
 	  "js": [
