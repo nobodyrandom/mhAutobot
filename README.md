@@ -1,8 +1,7 @@
 MouseHunt Autobot REVAMP
 =========
 
-Original version made and owned by [Ooi Keng Siang]
-(http://userscripts-mirror.org/scripts/show/78731.html)
+Original version made and owned by [Ooi Keng Siang](http://userscripts-mirror.org/scripts/show/78731.html)
 
 To install this version, please use [greasyFork](https://greasyfork.org/en/scripts/6092-mousehunt-autobot)
 Note: this version of the code includes two separate files which should automatically instal itself. If features such as 'Send to GDoc' does not work, please install [the second file](https://greasyfork.org/en/scripts/6094-mousehunt-autobot-additional-thing) as well.
@@ -11,7 +10,7 @@ Note: this version of the code includes two separate files which should automati
 To check development progress on the chrome extension version, check [GitHub](https://github.com/nobodyrandom/mhAutobot/tree/master/chromeExtension)
 *****
 Report all bugs to [GitHub](https://github.com/nobodyrandom/mhAutobot/issues) or email me @ <iamnobodyrandom@yahoo.com>   
->A sidenote ~ Since I am creating this version pretty actively, updates will come in from a 5 mins interval up to a weekly interval. Please make sure you update your install frequently   
+>	A sidenote ~ Since I am creating this version pretty actively, updates will come in from a 5 mins interval up to a weekly interval. Please make sure you update your install frequently   
 
 Changelog - [GitHub](https://github.com/nobodyrandom/mhAutobot/commits/master)
 *****
