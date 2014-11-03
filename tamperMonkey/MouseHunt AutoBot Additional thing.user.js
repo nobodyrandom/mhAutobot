@@ -273,7 +273,8 @@ function createClockArea(){
 }
 
 function clockTick(){
-    setTimeout(NOBcalculateTime, /* 10*60* */ 1000);
+    NOBcalculateTime();
+    setTimeout(clockTick(), /* 10*60* */ 1000);
 }
 
 function updateTime(){
