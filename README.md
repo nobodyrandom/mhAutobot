@@ -15,7 +15,7 @@ Report all bugs to [GitHub](https://github.com/nobodyrandom/mhAutobot/issues) or
 
 Changelog - [GitHub](https://github.com/nobodyrandom/mhAutobot/commits/master)
 *****
-> Additional features added:
+Additional features added:
 >*	Living Garden Spreadsheet -> [Google Drive](https://docs.google.com/spreadsheet/ccc?key=0Ag_KH_nuVUjbdGtldjJkWUJ4V1ZpUDVwd1FVM0RTM1E&usp=sharing) with run forecasting
 >*	(TODO: write up a instruction manual for the GDoc, but it should be pretty self explanatory)
 >*	Area clocks
