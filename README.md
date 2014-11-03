@@ -15,8 +15,8 @@ Report all bugs to [GitHub](https://github.com/nobodyrandom/mhAutobot/issues) or
 
 Changelog - [GitHub](https://github.com/nobodyrandom/mhAutobot/commits/master)
 *****
->Additional features added:
+> Additional features added:
 >*	LG -> [Google Drive](https://docs.google.com/spreadsheet/ccc?key=0Ag_KH_nuVUjbdGtldjJkWUJ4V1ZpUDVwd1FVM0RTM1E&usp=sharing) with run forecasting
-> >* TODO: write up a instruction manual for it, but it should be pretty self explanatory
+> >	TODO: write up a instruction manual for it, but it should be pretty self explanatory
 >*	Area clocks
 >*	Auto Kings Reward popup (check the settings)
