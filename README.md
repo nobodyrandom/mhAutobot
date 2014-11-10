@@ -23,3 +23,4 @@ Additional features added:
 >*	Auto Kings Reward popup (check the settings)
 >*  Cleaned code
 >*  Removed not working sound player, will implement a working one later
+>*  Also fixed browser notifs mainly for chrome
