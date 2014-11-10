@@ -21,3 +21,5 @@ Additional features added:
 >*	(TODO: write up a instruction manual for the GDoc, but it should be pretty self explanatory)
 >*	Area clocks
 >*	Auto Kings Reward popup (check the settings)
+>*  Cleaned code
+>*  Removed not working sound player, will implement a working one later
