@@ -22,5 +22,5 @@ Additional features added:
 >*	Area clocks
 >*	Auto Kings Reward popup (check the settings)
 >*  Cleaned code
->*  Removed not working sound player, will implement a working one later
+>*  Removed not working sound player and replaced with HTML5 one, pls comment if problem occurs
 >*  Also fixed browser notifs mainly for chrome
