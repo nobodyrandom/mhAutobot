@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot Additional thing
 // @author      nobodyrandom
-// @version    	1.1.113
+// @version    	1.1.114
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
 // @include		http://www.mousehuntgame.com/*
@@ -84,7 +84,7 @@ $(window).load(function(e) {
     if (NOBhasPuzzle == false) {
         createClockArea();
 
-        if (window.location.href == "http://www.mousehuntgame.com/" ||
+        /* if (window.location.href == "http://www.mousehuntgame.com/" ||
             window.location.href == "http://www.mousehuntgame.com/#" ||
             window.location.href == "http://www.mousehuntgame.com/?switch_to=standard" ||
             window.location.href == "https://www.mousehuntgame.com/" ||
@@ -105,9 +105,9 @@ $(window).load(function(e) {
             if (!checkIntroContainer()) {
                 NOBpage = true;
             }
-        }
+        } */
 
-        if (NOBpage) {
+        if (!NOBpage) {
             clockTick();
         }
     }
@@ -137,6 +137,7 @@ function NOBajaxGet(url, callback) {
         jQuery.ajax({
             url: url,
             type: "GET",
+			timeout: 3000,
             statusCode: {
                 0: function() {
                     console.log("Success get - " + url);
@@ -163,6 +164,7 @@ function NOBajaxPost(url, data, callback) {
             url: url,
             data: data,
             type: "POST",
+			timeout: 3000,
             statusCode: {
                 0: function() {
                     console.log("Success post - " + url);
@@ -273,6 +275,7 @@ function MapRequest(handleData) {
         data: dataSend,
         type: "POST",
         dataType: "json",
+		timeout: 3000,
         success: function(data) {
             // console.log(data);
             handleData(data);
