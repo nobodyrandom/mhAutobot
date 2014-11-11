@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot Additional thing
 // @author      nobodyrandom
-// @version    	1.1.112
+// @version    	1.1.113
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
 // @include		http://www.mousehuntgame.com/*
@@ -356,7 +356,7 @@ function createClockArea() {
 
 function clockTick() {
     NOBcalculateTime();
-    setTimeout(clockTick(), 2 * 60 * 1000);
+    // setTimeout(clockTick(), 2 * 60 * 1000);
 }
 
 function updateTime() {
