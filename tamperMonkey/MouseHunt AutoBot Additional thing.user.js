@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot Additional thing
 // @author      nobodyrandom
-// @version    	1.1.110
+// @version    	1.1.111
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
 // @include		http://www.mousehuntgame.com/*
@@ -108,7 +108,7 @@ $(window).load(function(e) {
         }
 
         if (NOBpage) {
-            setTimeout(clockTick(), 2 * 1000);
+            clockTick();
         }
     }
 });
