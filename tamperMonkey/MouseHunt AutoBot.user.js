@@ -17,6 +17,7 @@
 // @include		http://hi5.com/friend/games/MouseHunt*
 // @include		http://mousehunt.hi5.hitgrab.com/*
 // ==/UserScript==
+
 // == Basic User Preference Setting (Begin) ==
 // // The variable in this section contain basic option will normally edit by most user to suit their own preference
 // // Reload MouseHunt page manually if edit this script while running it for immediate effect.
@@ -1892,7 +1893,7 @@ function notify() {
     if (Notification.permission !== "granted")
         Notification.requestPermission();
 
-    var notification = new Notification('Notification title', {
+    var notification = new Notification('KR NOW', {
         icon: 'http://3.bp.blogspot.com/_O2yZIhpq9E8/TBoAMw0fMNI/AAAAAAAAAxo/1ytaIxQQz4o/s1600/Subliminal+Message.JPG',
         body: "Kings Reward NOW",
     });
@@ -1901,6 +1902,10 @@ function notify() {
         window.open("https://www.mousehuntgame.com/");
         notification.close();
     }
+	
+	notification.onshow = function() {
+		setTimeout(Notification.close(), 5000);
+	}
 }
 
 function playKingRewardSound() {
