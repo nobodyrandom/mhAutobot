@@ -27,4 +27,4 @@ Additional features added:
 >*	Auto Kings Reward popup (check the settings)
 >*  Cleaned code
 >*  Removed not working sound player and replaced with HTML5 one, pls comment if problem occurs
->*  Fixed browser notif, but the trigger is funny \=,\=
+>*  Fixed browser notif, but the trigger is funny =,=
