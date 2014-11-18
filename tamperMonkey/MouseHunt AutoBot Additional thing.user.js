@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot Additional thing development ver
 // @author      nobodyrandom
-// @version    	1.1.121d
+// @version    	1.1.122d
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -149,10 +149,6 @@ function NOBajaxGet(url, callback) {
                 }
             },
             success: callback
-                /*function( data ) {
-                                //console.log(data);
-                                callback(data);
-                            }*/
         });
     }
 }
@@ -176,10 +172,6 @@ function NOBajaxPost(url, data, callback) {
                 }
             },
             success: callback
-                /*function( data ) {
-                                callback(data);
-                                //console.log(data);
-                            }*/
         });
     }
 }
@@ -359,7 +351,7 @@ function createClockArea() {
 
 function clockTick() {
     NOBcalculateTime();
-    setTimeout(function(){clockTick()}, /*5 **/ 60 * 1000);
+    setTimeout(function(){clockTick()}, 5 * 60 * 1000);
 }
 
 function updateTime() {
