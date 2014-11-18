@@ -2,6 +2,7 @@
 =========
 
 ~~[Original](http://userscripts-mirror.org/scripts/show/78731.html) version made and owned by [Ooi Keng Siang](http://ooiks.com/blog/mousehunt-autobot) \(He no longer develops this code\)~~
+
 [REVAMP](https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) version adapts the original, with few bug fixes and etc
 [ENHANCED + REVAMP](https://greasyfork.org/en/scripts/6514-mousehunt-autobot-enhanced-revamp) version adapted from version made and owned by [CNN](https://devcnn.wordpress.com/) \(Just a note, he was **banned** for making and using the ENHANCED version, so up to you if you dare use it\)
 
