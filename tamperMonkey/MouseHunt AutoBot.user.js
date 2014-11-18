@@ -1901,10 +1901,11 @@ function notify() {
     notification.onclick = function() {
         window.open("https://www.mousehuntgame.com/");
         notification.close();
+		notification.cancel();
     }
 	
 	notification.onshow = function() {
-		setTimeout(Notification.close(), 5000);
+		setTimeout(function(){notification.close(); notification.cancel();}, 5000);
 	}
 }
 
