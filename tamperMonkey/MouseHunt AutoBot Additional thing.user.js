@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name        MouseHunt AutoBot Additional thing
+// @name        MouseHunt AutoBot Additional thing development ver
 // @author      nobodyrandom
 // @version    	1.1.115d
 // @license 	GNU GPL v2.0
