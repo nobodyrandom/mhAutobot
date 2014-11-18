@@ -1,4 +1,4 @@
-[MouseHunt Autobot REVAMP](https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) and [MouseHunt Autobot ENHANCED + REVAMP](https://greasyfork.org/en/scripts/6514-mousehunt-autobot-enhanced-revamp)
+[MouseHunt Autobot REVAMP](https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) and [ENHANCED + REVAMP](https://greasyfork.org/en/scripts/6514-mousehunt-autobot-enhanced-revamp)
 =========
 
 [Original](http://userscripts-mirror.org/scripts/show/78731.html) version made and owned by [Ooi Keng Siang](http://ooiks.com/blog/mousehunt-autobot) \(He no longer develops this code\)
