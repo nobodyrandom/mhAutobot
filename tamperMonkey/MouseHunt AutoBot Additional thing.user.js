@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot Additional thing development ver
 // @author      nobodyrandom
-// @version    	1.1.117d
+// @version    	1.1.118d
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -107,7 +107,7 @@ $(window).load(function(e) {
         } */
 
         if (!NOBpage) {
-        	createClockArea();
+        	//createClockArea();
             clockTick();
         }
     }
