@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      nobodyrandom
-// @version    	1.4.121
-// @description An advance user script to automate sounding the hunter horn in MouseHunt application in Facebook with MouseHunt version 3.0 (Longtail) supported and many other features. REVAMPED VERSION of ORIGINAL
+// @version    	1.4.122a
+// @description An advance user script to automate sounding the hunter horn in MouseHunt application in Facebook with MouseHunt version 3.0 (Longtail) supported and many other features. REVAMPED VERSION of ORIGINAL by Ooi
 // @require     https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=24446
 // @namespace   https://greasyfork.org/users/6398
 // @updateURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.user.js
@@ -38,7 +38,7 @@ var enableTrapCheck = false;
 // // Trap check time different value (00 minutes - 45 minutes)
 // // Note: Every player had different trap check time, set your trap check time here. It only take effect if enableTrapCheck = true;
 // // Example: If you have XX:00 trap check time then set 00. If you have XX:45 trap check time, then set 45.
-var trapCheckTimeDiff = 45;
+var trapCheckTimeDiff = 15;
 
 // // Extra delay time to trap check. (in seconds)
 // // Note: It only take effect if enableTrapCheck = true;
@@ -81,7 +81,7 @@ var showTimerInPage = true;
 var showLastPageLoadTime = true;
 
 // // Default time to reload the page when bot encounter error. (in seconds)
-var errorReloadTime = 5;
+var errorReloadTime = 20;
 
 // // Time interval for script timer to update the time. May affact timer accuracy if set too high value. (in seconds)
 var timerRefreshInterval = 1;
@@ -91,7 +91,7 @@ var timerRefreshInterval = 1;
 // WARNING - Do not modify the code below unless you know how to read and write the script.
 
 // All global variable declaration and default value
-var scriptVersion = "1.28";
+var scriptVersion = "1.4.122a";
 var fbPlatform = false;
 var hiFivePlatform = false;
 var mhPlatform = false;
@@ -1901,12 +1901,15 @@ function notify() {
     notification.onclick = function() {
         window.open("https://www.mousehuntgame.com/");
         notification.close();
-		notification.cancel();
+        notification.cancel();
     }
-	
-	notification.onshow = function() {
-		setTimeout(function(){notification.close(); notification.cancel();}, 5000);
-	}
+
+    notification.onshow = function() {
+        setTimeout(function() {
+            notification.close();
+            notification.cancel();
+        }, 5000);
+    }
 }
 
 function playKingRewardSound() {
