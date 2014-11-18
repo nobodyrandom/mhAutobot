@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot Additional thing
 // @author      nobodyrandom
-// @version    	1.1.115
+// @version    	1.1.120
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -83,8 +83,6 @@ NOBhtmlFetch();
 $(window).load(function(e) {
     var NOBhasPuzzle = user.has_puzzle;
     if (NOBhasPuzzle == false) {
-        createClockArea();
-
         /* if (window.location.href == "http://www.mousehuntgame.com/" ||
             window.location.href == "http://www.mousehuntgame.com/#" ||
             window.location.href == "http://www.mousehuntgame.com/?switch_to=standard" ||
@@ -109,7 +107,8 @@ $(window).load(function(e) {
         } */
 
         if (!NOBpage) {
-            clockTick();
+        	createClockArea();
+        	clockTick();
         }
     }
 });
@@ -150,10 +149,6 @@ function NOBajaxGet(url, callback) {
                 }
             },
             success: callback
-                /*function( data ) {
-                                //console.log(data);
-                                callback(data);
-                            }*/
         });
     }
 }
@@ -177,10 +172,6 @@ function NOBajaxPost(url, data, callback) {
                 }
             },
             success: callback
-                /*function( data ) {
-                                callback(data);
-                                //console.log(data);
-                            }*/
         });
     }
 }
@@ -360,7 +351,7 @@ function createClockArea() {
 
 function clockTick() {
     NOBcalculateTime();
-    setTimeout(function(){clockTick()}, 2 * 60 * 1000);
+    setTimeout(function(){clockTick()}, 5 * 60 * 1000);
 }
 
 function updateTime() {
