@@ -28,3 +28,5 @@ Additional features added:
 >*  Cleaned code
 >*  Removed not working sound player and replaced with HTML5 one, pls comment if problem occurs
 >*  Fixed browser notif, but the trigger is funny =,=
+
+#####Sorrry I am new to GitHub, GM and actually anything at all so if there's something wrong pls email me or submit a bug report asap so I can fix it
