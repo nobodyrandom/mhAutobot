@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot Additional thing
 // @author      nobodyrandom
-// @version    	1.1.114
+// @version    	1.1.115
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -138,7 +138,7 @@ function NOBajaxGet(url, callback) {
         jQuery.ajax({
             url: url,
             type: "GET",
-			timeout: 3000,
+			timeout: 5000,
             statusCode: {
                 0: function() {
                     console.log("Success get - " + url);
@@ -165,7 +165,7 @@ function NOBajaxPost(url, data, callback) {
             url: url,
             data: data,
             type: "POST",
-			timeout: 3000,
+			timeout: 5000,
             statusCode: {
                 0: function() {
                     console.log("Success post - " + url);
@@ -276,7 +276,7 @@ function MapRequest(handleData) {
         data: dataSend,
         type: "POST",
         dataType: "json",
-		timeout: 3000,
+		timeout: 5000,
         success: function(data) {
             // console.log(data);
             handleData(data);
@@ -360,7 +360,7 @@ function createClockArea() {
 
 function clockTick() {
     NOBcalculateTime();
-    // setTimeout(clockTick(), 2 * 60 * 1000);
+    setTimeout(function(){clockTick()}, 2 * 60 * 1000);
 }
 
 function updateTime() {
