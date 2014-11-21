@@ -5,7 +5,7 @@
 
 [REVAMP](https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) version adapts the original, with few bug fixes and etc \(ver a\)
 
-[ENHANCED + REVAMP](https://greasyfork.org/en/scripts/6514-mousehunt-autobot-enhanced-revamp) version adapted from version made and owned by [CNN](https://devcnn.wordpress.com/) \(ver b\)\(Just a note, he was **banned** for making and using the ENHANCED version, so up to you if you dare use it\)
+[ENHANCED + REVAMP](https://greasyfork.org/en/scripts/6514-mousehunt-autobot-enhanced-revamp) version adapted from version made and owned by [CNN](https://devcnn.wordpress.com/) \(ver b\) \(Just a note, he was **banned** for making and using the ENHANCED version, so up to you if you dare use it\)
 
 To install this version, please use [greasyFork](https://greasyfork.org/en/scripts/6092-mousehunt-autobot) or [OpenUserJS](https://openuserjs.org/scripts/nobodyrandom/MouseHunt_AutoBot_REVAMP)
 Note: this version of the code includes two separate files which should automatically instal itself. If features such as 'Send to GDoc' does not work, please install [the second file](https://greasyfork.org/en/scripts/6094-mousehunt-autobot-additional-thing) as well.
