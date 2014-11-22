@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom
-// @version    	1.4.130a
+// @version    	1.4.132a
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application in Facebook with MouseHunt version 3.0 (Longtail) supported and many other features. REVAMPED VERSION of ORIGINAL by Ooi
 // @require		https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=25306
 // @namespace   https://greasyfork.org/users/6398
@@ -91,7 +91,7 @@ var timerRefreshInterval = 1;
 // WARNING - Do not modify the code below unless you know how to read and write the script.
 
 // All global variable declaration and default value
-var scriptVersion = "1.4.130a [revamp only]";
+var scriptVersion = "1.4.132a [revamp only]";
 var fbPlatform = false;
 var hiFivePlatform = false;
 var mhPlatform = false;
@@ -1029,6 +1029,10 @@ function embedTimer(targetPage) {
                 tempDiv.innerHTML = text;
                 var tempSpan = document.createElement('span');
                 tempSpan.innerHTML = ' &#126; <a href="javascript:window.open(\'http://goo.gl/forms/ayRsnizwL1\');" target=_blank>Click to submit a bug report/feedback</a>';
+                /* var tempAudio = document.createElement('audio');
+                tempAudio.setAttribute('style', 'display: none;');
+                tempAudio.setAttribute('id', 'hornAudio');
+                tempAudio.innerHTML = '<source src="https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3" type="audio/mpeg">Your browser does not support the audio element.'; */
                 loadLinkToUpdateDiv.appendChild(tempDiv);
                 loadLinkToUpdateDiv.appendChild(tempSpan);
                 
@@ -1921,11 +1925,13 @@ function notify() {
 
 function playKingRewardSound() {
     notify();
-    if (autopopkr) {
+    if (autopopkr)
         alert("Kings Reward NOW");
-    }
+    
     if (isKingWarningSound) {
-        var targetArea = document.getElementsByTagName('body');
+    	var hornAudio = new Audio('https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3');
+    	hornAudio.play();
+        /* var targetArea = document.getElementsByTagName('body');
         var child = document.createElement('audio');
         child.setAttribute('id', "embedHorn");
         child.setAttribute('controller', 'false');
@@ -1937,7 +1943,7 @@ function playKingRewardSound() {
         targetArea.appendChild(child);
         targetArea = null;
         child = null;
-        snippet = null;
+        snippet = null; */
 
         //var browser = browserDetection();
 
