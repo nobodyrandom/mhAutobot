@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom
-// @version    	1.4.132a
+// @version    	1.4.133a
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application in Facebook with MouseHunt version 3.0 (Longtail) supported and many other features. REVAMPED VERSION of ORIGINAL by Ooi
 // @require		https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=25306
 // @namespace   https://greasyfork.org/users/6398
@@ -91,7 +91,7 @@ var timerRefreshInterval = 1;
 // WARNING - Do not modify the code below unless you know how to read and write the script.
 
 // All global variable declaration and default value
-var scriptVersion = "1.4.132a [revamp only]";
+var scriptVersion = "1.4.133a [revamp only]";
 var fbPlatform = false;
 var hiFivePlatform = false;
 var mhPlatform = false;
@@ -1931,19 +1931,15 @@ function playKingRewardSound() {
     if (isKingWarningSound) {
     	var hornAudio = new Audio('https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3');
     	hornAudio.play();
-        /* var targetArea = document.getElementsByTagName('body');
-        var child = document.createElement('audio');
-        child.setAttribute('id', "embedHorn");
-        child.setAttribute('controller', 'false');
-        child.setAttribute('preload', 'auto');
-        child.setAttribute('loop', 'true');
-        child.setAttribute('style', 'display: none;');
-        var snippet = document.createTextNode('<source src="horn.mp3" type="audio/mpeg"/>');
-        child.appendChild(snippet);
+    	var targetArea = document.getElementsByTagName('body');
+        var child = document.createElement('button');
+        child.setAttribute('id', "stopAudio");
+        child.setAttribute('onclick', 'hornAudio.pause();');
+        child.innerHTML = "CLICK ME TO STOP THIS ANNOYING MUSIC";
         targetArea.appendChild(child);
         targetArea = null;
         child = null;
-        snippet = null; */
+        snippet = null;
 
         //var browser = browserDetection();
 
