@@ -1014,7 +1014,7 @@ function embedTimer(targetPage) {
                 loadLinkToUpdateDiv.setAttribute('id', 'gDocArea');
                 var tempSpan2 = document.createElement('span');
                 var loadLinkToUpdate = document.createElement('a');
-                text = document.createTextNode('Click to submit to GDoc');
+                text = document.createTextNode('Click to submit to GDoc (broken for chrome ver)');
                 loadLinkToUpdate.href = '#';
                 loadLinkToUpdate.setAttribute('id', 'gDocLink');
                 loadLinkToUpdate.appendChild(text);
@@ -1022,7 +1022,7 @@ function embedTimer(targetPage) {
                 tempSpan2.appendChild(loadLinkToUpdate);
                 loadLinkToUpdateDiv.appendChild(tempSpan2);
                 timerDivElement.appendChild(loadLinkToUpdateDiv);
-                loadLinkToUpdate.addEventListener('click', NOBscript, false);
+                //loadLinkToUpdate.addEventListener('click', NOBscript, false);
 
                 text = ' &#126; <a href="javascript:window.open(\'https://docs.google.com/spreadsheet/ccc?key=0Ag_KH_nuVUjbdGtldjJkWUJ4V1ZpUDVwd1FVM0RTM1E#gid=5\');" target=_blank>Click to go to GDoc</a>';
                 var tempDiv = document.createElement('span');
