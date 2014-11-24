@@ -1036,7 +1036,7 @@ function embedTimer(targetPage) {
                 tempAudio.innerHTML = '<source src="https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3" type="audio/mpeg">Your browser does not support the audio element.'; */
                 loadLinkToUpdateDiv.appendChild(tempDiv);
                 loadLinkToUpdateDiv.appendChild(tempSpan);
-                
+
                 text = null;
                 tempDiv = null;
                 tempSpan = null;
@@ -1928,11 +1928,11 @@ function playKingRewardSound() {
     notify();
     if (autopopkr)
         alert("Kings Reward NOW");
-    
+
     if (isKingWarningSound) {
-    	var hornAudio = new Audio('https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3');
-    	hornAudio.play();
-    	var targetArea = document.getElementsByTagName('body');
+        var hornAudio = new Audio('https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3');
+        hornAudio.play();
+        var targetArea = document.getElementsByTagName('body');
         var child = document.createElement('button');
         child.setAttribute('id', "stopAudio");
         child.setAttribute('onclick', 'hornAudio.pause();');

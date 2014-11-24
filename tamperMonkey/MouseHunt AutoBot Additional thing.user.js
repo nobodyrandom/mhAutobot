@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
-// @version    	1.1.127
+// @version    	1.1.128
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -109,8 +109,8 @@ $(window).load(function(e) {
         } */
 
         if (!NOBpage) {
-        	createClockArea();
-        	clockTick();
+            createClockArea();
+            clockTick();
         }
     }
 });
@@ -139,7 +139,7 @@ function NOBajaxGet(url, callback, throwError) {
         jQuery.ajax({
             url: url,
             type: "GET",
-			timeout: 5000,
+            timeout: 5000,
             statusCode: {
                 0: function() {
                     console.log("Success get - " + url);
@@ -163,7 +163,7 @@ function NOBajaxPost(url, data, callback, throwError) {
             url: url,
             data: data,
             type: "POST",
-			timeout: 5000,
+            timeout: 5000,
             statusCode: {
                 0: function() {
                     console.log("Success post - " + url);
@@ -217,7 +217,9 @@ function GDoc(items, type) {
     NOBajaxPost(sheet, dataSendString, function(data) {
         // CONSOLE LOGGING FOR DEBUG
         // console.log(data);
-    }, function(e) {console.log(e)});
+    }, function(e) {
+        console.log(e)
+    });
 }
 
 function NOBhtmlFetch() {
@@ -271,7 +273,7 @@ function MapRequest(handleData) {
         data: dataSend,
         type: "POST",
         dataType: "json",
-		timeout: 5000,
+        timeout: 5000,
         success: function(data) {
             // console.log(data);
             handleData(data);
@@ -327,7 +329,9 @@ unsafeWindow.NOBtravel = function(location) {
         };
         NOBajaxPost(url, data, function(r) {
             console.log(r);
-        }, function(e) {console.log(e)});
+        }, function(e) {
+            console.log(e)
+        });
     }
 }
 
@@ -355,7 +359,9 @@ function createClockArea() {
 
 function clockTick() {
     NOBcalculateTime();
-    setTimeout(function(){clockTick()}, 15 * 60 * 1000);
+    setTimeout(function() {
+        clockTick()
+    }, 15 * 60 * 1000);
 }
 
 function updateTime() {
@@ -374,7 +380,11 @@ function NOBcalculateTime() {
                 text = JSON.parse(text);
                 var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
                 child.innerHTML = "Relic hunter now in: <font color='green'>" + text.location + "</font> \~ Next move time: " + UpdateTimer(text.next_move, true);
-            }, function(e) {console.log(e)});
+            }, function(a, b, c) {
+                console.log(b);
+                var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
+                child.innerHTML = "<font color='red'>" + b + " error, probably hornTracker, google, or my scripts broke. Please wait awhile, if not just contact me.</font>";
+            });
         }
 
         if (typeof LOCATION_TIMERS[4][1].url != 'undefined' || LOCATION_TIMERS[4][1].url != 'undefined') {
@@ -404,7 +414,11 @@ function NOBcalculateTime() {
                 }
 
                 child.innerHTML = 'Toxic spill is now - <font color="' + text.level.color + '">' + text.level.state + '</font>' + text.percent;
-            }, function(e) {console.log(e)});
+            }, function(a, b, c) {
+                console.log(b);
+                var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
+                child.innerHTML = "<font color='red'>" + b + " error, probably hornTracker, google, or my scripts broke. Please wait awhile, if not just contact me.</font>";
+            });
         }
 
         for (i = 0; i < 3; i++) {
