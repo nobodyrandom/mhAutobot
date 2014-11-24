@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom
-// @version    	1.4.135a
+// @version    	1.4.136a
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application in Facebook with MouseHunt version 3.0 (Longtail) supported and many other features. REVAMPED VERSION of ORIGINAL by Ooi
 // @require		https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=25877
 // @namespace   https://greasyfork.org/users/6398
@@ -91,8 +91,7 @@ var timerRefreshInterval = 1;
 // WARNING - Do not modify the code below unless you know how to read and write the script.
 
 // All global variable declaration and default value
-var scriptVersion = "1.4.135a [revamp only]";
-//var addonScriptVer = "1.1.123";
+var scriptVersion = "1.4.136a [revamp only]";
 var fbPlatform = false;
 var hiFivePlatform = false;
 var mhPlatform = false;
@@ -933,7 +932,7 @@ function embedTimer(targetPage) {
             var titleElement = document.createElement('div');
             titleElement.setAttribute('id', 'titleElement');
             if (targetPage && aggressiveMode) {
-                titleElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target=\"_blank\"><b>MouseHunt AutoBot (version " + scriptVersion + ")</b></a> - <font color='red'>Aggressive Mode</font>";
+                titleElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target=\"_blank\"><b>MouseHunt AutoBot (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing (version " + addonScriptVer + ")</b> - <font color='red'>Aggressive Mode</font>";
             } else {
                 titleElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target=\"_blank\"><b>MouseHunt AutoBot (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing (version " + addonScriptVer + ")</b>";
             }
