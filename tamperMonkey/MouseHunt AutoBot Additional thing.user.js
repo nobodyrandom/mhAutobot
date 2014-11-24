@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
-// @version    	1.1.136
+// @version    	1.1.137
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -14,7 +14,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-var addonScriptVer = '1.1.131';
+var addonScriptVer = '1.1.136';
 // var addonScriptVer = GM_info.script.version;
 var STATE = {
     title: document.title,
@@ -93,9 +93,9 @@ $(window).load(function(e) {
             window.location.href == "https://www.mousehuntgame.com/?switch_to=standard" ||
             window.location.href.indexOf("mousehuntgame.com/turn.php") != -1 ||
             window.location.href.indexOf("mousehuntgame.com/index.php") != -1) {
-            if (!checkIntroContainer()) {
+            // if (!checkIntroContainer()) {
                 NOBpage = true;
-            }
+            //}
         } else if (window.location.href == "http://www.mousehuntgame.com/canvas/" ||
             window.location.href == "http://www.mousehuntgame.com/canvas/#" ||
             window.location.href == "https://www.mousehuntgame.com/canvas/" ||
@@ -103,9 +103,9 @@ $(window).load(function(e) {
             window.location.href.indexOf("mousehuntgame.com/canvas/index.php") != -1 ||
             window.location.href.indexOf("mousehuntgame.com/canvas/turn.php") != -1 ||
             window.location.href.indexOf("mousehuntgame.com/canvas/?") != -1) {
-            if (!checkIntroContainer()) {
+            // if (!checkIntroContainer()) {
                 NOBpage = true;
-            }
+            //}
         }
 
         if (!NOBpage) {
