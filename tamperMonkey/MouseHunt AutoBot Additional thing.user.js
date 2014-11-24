@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
-// @version    	1.1.133
+// @version    	1.1.134
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -342,8 +342,7 @@ unsafeWindow.NOBupdateCheck = function() {
         text = JSON.parse(text);
         checkVer = text.version;
         console.log('Current mouseHunt AutoBot version: ' + currVer);
-		console.log('Server version: ' + text);
-		console.log(text);
+		console.log('Server version: ' + checkVer);
 		if (checkVer > currVer) {
 			return true;
 		} else {
