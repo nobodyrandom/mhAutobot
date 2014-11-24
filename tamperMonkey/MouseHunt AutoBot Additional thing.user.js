@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot Additional thing development ver
 // @author      nobodyrandom
-// @version    	1.1.137d
+// @version    	1.1.138d
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -82,8 +82,7 @@ NOBhtmlFetch();
 
 // SETTING BASE VARS DONE ******************************* INIT AJAX CALLS AND INIT CALLS
 // Function calls after page LOAD
-$(window).load(function(e) {
-    var NOBhasPuzzle = user.has_puzzle;
+$(window).load(function() {
     if (NOBhasPuzzle == false) {
         if (window.location.href == "http://www.mousehuntgame.com/" ||
             window.location.href == "http://www.mousehuntgame.com/#" ||
@@ -105,7 +104,7 @@ $(window).load(function(e) {
             //}
         }
 
-        if (!NOBpage) {
+        if (NOBpage) {
             createClockArea();
             clockTick();
         }
