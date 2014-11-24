@@ -85,11 +85,7 @@ NOBhtmlFetch();
 $(window).load(function(e) {
     var NOBhasPuzzle = user.has_puzzle;
     if (NOBhasPuzzle == false) {
-<<<<<<< HEAD
-        /* if (window.location.href == "http://www.mousehuntgame.com/" ||
-=======
         if (window.location.href == "http://www.mousehuntgame.com/" ||
->>>>>>> master
             window.location.href == "http://www.mousehuntgame.com/#" ||
             window.location.href == "http://www.mousehuntgame.com/?switch_to=standard" ||
             window.location.href == "https://www.mousehuntgame.com/" ||
@@ -110,11 +106,7 @@ $(window).load(function(e) {
         }
 
         if (!NOBpage) {
-<<<<<<< HEAD
-        	createClockArea();
-=======
             createClockArea();
->>>>>>> master
             clockTick();
         }
     }
@@ -155,12 +147,8 @@ function NOBajaxGet(url, callback, throwError) {
                     //Success Message
                 }
             },
-<<<<<<< HEAD
-            success: callback
-=======
             success: callback,
             error: throwError
->>>>>>> master
         });
     }
 }
@@ -183,12 +171,8 @@ function NOBajaxPost(url, data, callback, throwError) {
                     //Success Message
                 }
             },
-<<<<<<< HEAD
-            success: callback
-=======
             success: callback,
             error: throwError
->>>>>>> master
         });
     }
 }
@@ -395,13 +379,9 @@ function createClockArea() {
 
 function clockTick() {
     NOBcalculateTime();
-<<<<<<< HEAD
-    setTimeout(function(){clockTick()}, 5 * 60 * 1000);
-=======
     setTimeout(function() {
         clockTick()
     }, 15 * 60 * 1000);
->>>>>>> master
 }
 
 function updateTime() {
