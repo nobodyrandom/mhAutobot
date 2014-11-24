@@ -7,5 +7,5 @@ s.onload = function() {
 };
 (document.head||document.documentElement).appendChild(s);
 }
-inject('MouseHunt AutoBot.user.js');
 inject('MouseHunt AutoBot Additional thing.user.js');
+inject('MouseHunt AutoBot.user.js');

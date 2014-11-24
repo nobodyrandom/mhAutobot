@@ -33,8 +33,9 @@
 	}
   ],
   
-  "web_accessible_resources": ["MouseHunt AutoBot.user.js",
-  "MouseHunt AutoBot Additional thing.user.js"
+  "web_accessible_resources": [
+  "MouseHunt%20AutoBot.user.js",
+  "MouseHunt%20AutoBot%20Additional%20thing.user.js"
   ],
   
   "permissions": [

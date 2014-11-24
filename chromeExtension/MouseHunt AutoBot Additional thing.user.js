@@ -284,7 +284,7 @@ function MapRequest(handleData) {
 
 // VARS DONE ******************************* COMMENCE CODE
 var mapRequestFailed = false;
-unsafeWindow.NOBscript = function(qqEvent) {
+NOBscript = function(qqEvent) {
     var NOBhasPuzzle = user.has_puzzle;
     var NOBdata = localStorage.getItem('NOB_data');
     if (NOBhasPuzzle == false && NOBdata != null || NOBdata != undefined) {
@@ -312,11 +312,11 @@ unsafeWindow.NOBscript = function(qqEvent) {
     }
 }
 
-unsafeWindow.showHideTimers = function() {
+showHideTimers = function() {
     $("#loadTimersElement").toggle();
 }
 
-unsafeWindow.NOBtravel = function(location) {
+NOBtravel = function(location) {
     if (!NOBhasPuzzle) {
         var url = "https://www.mousehuntgame.com/managers/ajax/users/changeenvironment.php";
         var data = {
