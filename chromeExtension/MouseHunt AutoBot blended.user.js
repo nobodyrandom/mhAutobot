@@ -1,10 +1,10 @@
 // ==UserScript==
-// @name        MouseHunt AutoBot REVAMP
-// @author      NobodyRandom
-// @version    	1.4.137a
-// @description An advance user script to automate sounding the hunter horn in MouseHunt application in Facebook with MouseHunt version 3.0 (Longtail) supported and many other features. REVAMPED VERSION of ORIGINAL by Ooi
-// @require		https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=25877
-// @namespace   https://greasyfork.org/users/6398
+// @name        MouseHunt AutoBot ENHANCED + REVAMP
+// @author      NobodyRandom, Ooi Keng Siang, CnN
+// @version    	1.4.225b
+// @description An advance user script to automate sounding the hunter horn in MouseHunt application in Facebook with MouseHunt version 3.0 (Longtail) supported and many other features. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN
+// @require     https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=25877
+// @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot, https://devcnn.wordpress.com/
 // @updateURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.user.js
 // @downloadURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.user.js
 // @license 	GNU GPL v2.0
@@ -27,7 +27,7 @@ var hornTimeDelayMin = 1;
 var hornTimeDelayMax = 150;
 
 // // Bot aggressively by ignore all safety measure such as check horn image visible before sounding it. (true/false)
-// // Note: Highly recommanded to turn off because it increase the chances of getting caugh in botting.
+// // Note: Highly recommended to turn off because it increase the chances of getting caugh in botting.
 // // Note: It will ignore the hornTimeDelayMin and hornTimeDelayMax.
 // // Note: It may take a little bit extra of CPU processing power.
 var aggressiveMode = false;
@@ -86,12 +86,30 @@ var errorReloadTime = 20;
 // // Time interval for script timer to update the time. May affact timer accuracy if set too high value. (in seconds)
 var timerRefreshInterval = 1;
 
+// // Best weapon/base pre-determined by user. Edit ur best weapon/trap in ascending order. e.g. [best, better, good]
+var bestPhysical = ['Chrome MonstroBot', 'Sandstorm MonstroBot', 'Sandtail Sentinel'];
+var bestTactical = ['Sphynx Wrath'];
+var bestHydro = ['Chrome Phantasmic Oasis Trap', 'Phantasmic Oasis Trap', 'Oasis Water Node Trap'];
+var bestArcane = ['Grand Arcanum Trap', 'Arcane Blast Trap', 'Arcane Capturing Rod Of Nev'];
+var bestShadow = ['Clockwork Portal Trap', 'Reaper\'s Perch', 'Clockapult of Time', 'Clockapult of Winter Past'];
+var bestForgotten = ['Tarannosaurus Rex Trap', 'The Forgotten Art of Dance'];
+var bestDraconic = ['Dragon Lance', 'Ice Maiden'];
+var bestRiftLuck = ['Multi-Crystal Laser', 'Crystal Tower'];
+var bestRiftPower = ['Focused Crystal Laser', 'Crystal Tower'];
+var bestPowerBase = ['Golden Tournament Base', 'Spellbook Base'];
+var bestLuckBase = ['Rift Base', 'Horse Jade Base'];
+var bestAttBasae = ['Birthday Drag', 'Cheesecake Base'];
+var bestSalt = ['Super Salt', 'Grub Salt'];
+var wasteCharm = ['Tarnished', 'Wealth'];
+var redSpongeCharm = ['Red Double', 'Red Sponge'];
+var yellowSpongeCharm = ['Yellow Double', 'Yellow Sponge'];
+var spongeCharm = ['Double Sponge', 'Sponge'];
 // == Advance User Preference Setting (End) ==
 
 // WARNING - Do not modify the code below unless you know how to read and write the script.
 
 // All global variable declaration and default value
-var scriptVersion = "1.4.137a [revamp only]";
+var scriptVersion = "1.4.225b [revamp + enhance]";
 var fbPlatform = false;
 var hiFivePlatform = false;
 var mhPlatform = false;
@@ -114,6 +132,12 @@ var hornRetryMax = 10;
 var hornRetry = 0;
 var nextActiveTime = 900;
 var timerInterval = 2;
+var checkMouseResult = null;
+var mouseList = [];
+var eventLocation;
+var arming = false;
+var best = 0;
+var maxSaltCharged = 24;
 
 // element in page
 var titleElement;
@@ -123,12 +147,27 @@ var kingTimeElement;
 var lastKingRewardSumTimeElement;
 var optionElement;
 var travelElement;
+var strHornButton = 'hornbutton';
+var strCampButton = 'campbutton';
 
 // start executing script
 exeScript();
 
 function exeScript() {
     // check the trap check setting first
+    try {
+        var time = document.getElementsByClassName('passive')[0].getElementsByClassName('journaldate')[0].innerHTML;
+        time = time.substr(time.indexOf(':') + 1, 2);
+        trapCheckTimeDiff = parseInt(time);
+        setStorage("TrapCheckTimeOffset", trapCheckTimeDiff);
+    } catch (e) {
+        console.debug('Class element "passive" not found');
+        trapCheckTimeDiff = getStorage('TrapCheckTimeOffset');
+        if (trapCheckTimeDiff == null) {
+            trapCheckTimeDiff = 00;
+            setStorage("TrapCheckTimeOffset", trapCheckTimeDiff);
+        }
+    }
     if (trapCheckTimeDiff == 60) {
         trapCheckTimeDiff = 00;
     } else if (trapCheckTimeDiff < 0 || trapCheckTimeDiff > 60) {
@@ -319,6 +358,504 @@ function checkIntroContainer() {
     }
 }
 
+//// EMBEDING ENHANCED EDITION CODE
+function notifyMe(notice) {
+    // Let's check if the browser supports notifications
+    if (!("Notification" in window)) {
+        alert("This browser does not support desktop notification");
+    }
+
+    // Let's check if the user is okay to get some notification
+    else if (Notification.permission === "granted") {
+        // If it's okay let's create a notification
+        var notification = new Notification(notice);
+    }
+    // Otherwise, we need to ask the user for permission
+    // Note, Chrome does not implement the permission static property
+    // So we have to check for NOT 'denied' instead of 'default'
+    else if (Notification.permission !== 'denied') {
+        Notification.requestPermission(function(permission) {
+            // Whatever the user answers, we make sure we store the information
+            if (!('permission' in Notification)) {
+                Notification.permission = permission;
+            }
+
+            // If the user is okay, let's create a notification
+            if (permission === "granted") {
+                var notification = new Notification(notice);
+            }
+        });
+    }
+}
+
+function ZTalgo() {
+    retrieveMouseList();
+    var intervalZT = setInterval(
+        function() {
+            if (mouseList.length > 0) {
+                if (checkMouse("Chess Master")) {
+                    //arm Uncharged Scholar Charm & Checkmate Cheese
+                    checkThenArm(null, "trinket", "Uncharged Scholar");
+                    checkThenArm(null, "bait", "Checkmate");
+                } else if (checkMouse("King")) {
+                    //arm Checkmate Cheese
+                    checkThenArm(null, "bait", "Checkmate");
+                } else if (checkMouse("Queen")) {
+                    //arm another charm other than rook charm
+                    checkThenArm(null, "trinket", "Super Power");
+                    disarmTrap('trinket');
+                } else if (checkMouse("Rook")) {
+                    //arm rook charm (if available)
+                    checkThenArm(null, "trinket", "Rook Crumble");
+                } else if (checkMouse("Knight")) {
+                    //arm Sphynx Wrath
+                    checkThenArm(null, "weapon", "Sphynx Wrath");
+                    checkThenArm('best', 'base', bestPowerBase);
+                }
+                clearInterval(intervalZT);
+                intervalZT = null;
+                mouseList = [];
+                return;
+            }
+        }, 1000);
+    return;
+}
+
+function eventLocationCheck() {
+    console.debug(eventLocation);
+    switch (eventLocation) {
+        case 'Charge Egg 2014':
+            checkCharge(12);
+            break;
+        case 'Charge Egg 2014(17)':
+            checkCharge(17);
+            break;
+        case 'Burroughs Rift(Red)':
+            BurroughRift(19, 20);
+            break;
+        case 'Burroughs Rift(Green)':
+            BurroughRift(6, 18);
+            break;
+        case 'Halloween 2014':
+            Halloween2014();
+            break;
+        case 'All LG Area':
+            general();
+            break;
+        case 'Sunken City':
+            SunkenCity();
+            break;
+        default:
+            break;
+    }
+    return;
+}
+
+function Halloween2014() {
+    var currentLocation = getPageVariableForChrome("user.location");
+    console.debug(currentLocation);
+    if (currentLocation.indexOf("Haunted Terrortories") > -1) {
+        var areaName = document.getElementsByClassName('halloween2014Hud-areaDetails-name')[0].innerHTML;
+        var warning = document.getElementsByClassName('halloween2014Hud-areaDetails-warning active').length;
+        var isWarning = (warning > 0) ? true : false;
+        console.debug('Current Area Name: ' + areaName + " Warning: " + isWarning);
+        if (isWarning) {
+            var trickContainer = document.getElementsByClassName('halloween2014Hud-bait trick_cheese clear-block')[0];
+            var treatContainer = document.getElementsByClassName('halloween2014Hud-bait treat_cheese clear-block')[0];
+            if (trickContainer.children[2].getAttribute('class') == 'armNow active') {
+                console.debug('Currently armed: Trick cheese, Going to arm Treat cheese');
+                fireEvent(treatContainer.children[2], 'click');
+            } else {
+                console.debug('Currently armed: Treat cheese, Going to arm Trick cheese');
+                fireEvent(trickContainer.children[2], 'click');
+            }
+        }
+    }
+}
+
+function BurroughRift(minMist, maxMist) {
+    //Tier 0: 0 Mist Canisters
+    //Tier 1/Yellow: 1-5 Mist Canisters
+    //Tier 2/Green: 6-18 Mist Canisters
+    //Tier 3/Red: 19-20 Mist Canisters
+
+    var currentMistQuantity = parseInt(document.getElementsByClassName('mistQuantity')[0].innerText);
+    var isMisting = getPageVariableForChrome('user.quests.QuestRiftBurroughs.is_misting');
+    var mistButton = document.getElementsByClassName('mistButton')[0];
+    console.debug('Current Mist Quantity: ' + currentMistQuantity);
+    console.debug('Is Misting: ' + isMisting);
+    console.debug('Min Mist: ' + minMist + " Max Mist: " + maxMist);
+    if (currentMistQuantity >= maxMist && isMisting == 'true') {
+        console.debug('Stop mist...');
+        fireEvent(mistButton, 'click');
+    } else if (currentMistQuantity <= minMist && isMisting == 'false') {
+        console.debug('Start mist...');
+        fireEvent(mistButton, 'click');
+    }
+    return;
+}
+
+function general() {
+    var location = getPageVariableForChrome('user.location');
+    console.debug('Current Location: ' + location);
+    switch (location) {
+        case 'Living Garden':
+            livingGarden();
+            break;
+        case 'Lost City':
+            lostCity();
+            break;
+        case 'Sand Dunes':
+            sandDunes();
+            break;
+        case 'Twisted Garden':
+            twistedGarden();
+            break;
+        case 'Cursed City':
+            cursedCity();
+            break;
+        case 'Sand Crypts':
+            sandCrypts();
+            break;
+        default:
+            break;
+    }
+}
+
+function SunkenCity() {
+    var zone = document.getElementsByClassName('zoneName')[0].innerText;
+    console.debug('Current Zone: ' + zone);
+    switch (zone) {
+        case 'Sand Dollar Sea Bar':
+        case 'Pearl Patch':
+        case 'Sunken Treasure':
+        case 'Monster Trench':
+        case 'Lair of the Ancients':
+        case 'Deep Oxygen Stream':
+        case 'Oxygen Stream':
+        case 'Magma Flow':
+            checkThenArm(null, 'trinket', 'Empowered Anchor');
+            checkThenArm(null, 'bait', 'SUPER');
+            break;
+        case 'Sunken City':
+            checkThenArm(null, 'bait', 'Fishy Fromage');
+            break;
+        default:
+            break;
+    }
+}
+
+function livingGarden() {
+    var pourEstimate = document.getElementsByClassName('pourEstimate')[0];
+    if (pourEstimate.innerText != "") {
+        // Not pouring
+        var estimateHunt = parseInt(pourEstimate.innerText);
+        console.debug('Estimate Hunt: ' + estimateHunt);
+        if (estimateHunt >= 35) {
+            console.debug('Going to click Pour...');
+            var pourButton = document.getElementsByClassName('pour')[0];
+            fireEvent(pourButton, 'click');
+            var confirmButton = document.getElementsByClassName('confirm button')[0];
+            fireEvent(confirmButton, 'click');
+            if (getPageVariableForChrome('user.trinket_name').indexOf('Sponge') > -1) {
+                console.debug('Going to disarm');
+                disarmTrap('trinket');
+            }
+        } else if (estimateHunt == 34) {
+            checkThenArm('best', 'trinket', 'Sponge');
+        } else {
+            checkThenArm('best', 'trinket', spongeCharm);
+        }
+    } else {
+        // Pouring
+        if (getPageVariableForChrome('user.trinket_name').indexOf('Sponge') > -1) {
+            disarmTrap('trinket');
+        }
+    }
+    return;
+}
+
+function lostCity() {
+    var isCursed = (document.getElementsByClassName('stateBlessed hidden').length > 0) ? true : false;
+    console.debug('Cursed = ' + isCursed);
+
+    //disarm searcher charm when cursed is lifted    
+    if (!isCursed) {
+        if (getPageVariableForChrome('user.trinket_name').indexOf('Searcher') > -1) {
+            disarmTrap('trinket');
+        }
+    } else {
+        checkThenArm(null, 'trinket', 'Searcher');
+    }
+    checkThenArm('best', 'weapon', bestArcane);
+    return;
+}
+
+function sandDunes() {
+    var hasStampede = getPageVariableForChrome('user.quests.QuestSandDunes.minigame.has_stampede');
+    console.debug('Has Stampede = ' + hasStampede);
+
+    //disarm grubling chow charm when there is no stampede
+    if (hasStampede == 'false') {
+        if (getPageVariableForChrome('user.trinket_name').indexOf('Chow') > -1) {
+            disarmTrap('trinket');
+        }
+    } else {
+        checkThenArm(null, 'trinket', 'Grubling Chow');
+    }
+    checkThenArm('best', 'weapon', bestShadow);
+    return;
+}
+
+function twistedGarden() {
+    var red = parseInt(document.getElementsByClassName('itemImage red')[0].innerText);
+    var yellow = parseInt(document.getElementsByClassName('itemImage yellow')[0].innerText);
+    var charmArmed = getPageVariableForChrome('user.trinket_name');
+    console.debug('Red: ' + red + ' Yellow: ' + yellow);
+    if (red < 10) {
+        if (red <= 8) {
+            checkThenArm('best', 'trinket', redSpongeCharm);
+        } else {
+            checkThenArm(null, 'trinket', 'Red Sponge');
+        }
+    } else if (red == 10 && yellow < 10) {
+        if (yellow <= 8) {
+            checkThenArm('best', 'trinket', yellowSpongeCharm);
+        } else {
+            checkThenArm(null, 'trinket', 'Yellow Sponge');
+        }
+    } else {
+        if (charmArmed.indexOf('Red') > -1 || charmArmed.indexOf('Yellow') > -1) {
+            disarmTrap('trinket');
+        }
+    }
+    checkThenArm('best', 'weapon', bestHydro);
+    return;
+}
+
+function cursedCity() {
+    var cursed = getPageVariableForChrome('user.quests.QuestLostCity.minigame.is_cursed');
+    var curses = [];
+    var charmArmed = getPageVariableForChrome('user.trinket_name');
+    if (cursed == 'false') {
+        if (charmArmed.indexOf('Bravery') > -1 || charmArmed.indexOf('Shine') > -1 || charmArmed.indexOf('Clarity') > -1) {
+            disarmTrap('trinket');
+        }
+        checkThenArm(null, "trinket", "Super Luck");
+    } else {
+        for (var i = 0; i < 3; ++i) {
+            curses[i] = getPageVariableForChrome('user.quests.QuestLostCity.minigame.curses[' + i + '].active');
+            if (curses[i] == 'true') {
+                switch (i) {
+                    case 0:
+                        console.debug("Fear Active");
+                        checkThenArm(null, "trinket", "Bravery");
+                        break;
+                    case 1:
+                        console.debug("Darkness Active");
+                        checkThenArm(null, "trinket", "Shine");
+                        break;
+                    case 2:
+                        console.debug("Mist Active");
+                        checkThenArm(null, "trinket", "Clarity");
+                        break;
+                    default:
+                        break;
+                }
+                return;
+            }
+        }
+    }
+    checkThenArm('best', 'weapon', bestArcane);
+    return;
+}
+
+function sandCrypts() {
+    var salt = parseInt(document.getElementsByClassName('salt_charms')[0].innerText);
+    console.debug('Salted: ' + salt);
+    if (salt >= maxSaltCharged) {
+        checkThenArm(null, 'trinket', 'Grub Scent');
+    } else {
+        checkThenArm('best', 'trinket', bestSalt);
+    }
+    checkThenArm('best', 'weapon', bestShadow);
+    return;
+}
+
+function retrieveMouseList() {
+    fireEvent(document.getElementById('effectiveness'), 'click');
+    var sec = 5;
+    var intervalRML = setInterval(
+        function() {
+            if (document.getElementsByClassName('thumb').length > 0) {
+                mouseList = [];
+                var y = document.getElementsByClassName('thumb');
+                for (var i = 0; i < y.length; ++i) {
+                    mouseList.push(y[i].getAttribute('title'));
+                }
+                fireEvent(document.getElementById('trapSelectorBrowserClose'), 'click');
+                clearInterval(intervalRML);
+                intervalRML = null;
+                return;
+            } else {
+                --sec;
+                if (sec <= 0) {
+                    fireEvent(document.getElementById('effectiveness'), 'click');
+                    sec = 5;
+                }
+            }
+        }, 1000);
+    return;
+}
+
+function checkMouse(mouseName) {
+    for (var i = 0; i < mouseList.length; ++i) {
+        if (mouseList[i].indexOf(mouseName) > -1) {
+            return true;
+        }
+        return false;
+    }
+}
+
+function checkCharge(stopDischargeAt) {
+    try {
+        var charge = parseInt(document.getElementsByClassName("chargeQuantity")[0].innerText);
+
+        if (charge == 20) {
+            setStorage("discharge", true.toString());
+            checkThenArm(null, "trinket", "Eggstra");
+        } else if (charge < 20 && charge > stopDischargeAt) {
+            if (getStorage("discharge") == "true") {
+                checkThenArm(null, "trinket", "Eggstra");
+            } else {
+                checkThenArm(null, "trinket", "Eggscavator");
+            }
+        } else if (charge <= stopDischargeAt) {
+            setStorage("discharge", false.toString());
+            checkThenArm(null, "trinket", "Eggscavator");
+        }
+        return;
+    } catch (e) {
+        return console.debug(e.message);
+    }
+}
+
+function checkThenArm(sort, category, name) //category = weapon/base/charm/trinket/bait
+    {
+        if (category == "charm") {
+            category = "trinket";
+        }
+
+        var trapArmed;
+        var userVariable = getPageVariableForChrome("user." + category + "_name");
+        if (sort == 'best') {
+            for (var i = 0; i < name.length; i++) {
+                if (userVariable.indexOf(name[i]) == 0) {
+                    trapArmed = true;
+                    break;
+                }
+            }
+        } else {
+            trapArmed = (userVariable.indexOf(name) == 0);
+        }
+
+        if (!trapArmed) {
+            var intervalCTA = setInterval(
+                function() {
+                    if (arming == false) {
+                        clickThenArmTrapInterval(sort, category, name);
+                        clearInterval(intervalCTA);
+                        intervalCTA = null;
+                        return;
+                    }
+                }, 1000);
+        }
+        return;
+    }
+
+function clickThenArmTrapInterval(sort, trap, name) //sort = power/luck/attraction
+    {
+        clickTrapSelector(trap);
+        var index;
+        var sec = 5;
+        var intervalCTATI = setInterval(
+            function() {
+                if (armTrap(sort, name) == true) {
+                    clearInterval(intervalCTATI);
+                    arming = false;
+                    intervalCTATI = null;
+                    return;
+                } else {
+                    --sec;
+                    if (sec <= 0) {
+                        clickTrapSelector(trap);
+                        sec = 5;
+                    }
+                }
+            }, 1000);
+        return;
+    }
+
+// name = Brie/Gouda/Swiss (brie = wrong)
+function armTrap(sort, name) {
+    var tagGroupElement = document.getElementsByClassName('tagGroup');
+    var tagElement;
+    var nameElement;
+
+    if (sort == 'best') {
+        var nameArray = name;
+        name = name[0];
+    }
+
+    if (tagGroupElement.length > 0) {
+        console.debug('Try to arm ' + name);
+        for (var i = 0; i < tagGroupElement.length; ++i) {
+            tagElement = tagGroupElement[i].getElementsByTagName('a');
+            for (var j = 0; j < tagElement.length; ++j) {
+                nameElement = tagElement[j].getElementsByClassName('name')[0].innerText;
+                if (nameElement.indexOf(name) == 0) {
+                    fireEvent(tagElement[j], 'click');
+                    console.debug(name + ' armed');
+                    return true;
+                }
+            }
+        }
+        console.debug(name + " not found");
+        if (sort == 'best') {
+            nameArray.shift();
+            if (nameArray.length > 0) {
+                return armTrap(sort, nameArray);
+            } else {
+                console.debug('No traps found');
+                return false;
+            }
+        }
+    }
+    return false;
+}
+
+function clickTrapSelector(strSelect) //strSelect = weapon/base/charm/trinket/bait
+    {
+        if (strSelect == "base") {
+            fireEvent(document.getElementsByClassName('trapControlThumb')[0], 'click');
+        } else if (strSelect == "weapon") {
+            fireEvent(document.getElementsByClassName('trapControlThumb')[1], 'click');
+        } else if (strSelect == "charm" || strSelect == "trinket") {
+            fireEvent(document.getElementsByClassName('trapControlThumb')[2], 'click');
+        } else if (strSelect == "bait") {
+            fireEvent(document.getElementsByClassName('trapControlThumb')[3], 'click');
+        } else {
+            return (console.debug("Invalid trapSelector"));
+        }
+        arming = true;
+        return (console.debug("Trap selector: " + strSelect + " clicked"));
+    }
+
+function objToString(obj, str) {
+        return str = obj.data;
+    }
+    //// END EMBED
+
 function retrieveDataFirst() {
     var gotHornTime = false;
     var gotPuzzle = false;
@@ -445,6 +982,7 @@ function retrieveDataFirst() {
             checkTime = (today.getMinutes() >= trapCheckTimeDiff) ? 3600 + (trapCheckTimeDiff * 60) - (today.getMinutes() * 60 + today.getSeconds()) : (trapCheckTimeDiff * 60) - (today.getMinutes() * 60 + today.getSeconds());
             checkTime += checkTimeDelay;
             today = undefined;
+            time = undefined;
         }
 
         // get last location
@@ -556,6 +1094,7 @@ function retrieveData() {
         checkTime += checkTimeDelay;
         today = undefined;
     }
+    eventLocationCheck();
 }
 
 function getPageVariable(name, value) {
@@ -627,6 +1166,7 @@ function checkJournalDate() {
 function action() {
     if (isKingReward) {
         kingRewardAction();
+        notifyMe('King\'s Reward - ' + getPageVariableForChrome('user.username'));
     } else if (pauseAtInvalidLocation && (huntLocation != currentLocation)) {
         // update timer
         displayTimer("Out of pre-defined hunting location...", "Out of pre-defined hunting location...", "Out of pre-defined hunting location...");
@@ -670,6 +1210,7 @@ function action() {
         // check if the horn image is visible
         var headerElement;
         headerElement = document.getElementById('header');
+        headerElement = (strHornButton == 'hornbutton') ? document.getElementById('header') : headerElement = document.getElementById('mousehuntHud').firstChild;
         if (headerElement) {
             var headerStatus = headerElement.getAttribute('class');
             if (headerStatus.indexOf("hornready") != -1) {
@@ -692,6 +1233,7 @@ function action() {
 
         isHornSounding = undefined;
     }
+    eventLocationCheck();
 }
 
 function countdownTimer() {
@@ -708,7 +1250,7 @@ function countdownTimer() {
 
         // reload the page so that the sound can be play
         // simulate mouse click on the camp button
-        fireEvent(document.getElementsByClassName('campbutton')[0].firstChild, 'click');
+        fireEvent(document.getElementsByClassName(strCampButton)[0].firstChild, 'click');
 
         // reload the page if click on camp button fail
         window.setTimeout(function() {
@@ -816,6 +1358,7 @@ function countdownTimer() {
 
                     // agressive mode should sound the horn whenever it is possible to do so.
                     var headerElement = document.getElementById('header');
+                    headerElement = (strHornButton == 'hornbutton') ? document.getElementById('header') : headerElement = document.getElementById('mousehuntHud').firstChild;
                     if (headerElement) {
                         // the horn image appear before the timer end
                         if (headerElement.getAttribute('class').indexOf("hornready") != -1) {
@@ -932,9 +1475,9 @@ function embedTimer(targetPage) {
             var titleElement = document.createElement('div');
             titleElement.setAttribute('id', 'titleElement');
             if (targetPage && aggressiveMode) {
-                titleElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target=\"_blank\"><b>MouseHunt AutoBot (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing (version " + addonScriptVer + ")</b> - <font color='red'>Aggressive Mode</font>";
+                titleElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target=\"_blank\"><b>MouseHunt AutoBot (version " + scriptVersion + ")</b></a> - <font color='red'>Aggressive Mode</font>";
             } else {
-                titleElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target=\"_blank\"><b>MouseHunt AutoBot (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing (version " + addonScriptVer + ")</b>";
+                titleElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target=\"_blank\"><b>MouseHunt AutoBot (version " + scriptVersion + ")</b></a>";
             }
             timerDivElement.appendChild(titleElement);
             titleElement = null;
@@ -1012,34 +1555,23 @@ function embedTimer(targetPage) {
 
                 var loadLinkToUpdateDiv = document.createElement('div');
                 loadLinkToUpdateDiv.setAttribute('id', 'gDocArea');
-                var tempSpan2 = document.createElement('span');
                 var loadLinkToUpdate = document.createElement('a');
                 text = document.createTextNode('Click to submit to GDoc');
                 loadLinkToUpdate.href = '#';
                 loadLinkToUpdate.setAttribute('id', 'gDocLink');
                 loadLinkToUpdate.appendChild(text);
                 text = null;
-                tempSpan2.appendChild(loadLinkToUpdate);
-                loadLinkToUpdateDiv.appendChild(tempSpan2);
+                loadLinkToUpdateDiv.appendChild(loadLinkToUpdate);
                 timerDivElement.appendChild(loadLinkToUpdateDiv);
                 loadLinkToUpdate.addEventListener('click', NOBscript, false);
 
                 text = ' &#126; <a href="javascript:window.open(\'https://docs.google.com/spreadsheet/ccc?key=0Ag_KH_nuVUjbdGtldjJkWUJ4V1ZpUDVwd1FVM0RTM1E#gid=5\');" target=_blank>Click to go to GDoc</a>';
                 var tempDiv = document.createElement('span');
                 tempDiv.innerHTML = text;
-                var tempSpan = document.createElement('span');
-                tempSpan.innerHTML = ' &#126; <a href="javascript:window.open(\'http://goo.gl/forms/ayRsnizwL1\');" target=_blank>Click to submit a bug report/feedback</a>';
-                /* var tempAudio = document.createElement('audio');
-                tempAudio.setAttribute('style', 'display: none;');
-                tempAudio.setAttribute('id', 'hornAudio');
-                tempAudio.innerHTML = '<source src="https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3" type="audio/mpeg">Your browser does not support the audio element.'; */
                 loadLinkToUpdateDiv.appendChild(tempDiv);
-                loadLinkToUpdateDiv.appendChild(tempSpan);
-                
+
                 text = null;
                 tempDiv = null;
-                tempSpan = null;
-                tempSpan2 = null;
                 loadLinkToUpdateDiv = null;
                 timersElementToggle = null;
                 loadTimersElement = null;
@@ -1336,12 +1868,24 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<tr>';
                 preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
                 preferenceHTMLStr += '<a title="Auto Popup on KR"><b>Auto KR Popup</b></a>';
+                preferenceHTMLStr += '<a title="Select the script algorithm based on certain event / location"><b>Event or Location</b></a>';
                 preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
                 preferenceHTMLStr += '</td>';
                 preferenceHTMLStr += '<td style="height:24px">';
                 preferenceHTMLStr += '<input type="radio" id="autopopkrTrue" name="autopopkrInput" value="true"/> True';
                 preferenceHTMLStr += '   ';
                 preferenceHTMLStr += '<input type="radio" id="autopopkrFalse" name="autopopkrInput" value="false" checked="checked"/> False';
+                preferenceHTMLStr += '<select name="algo" onChange="window.localStorage.setItem(\'eventLocation\', value); document.getElementById(\'event\').value=window.localStorage.getItem(\'eventLocation\');">';
+                preferenceHTMLStr += '<option value="None" selected>None</option>';
+                preferenceHTMLStr += '<option value="Charge Egg 2014">Charge Egg 2014</option>';
+                preferenceHTMLStr += '<option value="Charge Egg 2014(17)">Charge Egg 2014(17)</option>';
+                preferenceHTMLStr += '<option value="Burroughs Rift(Red)">Burroughs Rift(Red)</option>';
+                preferenceHTMLStr += '<option value="Burroughs Rift(Green)">Burroughs Rift(Green)</option>';
+                preferenceHTMLStr += '<option value="Halloween 2014">Halloween 2014</option>';
+                preferenceHTMLStr += '<option value="Sunken City">Sunken City</option>';
+                preferenceHTMLStr += '<option value="All LG Area">All LG Area</option>';
+                preferenceHTMLStr += '</select> Current Selection : ';
+                preferenceHTMLStr += '<input type="text" id="event" name="event" value="' + eventLocation + '"/>';
                 preferenceHTMLStr += '</td>';
                 preferenceHTMLStr += '</tr>';
             }
@@ -1508,6 +2052,24 @@ function loadPreferenceSettingFromStorage() {
         autopopkr = false;
     }
     autopopkrTemp = undefined;
+
+    var dischargeTemp = getStorage("discharge");
+    if (dischargeTemp == undefined || dischargeTemp == null) {
+        setStorage("discharge", true.toString());
+    } else if (dischargeTemp == true || dischargeTemp.toLowerCase() == "true") {
+        discharge = true;
+    } else {
+        discharge = false;
+    }
+    dischargeTemp = undefined;
+
+    var eventTemp = getStorage('eventLocation');
+    if (eventTemp == undefined || eventTemp == null) {
+        setStorage('eventLocation', 'None');
+        eventTemp = getStorage('eventLocation');
+    }
+    eventLocation = eventTemp;
+    eventTemp = undefined;
 }
 
 function displayTimer(title, nextHornTime, checkTime) {
@@ -1606,6 +2168,7 @@ function soundHorn() {
     if (!aggressiveMode) {
         // safety mode, check the horn image is there or not before sound the horn
         var headerElement = document.getElementById('header');
+        headerElement = (strHornButton == 'hornbutton') ? document.getElementById('header') : headerElement = document.getElementById('mousehuntHud').firstChild;
         if (headerElement) {
             // need to make sure that the horn image is ready before we can click on it
             var headerStatus = headerElement.getAttribute('class');
@@ -1616,7 +2179,7 @@ function soundHorn() {
                 displayTimer("Blowing The Horn...", "Blowing The Horn...", "Blowing The Horn...");
 
                 // simulate mouse click on the horn
-                var hornElement = document.getElementsByClassName('hornbutton')[0].firstChild;
+                var hornElement = document.getElementsByClassName(strHornButton)[0].firstChild;
                 fireEvent(hornElement, 'click');
                 hornElement = null;
 
@@ -1668,7 +2231,7 @@ function soundHorn() {
                 displayTimer("Synchronizing Data...", "Hunter horn is missing. Synchronizing data...", "Hunter horn is missing. Synchronizing data...");
 
                 // try to click on the horn
-                var hornElement = document.getElementsByClassName('hornbutton')[0].firstChild;
+                var hornElement = document.getElementsByClassName(strHornButton)[0].firstChild;
                 fireEvent(hornElement, 'click');
                 hornElement = null;
 
@@ -1695,7 +2258,7 @@ function soundHorn() {
         // aggressive mode, ignore whatever horn image is there or not, just sound the horn!
 
         // simulate mouse click on the horn
-        fireEvent(document.getElementsByClassName('hornbutton')[0].firstChild, 'click');
+        fireEvent(document.getElementsByClassName(strHornButton)[0].firstChild, 'click');
 
         // double check if the horn was already sounded
         window.setTimeout(function() {
@@ -1712,6 +2275,7 @@ function afterSoundingHorn() {
     scriptNode = null;
 
     var headerElement = document.getElementById('header');
+    headerElement = (strHornButton == 'hornbutton') ? document.getElementById('header') : headerElement = document.getElementById('mousehuntHud').firstChild;
     if (headerElement) {
         // double check if the horn image is still visible after the script already sound it
         var headerStatus = headerElement.getAttribute('class');
@@ -1722,7 +2286,7 @@ function afterSoundingHorn() {
             displayTimer("Blowing The Horn Again...", "Blowing The Horn Again...", "Blowing The Horn Again...");
 
             // simulate mouse click on the horn
-            var hornElement = document.getElementsByClassName('hornbutton')[0].firstChild;
+            var hornElement = document.getElementsByClassName(strHornButton)[0].firstChild;
             fireEvent(hornElement, 'click');
             hornElement = null;
 
@@ -1790,6 +2354,7 @@ function afterSoundingHorn() {
             hornRetry = 0;
         }
     }
+    eventLocationCheck();
 }
 
 function embedScript() {
@@ -1822,7 +2387,14 @@ scriptNode = null;														\
     headerElement = null;
 
     // change the function call of horn
-    var hornButtonLink = document.getElementsByClassName('hornbutton')[0].firstChild;
+    var hornButtonLink = document.getElementsByClassName(strHornButton)[0].firstChild;
+    if (hornButtonLink.length > 0) {
+        hornButtonLink = hornButtonLink[0].firstChild;
+    } else {
+        strHornButton = 'mousehuntHud-huntersHorn-container';
+        strCampButton = 'camp active';
+        hornButtonLink = document.getElementsByClassName(strHornButton)[0].firstChild;
+    }
     var oriStr = hornButtonLink.getAttribute('onclick').toString();
     var index = oriStr.indexOf('return false;');
     var modStr = oriStr.substring(0, index) + 'soundedHorn();' + oriStr.substring(index);
@@ -1904,7 +2476,7 @@ function notify() {
     if (Notification.permission !== "granted")
         Notification.requestPermission();
 
-    var notification = new Notification('KR NOW', {
+    var notification = new Notification('Notification title', {
         icon: 'http://3.bp.blogspot.com/_O2yZIhpq9E8/TBoAMw0fMNI/AAAAAAAAAxo/1ytaIxQQz4o/s1600/Subliminal+Message.JPG',
         body: "Kings Reward NOW",
     });
@@ -1912,30 +2484,24 @@ function notify() {
     notification.onclick = function() {
         window.open("https://www.mousehuntgame.com/");
         notification.close();
-        notification.cancel();
-    }
-
-    notification.onshow = function() {
-        setTimeout(function() {
-            notification.close();
-            notification.cancel();
-        }, 5000);
     }
 }
 
 function playKingRewardSound() {
     notify();
-    if (autopopkr)
+    if (autopopkr) {
         alert("Kings Reward NOW");
-    
+    }
     if (isKingWarningSound) {
-    	var hornAudio = new Audio('https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3');
-    	hornAudio.play();
-    	var targetArea = document.getElementsByTagName('body');
-        var child = document.createElement('button');
-        child.setAttribute('id', "stopAudio");
-        child.setAttribute('onclick', 'hornAudio.pause();');
-        child.innerHTML = "CLICK ME TO STOP THIS ANNOYING MUSIC";
+        var targetArea = document.getElementsByTagName('body');
+        var child = document.createElement('audio');
+        child.setAttribute('id', "embedHorn");
+        child.setAttribute('controller', 'false');
+        child.setAttribute('preload', 'auto');
+        child.setAttribute('loop', 'true');
+        child.setAttribute('style', 'display: none;');
+        var snippet = document.createTextNode('<source src="horn.mp3" type="audio/mpeg"/>');
+        child.appendChild(snippet);
         targetArea.appendChild(child);
         targetArea = null;
         child = null;
@@ -2016,7 +2582,7 @@ function kingRewardCountdownTimer() {
         displayTimer("King's Reward - Reloading...", "Reloading...", "Reloading...");
 
         // simulate mouse click on the camp button
-        var campElement = document.getElementsByClassName('campbutton')[0].firstChild;
+        var campElement = document.getElementsByClassName(strCampButton)[0].firstChild;
         fireEvent(campElement, 'click');
         campElement = null;
 
@@ -2098,7 +2664,7 @@ function trapCheck() {
     displayTimer("Checking The Trap...", "Checking trap now...", "Checking trap now...");
 
     // simulate mouse click on the camp button
-    var campElement = document.getElementsByClassName('campbutton')[0].firstChild;
+    var campElement = document.getElementsByClassName(strCampButton)[0].firstChild;
     fireEvent(campElement, 'click');
     campElement = null;
 
@@ -2189,6 +2755,27 @@ function getCookie(c_name) {
     }
     c_name = null;
     return null;
+}
+
+function disarmTrap(trapSelector) {
+    clickTrapSelector(trapSelector);
+    var x;
+    var intervalDT = setInterval(
+        function() {
+            x = document.getElementsByClassName(trapSelector + ' canDisarm');
+            if (x.length > 0) {
+                for (var i = 0; i < x.length; ++i) {
+                    if (x[i].getAttribute('title').indexOf('Click to disarm') > -1) {
+                        fireEvent(x[i], 'click');
+                        clearInterval(intervalDT);
+                        intervalDT = null;
+                        return (console.debug('Disarmed'));
+                    }
+                }
+
+            }
+        }, 1000);
+    return;
 }
 
 function fireEvent(element, event) {

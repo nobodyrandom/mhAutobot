@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot Additional thing
-// @author      nobodyrandom
-// @version    	1.1.115
+// @author      NobodyRandom
+// @version    	1.1.124
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -14,6 +14,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
+var addonScriptVer = "1.1.124";
 var STATE = {
     title: document.title,
     ready: false,
@@ -83,8 +84,6 @@ NOBhtmlFetch();
 $(window).load(function(e) {
     var NOBhasPuzzle = user.has_puzzle;
     if (NOBhasPuzzle == false) {
-        createClockArea();
-
         /* if (window.location.href == "http://www.mousehuntgame.com/" ||
             window.location.href == "http://www.mousehuntgame.com/#" ||
             window.location.href == "http://www.mousehuntgame.com/?switch_to=standard" ||
@@ -109,7 +108,8 @@ $(window).load(function(e) {
         } */
 
         if (!NOBpage) {
-            clockTick();
+        	createClockArea();
+        	clockTick();
         }
     }
 });
@@ -132,7 +132,7 @@ function checkIntroContainer() {
     }
 }
 
-function NOBajaxGet(url, callback) {
+function NOBajaxGet(url, callback, throwError) {
     var NOBhasPuzzle = user.has_puzzle;
     if (NOBhasPuzzle == false) {
         jQuery.ajax({
@@ -149,16 +149,13 @@ function NOBajaxGet(url, callback) {
                     //Success Message
                 }
             },
-            success: callback
-                /*function( data ) {
-                                //console.log(data);
-                                callback(data);
-                            }*/
+            success: callback,
+            error: throwError
         });
     }
 }
 
-function NOBajaxPost(url, data, callback) {
+function NOBajaxPost(url, data, callback, throwError) {
     var NOBhasPuzzle = user.has_puzzle;
     if (NOBhasPuzzle == false) {
         jQuery.ajax({
@@ -176,11 +173,8 @@ function NOBajaxPost(url, data, callback) {
                     //Success Message
                 }
             },
-            success: callback
-                /*function( data ) {
-                                callback(data);
-                                //console.log(data);
-                            }*/
+            success: callback,
+            error: throwError
         });
     }
 }
@@ -222,7 +216,7 @@ function GDoc(items, type) {
     NOBajaxPost(sheet, dataSendString, function(data) {
         // CONSOLE LOGGING FOR DEBUG
         // console.log(data);
-    });
+    }, function(e) {console.log(e)});
 }
 
 function NOBhtmlFetch() {
@@ -270,7 +264,7 @@ function MapRequest(handleData) {
                 GDoc(output, "user");
                 return JSON.parse(output);
             }
-        }); */
+        }, function(e) {console.log(e)}); */
     jQuery.ajax({
         url: url,
         data: dataSend,
@@ -330,9 +324,9 @@ unsafeWindow.NOBtravel = function(location) {
             "destination": location,
             'uh': user.unique_hash
         };
-        NOBajaxPost(url, data, function(e) {
-            console.log(e);
-        });
+        NOBajaxPost(url, data, function(r) {
+            console.log(r);
+        }, function(e) {console.log(e)});
     }
 }
 
@@ -360,7 +354,7 @@ function createClockArea() {
 
 function clockTick() {
     NOBcalculateTime();
-    setTimeout(function(){clockTick()}, 2 * 60 * 1000);
+    setTimeout(function(){clockTick()}, 15 * 60 * 1000);
 }
 
 function updateTime() {
@@ -379,7 +373,7 @@ function NOBcalculateTime() {
                 text = JSON.parse(text);
                 var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
                 child.innerHTML = "Relic hunter now in: <font color='green'>" + text.location + "</font> \~ Next move time: " + UpdateTimer(text.next_move, true);
-            });
+            }, function(e) {console.log(e)});
         }
 
         if (typeof LOCATION_TIMERS[4][1].url != 'undefined' || LOCATION_TIMERS[4][1].url != 'undefined') {
@@ -409,7 +403,7 @@ function NOBcalculateTime() {
                 }
 
                 child.innerHTML = 'Toxic spill is now - <font color="' + text.level.color + '">' + text.level.state + '</font>' + text.percent;
-            });
+            }, function(e) {console.log(e)});
         }
 
         for (i = 0; i < 3; i++) {
