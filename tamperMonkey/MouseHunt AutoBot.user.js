@@ -939,6 +939,12 @@ function embedTimer(targetPage) {
             }
             timerDivElement.appendChild(titleElement);
             titleElement = null;
+            
+            if (NOBupdateCheck) {
+            	var updateElement = document.createElement('div');
+            	updateElement.setAttribute('id', 'updateElement');
+            	updateElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\"><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
+            }
 
             if (targetPage) {
                 nextHornTimeElement = document.createElement('div');
