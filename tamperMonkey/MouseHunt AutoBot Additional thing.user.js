@@ -92,11 +92,8 @@ $(window).load(function(e) {
             window.location.href == "https://www.mousehuntgame.com/#" ||
             window.location.href == "https://www.mousehuntgame.com/?switch_to=standard" ||
             window.location.href.indexOf("mousehuntgame.com/turn.php") != -1 ||
-            window.location.href.indexOf("mousehuntgame.com/index.php") != -1) {
-            // if (!checkIntroContainer()) {
-                NOBpage = true;
-            //}
-        } else if (window.location.href == "http://www.mousehuntgame.com/canvas/" ||
+            window.location.href.indexOf("mousehuntgame.com/index.php") != -1||
+            window.location.href == "http://www.mousehuntgame.com/canvas/" ||
             window.location.href == "http://www.mousehuntgame.com/canvas/#" ||
             window.location.href == "https://www.mousehuntgame.com/canvas/" ||
             window.location.href == "https://www.mousehuntgame.com/canvas/#" ||
@@ -113,7 +110,7 @@ $(window).load(function(e) {
             clockTick();
         }
     }
-});
+}); console.log(NOBpage);
 
 function checkIntroContainer() {
     var gotIntroContainerDiv = false;
