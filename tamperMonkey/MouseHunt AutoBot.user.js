@@ -92,6 +92,7 @@ var timerRefreshInterval = 1;
 
 // All global variable declaration and default value
 var scriptVersion = "1.4.134a [revamp only]";
+var addonScriptVer = "1.1.123";
 var fbPlatform = false;
 var hiFivePlatform = false;
 var mhPlatform = false;
