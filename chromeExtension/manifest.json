@@ -35,7 +35,9 @@
   
   "web_accessible_resources": [
   "MouseHunt%20AutoBot.user.js",
-  "MouseHunt%20AutoBot%20Additional%20thing.user.js"
+  "MouseHunt%20AutoBot%20Additional%20thing.user.js",
+  "https://github.com/nobodyrandom/mhAutobot/raw/master/tamperMonkey/MouseHunt%20AutoBot.user.js",
+  "https://github.com/nobodyrandom/mhAutobot/raw/master/tamperMonkey/MouseHunt%20AutoBot%20Additional%20thing.user.js"
   ],
   
   "permissions": [
