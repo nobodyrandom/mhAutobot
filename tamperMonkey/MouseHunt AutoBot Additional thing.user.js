@@ -1,13 +1,7 @@
 // ==UserScript==
-<<<<<<< HEAD
 // @name        MouseHunt AutoBot Additional thing development ver
 // @author      nobodyrandom
-// @version    	1.1.122d
-=======
-// @name        MouseHunt AutoBot Additional thing
-// @author      NobodyRandom
-// @version    	1.1.137
->>>>>>> master
+// @version    	1.1.137d
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
