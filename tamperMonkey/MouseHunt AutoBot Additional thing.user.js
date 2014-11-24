@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
-// @version    	1.1.135
+// @version    	1.1.136
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -336,7 +336,7 @@ unsafeWindow.NOBtravel = function(location) {
 }
 
 unsafeWindow.NOBupdateCheck = function() {
-    if (nobpage) {
+    if (NOBpage) {
 		var currVer = GM_info.script.version;
 		var checkVer;
 		NOBajaxGet('https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=version', function(text) {
