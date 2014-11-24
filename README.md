@@ -10,8 +10,7 @@
 To install this version, please use [greasyFork](https://greasyfork.org/en/scripts/6092-mousehunt-autobot) or [OpenUserJS](https://openuserjs.org/scripts/nobodyrandom/MouseHunt_AutoBot_REVAMP)
 Note: this version of the code includes two separate files which should automatically instal itself. If features such as 'Send to GDoc' does not work, please install [the second file](https://greasyfork.org/en/scripts/6094-mousehunt-autobot-additional-thing) as well.
 
-####This version will not work if you import the file into google extensions directly, use only GreasyMonkey (firefox) or TamperMoney (chrome)
-To check development progress on the chrome extension version, check [GitHub](https://github.com/nobodyrandom/mhAutobot/tree/master/chromeExtension)
+####Chrome version is now made - download it [here](https://github.com/nobodyrandom/mhAutobot/raw/master/chromeExtension.crx)
 #####PRECAUTION: Use this script at your own risk as this is against the rule of Mousehunt.
 *****
 Report all bugs to [GitHub](https://github.com/nobodyrandom/mhAutobot/issues) or email me @ <iamnobodyrandom@yahoo.com>   
