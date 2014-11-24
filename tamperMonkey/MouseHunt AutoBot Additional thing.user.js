@@ -381,7 +381,7 @@ function NOBcalculateTime() {
                 var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
                 child.innerHTML = "Relic hunter now in: <font color='green'>" + text.location + "</font> \~ Next move time: " + UpdateTimer(text.next_move, true);
             }, function(a, b, c) {
-                console.log(b);
+                // console.log(b);
                 var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
                 child.innerHTML = "<font color='red'>" + b + " error, probably hornTracker, google, or my scripts broke. Please wait awhile, if not just contact me.</font>";
             });
@@ -415,7 +415,7 @@ function NOBcalculateTime() {
 
                 child.innerHTML = 'Toxic spill is now - <font color="' + text.level.color + '">' + text.level.state + '</font>' + text.percent;
             }, function(a, b, c) {
-                console.log(b);
+                // console.log(b);
                 var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
                 child.innerHTML = "<font color='red'>" + b + " error, probably hornTracker, google, or my scripts broke. Please wait awhile, if not just contact me.</font>";
             });
