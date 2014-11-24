@@ -3,7 +3,7 @@
 
   "name": "MouseHunt AutoBot REVAMP",
   "description": "An advance user script to automate sounding the hunter horn in MouseHunt application in Facebook with MouseHunt version 3.0 (Longtail) supported and many other features. REVAMPED VERSION of ORIGINAL",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "nobodyrandom",
   
   "content_scripts": [
@@ -26,12 +26,18 @@
 	  "http://mousehunt.hi5.hitgrab.com/*"
 	  ],
 	  "js": [
-	  "MouseHunt AutoBot.user.js",
-	  "MouseHunt AutoBot Additional thing.user.js"
+	  "MouseHunt AutoBot chrome injector.js"
 	  ],
 	  "run_at": "document_end",
 	  "all_frames": true
 	}
+  ],
+  
+  "web_accessible_resources": [
+  "MouseHunt%20AutoBot.user.js",
+  "MouseHunt%20AutoBot%20Additional%20thing.user.js",
+  "https://github.com/nobodyrandom/mhAutobot/raw/master/tamperMonkey/MouseHunt%20AutoBot.user.js",
+  "https://github.com/nobodyrandom/mhAutobot/raw/master/tamperMonkey/MouseHunt%20AutoBot%20Additional%20thing.user.js"
   ],
   
   "permissions": [

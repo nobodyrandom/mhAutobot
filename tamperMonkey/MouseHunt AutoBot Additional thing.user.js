@@ -1,7 +1,13 @@
 // ==UserScript==
+<<<<<<< HEAD
 // @name        MouseHunt AutoBot Additional thing development ver
 // @author      nobodyrandom
 // @version    	1.1.122d
+=======
+// @name        MouseHunt AutoBot Additional thing
+// @author      NobodyRandom
+// @version    	1.1.137
+>>>>>>> master
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -14,6 +20,8 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
+var addonScriptVer = '1.1.136';
+// var addonScriptVer = GM_info.script.version;
 var STATE = {
     title: document.title,
     ready: false,
@@ -83,35 +91,40 @@ NOBhtmlFetch();
 $(window).load(function(e) {
     var NOBhasPuzzle = user.has_puzzle;
     if (NOBhasPuzzle == false) {
+<<<<<<< HEAD
         /* if (window.location.href == "http://www.mousehuntgame.com/" ||
+=======
+        if (window.location.href == "http://www.mousehuntgame.com/" ||
+>>>>>>> master
             window.location.href == "http://www.mousehuntgame.com/#" ||
             window.location.href == "http://www.mousehuntgame.com/?switch_to=standard" ||
             window.location.href == "https://www.mousehuntgame.com/" ||
             window.location.href == "https://www.mousehuntgame.com/#" ||
             window.location.href == "https://www.mousehuntgame.com/?switch_to=standard" ||
             window.location.href.indexOf("mousehuntgame.com/turn.php") != -1 ||
-            window.location.href.indexOf("mousehuntgame.com/index.php") != -1) {
-            if (!checkIntroContainer()) {
-                NOBpage = true;
-            }
-        } else if (window.location.href == "http://www.mousehuntgame.com/canvas/" ||
+            window.location.href.indexOf("mousehuntgame.com/index.php") != -1||
+            window.location.href == "http://www.mousehuntgame.com/canvas/" ||
             window.location.href == "http://www.mousehuntgame.com/canvas/#" ||
             window.location.href == "https://www.mousehuntgame.com/canvas/" ||
             window.location.href == "https://www.mousehuntgame.com/canvas/#" ||
             window.location.href.indexOf("mousehuntgame.com/canvas/index.php") != -1 ||
             window.location.href.indexOf("mousehuntgame.com/canvas/turn.php") != -1 ||
             window.location.href.indexOf("mousehuntgame.com/canvas/?") != -1) {
-            if (!checkIntroContainer()) {
+            // if (!checkIntroContainer()) {
                 NOBpage = true;
-            }
-        } */
+            //}
+        }
 
         if (!NOBpage) {
+<<<<<<< HEAD
         	createClockArea();
+=======
+            createClockArea();
+>>>>>>> master
             clockTick();
         }
     }
-});
+}); console.log(NOBpage);
 
 function checkIntroContainer() {
     var gotIntroContainerDiv = false;
@@ -131,13 +144,13 @@ function checkIntroContainer() {
     }
 }
 
-function NOBajaxGet(url, callback) {
+function NOBajaxGet(url, callback, throwError) {
     var NOBhasPuzzle = user.has_puzzle;
     if (NOBhasPuzzle == false) {
         jQuery.ajax({
             url: url,
             type: "GET",
-			timeout: 5000,
+            timeout: 5000,
             statusCode: {
                 0: function() {
                     console.log("Success get - " + url);
@@ -148,19 +161,24 @@ function NOBajaxGet(url, callback) {
                     //Success Message
                 }
             },
+<<<<<<< HEAD
             success: callback
+=======
+            success: callback,
+            error: throwError
+>>>>>>> master
         });
     }
 }
 
-function NOBajaxPost(url, data, callback) {
+function NOBajaxPost(url, data, callback, throwError) {
     var NOBhasPuzzle = user.has_puzzle;
     if (NOBhasPuzzle == false) {
         jQuery.ajax({
             url: url,
             data: data,
             type: "POST",
-			timeout: 5000,
+            timeout: 5000,
             statusCode: {
                 0: function() {
                     console.log("Success post - " + url);
@@ -171,7 +189,12 @@ function NOBajaxPost(url, data, callback) {
                     //Success Message
                 }
             },
+<<<<<<< HEAD
             success: callback
+=======
+            success: callback,
+            error: throwError
+>>>>>>> master
         });
     }
 }
@@ -213,6 +236,8 @@ function GDoc(items, type) {
     NOBajaxPost(sheet, dataSendString, function(data) {
         // CONSOLE LOGGING FOR DEBUG
         // console.log(data);
+    }, function(e) {
+        console.log(e)
     });
 }
 
@@ -261,13 +286,13 @@ function MapRequest(handleData) {
                 GDoc(output, "user");
                 return JSON.parse(output);
             }
-        }); */
+        }, function(e) {console.log(e)}); */
     jQuery.ajax({
         url: url,
         data: dataSend,
         type: "POST",
         dataType: "json",
-		timeout: 5000,
+        timeout: 5000,
         success: function(data) {
             // console.log(data);
             handleData(data);
@@ -321,9 +346,34 @@ unsafeWindow.NOBtravel = function(location) {
             "destination": location,
             'uh': user.unique_hash
         };
-        NOBajaxPost(url, data, function(e) {
-            console.log(e);
+        NOBajaxPost(url, data, function(r) {
+            console.log(r);
+        }, function(e) {
+            console.log(e)
         });
+    }
+}
+
+unsafeWindow.NOBupdateCheck = function() {
+    if (NOBpage) {
+		var currVer = GM_info.script.version;
+		var checkVer;
+		NOBajaxGet('https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=version', function(text) {
+			text = JSON.parse(text);
+			checkVer = text.version;
+			console.log('Current mouseHunt AutoBot version: ' + currVer);
+			console.log('Server version: ' + checkVer);
+			if (checkVer > currVer) {
+				return true;
+			} else {
+				return false;
+			}
+		}, function(a, b, c) {
+			console.log(b + ' error - Google Docs is now not working qq');
+			return false;
+		});
+    } else {
+    	return false;
     }
 }
 
@@ -351,7 +401,13 @@ function createClockArea() {
 
 function clockTick() {
     NOBcalculateTime();
+<<<<<<< HEAD
     setTimeout(function(){clockTick()}, 5 * 60 * 1000);
+=======
+    setTimeout(function() {
+        clockTick()
+    }, 15 * 60 * 1000);
+>>>>>>> master
 }
 
 function updateTime() {
@@ -370,6 +426,10 @@ function NOBcalculateTime() {
                 text = JSON.parse(text);
                 var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
                 child.innerHTML = "Relic hunter now in: <font color='green'>" + text.location + "</font> \~ Next move time: " + UpdateTimer(text.next_move, true);
+            }, function(a, b, c) {
+                // console.log(b);
+                var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
+                child.innerHTML = "<font color='red'>" + b + " error, probably hornTracker, google, or my scripts broke. Please wait awhile, if not just contact me.</font>";
             });
         }
 
@@ -400,6 +460,10 @@ function NOBcalculateTime() {
                 }
 
                 child.innerHTML = 'Toxic spill is now - <font color="' + text.level.color + '">' + text.level.state + '</font>' + text.percent;
+            }, function(a, b, c) {
+                // console.log(b);
+                var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
+                child.innerHTML = "<font color='red'>" + b + " error, probably hornTracker, google, or my scripts broke. Please wait awhile, if not just contact me.</font>";
             });
         }
 

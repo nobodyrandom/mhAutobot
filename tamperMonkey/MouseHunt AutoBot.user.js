@@ -1,8 +1,16 @@
 // ==UserScript==
+<<<<<<< HEAD
 // @name        MouseHunt AutoBot REVAMP development ver
 // @author      nobodyrandom
 // @version    	1.4.123d
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application in Facebook with MouseHunt version 3.0 (Longtail) supported and many other features. REVAMPED VERSION of ORIGINAL by Ooi
+=======
+// @name        MouseHunt AutoBot REVAMP
+// @author      NobodyRandom
+// @version    	1.4.151a
+// @description An advance user script to automate sounding the hunter horn in MouseHunt application in Facebook with MouseHunt version 3.0 (Longtail) supported and many other features. REVAMPED VERSION of ORIGINAL by Ooi
+// @require		https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=25946
+>>>>>>> master
 // @namespace   https://greasyfork.org/users/6398
 // @updateURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.user.js
 // @downloadURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.user.js
@@ -90,7 +98,7 @@ var timerRefreshInterval = 1;
 // WARNING - Do not modify the code below unless you know how to read and write the script.
 
 // All global variable declaration and default value
-var scriptVersion = "1.4.122a";
+var scriptVersion = GM_info.script.version;
 var fbPlatform = false;
 var hiFivePlatform = false;
 var mhPlatform = false;
@@ -931,12 +939,20 @@ function embedTimer(targetPage) {
             var titleElement = document.createElement('div');
             titleElement.setAttribute('id', 'titleElement');
             if (targetPage && aggressiveMode) {
-                titleElement.innerHTML = "<a href=\"http://ooiks.com/blog/category/mousehunt-autobot\" target=\"_blank\"><b>MouseHunt AutoBot (version " + scriptVersion + ")</b></a> - <font color='red'>Aggressive Mode</font>";
+                titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target=\"_blank\">MouseHunt AutoBot (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing (version " + addonScriptVer + ")</b> - <font color='red'>Aggressive Mode</font>";
             } else {
-                titleElement.innerHTML = "<a href=\"http://ooiks.com/blog/category/mousehunt-autobot\" target=\"_blank\"><b>MouseHunt AutoBot (version " + scriptVersion + ")</b></a>";
+                titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target=\"_blank\">MouseHunt AutoBot (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing (version " + addonScriptVer + ")</b>";
             }
             timerDivElement.appendChild(titleElement);
             titleElement = null;
+            
+            if (NOBupdateCheck()) {
+            	var updateElement = document.createElement('div');
+            	updateElement.setAttribute('id', 'updateElement');
+            	updateElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\"><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
+            	timerDivElement.appendChild(updateElement);
+            	updateElement = null;
+            }
 
             if (targetPage) {
                 nextHornTimeElement = document.createElement('div');
@@ -1011,23 +1027,34 @@ function embedTimer(targetPage) {
 
                 var loadLinkToUpdateDiv = document.createElement('div');
                 loadLinkToUpdateDiv.setAttribute('id', 'gDocArea');
+                var tempSpan2 = document.createElement('span');
                 var loadLinkToUpdate = document.createElement('a');
                 text = document.createTextNode('Click to submit to GDoc');
                 loadLinkToUpdate.href = '#';
                 loadLinkToUpdate.setAttribute('id', 'gDocLink');
                 loadLinkToUpdate.appendChild(text);
                 text = null;
-                loadLinkToUpdateDiv.appendChild(loadLinkToUpdate);
+                tempSpan2.appendChild(loadLinkToUpdate);
+                loadLinkToUpdateDiv.appendChild(tempSpan2);
                 timerDivElement.appendChild(loadLinkToUpdateDiv);
                 loadLinkToUpdate.addEventListener('click', NOBscript, false);
 
                 text = ' &#126; <a href="javascript:window.open(\'https://docs.google.com/spreadsheet/ccc?key=0Ag_KH_nuVUjbdGtldjJkWUJ4V1ZpUDVwd1FVM0RTM1E#gid=5\');" target=_blank>Click to go to GDoc</a>';
                 var tempDiv = document.createElement('span');
                 tempDiv.innerHTML = text;
+                var tempSpan = document.createElement('span');
+                tempSpan.innerHTML = ' &#126; <a href="javascript:window.open(\'http://goo.gl/forms/ayRsnizwL1\');" target=_blank>Click to submit a bug report/feedback</a>';
+                /* var tempAudio = document.createElement('audio');
+                tempAudio.setAttribute('style', 'display: none;');
+                tempAudio.setAttribute('id', 'hornAudio');
+                tempAudio.innerHTML = '<source src="https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3" type="audio/mpeg">Your browser does not support the audio element.'; */
                 loadLinkToUpdateDiv.appendChild(tempDiv);
+                loadLinkToUpdateDiv.appendChild(tempSpan);
 
                 text = null;
                 tempDiv = null;
+                tempSpan = null;
+                tempSpan2 = null;
                 loadLinkToUpdateDiv = null;
                 timersElementToggle = null;
                 loadTimersElement = null;
@@ -1913,19 +1940,17 @@ function notify() {
 
 function playKingRewardSound() {
     notify();
-    if (autopopkr) {
+    if (autopopkr)
         alert("Kings Reward NOW");
-    }
+
     if (isKingWarningSound) {
+        var hornAudio = new Audio('https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3');
+        hornAudio.play();
         var targetArea = document.getElementsByTagName('body');
-        var child = document.createElement('audio');
-        child.setAttribute('id', "embedHorn");
-        child.setAttribute('controller', 'false');
-        child.setAttribute('preload', 'auto');
-        child.setAttribute('loop', 'true');
-        child.setAttribute('style', 'display: none;');
-        var snippet = document.createTextNode('<source src="horn.mp3" type="audio/mpeg"/>');
-        child.appendChild(snippet);
+        var child = document.createElement('button');
+        child.setAttribute('id', "stopAudio");
+        child.setAttribute('onclick', 'hornAudio.pause();');
+        child.innerHTML = "CLICK ME TO STOP THIS ANNOYING MUSIC";
         targetArea.appendChild(child);
         targetArea = null;
         child = null;
