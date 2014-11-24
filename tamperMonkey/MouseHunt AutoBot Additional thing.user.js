@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
-// @version    	1.1.134
+// @version    	1.1.135
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -85,7 +85,7 @@ NOBhtmlFetch();
 $(window).load(function(e) {
     var NOBhasPuzzle = user.has_puzzle;
     if (NOBhasPuzzle == false) {
-        /* if (window.location.href == "http://www.mousehuntgame.com/" ||
+        if (window.location.href == "http://www.mousehuntgame.com/" ||
             window.location.href == "http://www.mousehuntgame.com/#" ||
             window.location.href == "http://www.mousehuntgame.com/?switch_to=standard" ||
             window.location.href == "https://www.mousehuntgame.com/" ||
@@ -106,7 +106,7 @@ $(window).load(function(e) {
             if (!checkIntroContainer()) {
                 NOBpage = true;
             }
-        } */
+        }
 
         if (!NOBpage) {
             createClockArea();
@@ -336,22 +336,26 @@ unsafeWindow.NOBtravel = function(location) {
 }
 
 unsafeWindow.NOBupdateCheck = function() {
-    var currVer = GM_info.script.version;
-    var checkVer;
-    NOBajaxGet('https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=version', function(text) {
-        text = JSON.parse(text);
-        checkVer = text.version;
-        console.log('Current mouseHunt AutoBot version: ' + currVer);
-		console.log('Server version: ' + checkVer);
-		if (checkVer > currVer) {
-			return true;
-		} else {
+    if (nobpage) {
+		var currVer = GM_info.script.version;
+		var checkVer;
+		NOBajaxGet('https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=version', function(text) {
+			text = JSON.parse(text);
+			checkVer = text.version;
+			console.log('Current mouseHunt AutoBot version: ' + currVer);
+			console.log('Server version: ' + checkVer);
+			if (checkVer > currVer) {
+				return true;
+			} else {
+				return false;
+			}
+		}, function(a, b, c) {
+			console.log(b + ' error - Google Docs is now not working qq');
 			return false;
-		}
-    }, function(a, b, c) {
-        console.log(b + ' error - Google Docs is now not working qq');
-        return false;
-    });
+		});
+    } else {
+    	return false;
+    }
 }
 
 // CALCULATE TIMER *******************************
