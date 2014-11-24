@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
-// @version    	1.1.131
+// @version    	1.1.132
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -342,11 +342,12 @@ unsafeWindow.NOBupdateCheck = function() {
         text = JSON.parse(text);
         checkVer = text.version;
     }, function(a, b, c) {
-        console.log(b + 'Google Docs is now not working qq');
+        console.log(b + ' error - Google Docs is now not working qq');
         return false;
     });
     console.log('Current mouseHunt AutoBot version: ' + currVer);
-    console.log('Server version: ' + checkVer);
+    console.log('Server version: ' + text);
+    console.log(text);
     if (checkVer > currVer) {
         return true;
     } else {
