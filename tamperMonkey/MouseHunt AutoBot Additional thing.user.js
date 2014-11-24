@@ -14,6 +14,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
+var addonScriptVer = 1.1.123;
 var STATE = {
     title: document.title,
     ready: false,
