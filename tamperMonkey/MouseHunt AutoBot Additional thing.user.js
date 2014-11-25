@@ -138,10 +138,6 @@ function NOBajaxGet(url, callback, throwError) {
             type: "GET",
             timeout: 5000,
             statusCode: {
-                0: function() {
-                    console.log("Success get - " + url);
-                    //Success message
-                },
                 200: function() {
                     console.log("Success get - " + url);
                     //Success Message
@@ -162,10 +158,6 @@ function NOBajaxPost(url, data, callback, throwError) {
             type: "POST",
             timeout: 5000,
             statusCode: {
-                0: function() {
-                    console.log("Success post - " + url);
-                    //Success message
-                },
                 200: function() {
                     console.log("Success post - " + url);
                     //Success Message
@@ -214,8 +206,8 @@ function GDoc(items, type) {
     NOBajaxPost(sheet, dataSendString, function(data) {
         // CONSOLE LOGGING FOR DEBUG
         // console.log(data);
-    }, function(e) {
-        console.log(e)
+    }, function(a,b,c) {
+        console.log(b)
     });
 }
 
@@ -290,7 +282,7 @@ unsafeWindow.NOBscript = function(qqEvent) {
     if (NOBhasPuzzle == false && NOBdata != null || NOBdata != undefined) {
         if (mapRequestFailed == undefined || mapRequestFailed == false || mapRequestFailed == null) {
             MapRequest(function(output) {
-                if (output.status == 200 || output.status == 0 || output.status == undefined) {
+                if (output.status == 200 || output.status == undefined) {
                     NOBstore(output, "data");
                     GDoc(JSON.stringify(output), "map");
                 } else {
