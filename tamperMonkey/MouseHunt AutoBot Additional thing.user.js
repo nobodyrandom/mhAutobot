@@ -1,7 +1,8 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot Additional thing development ver
 // @author      nobodyrandom
-// @version    	1.1.138d
+// @namespace   https://greasyfork.org/users/6398
+// @version    	1.1.139d
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -14,7 +15,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-var addonScriptVer = '1.1.136';
+unsafeWindow.addonScriptVer = '1.1.139d';
 // var addonScriptVer = GM_info.script.version;
 var STATE = {
     title: document.title,
