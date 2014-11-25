@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing development ver
 // @author      nobodyrandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.150d
+// @version    	1.1.152d
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -326,36 +326,26 @@ unsafeWindow.NOBtravel = function(location) {
 
 unsafeWindow.NOBupdateCheck = function() {
     if (NOBpage) {
-        //var currVer = GM_info.script.version;
-        var currVer = "1.4.150a";
-        var checkVer;
-        NOBajaxGet('https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=version', function(text) {
-            text = JSON.parse(text);
-            checkVer = text.version;
-            console.log('Current mouseHunt AutoBot version: ' + currVer);
-            console.log('Server version: ' + checkVer);
-            if (checkVer > currVer) {
-                var message = updateMessage();
-                return message;
-            } else {
-                return;
-            }
-        }, function(a, b, c) {
-            console.log(b + ' error - Google Docs is now not working qq');
-            return;
-        });
+		//var currVer = GM_info.script.version;
+		var currVer = "1.4.150a";
+		var checkVer;
+		NOBajaxGet('https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=version', function(text) {
+			text = JSON.parse(text);
+			checkVer = text.version;
+			console.log('Current mouseHunt AutoBot version: ' + currVer);
+			console.log('Server version: ' + checkVer);
+			if (checkVer > currVer) {
+				return true;
+			} else {
+				return false;
+			}
+		}, function(a, b, c) {
+			console.log(b + ' error - Google Docs is now not working qq');
+			return false;
+		});
     } else {
-        return;
+    	return false;
     }
-}
-
-function updateMessage() {
-        var updateElement = document.createElement('div');
-        updateElement.setAttribute('id', 'updateElement');
-        updateElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\"><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
-        updateElement = null;
-        console.log("RAN UPDATE CHECK");
-        return updateElement;
 }
 
 // CALCULATE TIMER *******************************
