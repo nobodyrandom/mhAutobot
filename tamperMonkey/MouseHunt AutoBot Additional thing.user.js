@@ -84,6 +84,8 @@ NOBhtmlFetch();
 // SETTING BASE VARS DONE ******************************* INIT AJAX CALLS AND INIT CALLS
 // Function calls after page LOAD
 //$(window).load(function() {
+NOBinit();
+function NOBinit() {
     if (NOBhasPuzzle == false) {
         if (window.location.href == "http://www.mousehuntgame.com/" ||
             window.location.href == "http://www.mousehuntgame.com/#" ||
@@ -111,6 +113,7 @@ NOBhtmlFetch();
             clockTick();
         }
     }
+}
 //});
 console.log(NOBpage);
 
