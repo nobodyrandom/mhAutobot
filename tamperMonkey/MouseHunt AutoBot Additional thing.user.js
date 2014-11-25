@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing development ver
 // @author      nobodyrandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.142d
+// @version    	1.1.143d
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -83,9 +83,9 @@ NOBhtmlFetch();
 
 // SETTING BASE VARS DONE ******************************* INIT AJAX CALLS AND INIT CALLS
 // Function calls after page LOAD
-//$(window).load(function() {
-NOBinit();
-function NOBinit() {
+$(window).load(function() {
+/* NOBinit();
+function NOBinit() { */
     if (NOBhasPuzzle == false) {
         if (window.location.href == "http://www.mousehuntgame.com/" ||
             window.location.href == "http://www.mousehuntgame.com/#" ||
@@ -113,8 +113,8 @@ function NOBinit() {
             clockTick();
         }
     }
-}
-//});
+//}
+});
 console.log(NOBpage);
 
 function checkIntroContainer() {
