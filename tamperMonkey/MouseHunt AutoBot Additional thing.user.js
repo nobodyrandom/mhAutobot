@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing development ver
 // @author      nobodyrandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.139d
+// @version    	1.1.140d
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -102,6 +102,7 @@ $(window).load(function() {
             window.location.href.indexOf("mousehuntgame.com/canvas/?") != -1) {
             // if (!checkIntroContainer()) {
                 NOBpage = true;
+                console.log(NOBpage);
             //}
         }
 
@@ -110,7 +111,8 @@ $(window).load(function() {
             clockTick();
         }
     }
-}); console.log(NOBpage);
+});
+console.log(NOBpage);
 
 function checkIntroContainer() {
     var gotIntroContainerDiv = false;
