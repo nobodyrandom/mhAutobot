@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing development ver
 // @author      nobodyrandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.148d
+// @version    	1.1.149d
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -326,7 +326,8 @@ unsafeWindow.NOBtravel = function(location) {
 
 unsafeWindow.NOBupdateCheck = function() {
     if (NOBpage) {
-		var currVer = GM_info.script.version;
+		//var currVer = GM_info.script.version;
+		var currVer = "1.4.150a";
 		var checkVer;
 		NOBajaxGet('https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=version', function(text) {
 			text = JSON.parse(text);
