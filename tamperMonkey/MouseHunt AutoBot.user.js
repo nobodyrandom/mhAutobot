@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP development ver
 // @author      nobodyrandom
-// @version    	1.4.151d
+// @version    	1.4.152d
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application in Facebook with MouseHunt version 3.0 (Longtail) supported and many other features. REVAMPED VERSION of ORIGINAL by Ooi
 // @namespace   https://greasyfork.org/users/6398
 // @license 	GNU GPL v2.0
