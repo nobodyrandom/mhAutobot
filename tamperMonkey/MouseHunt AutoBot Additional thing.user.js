@@ -104,7 +104,6 @@ function NOBinit() { */
             window.location.href.indexOf("mousehuntgame.com/canvas/?") != -1) {
             // if (!checkIntroContainer()) {
                 NOBpage = true;
-                console.log("IF " + NOBpage);
             //}
         }
 
@@ -115,7 +114,6 @@ function NOBinit() { */
     }
 //}
 });
-console.log(NOBpage);
 
 function checkIntroContainer() {
     var gotIntroContainerDiv = false;
