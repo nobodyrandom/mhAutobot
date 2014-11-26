@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing development ver
 // @author      nobodyrandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.154d
+// @version    	1.1.155d
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -280,8 +280,10 @@ unsafeWindow.NOBscript = function(qqEvent) {
     var NOBhasPuzzle = user.has_puzzle;
     var NOBdata = localStorage.getItem('NOB_data');
     var mapThere = document.getElementById('hudmapitem').style;
-    if (mapThere == 'display: none;')
+    if (mapThere == 'display: none;') {
     	mapThere = false;
+    	console.log("No map, using HTML data now");
+    }
     if (NOBhasPuzzle == false && NOBdata != null || NOBdata != undefined) {
         if (mapRequestFailed == undefined || mapRequestFailed == false || mapRequestFailed == null || mapThere == true) {
             MapRequest(function(output) {
