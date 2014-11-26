@@ -1,7 +1,13 @@
 // ==UserScript==
+<<<<<<< HEAD
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom
 // @version    	1.4.153a
+=======
+// @name        MouseHunt AutoBot REVAMP development ver
+// @author      nobodyrandom
+// @version    	1.4.159d
+>>>>>>> development
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application in Facebook with MouseHunt version 3.0 (Longtail) supported and many other features. REVAMPED VERSION of ORIGINAL by Ooi
 // @require		https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=25954
 // @namespace   https://greasyfork.org/users/6398
@@ -938,16 +944,37 @@ function embedTimer(targetPage) {
             }
             timerDivElement.appendChild(titleElement);
             titleElement = null;
-            
-            if (NOBupdateCheck()) {
-            	var updateElement = document.createElement('div');
-            	updateElement.setAttribute('id', 'updateElement');
-            	updateElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\"><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
-            	timerDivElement.appendChild(updateElement);
-            	updateElement = null;
-            }
 
             if (targetPage) {
+            	var NOBupdate = true;
+				NOBupdate = NOBupdateCheck(
+					function(text) {
+						text = JSON.parse(text);
+						checkVer = text.version;
+						console.log('Current mouseHunt AutoBot version: ' + currVer);
+						console.log('Server version: ' + checkVer);
+						if (checkVer > currVer) {
+							return true;
+						} else {
+							return false;
+						}
+					},
+					function(a, b, c) {
+						console.log(b + ' error - Google Docs is now not working qq');
+						return false;
+					});
+				// console.log(NOBupdate);
+				setTimeout(function() {
+					if (NOBupdate) {
+						var updateElement = document.createElement('div');
+						updateElement.setAttribute('id', 'updateElement');
+						updateElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\"><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
+						timerDivElement.appendChild(updateElement);
+						updateElement = null;
+						console.log("RAN UPDATE CHECK");
+					}
+				}, 4000);
+				
                 nextHornTimeElement = document.createElement('div');
                 nextHornTimeElement.setAttribute('id', 'nextHornTimeElement');
                 nextHornTimeElement.innerHTML = "<b>Next Hunter Horn Time:</b> Loading...";

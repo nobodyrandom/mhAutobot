@@ -2,7 +2,11 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
+<<<<<<< HEAD
 // @version    	1.1.144
+=======
+// @version    	1.1.155d
+>>>>>>> development
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -15,8 +19,13 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
+<<<<<<< HEAD
 unsafeWindow.addonScriptVer = '1.1.144';
 // var addonScriptVer = GM_info.script.version;
+=======
+// unsafeWindow.addonScriptVer = '1.1.145d';
+unsafeWindow.addonScriptVer = addonScriptVer = GM_info.script.version;
+>>>>>>> development
 var STATE = {
     title: document.title,
     ready: false,
@@ -138,10 +147,6 @@ function NOBajaxGet(url, callback, throwError) {
             type: "GET",
             timeout: 5000,
             statusCode: {
-                0: function() {
-                    console.log("Success get - " + url);
-                    //Success message
-                },
                 200: function() {
                     console.log("Success get - " + url);
                     //Success Message
@@ -162,10 +167,6 @@ function NOBajaxPost(url, data, callback, throwError) {
             type: "POST",
             timeout: 5000,
             statusCode: {
-                0: function() {
-                    console.log("Success post - " + url);
-                    //Success message
-                },
                 200: function() {
                     console.log("Success post - " + url);
                     //Success Message
@@ -214,8 +215,8 @@ function GDoc(items, type) {
     NOBajaxPost(sheet, dataSendString, function(data) {
         // CONSOLE LOGGING FOR DEBUG
         // console.log(data);
-    }, function(e) {
-        console.log(e)
+    }, function(a,b,c) {
+        console.log(b)
     });
 }
 
@@ -287,10 +288,15 @@ var mapRequestFailed = false;
 unsafeWindow.NOBscript = function(qqEvent) {
     var NOBhasPuzzle = user.has_puzzle;
     var NOBdata = localStorage.getItem('NOB_data');
+    var mapThere = document.getElementById('hudmapitem').style;
+    if (mapThere == 'display: none;') {
+    	mapThere = false;
+    	console.log("No map, using HTML data now");
+    }
     if (NOBhasPuzzle == false && NOBdata != null || NOBdata != undefined) {
-        if (mapRequestFailed == undefined || mapRequestFailed == false || mapRequestFailed == null) {
+        if (mapRequestFailed == undefined || mapRequestFailed == false || mapRequestFailed == null || mapThere == true) {
             MapRequest(function(output) {
-                if (output.status == 200 || output.status == 0 || output.status == undefined) {
+                if (output.status == 200 || output.status == undefined) {
                     NOBstore(output, "data");
                     GDoc(JSON.stringify(output), "map");
                 } else {
@@ -332,24 +338,14 @@ unsafeWindow.NOBtravel = function(location) {
     }
 }
 
-unsafeWindow.NOBupdateCheck = function() {
+unsafeWindow.NOBupdateCheck = function(callback, error) {
     if (NOBpage) {
-		var currVer = GM_info.script.version;
+		//var currVer = GM_info.script.version;
+		var currVer = "1.4.150a";
 		var checkVer;
 		NOBajaxGet('https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=version', function(text) {
-			text = JSON.parse(text);
-			checkVer = text.version;
-			console.log('Current mouseHunt AutoBot version: ' + currVer);
-			console.log('Server version: ' + checkVer);
-			if (checkVer > currVer) {
-				return true;
-			} else {
-				return false;
-			}
-		}, function(a, b, c) {
-			console.log(b + ' error - Google Docs is now not working qq');
-			return false;
-		});
+			callback(text)
+		}, error(a,b,c));
     } else {
     	return false;
     }
