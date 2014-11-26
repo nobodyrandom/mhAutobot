@@ -1,13 +1,7 @@
 // ==UserScript==
-<<<<<<< HEAD
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom
-// @version    	1.4.153a
-=======
-// @name        MouseHunt AutoBot REVAMP development ver
-// @author      nobodyrandom
-// @version    	1.4.159d
->>>>>>> development
+// @version    	1.4.159a
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application in Facebook with MouseHunt version 3.0 (Longtail) supported and many other features. REVAMPED VERSION of ORIGINAL by Ooi
 // @require		https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=25954
 // @namespace   https://greasyfork.org/users/6398
@@ -1064,10 +1058,6 @@ function embedTimer(targetPage) {
                 tempDiv.innerHTML = text;
                 var tempSpan = document.createElement('span');
                 tempSpan.innerHTML = ' &#126; <a href="javascript:window.open(\'http://goo.gl/forms/ayRsnizwL1\');" target=_blank>Click to submit a bug report/feedback</a>';
-                /* var tempAudio = document.createElement('audio');
-                tempAudio.setAttribute('style', 'display: none;');
-                tempAudio.setAttribute('id', 'hornAudio');
-                tempAudio.innerHTML = '<source src="https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3" type="audio/mpeg">Your browser does not support the audio element.'; */
                 loadLinkToUpdateDiv.appendChild(tempDiv);
                 loadLinkToUpdateDiv.appendChild(tempSpan);
 
@@ -1975,57 +1965,6 @@ function playKingRewardSound() {
         targetArea = null;
         child = null;
         snippet = null;
-
-        //var browser = browserDetection();
-
-        //if (browser == "") {
-        // The code below are no longer needed
-        /* 
-                        var kingSound = document.createElement("div");
-                        kingSound.innerHTML = "<embed name=\"kingreward\" src=\"http://images.norack.info/prodigy_-_girls.mid\" type=\"audio/midi\" autostart=\"true\" hidden=\"true\" loop=\"true\" mastersound enablejavascript=\"true\"><noembed><bgsound src=\"http://images.norack.info/prodigy_-_girls.mid\" loop=\"infinite\"></noembed></embed>";
-                        
-                        var containerElement = document.getElementById("hgAppContainer");
-                        containerElement.appendChild(kingSound);
-                        containerElement = null;
-                        
-                        kingSound = null;
-                        */
-        /*} else {
-                        // midi music data
-                        // end of track
-            
-                        // Extra note: In Opera: hidden cannot be set to true, else it will fail to play with unknown reason.
-            
-                        var embedMidiElement = document.getElementsByName('embedMidiElement');
-                        if (embedMidiElement.length > 0) {
-                            // remove any same element if found
-                            document.body.removeChild(embedMidiElement[0]);
-                            embedMidiElement = null;
-                        }
-            
-                        embedMidiElement = document.createElement('embed');
-                        embedMidiElement.setAttribute('id', "embedMidiElement");
-                        embedMidiElement.setAttribute('name', "embedMidiElement");
-                        embedMidiElement.setAttribute('src', MIDI_DATA);
-                        embedMidiElement.setAttribute('type', 'audio/midi');
-                        embedMidiElement.setAttribute('controller', 'false');
-                        embedMidiElement.setAttribute('autoplay', 'true');
-                        embedMidiElement.setAttribute('loop', 'true');
-                        embedMidiElement.innerHTML = "<noembed><bgsound src=\"http://images.norack.info/prodigy_-_girls.mid\" loop=\"infinite\"></noembed>";
-                        document.body.appendChild(embedMidiElement);
-            
-                        MIDI_DATA = null;
-                        embedMidiElement = null;
-                    }
-            
-                    if (browser == "opera") {
-                        // since opera cannot loop the king reward music, then we play it again.
-                        window.setTimeout(function() {
-                            playKingRewardSound()
-                        }, 214000);
-                    }
-            
-                    browser = null; */
     }
 }
 
