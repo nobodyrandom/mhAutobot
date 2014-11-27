@@ -15,7 +15,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.1.144';
+unsafeWindow.addonScriptVer = '1.1.155';
 var STATE = {
     title: document.title,
     ready: false,

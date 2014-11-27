@@ -1950,8 +1950,6 @@ function notify() {
 
 function playKingRewardSound() {
     notify();
-    if (autopopkr)
-        alert("Kings Reward NOW");
 
     if (isKingWarningSound) {
         var hornAudio = new Audio('https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3');
@@ -1966,6 +1964,9 @@ function playKingRewardSound() {
         child = null;
         snippet = null;
     }
+    
+    if (autopopkr)
+        alert("Kings Reward NOW");
 }
 
 function kingRewardCountdownTimer() {
