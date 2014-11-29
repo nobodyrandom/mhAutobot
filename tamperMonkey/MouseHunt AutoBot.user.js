@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom
-// @version    	1.4.201a
+// @version    	1.4.202a
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application in Facebook with MouseHunt version 3.0 (Longtail) supported and many other features. REVAMPED VERSION of ORIGINAL by Ooi
 // @require		https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=26098
 // @namespace   https://greasyfork.org/users/6398
@@ -1904,23 +1904,6 @@ function kingRewardAction() {
 }
 
 function notify() {
-    /* var havePermission = window.webkitNotifications.checkPermission();
-              if (havePermission == 0) {
-                  // 0 is PERMISSION_ALLOWED
-                  var notification = window.webkitNotifications.createNotification(
-                      'http://3.bp.blogspot.com/_O2yZIhpq9E8/TBoAMw0fMNI/AAAAAAAAAxo/1ytaIxQQz4o/s1600/Subliminal+Message.JPG',
-                      'MH Notifications',
-                      'Kings Reward NOW'
-                  );
-          
-                  notification.onclick = function() {
-                      window.open("https://www.mousehuntgame.com/");
-                      notification.close();
-                  }
-                  notification.show();
-              } else {
-                  window.webkitNotifications.requestPermission();
-              } */
     if (!Notification) {
         alert('Please us a modern version of Chrome, Firefox, Opera or Firefox.');
         return;
@@ -1931,7 +1914,7 @@ function notify() {
 
     var notification = new Notification('KR NOW', {
         icon: 'http://3.bp.blogspot.com/_O2yZIhpq9E8/TBoAMw0fMNI/AAAAAAAAAxo/1ytaIxQQz4o/s1600/Subliminal+Message.JPG',
-        body: "Kings Reward NOW",
+        body: "Kings Reward NOW"
     });
 
     notification.onclick = function() {
