@@ -91,7 +91,8 @@ var timerRefreshInterval = 1;
 // WARNING - Do not modify the code below unless you know how to read and write the script.
 
 // All global variable declaration and default value
-var scriptVersion = GM_info.script.version;
+//var scriptVersion = GM_info.script.version;
+var scriptVersion = "1.4.203a";
 var fbPlatform = false;
 var hiFivePlatform = false;
 var mhPlatform = false;
@@ -1043,7 +1044,7 @@ function embedTimer(targetPage) {
                 loadLinkToUpdateDiv.setAttribute('id', 'gDocArea');
                 var tempSpan2 = document.createElement('span');
                 var loadLinkToUpdate = document.createElement('a');
-                text = document.createTextNode('Click to submit to GDoc');
+                text = document.createTextNode('Click to submit to GDoc (broken for chrome ext ver)');
                 loadLinkToUpdate.href = '#';
                 loadLinkToUpdate.setAttribute('id', 'gDocLink');
                 loadLinkToUpdate.appendChild(text);
@@ -1051,7 +1052,7 @@ function embedTimer(targetPage) {
                 tempSpan2.appendChild(loadLinkToUpdate);
                 loadLinkToUpdateDiv.appendChild(tempSpan2);
                 timerDivElement.appendChild(loadLinkToUpdateDiv);
-                loadLinkToUpdate.addEventListener('click', NOBscript, false);
+                //loadLinkToUpdate.addEventListener('click', NOBscript, false);
 
                 text = ' &#126; <a href="javascript:window.open(\'https://docs.google.com/spreadsheet/ccc?key=0Ag_KH_nuVUjbdGtldjJkWUJ4V1ZpUDVwd1FVM0RTM1E#gid=5\');" target=_blank>Click to go to GDoc</a>';
                 var tempDiv = document.createElement('span');
