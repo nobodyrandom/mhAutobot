@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom
-// @version    	1.4.202a
+// @version    	1.4.203a
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application in Facebook with MouseHunt version 3.0 (Longtail) supported and many other features. REVAMPED VERSION of ORIGINAL by Ooi
 // @require		https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=26098
 // @namespace   https://greasyfork.org/users/6398
@@ -1920,13 +1920,13 @@ function notify() {
     notification.onclick = function() {
         window.open("https://www.mousehuntgame.com/");
         notification.close();
-        notification.cancel();
+        //notification.cancel();
     }
 
     notification.onshow = function() {
         setTimeout(function() {
             notification.close();
-            notification.cancel();
+            //notification.cancel();
         }, 5000);
     }
 }
