@@ -15,7 +15,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.1.155';
+var addonScriptVer = '1.1.155';
 var STATE = {
     title: document.title,
     ready: false,
@@ -275,7 +275,7 @@ function MapRequest(handleData) {
 
 // VARS DONE ******************************* COMMENCE CODE
 var mapRequestFailed = false;
-unsafeWindow.NOBscript = function(qqEvent) {
+NOBscript = function(qqEvent) {
     var NOBhasPuzzle = user.has_puzzle;
     var NOBdata = localStorage.getItem('NOB_data');
     var mapThere = document.getElementById('hudmapitem').style;
@@ -308,11 +308,11 @@ unsafeWindow.NOBscript = function(qqEvent) {
     }
 }
 
-unsafeWindow.showHideTimers = function() {
+showHideTimers = function() {
     $("#loadTimersElement").toggle();
 }
 
-unsafeWindow.NOBtravel = function(location) {
+NOBtravel = function(location) {
     if (!NOBhasPuzzle) {
         var url = "https://www.mousehuntgame.com/managers/ajax/users/changeenvironment.php";
         var data = {
@@ -328,7 +328,7 @@ unsafeWindow.NOBtravel = function(location) {
     }
 }
 
-unsafeWindow.NOBupdateCheck = function(callback, error) {
+NOBupdateCheck = function(callback, error) {
     if (NOBpage) {
 		//var currVer = GM_info.script.version;
 		var currVer = "1.4.150a";
