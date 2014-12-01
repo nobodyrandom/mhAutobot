@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom
-// @version    	1.4.203a
+// @version    	1.4.204a
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application in Facebook with MouseHunt version 3.0 (Longtail) supported and many other features. REVAMPED VERSION of ORIGINAL by Ooi
 // @require		https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=26098
 // @namespace   https://greasyfork.org/users/6398
@@ -1942,7 +1942,7 @@ function playKingRewardSound() {
         child.setAttribute('id', "stopAudio");
         child.setAttribute('onclick', 'hornAudio.pause();');
         child.innerHTML = "CLICK ME TO STOP THIS ANNOYING MUSIC";
-        targetArea.appendChild(child);
+        targetArea[0].appendChild(child);
         targetArea = null;
         child = null;
         snippet = null;
