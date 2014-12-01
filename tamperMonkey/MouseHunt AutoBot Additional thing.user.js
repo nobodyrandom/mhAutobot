@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.155
+// @version    	1.1.156
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -78,7 +78,6 @@ var LOCATION_TIMERS = [
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
-NOBhtmlFetch();
 
 // SETTING BASE VARS DONE ******************************* INIT AJAX CALLS AND INIT CALLS
 // Function calls after page LOAD
@@ -105,6 +104,7 @@ $(window).load(function() {
         }
 
         if (NOBpage) {
+        	NOBhtmlFetch();
             createClockArea();
             clockTick();
         }
@@ -330,14 +330,26 @@ unsafeWindow.NOBtravel = function(location) {
 
 unsafeWindow.NOBupdateCheck = function(callback, error) {
     if (NOBpage) {
-		//var currVer = GM_info.script.version;
-		var currVer = "1.4.150a";
-		var checkVer;
-		NOBajaxGet('https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=version', function(text) {
-			callback(text)
-		}, error(a,b,c));
+        var currVer = GM_info.script.version;
+        //var currVer = "1.4.150a";
+        var checkVer;
+        NOBajaxGet('https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=version', function(text) {
+            callback(text)
+        }, error(a, b, c));
     } else {
-    	return false;
+        return false;
+    }
+}
+
+unsafeWindow.NOBfetchMessage = function() {
+    if (NOBpage) {
+        NOBajaxGet('https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=message', function(text) {
+            return text;
+        }, function(a, b, c) {
+            return b;
+        });
+    } else {
+        return "";
     }
 }
 
