@@ -344,7 +344,8 @@ unsafeWindow.NOBupdateCheck = function(callback, error) {
 unsafeWindow.NOBfetchMessage = function() {
     if (NOBpage) {
         NOBajaxGet('https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=message', function(text) {
-            return text;
+        	text = JSON.parse(text);
+            return text.message;
         }, function(a, b, c) {
             return b;
         });
