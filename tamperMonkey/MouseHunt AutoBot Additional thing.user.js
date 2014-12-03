@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing DEVELOPMENT VERSION
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.168d
+// @version    	1.1.169d
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -107,14 +107,8 @@ $(window).load(function() {
         	NOBhtmlFetch();
             createClockArea();
             clockTick();
-            fetchMessage(
-				function(text) {
-					var NOBmessage = document.getElementById('NOBmessage');
-					NOBmessage.innerHTML = text;
-				},
-				function(a, b, c) {
-					console.log(b);
-				});
+            fetchMessage();
+			updateCheck();
         }
     }
 });
@@ -337,25 +331,14 @@ unsafeWindow.NOBtravel = function(location) {
 }
 
 // UPDATE check
-function NOBupdateCheck(callback, error) {
+function updateCheck() {
     if (NOBpage) {
+        var currVer = GM_info.script.version;
+        //var currVer = "1.4.150a";
+        var checkVer;
         var url = 'https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=version';
         NOBajaxGet(url, function(text) {
-            callback(text);
-        }, function() {
-            error(a, b, c);
-        });
-    } else {
-        return false;
-    }
-}
 
-unsafeWindow.NOBupdate = function() {
-    var currVer = GM_info.script.version;
-    //var currVer = "1.4.150a";
-    var checkVer;
-    NOBupdateCheck(
-        function(text) {
             text = JSON.parse(text);
             checkVer = text.version;
             console.log('Current mouseHunt AutoBot version: ' + currVer);
@@ -364,24 +347,25 @@ unsafeWindow.NOBupdate = function() {
                 var updateElement = document.getElementById('updateElement');
                 updateElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\"><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
             }
-        },
-        function(a, b, c) {
+        }, function(a, b, c) {
             console.log(b + ' error - Google Docs is now not working qq');
         });
+    }
 }
 
 // Fetch news
-function fetchMessage(callback, error) {
+function fetchMessage(callback) {
     if (NOBpage) {
         var url = 'https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=message';
         NOBajaxGet(url,
             function(text) {
                 text = JSON.parse(text);
-                callback(text.message);
+                text = text.message;
+                var NOBmessage = document.getElementById('NOBmessage');
+				NOBmessage.innerHTML = text;
             },
             function(a, b, c) {
                 console.log(b);
-                error(b);
             });
     }
 }
