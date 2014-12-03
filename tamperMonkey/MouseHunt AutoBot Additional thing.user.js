@@ -338,7 +338,6 @@ function updateCheck() {
         var checkVer;
         var url = 'https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=version';
         NOBajaxGet(url, function(text) {
-
             text = JSON.parse(text);
             checkVer = text.version;
             console.log('Current mouseHunt AutoBot version: ' + currVer);
