@@ -343,7 +343,11 @@ function NOBupdateCheck(callback, error) {
         //var currVer = "1.4.150a";
         var checkVer;
         var url = 'https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=version';
-        NOBajaxGet(url, callback(text), error(a, b, c));
+        NOBajaxGet(url, function(text) {
+            callback(text);
+        }, function() {
+            error(a, b, c);
+        });
     } else {
         return false;
     }
