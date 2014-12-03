@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing DEVELOPMENT VERSION
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.162d
+// @version    	1.1.163d
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -15,7 +15,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.1.162d';
+unsafeWindow.addonScriptVer = '1.1.163d';
 var STATE = {
     title: document.title,
     ready: false,
@@ -107,6 +107,13 @@ $(window).load(function() {
         	NOBhtmlFetch();
             createClockArea();
             clockTick();
+            NOBfetchMessage(
+				function(text) {
+					NOBmessage.innerHTML = text;
+				},
+				function(a, b, c) {
+					console.log(b);
+				});
         }
     }
 });
@@ -354,7 +361,7 @@ unsafeWindow.NOBupdateCheck = function(callback, error) {
     }
 }*/
 
-unsafeWindow.NOBfetchMessage = function(callback, error) {
+function NOBfetchMessage(callback, error) {
     if (NOBpage) {
         var url = 'https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=message';
         NOBajaxGet(url,
