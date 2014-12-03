@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing DEVELOPMENT VERSION
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.160d
+// @version    	1.1.161d
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -15,7 +15,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.1.160d';
+unsafeWindow.addonScriptVer = '1.1.161d';
 var STATE = {
     title: document.title,
     ready: false,
@@ -339,7 +339,7 @@ unsafeWindow.NOBupdateCheck = function(callback, error) {
     }
 }
 
-unsafeWindow.NOBfetchMessage = function(callback, error) {
+/*unsafeWindow.NOBfetchMessage = function(callback, error) {
     if (NOBpage) {
         var url = 'https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=message';
         NOBajaxGet(url,
@@ -350,6 +350,23 @@ unsafeWindow.NOBfetchMessage = function(callback, error) {
             },
             function(a, b, c) {
                 console.log(b);
+            });
+    }
+}*/
+
+unsafeWindow.NOBfetchMessage = function(callback, error) {
+    if (NOBpage) {
+        var url = 'https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=message';
+        NOBajaxGet(url,
+            function(text) {
+                text = JSON.parse(text);
+                // var parent = document.getElementById('NOBmessage');
+                // parent.innerHTML = text;
+                callback(text.message);
+            },
+            function(a, b, c) {
+                console.log(b);
+                error(b);
             });
     }
 }
