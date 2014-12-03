@@ -333,20 +333,15 @@ unsafeWindow.NOBupdateCheck = function(callback, error) {
         var currVer = GM_info.script.version;
         //var currVer = "1.4.150a";
         var checkVer;
-        NOBajaxGet('https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=version', function(text) {
-            callback(text)
-        }, error(a, b, c));
+        NOBajaxGet('https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=version', callback(text), error(a, b, c));
     } else {
         return false;
     }
 }
 
-unsafeWindow.NOBfetchMessage = function() {
+unsafeWindow.NOBfetchMessage = function(callback, error) {
     if (NOBpage) {
-        NOBajaxGet('https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=message', function(text) {
-        	text = JSON.parse(text);
-            return text.message;
-        }, function(a, b, c) {
+        NOBajaxGet('https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=message', callback(text), function(a, b, c) {
             return b;
         });
     } else {
