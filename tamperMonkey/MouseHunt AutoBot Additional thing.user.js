@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing DEVELOPMENT VERSION
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.164d
+// @version    	1.1.165d
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -336,16 +336,42 @@ unsafeWindow.NOBtravel = function(location) {
     }
 }
 
-unsafeWindow.NOBupdateCheck = function(callback, error) {
+// UPDATE check
+function NOBupdateCheck(callback, error) {
     if (NOBpage) {
         var currVer = GM_info.script.version;
         //var currVer = "1.4.150a";
         var checkVer;
-        NOBajaxGet('https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=version', callback(text), error(a, b, c));
+        var url = 'https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=version';
+        NOBajaxGet(url, callback(text), error(a, b, c));
     } else {
         return false;
     }
 }
+
+unsafeWindow.NOBupdate = function() {
+    NOBupdateCheck(
+        function(text) {
+            text = JSON.parse(text);
+            checkVer = text.version;
+            console.log('Current mouseHunt AutoBot version: ' + currVer);
+            console.log('Server version: ' + checkVer);
+            if (checkVer > currVer) {
+                return true;
+            } else {
+                return false;
+            }
+        },
+        function(a, b, c) {
+            console.log(b + ' error - Google Docs is now not working qq');
+            return false;
+        });
+}
+
+/* if (NOBupdate) {
+	var updateElement = document.getElementById('updateElement');
+	updateElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\"><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
+} */
 
 // Fetch news
 function fetchMessage(callback, error) {
