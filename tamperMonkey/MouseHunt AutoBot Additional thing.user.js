@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing DEVELOPMENT VERSION
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.157d
+// @version    	1.1.158d
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -341,11 +341,15 @@ unsafeWindow.NOBupdateCheck = function(callback, error) {
 
 unsafeWindow.NOBfetchMessage = function(callback, error) {
     if (NOBpage) {
-        NOBajaxGet('https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=message', function(text){console.log(text); callback(text);}, function(a, b, c) {
-            return b;
+    	var url = 'https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=message';
+        NOBajaxGet(url,
+        	function(text){
+        		text = JSON.parse(text);
+        		var parent = document.getElementById('NOBmessage');
+        		parent.innerHTML = text;
+        	}, function(a, b, c) {
+            	console.log(b);
         });
-    } else {
-        return "";
     }
 }
 
@@ -388,7 +392,6 @@ function NOBcalculateTime() {
         //for (i = 0; i < 4; i++) {
         if (typeof LOCATION_TIMERS[3][1].url != 'undefined' || LOCATION_TIMERS[3][1].url != 'undefined') {
             var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=relic";
-            // url = LOCATION_TIMERS[3][1].url;
             NOBajaxGet(url, function(text) {
                 // console.log(JSON.parse(text));
                 text = JSON.parse(text);
