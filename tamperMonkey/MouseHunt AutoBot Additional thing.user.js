@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing DEVELOPMENT VERSION
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.165d
+// @version    	1.1.166d
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
