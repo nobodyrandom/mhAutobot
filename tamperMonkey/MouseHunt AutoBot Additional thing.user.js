@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing DEVELOPMENT VERSION
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.167d
+// @version    	1.1.168d
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -15,7 +15,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.1.167d';
+unsafeWindow.addonScriptVer = '1.1.168d';
 var STATE = {
     title: document.title,
     ready: false,
@@ -351,9 +351,9 @@ function NOBupdateCheck(callback, error) {
 }
 
 unsafeWindow.NOBupdate = function() {
-	var currVer = GM_info.script.version;
-	//var currVer = "1.4.150a";
-	var checkVer;
+    var currVer = GM_info.script.version;
+    //var currVer = "1.4.150a";
+    var checkVer;
     NOBupdateCheck(
         function(text) {
             text = JSON.parse(text);
@@ -361,21 +361,14 @@ unsafeWindow.NOBupdate = function() {
             console.log('Current mouseHunt AutoBot version: ' + currVer);
             console.log('Server version: ' + checkVer);
             if (checkVer > currVer) {
-                return true;
-            } else {
-                return false;
+                var updateElement = document.getElementById('updateElement');
+                updateElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\"><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
             }
         },
         function(a, b, c) {
             console.log(b + ' error - Google Docs is now not working qq');
-            return false;
         });
 }
-
-/* if (NOBupdate) {
-	var updateElement = document.getElementById('updateElement');
-	updateElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\"><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
-} */
 
 // Fetch news
 function fetchMessage(callback, error) {
