@@ -1,9 +1,12 @@
 // ==UserScript==
-// @name        MouseHunt AutoBot REVAMP development ver
-// @author      nobodyrandom
-// @version    	1.4.159d
+// @name        MouseHunt AutoBot REVAMP
+// @author      NobodyRandom
+// @version    	1.4.301a
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application in Facebook with MouseHunt version 3.0 (Longtail) supported and many other features. REVAMPED VERSION of ORIGINAL by Ooi
+// @require		https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=26635
 // @namespace   https://greasyfork.org/users/6398
+// @updateURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.user.js
+// @downloadURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.user.js
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -24,7 +27,7 @@ var hornTimeDelayMin = 1;
 var hornTimeDelayMax = 150;
 
 // // Bot aggressively by ignore all safety measure such as check horn image visible before sounding it. (true/false)
-// // Note: Highly recommanded to turn off because it increase the chances of getting caugh in botting.
+// // Note: Highly recommended to turn off because it increase the chances of getting caugh in botting.
 // // Note: It will ignore the hornTimeDelayMin and hornTimeDelayMax.
 // // Note: It may take a little bit extra of CPU processing power.
 var aggressiveMode = false;
@@ -937,7 +940,7 @@ function embedTimer(targetPage) {
             titleElement = null;
 
             if (targetPage) {
-            	var NOBupdate = true;
+            	/*var NOBupdate = true;
 				NOBupdate = NOBupdateCheck(
 					function(text) {
 						text = JSON.parse(text);
@@ -964,7 +967,13 @@ function embedTimer(targetPage) {
 						updateElement = null;
 						console.log("RAN UPDATE CHECK");
 					}
-				}, 4000);
+				}, 4000); */
+				
+				var NOBmessage = document.createElement('div');
+				NOBmessage.setAttribute('id', 'NOBmessage');
+				NOBmessage.innerHTML = NOBfetchMessage();
+				timerDivElement.appendChild(NOBmessage);
+				NOBmessage = null;
 				
                 nextHornTimeElement = document.createElement('div');
                 nextHornTimeElement.setAttribute('id', 'nextHornTimeElement');
@@ -1055,10 +1064,6 @@ function embedTimer(targetPage) {
                 tempDiv.innerHTML = text;
                 var tempSpan = document.createElement('span');
                 tempSpan.innerHTML = ' &#126; <a href="javascript:window.open(\'http://goo.gl/forms/ayRsnizwL1\');" target=_blank>Click to submit a bug report/feedback</a>';
-                /* var tempAudio = document.createElement('audio');
-                tempAudio.setAttribute('style', 'display: none;');
-                tempAudio.setAttribute('id', 'hornAudio');
-                tempAudio.innerHTML = '<source src="https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3" type="audio/mpeg">Your browser does not support the audio element.'; */
                 loadLinkToUpdateDiv.appendChild(tempDiv);
                 loadLinkToUpdateDiv.appendChild(tempSpan);
 
@@ -1905,23 +1910,6 @@ function kingRewardAction() {
 }
 
 function notify() {
-    /* var havePermission = window.webkitNotifications.checkPermission();
-              if (havePermission == 0) {
-                  // 0 is PERMISSION_ALLOWED
-                  var notification = window.webkitNotifications.createNotification(
-                      'http://3.bp.blogspot.com/_O2yZIhpq9E8/TBoAMw0fMNI/AAAAAAAAAxo/1ytaIxQQz4o/s1600/Subliminal+Message.JPG',
-                      'MH Notifications',
-                      'Kings Reward NOW'
-                  );
-          
-                  notification.onclick = function() {
-                      window.open("https://www.mousehuntgame.com/");
-                      notification.close();
-                  }
-                  notification.show();
-              } else {
-                  window.webkitNotifications.requestPermission();
-              } */
     if (!Notification) {
         alert('Please us a modern version of Chrome, Firefox, Opera or Firefox.');
         return;
@@ -1932,92 +1920,40 @@ function notify() {
 
     var notification = new Notification('KR NOW', {
         icon: 'http://3.bp.blogspot.com/_O2yZIhpq9E8/TBoAMw0fMNI/AAAAAAAAAxo/1ytaIxQQz4o/s1600/Subliminal+Message.JPG',
-        body: "Kings Reward NOW",
+        body: "Kings Reward NOW"
     });
 
     notification.onclick = function() {
         window.open("https://www.mousehuntgame.com/");
         notification.close();
-        notification.cancel();
     }
 
     notification.onshow = function() {
         setTimeout(function() {
             notification.close();
-            notification.cancel();
         }, 5000);
     }
 }
 
 function playKingRewardSound() {
     notify();
-    if (autopopkr)
-        alert("Kings Reward NOW");
-
     if (isKingWarningSound) {
         var hornAudio = new Audio('https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3');
         hornAudio.play();
         var targetArea = document.getElementsByTagName('body');
         var child = document.createElement('button');
         child.setAttribute('id', "stopAudio");
+        child.setAttribute('style', 'position: fixed;');
         child.setAttribute('onclick', 'hornAudio.pause();');
         child.innerHTML = "CLICK ME TO STOP THIS ANNOYING MUSIC";
-        targetArea.appendChild(child);
+        targetArea[0].appendChild(child);
         targetArea = null;
         child = null;
         snippet = null;
-
-        //var browser = browserDetection();
-
-        //if (browser == "") {
-        // The code below are no longer needed
-        /* 
-                        var kingSound = document.createElement("div");
-                        kingSound.innerHTML = "<embed name=\"kingreward\" src=\"http://images.norack.info/prodigy_-_girls.mid\" type=\"audio/midi\" autostart=\"true\" hidden=\"true\" loop=\"true\" mastersound enablejavascript=\"true\"><noembed><bgsound src=\"http://images.norack.info/prodigy_-_girls.mid\" loop=\"infinite\"></noembed></embed>";
-                        
-                        var containerElement = document.getElementById("hgAppContainer");
-                        containerElement.appendChild(kingSound);
-                        containerElement = null;
-                        
-                        kingSound = null;
-                        */
-        /*} else {
-                        // midi music data
-                        // end of track
-            
-                        // Extra note: In Opera: hidden cannot be set to true, else it will fail to play with unknown reason.
-            
-                        var embedMidiElement = document.getElementsByName('embedMidiElement');
-                        if (embedMidiElement.length > 0) {
-                            // remove any same element if found
-                            document.body.removeChild(embedMidiElement[0]);
-                            embedMidiElement = null;
-                        }
-            
-                        embedMidiElement = document.createElement('embed');
-                        embedMidiElement.setAttribute('id', "embedMidiElement");
-                        embedMidiElement.setAttribute('name', "embedMidiElement");
-                        embedMidiElement.setAttribute('src', MIDI_DATA);
-                        embedMidiElement.setAttribute('type', 'audio/midi');
-                        embedMidiElement.setAttribute('controller', 'false');
-                        embedMidiElement.setAttribute('autoplay', 'true');
-                        embedMidiElement.setAttribute('loop', 'true');
-                        embedMidiElement.innerHTML = "<noembed><bgsound src=\"http://images.norack.info/prodigy_-_girls.mid\" loop=\"infinite\"></noembed>";
-                        document.body.appendChild(embedMidiElement);
-            
-                        MIDI_DATA = null;
-                        embedMidiElement = null;
-                    }
-            
-                    if (browser == "opera") {
-                        // since opera cannot loop the king reward music, then we play it again.
-                        window.setTimeout(function() {
-                            playKingRewardSound()
-                        }, 214000);
-                    }
-            
-                    browser = null; */
     }
+    
+    if (autopopkr)
+        alert("Kings Reward NOW");
 }
 
 function kingRewardCountdownTimer() {
