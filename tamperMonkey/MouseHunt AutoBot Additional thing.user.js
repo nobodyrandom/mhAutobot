@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name        MouseHunt AutoBot Additional thing DEVELOPMENT VERSION
+// @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.200d
+// @version    	1.1.156
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -15,7 +15,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.1.200d';
+unsafeWindow.addonScriptVer = '1.1.156';
 var STATE = {
     title: document.title,
     ready: false,
@@ -107,8 +107,6 @@ $(window).load(function() {
         	NOBhtmlFetch();
             createClockArea();
             clockTick();
-            fetchMessage();
-			updateCheck();
         }
     }
 });
@@ -330,48 +328,30 @@ unsafeWindow.NOBtravel = function(location) {
     }
 }
 
-// UPDATE check
-function updateCheck() {
+unsafeWindow.NOBupdateCheck = function(callback, error) {
     if (NOBpage) {
         var currVer = GM_info.script.version;
         //var currVer = "1.4.150a";
         var checkVer;
-        var url = 'https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=version';
-        NOBajaxGet(url, function(text) {
-            text = JSON.parse(text);
-            checkVer = text.version;
-            console.log('Current mouseHunt AutoBot version: ' + currVer);
-            console.log('Server version: ' + checkVer);
-            if (checkVer > currVer) {
-                var updateElement = document.getElementById('updateElement');
-                updateElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\"><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
-            }
-        }, function(a, b, c) {
-            console.log(b + ' error - Google Docs is now not working qq');
-        });
+        NOBajaxGet('https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=version', function(text) {
+            callback(text)
+        }, error(a, b, c));
+    } else {
+        return false;
     }
 }
 
-// Fetch news
-function fetchMessage(callback) {
+unsafeWindow.NOBfetchMessage = function() {
     if (NOBpage) {
-        var url = 'https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=message';
-        NOBajaxGet(url,
-            function(text) {
-                text = JSON.parse(text);
-                text = text.message;
-                var NOBmessage = document.getElementById('NOBmessage');
-				NOBmessage.innerHTML = text;
-            },
-            function(a, b, c) {
-                console.log(b);
-            });
+        NOBajaxGet('https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=message', function(text) {
+        	text = JSON.parse(text);
+            return text.message;
+        }, function(a, b, c) {
+            return b;
+        });
+    } else {
+        return "";
     }
-}
-
-function hideMessage(time) {
-	var element = document.getElementById('NOBmessage');
-	
 }
 
 // CALCULATE TIMER *******************************
@@ -413,6 +393,7 @@ function NOBcalculateTime() {
         //for (i = 0; i < 4; i++) {
         if (typeof LOCATION_TIMERS[3][1].url != 'undefined' || LOCATION_TIMERS[3][1].url != 'undefined') {
             var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=relic";
+            // url = LOCATION_TIMERS[3][1].url;
             NOBajaxGet(url, function(text) {
                 // console.log(JSON.parse(text));
                 text = JSON.parse(text);
