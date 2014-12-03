@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom
-// @version    	1.4.210a
+// @version    	1.4.300a
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application in Facebook with MouseHunt version 3.0 (Longtail) supported and many other features. REVAMPED VERSION of ORIGINAL by Ooi
 // @require		https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=26635
 // @namespace   https://greasyfork.org/users/6398
@@ -27,7 +27,7 @@ var hornTimeDelayMin = 1;
 var hornTimeDelayMax = 150;
 
 // // Bot aggressively by ignore all safety measure such as check horn image visible before sounding it. (true/false)
-// // Note: Highly recommanded to turn off because it increase the chances of getting caugh in botting.
+// // Note: Highly recommended to turn off because it increase the chances of getting caugh in botting.
 // // Note: It will ignore the hornTimeDelayMin and hornTimeDelayMax.
 // // Note: It may take a little bit extra of CPU processing power.
 var aggressiveMode = false;
@@ -1926,26 +1926,24 @@ function notify() {
     notification.onclick = function() {
         window.open("https://www.mousehuntgame.com/");
         notification.close();
-        //notification.cancel();
     }
 
     notification.onshow = function() {
         setTimeout(function() {
             notification.close();
-            //notification.cancel();
         }, 5000);
     }
 }
 
 function playKingRewardSound() {
     notify();
-
     if (isKingWarningSound) {
         var hornAudio = new Audio('https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3');
         hornAudio.play();
         var targetArea = document.getElementsByTagName('body');
         var child = document.createElement('button');
         child.setAttribute('id', "stopAudio");
+        child.setAttribute('style', 'position: fixed;');
         child.setAttribute('onclick', 'hornAudio.pause();');
         child.innerHTML = "CLICK ME TO STOP THIS ANNOYING MUSIC";
         targetArea[0].appendChild(child);
