@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP DEVELOPMENT VERSION
 // @author      NobodyRandom
-// @version    	1.4.307d
+// @version    	1.4.308d
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application in Facebook with MouseHunt version 3.0 (Longtail) supported and many other features. REVAMPED VERSION of ORIGINAL by Ooi
 // @namespace   https://greasyfork.org/users/6398
 // @license 	GNU GPL v2.0
@@ -968,9 +968,11 @@ function embedTimer(targetPage) {
 				
 				var NOBmessage = document.createElement('div');
 				NOBmessage.setAttribute('id', 'NOBmessage');
-				var text = NOBfetchMessage(function(text){return text;}, function(a,b,c){console.log(b);});
-				NOBmessage.innerHTML = text;
+				var shovein = "";
+				NOBfetchMessage(function(text){shovein = text;}, function(a,b,c){console.log(b);});
+				NOBmessage.innerHTML = shovein;
 				timerDivElement.appendChild(NOBmessage);
+				shovein = null;
 				NOBmessage = null;
 				
                 nextHornTimeElement = document.createElement('div');
