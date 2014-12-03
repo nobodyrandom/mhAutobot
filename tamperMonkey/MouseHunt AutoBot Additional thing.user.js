@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing DEVELOPMENT VERSION
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.163d
+// @version    	1.1.164d
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -107,8 +107,9 @@ $(window).load(function() {
         	NOBhtmlFetch();
             createClockArea();
             clockTick();
-            NOBfetchMessage(
+            fetchMessage(
 				function(text) {
+					var NOBmessage = document.getElementById('NOBmessage');
 					NOBmessage.innerHTML = text;
 				},
 				function(a, b, c) {
@@ -346,29 +347,13 @@ unsafeWindow.NOBupdateCheck = function(callback, error) {
     }
 }
 
-/*unsafeWindow.NOBfetchMessage = function(callback, error) {
+// Fetch news
+function fetchMessage(callback, error) {
     if (NOBpage) {
         var url = 'https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=message';
         NOBajaxGet(url,
             function(text) {
                 text = JSON.parse(text);
-                var parent = document.getElementById('NOBmessage');
-                parent.innerHTML = text;
-            },
-            function(a, b, c) {
-                console.log(b);
-            });
-    }
-}*/
-
-function NOBfetchMessage(callback, error) {
-    if (NOBpage) {
-        var url = 'https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=message';
-        NOBajaxGet(url,
-            function(text) {
-                text = JSON.parse(text);
-                // var parent = document.getElementById('NOBmessage');
-                // parent.innerHTML = text;
                 callback(text.message);
             },
             function(a, b, c) {
@@ -376,6 +361,11 @@ function NOBfetchMessage(callback, error) {
                 error(b);
             });
     }
+}
+
+function hideMessage(time) {
+	var element = document.getElementById('NOBmessage');
+	
 }
 
 // CALCULATE TIMER *******************************
