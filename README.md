@@ -3,13 +3,14 @@
 
 ~~[Original](http://userscripts-mirror.org/scripts/show/78731.html) version made and owned by [Ooi Keng Siang](http://ooiks.com/blog/mousehunt-autobot) \(He no longer develops this code\)~~
 
+######Chrome version is now made - download it [here](https://github.com/nobodyrandom/mhAutobot/raw/master/chromeExtension.crx) (version 1.4.400a script)
+
 [REVAMP](https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) version adapts the original, with few bug fixes and etc \(ver a\)
 
 [ENHANCED + REVAMP](https://greasyfork.org/en/scripts/6514-mousehunt-autobot-enhanced-revamp) version adapted from version made and owned by [CNN](https://devcnn.wordpress.com/) \(ver b\) \(Just a note, he was **banned** for making and using the ENHANCED version, so up to you if you dare use it\)
 
 To install this version, please use [greasyFork](https://greasyfork.org/en/scripts/6092-mousehunt-autobot) or [OpenUserJS](https://openuserjs.org/scripts/nobodyrandom/MouseHunt_AutoBot_REVAMP)
 Note: this version of the code includes two separate files which should automatically instal itself. If features such as 'Send to GDoc' does not work, please install [the second file](https://greasyfork.org/en/scripts/6094-mousehunt-autobot-additional-thing) as well.
-######Chrome version is now made - download it [here](https://github.com/nobodyrandom/mhAutobot/raw/master/chromeExtension.crx) (version 1.4.203a script)
 
 #####PRECAUTION: Use this script at your own risk as this is against the rule of Mousehunt.
 *****
