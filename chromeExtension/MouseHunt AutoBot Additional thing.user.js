@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.155
+// @version    	1.1.200
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -15,7 +15,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-var addonScriptVer = '1.1.155';
+var addonScriptVer = '1.1.200';
 var STATE = {
     title: document.title,
     ready: false,
@@ -78,7 +78,6 @@ var LOCATION_TIMERS = [
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
-NOBhtmlFetch();
 
 // SETTING BASE VARS DONE ******************************* INIT AJAX CALLS AND INIT CALLS
 // Function calls after page LOAD
@@ -105,8 +104,11 @@ $(window).load(function() {
         }
 
         if (NOBpage) {
+        	NOBhtmlFetch();
             createClockArea();
             clockTick();
+            fetchMessage();
+			updateCheck();
         }
     }
 });
@@ -275,7 +277,7 @@ function MapRequest(handleData) {
 
 // VARS DONE ******************************* COMMENCE CODE
 var mapRequestFailed = false;
-NOBscript = function(qqEvent) {
+function NOBscript(qqEvent) {
     var NOBhasPuzzle = user.has_puzzle;
     var NOBdata = localStorage.getItem('NOB_data');
     var mapThere = document.getElementById('hudmapitem').style;
@@ -308,11 +310,11 @@ NOBscript = function(qqEvent) {
     }
 }
 
-showHideTimers = function() {
+function showHideTimers() {
     $("#loadTimersElement").toggle();
 }
 
-NOBtravel = function(location) {
+function NOBtravel(location) {
     if (!NOBhasPuzzle) {
         var url = "https://www.mousehuntgame.com/managers/ajax/users/changeenvironment.php";
         var data = {
@@ -328,17 +330,48 @@ NOBtravel = function(location) {
     }
 }
 
-NOBupdateCheck = function(callback, error) {
+// UPDATE check
+function updateCheck() {
     if (NOBpage) {
-		//var currVer = GM_info.script.version;
-		var currVer = "1.4.150a";
-		var checkVer;
-		NOBajaxGet('https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=version', function(text) {
-			callback(text)
-		}, error(a,b,c));
-    } else {
-    	return false;
+        //var currVer = GM_info.script.version;
+        var currVer = "1.4.400a";
+        var checkVer;
+        var url = 'https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=version';
+        NOBajaxGet(url, function(text) {
+            text = JSON.parse(text);
+            checkVer = text.version;
+            console.log('Current mouseHunt AutoBot version: ' + currVer);
+            console.log('Server version: ' + checkVer);
+            if (checkVer > currVer) {
+                var updateElement = document.getElementById('updateElement');
+                updateElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\"><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
+            }
+        }, function(a, b, c) {
+            console.log(b + ' error - Google Docs is now not working qq');
+        });
     }
+}
+
+// Fetch news
+function fetchMessage(callback) {
+    if (NOBpage) {
+        var url = 'https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=message';
+        NOBajaxGet(url,
+            function(text) {
+                text = JSON.parse(text);
+                text = text.message;
+                var NOBmessage = document.getElementById('NOBmessage');
+				NOBmessage.innerHTML = text;
+            },
+            function(a, b, c) {
+                console.log(b);
+            });
+    }
+}
+
+function hideMessage(time) {
+	var element = document.getElementById('NOBmessage');
+	
 }
 
 // CALCULATE TIMER *******************************
@@ -380,7 +413,6 @@ function NOBcalculateTime() {
         //for (i = 0; i < 4; i++) {
         if (typeof LOCATION_TIMERS[3][1].url != 'undefined' || LOCATION_TIMERS[3][1].url != 'undefined') {
             var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=relic";
-            // url = LOCATION_TIMERS[3][1].url;
             NOBajaxGet(url, function(text) {
                 // console.log(JSON.parse(text));
                 text = JSON.parse(text);

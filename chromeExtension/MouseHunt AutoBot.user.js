@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom
-// @version    	1.4.203a
+// @version    	1.4.400a
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application in Facebook with MouseHunt version 3.0 (Longtail) supported and many other features. REVAMPED VERSION of ORIGINAL by Ooi
-// @require		https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=26098
+// @require		https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=26765
 // @namespace   https://greasyfork.org/users/6398
 // @updateURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.user.js
 // @downloadURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.user.js
@@ -27,7 +27,7 @@ var hornTimeDelayMin = 1;
 var hornTimeDelayMax = 150;
 
 // // Bot aggressively by ignore all safety measure such as check horn image visible before sounding it. (true/false)
-// // Note: Highly recommanded to turn off because it increase the chances of getting caugh in botting.
+// // Note: Highly recommended to turn off because it increase the chances of getting caugh in botting.
 // // Note: It will ignore the hornTimeDelayMin and hornTimeDelayMax.
 // // Note: It may take a little bit extra of CPU processing power.
 var aggressiveMode = false;
@@ -92,7 +92,7 @@ var timerRefreshInterval = 1;
 
 // All global variable declaration and default value
 //var scriptVersion = GM_info.script.version;
-var scriptVersion = "1.4.203a";
+var scriptVersion = "1.4.400a";
 var fbPlatform = false;
 var hiFivePlatform = false;
 var mhPlatform = false;
@@ -941,34 +941,15 @@ function embedTimer(targetPage) {
             titleElement = null;
 
             if (targetPage) {
-            	var NOBupdate = true;
-				NOBupdate = NOBupdateCheck(
-					function(text) {
-						text = JSON.parse(text);
-						checkVer = text.version;
-						console.log('Current mouseHunt AutoBot version: ' + currVer);
-						console.log('Server version: ' + checkVer);
-						if (checkVer > currVer) {
-							return true;
-						} else {
-							return false;
-						}
-					},
-					function(a, b, c) {
-						console.log(b + ' error - Google Docs is now not working qq');
-						return false;
-					});
-				// console.log(NOBupdate);
-				setTimeout(function() {
-					if (NOBupdate) {
-						var updateElement = document.createElement('div');
-						updateElement.setAttribute('id', 'updateElement');
-						updateElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\"><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
-						timerDivElement.appendChild(updateElement);
-						updateElement = null;
-						console.log("RAN UPDATE CHECK");
-					}
-				}, 4000);
+            	var updateElement = document.createElement('div');
+				updateElement.setAttribute('id', 'updateElement');
+				timerDivElement.appendChild(updateElement);
+				updateElement = null;
+				
+				var NOBmessage = document.createElement('div');
+				NOBmessage.setAttribute('id', 'NOBmessage');
+				timerDivElement.appendChild(NOBmessage);
+				NOBmessage = null;
 				
                 nextHornTimeElement = document.createElement('div');
                 nextHornTimeElement.setAttribute('id', 'nextHornTimeElement');
@@ -1044,7 +1025,7 @@ function embedTimer(targetPage) {
                 loadLinkToUpdateDiv.setAttribute('id', 'gDocArea');
                 var tempSpan2 = document.createElement('span');
                 var loadLinkToUpdate = document.createElement('a');
-                text = document.createTextNode('Click to submit to GDoc (broken for chrome ext ver)');
+                text = document.createTextNode('Click to submit to GDoc');
                 loadLinkToUpdate.href = '#';
                 loadLinkToUpdate.setAttribute('id', 'gDocLink');
                 loadLinkToUpdate.appendChild(text);
@@ -1052,7 +1033,7 @@ function embedTimer(targetPage) {
                 tempSpan2.appendChild(loadLinkToUpdate);
                 loadLinkToUpdateDiv.appendChild(tempSpan2);
                 timerDivElement.appendChild(loadLinkToUpdateDiv);
-                //loadLinkToUpdate.addEventListener('click', NOBscript, false);
+                loadLinkToUpdate.addEventListener('click', NOBscript, false);
 
                 text = ' &#126; <a href="javascript:window.open(\'https://docs.google.com/spreadsheet/ccc?key=0Ag_KH_nuVUjbdGtldjJkWUJ4V1ZpUDVwd1FVM0RTM1E#gid=5\');" target=_blank>Click to go to GDoc</a>';
                 var tempDiv = document.createElement('span');
@@ -1921,29 +1902,27 @@ function notify() {
     notification.onclick = function() {
         window.open("https://www.mousehuntgame.com/");
         notification.close();
-        //notification.cancel();
     }
 
     notification.onshow = function() {
         setTimeout(function() {
             notification.close();
-            //notification.cancel();
         }, 5000);
     }
 }
 
 function playKingRewardSound() {
     notify();
-
     if (isKingWarningSound) {
         var hornAudio = new Audio('https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3');
         hornAudio.play();
         var targetArea = document.getElementsByTagName('body');
         var child = document.createElement('button');
         child.setAttribute('id', "stopAudio");
+        child.setAttribute('style', 'position: fixed;');
         child.setAttribute('onclick', 'hornAudio.pause();');
         child.innerHTML = "CLICK ME TO STOP THIS ANNOYING MUSIC";
-        targetArea.appendChild(child);
+        targetArea[0].appendChild(child);
         targetArea = null;
         child = null;
         snippet = null;
