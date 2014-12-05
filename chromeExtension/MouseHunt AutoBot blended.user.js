@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	1.4.225b
+// @version    	1.4.400b
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application in Facebook with MouseHunt version 3.0 (Longtail) supported and many other features. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN
-// @require     https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=25877
+// @require     https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=26765
 // @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot, https://devcnn.wordpress.com/
 // @updateURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.user.js
 // @downloadURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.user.js
@@ -109,7 +109,8 @@ var spongeCharm = ['Double Sponge', 'Sponge'];
 // WARNING - Do not modify the code below unless you know how to read and write the script.
 
 // All global variable declaration and default value
-var scriptVersion = "1.4.225b [revamp + enhance]";
+//var scriptVersion = GM_info.script.version;
+var scriptVersion = "1.4.400b";
 var fbPlatform = false;
 var hiFivePlatform = false;
 var mhPlatform = false;
@@ -1475,14 +1476,24 @@ function embedTimer(targetPage) {
             var titleElement = document.createElement('div');
             titleElement.setAttribute('id', 'titleElement');
             if (targetPage && aggressiveMode) {
-                titleElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target=\"_blank\"><b>MouseHunt AutoBot (version " + scriptVersion + ")</b></a> - <font color='red'>Aggressive Mode</font>";
+                titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target=\"_blank\">MouseHunt AutoBot (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing (version " + addonScriptVer + ")</b> - <font color='red'>Aggressive Mode</font>";
             } else {
-                titleElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target=\"_blank\"><b>MouseHunt AutoBot (version " + scriptVersion + ")</b></a>";
+                titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target=\"_blank\">MouseHunt AutoBot (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing (version " + addonScriptVer + ")</b>";
             }
             timerDivElement.appendChild(titleElement);
             titleElement = null;
 
             if (targetPage) {
+            	var updateElement = document.createElement('div');
+				updateElement.setAttribute('id', 'updateElement');
+				timerDivElement.appendChild(updateElement);
+				updateElement = null;
+				
+				var NOBmessage = document.createElement('div');
+				NOBmessage.setAttribute('id', 'NOBmessage');
+				timerDivElement.appendChild(NOBmessage);
+				NOBmessage = null;
+				
                 nextHornTimeElement = document.createElement('div');
                 nextHornTimeElement.setAttribute('id', 'nextHornTimeElement');
                 nextHornTimeElement.innerHTML = "<b>Next Hunter Horn Time:</b> Loading...";
@@ -1555,23 +1566,30 @@ function embedTimer(targetPage) {
 
                 var loadLinkToUpdateDiv = document.createElement('div');
                 loadLinkToUpdateDiv.setAttribute('id', 'gDocArea');
+                var tempSpan2 = document.createElement('span');
                 var loadLinkToUpdate = document.createElement('a');
                 text = document.createTextNode('Click to submit to GDoc');
                 loadLinkToUpdate.href = '#';
                 loadLinkToUpdate.setAttribute('id', 'gDocLink');
                 loadLinkToUpdate.appendChild(text);
                 text = null;
-                loadLinkToUpdateDiv.appendChild(loadLinkToUpdate);
+                tempSpan2.appendChild(loadLinkToUpdate);
+                loadLinkToUpdateDiv.appendChild(tempSpan2);
                 timerDivElement.appendChild(loadLinkToUpdateDiv);
                 loadLinkToUpdate.addEventListener('click', NOBscript, false);
 
                 text = ' &#126; <a href="javascript:window.open(\'https://docs.google.com/spreadsheet/ccc?key=0Ag_KH_nuVUjbdGtldjJkWUJ4V1ZpUDVwd1FVM0RTM1E#gid=5\');" target=_blank>Click to go to GDoc</a>';
                 var tempDiv = document.createElement('span');
                 tempDiv.innerHTML = text;
+                var tempSpan = document.createElement('span');
+                tempSpan.innerHTML = ' &#126; <a href="javascript:window.open(\'http://goo.gl/forms/ayRsnizwL1\');" target=_blank>Click to submit a bug report/feedback</a>';
                 loadLinkToUpdateDiv.appendChild(tempDiv);
+                loadLinkToUpdateDiv.appendChild(tempSpan);
 
                 text = null;
                 tempDiv = null;
+                tempSpan = null;
+                tempSpan2 = null;
                 loadLinkToUpdateDiv = null;
                 timersElementToggle = null;
                 loadTimersElement = null;
@@ -2451,23 +2469,6 @@ function kingRewardAction() {
 }
 
 function notify() {
-    /* var havePermission = window.webkitNotifications.checkPermission();
-              if (havePermission == 0) {
-                  // 0 is PERMISSION_ALLOWED
-                  var notification = window.webkitNotifications.createNotification(
-                      'http://3.bp.blogspot.com/_O2yZIhpq9E8/TBoAMw0fMNI/AAAAAAAAAxo/1ytaIxQQz4o/s1600/Subliminal+Message.JPG',
-                      'MH Notifications',
-                      'Kings Reward NOW'
-                  );
-          
-                  notification.onclick = function() {
-                      window.open("https://www.mousehuntgame.com/");
-                      notification.close();
-                  }
-                  notification.show();
-              } else {
-                  window.webkitNotifications.requestPermission();
-              } */
     if (!Notification) {
         alert('Please us a modern version of Chrome, Firefox, Opera or Firefox.');
         return;
@@ -2476,88 +2477,42 @@ function notify() {
     if (Notification.permission !== "granted")
         Notification.requestPermission();
 
-    var notification = new Notification('Notification title', {
+    var notification = new Notification('KR NOW', {
         icon: 'http://3.bp.blogspot.com/_O2yZIhpq9E8/TBoAMw0fMNI/AAAAAAAAAxo/1ytaIxQQz4o/s1600/Subliminal+Message.JPG',
-        body: "Kings Reward NOW",
+        body: "Kings Reward NOW"
     });
 
     notification.onclick = function() {
         window.open("https://www.mousehuntgame.com/");
         notification.close();
     }
+
+    notification.onshow = function() {
+        setTimeout(function() {
+            notification.close();
+        }, 5000);
+    }
 }
 
 function playKingRewardSound() {
     notify();
-    if (autopopkr) {
-        alert("Kings Reward NOW");
-    }
     if (isKingWarningSound) {
+        var hornAudio = new Audio('https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3');
+        hornAudio.play();
         var targetArea = document.getElementsByTagName('body');
-        var child = document.createElement('audio');
-        child.setAttribute('id', "embedHorn");
-        child.setAttribute('controller', 'false');
-        child.setAttribute('preload', 'auto');
-        child.setAttribute('loop', 'true');
-        child.setAttribute('style', 'display: none;');
-        var snippet = document.createTextNode('<source src="horn.mp3" type="audio/mpeg"/>');
-        child.appendChild(snippet);
-        targetArea.appendChild(child);
+        var child = document.createElement('button');
+        child.setAttribute('id', "stopAudio");
+        child.setAttribute('style', 'position: fixed;');
+        child.setAttribute('onclick', 'hornAudio.pause();');
+        child.innerHTML = "CLICK ME TO STOP THIS ANNOYING MUSIC";
+        targetArea[0].appendChild(child);
         targetArea = null;
         child = null;
         snippet = null;
-
-        //var browser = browserDetection();
-
-        //if (browser == "") {
-        // The code below are no longer needed
-        /* 
-                        var kingSound = document.createElement("div");
-                        kingSound.innerHTML = "<embed name=\"kingreward\" src=\"http://images.norack.info/prodigy_-_girls.mid\" type=\"audio/midi\" autostart=\"true\" hidden=\"true\" loop=\"true\" mastersound enablejavascript=\"true\"><noembed><bgsound src=\"http://images.norack.info/prodigy_-_girls.mid\" loop=\"infinite\"></noembed></embed>";
-                        
-                        var containerElement = document.getElementById("hgAppContainer");
-                        containerElement.appendChild(kingSound);
-                        containerElement = null;
-                        
-                        kingSound = null;
-                        */
-        /*} else {
-                        // midi music data
-                        // end of track
-            
-                        // Extra note: In Opera: hidden cannot be set to true, else it will fail to play with unknown reason.
-            
-                        var embedMidiElement = document.getElementsByName('embedMidiElement');
-                        if (embedMidiElement.length > 0) {
-                            // remove any same element if found
-                            document.body.removeChild(embedMidiElement[0]);
-                            embedMidiElement = null;
-                        }
-            
-                        embedMidiElement = document.createElement('embed');
-                        embedMidiElement.setAttribute('id', "embedMidiElement");
-                        embedMidiElement.setAttribute('name', "embedMidiElement");
-                        embedMidiElement.setAttribute('src', MIDI_DATA);
-                        embedMidiElement.setAttribute('type', 'audio/midi');
-                        embedMidiElement.setAttribute('controller', 'false');
-                        embedMidiElement.setAttribute('autoplay', 'true');
-                        embedMidiElement.setAttribute('loop', 'true');
-                        embedMidiElement.innerHTML = "<noembed><bgsound src=\"http://images.norack.info/prodigy_-_girls.mid\" loop=\"infinite\"></noembed>";
-                        document.body.appendChild(embedMidiElement);
-            
-                        MIDI_DATA = null;
-                        embedMidiElement = null;
                     }
             
-                    if (browser == "opera") {
-                        // since opera cannot loop the king reward music, then we play it again.
-                        window.setTimeout(function() {
-                            playKingRewardSound()
-                        }, 214000);
-                    }
-            
-                    browser = null; */
-    }
+    if (autopopkr)
+        alert("Kings Reward NOW");
 }
 
 function kingRewardCountdownTimer() {
@@ -2664,7 +2619,6 @@ function trapCheck() {
     displayTimer("Checking The Trap...", "Checking trap now...", "Checking trap now...");
 
     // simulate mouse click on the camp button
-    var campElement = document.getElementsByClassName(strCampButton)[0].firstChild;
     fireEvent(campElement, 'click');
     campElement = null;
 

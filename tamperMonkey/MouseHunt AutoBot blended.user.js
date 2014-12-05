@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	1.4.300b
+// @version    	1.4.400b
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application in Facebook with MouseHunt version 3.0 (Longtail) supported and many other features. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN
-// @require     https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=26635
+// @require     https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=26765
 // @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot, https://devcnn.wordpress.com/
 // @updateURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.user.js
 // @downloadURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.user.js
@@ -110,6 +110,7 @@ var spongeCharm = ['Double Sponge', 'Sponge'];
 
 // All global variable declaration and default value
 var scriptVersion = GM_info.script.version;
+//var scriptVersion = "1.4.400b";
 var fbPlatform = false;
 var hiFivePlatform = false;
 var mhPlatform = false;
@@ -1483,6 +1484,16 @@ function embedTimer(targetPage) {
             titleElement = null;
 
             if (targetPage) {
+            	var updateElement = document.createElement('div');
+				updateElement.setAttribute('id', 'updateElement');
+				timerDivElement.appendChild(updateElement);
+				updateElement = null;
+				
+				var NOBmessage = document.createElement('div');
+				NOBmessage.setAttribute('id', 'NOBmessage');
+				timerDivElement.appendChild(NOBmessage);
+				NOBmessage = null;
+				
                 nextHornTimeElement = document.createElement('div');
                 nextHornTimeElement.setAttribute('id', 'nextHornTimeElement');
                 nextHornTimeElement.innerHTML = "<b>Next Hunter Horn Time:</b> Loading...";
@@ -1555,13 +1566,15 @@ function embedTimer(targetPage) {
 
                 var loadLinkToUpdateDiv = document.createElement('div');
                 loadLinkToUpdateDiv.setAttribute('id', 'gDocArea');
+                var tempSpan2 = document.createElement('span');
                 var loadLinkToUpdate = document.createElement('a');
                 text = document.createTextNode('Click to submit to GDoc');
                 loadLinkToUpdate.href = '#';
                 loadLinkToUpdate.setAttribute('id', 'gDocLink');
                 loadLinkToUpdate.appendChild(text);
                 text = null;
-                loadLinkToUpdateDiv.appendChild(loadLinkToUpdate);
+                tempSpan2.appendChild(loadLinkToUpdate);
+                loadLinkToUpdateDiv.appendChild(tempSpan2);
                 timerDivElement.appendChild(loadLinkToUpdateDiv);
                 loadLinkToUpdate.addEventListener('click', NOBscript, false);
 
@@ -1576,6 +1589,7 @@ function embedTimer(targetPage) {
                 text = null;
                 tempDiv = null;
                 tempSpan = null;
+                tempSpan2 = null;
                 loadLinkToUpdateDiv = null;
                 timersElementToggle = null;
                 loadTimersElement = null;
