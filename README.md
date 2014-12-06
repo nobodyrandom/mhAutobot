@@ -27,6 +27,7 @@ Additional features added:
 >*	Auto Kings Reward popup (check the settings)
 >*  Cleaned code
 >*  Removed not working sound player and replaced with HTML5 one, pls comment if problem occurs
->*  Fixed browser notif, but the trigger is funny =,=
+>*  Browser notif and tiggers are now fixed ^.^
+>*	KR auto resume etc are now fixed
 
 #####Sorrry I am new to GitHub, GM and actually anything at all so if there's something wrong pls email me or submit a bug report asap so I can fix it
