@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.202
+// @version    	1.1.203
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -15,7 +15,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.1.202';
+unsafeWindow.addonScriptVer = '1.1.203';
 var STATE = {
     title: document.title,
     ready: false,
@@ -37,11 +37,11 @@ var STATE = {
     lastjournal: 0
 }
 
-if (localStorage.getItem('NOB_data') == null || localStorage.getItem('NOB_data') == undefined) {
+if (localStorage.getItem('NOB-data') == null || localStorage.getItem('NOB-data') == undefined) {
     NOBhtmlFetch();
-    var STATE = localStorage.getItem('NOB_data');
+    var STATE = localStorage.getItem('NOB-data');
 } else {
-    var STATE = localStorage.getItem('NOB_data');
+    var STATE = localStorage.getItem('NOB-data');
 }
 
 var LOCATION_TIMERS = [
