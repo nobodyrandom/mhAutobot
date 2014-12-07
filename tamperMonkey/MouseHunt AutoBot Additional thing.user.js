@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.206
+// @version    	1.1.207
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -15,7 +15,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.1.206';
+unsafeWindow.addonScriptVer = '1.1.207';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -330,13 +330,13 @@ function fetchGDocStuff() {
         var checkVer;
         var url = 'https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=all';
         NOBajaxGet(url, function(text) {
+        	text = JSON.parse(text);
             // MESSAGE PLACING
             message = text.message;
             var NOBmessage = document.getElementById('NOBmessage');
             NOBmessage.innerHTML = message;
 
             // UPDATE CHECK
-            text = JSON.parse(text);
             checkVer = text.version;
             console.log('Current mouseHunt AutoBot version: ' + currVer);
             console.log('Server version: ' + checkVer);
