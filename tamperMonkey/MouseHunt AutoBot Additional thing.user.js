@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.209
+// @version    	1.1.210
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -15,7 +15,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.1.209';
+unsafeWindow.addonScriptVer = '1.1.210';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -269,7 +269,7 @@ unsafeWindow.NOBscript = function(qqEvent) {
                     }
                 });
             } else {
-                console.log("Map fetch failed using USER data from html");
+                console.log("Map fetch failed using USER data from html (" + mapRequestFailed + ", " + mapThere + ")");
                 NOBhtmlFetch();
                 var output = NOBget('data');
                 GDoc(output, "user");
