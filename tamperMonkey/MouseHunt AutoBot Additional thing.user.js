@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.208
+// @version    	1.1.209
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -22,27 +22,6 @@ var NOBpage = false;
 var mapRequestFailed = false;
 var clockTicking = false;
 var clockNeedOn = false;
-
-/*var STATE = {
-    title: document.title,
-    ready: false,
-    hash: '',
-    level: -1,
-    location: -1,
-    trap: -1,
-    base: -1,
-    cheese: -1,
-    route: null,
-    maintenance: false,
-    king: false,
-    redirect: '',
-    baseurl: location.protocol + '//www.mousehuntgame.com/',
-    hornstate: 0, // 0 = countdown, 1 = ready, 2 = sounding
-    userobject: null,
-    errorshown: false,
-    tourney: -1,
-    lastjournal: 0
-} */
 
 var LOCATION_TIMERS = [
     ['Seasonal Garden', {
@@ -416,6 +395,9 @@ function NOBcalculateTime() {
 		var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=relic";
 		NOBajaxGet(url, function(text) {
 			text = JSON.parse(text);
+			var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
+			child.innerHTML = "Relic hunter now in: <font color='green'>" + text.location + "</font> \~ Next move time: <span id='NOBrelic'>" + UpdateTimer(text.next_move, true);
+			
 			if (text.next_move > 0) {
 				clockTicking = true;
 				NOBstore(text.next_move,'relic');
@@ -425,8 +407,6 @@ function NOBcalculateTime() {
 				clockTicking = false;
 				clockNeedOn = false;
 			}
-			var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
-			child.innerHTML = "Relic hunter now in: <font color='green'>" + text.location + "</font> \~ Next move time: <span id='NOBrelic'>" + UpdateTimer(text.next_move, true);
 		}, function(a, b, c) {
 			var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
 			child.innerHTML = "<font color='red'>" + b + " error, probably hornTracker, google, or my scripts broke. Please wait awhile, if not just contact me.</font>";
