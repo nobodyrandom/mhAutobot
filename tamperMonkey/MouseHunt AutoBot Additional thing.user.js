@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.207
+// @version    	1.1.208
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -15,7 +15,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.1.207';
+unsafeWindow.addonScriptVer = '1.1.208';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -378,11 +378,12 @@ function createClockArea() {
 }
 
 function clockTick() {
-	if (clockNeedOn && !clockTicking) {
+	var temp = document.getElementById('NOBrelic');
+	if (clockNeedOn && !clockTicking && temp) {
 		// Clock needs to be on, but is not ticking
 		updateTime();
-	} else if (clockTicking && clockNeedOn) {
-		// Clock needs to be on and is ticking
+	} else if (clockTicking && clockNeedOn && temp) {
+		// Clock needs to be on and is already ticking
 	} else {
 		// Clock does not need to be on
 		NOBcalculateTime();
