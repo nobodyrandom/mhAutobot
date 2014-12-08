@@ -2,8 +2,8 @@
   "manifest_version": 2,
 
   "name": "MouseHunt AutoBot REVAMP chrome ext ver",
-  "description": "An advance user script to automate sounding the hunter horn in MouseHunt application in Facebook with MouseHunt version 3.0 (Longtail) supported and many other features. REVAMPED VERSION of ORIGINAL",
-  "version": "1.400.200",
+  "description": "An advance user script to automate sounding the hunter horn in MouseHunt application with the newest version supported and many other features and fixes. REVAMPED VERSION of ORIGINAL by Ooi",
+  "version": "1.406.209",
   "author": "NobodyRandom",
   
   "content_scripts": [

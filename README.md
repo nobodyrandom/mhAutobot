@@ -3,7 +3,7 @@
 
 ~~[Original](http://userscripts-mirror.org/scripts/show/78731.html) version made and owned by [Ooi Keng Siang](http://ooiks.com/blog/mousehunt-autobot) \(He no longer develops this code\)~~
 
-######Chrome version is now made - download it [here](https://github.com/nobodyrandom/mhAutobot/raw/master/chromeExtension.crx) (version 1.4.400a script)
+######Chrome version is now updated to 406a script - download it [here](https://github.com/nobodyrandom/mhAutobot/raw/master/chromeExtension.crx)
 
 [REVAMP](https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) version adapts the original, with few bug fixes and etc \(ver a\)
 
