@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.213
+// @version    	1.1.214
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -79,16 +79,11 @@ $(window).load(function() {
         }
 
         if (NOBpage) {
-        	/*if (NOBget('data'); == null || NOBget('data'); == undefined) {
-				NOBhtmlFetch();
-				var STATE = NOBget('data');;
-			} else {
-				var STATE = NOBget('data');;
-			} */
             NOBhtmlFetch();
             createClockArea();
             clockTick();
             fetchGDocStuff();
+            setTimeout(function(){pingServer();}, 30000);
         }
     }
 });
@@ -330,6 +325,12 @@ function fetchGDocStuff() {
             console.log(b + ' error - Google Docs is now not working qq');
         });
     }
+}
+
+function pingServer() {
+	if (NOBpage) {
+		NOBajaxPost('http://nobodyrandom.comeze.com/index.php', JSON.stringify({data: NOBget('data')}), function(throwBack){}, function(a, b, c) {console.log(b);});
+	}
 }
 
 function hideMessage(time) {
