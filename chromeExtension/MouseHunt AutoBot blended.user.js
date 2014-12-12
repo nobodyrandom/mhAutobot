@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	1.4.406b
+// @version    	1.4.413b
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application with the newest version supported and many other features and fixes. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN
-// @require     https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=27450
+// @require     https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=28021
 // @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot, https://devcnn.wordpress.com/
 // @updateURL	https://greasyfork.org/scripts/6514-mousehunt-autobot-enhanced-revamp/code/MouseHunt%20AutoBot%20ENHANCED%20+%20REVAMP.user.js
 // @downloadURL	https://greasyfork.org/scripts/6514-mousehunt-autobot-enhanced-revamp/code/MouseHunt%20AutoBot%20ENHANCED%20+%20REVAMP.user.js
@@ -1483,16 +1483,16 @@ function embedTimer(targetPage) {
             titleElement = null;
 
             if (targetPage) {
-            	var updateElement = document.createElement('div');
-				updateElement.setAttribute('id', 'updateElement');
-				timerDivElement.appendChild(updateElement);
-				updateElement = null;
-				
-				var NOBmessage = document.createElement('div');
-				NOBmessage.setAttribute('id', 'NOBmessage');
-				timerDivElement.appendChild(NOBmessage);
-				NOBmessage = null;
-				
+                var updateElement = document.createElement('div');
+                updateElement.setAttribute('id', 'updateElement');
+                timerDivElement.appendChild(updateElement);
+                updateElement = null;
+
+                var NOBmessage = document.createElement('div');
+                NOBmessage.setAttribute('id', 'NOBmessage');
+                timerDivElement.appendChild(NOBmessage);
+                NOBmessage = null;
+
                 nextHornTimeElement = document.createElement('div');
                 nextHornTimeElement.setAttribute('id', 'nextHornTimeElement');
                 nextHornTimeElement.innerHTML = "<b>Next Hunter Horn Time:</b> Loading...";
@@ -2508,8 +2508,8 @@ function playKingRewardSound() {
         targetArea = null;
         child = null;
         snippet = null;
-                    }
-            
+    }
+
     if (autopopkr)
         alert("Kings Reward NOW");
 }

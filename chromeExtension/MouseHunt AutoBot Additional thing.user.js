@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.209
+// @version    	1.1.215
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -15,7 +15,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-var addonScriptVer = '1.1.209';
+var addonScriptVer = '1.1.215';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -79,16 +79,11 @@ $(window).load(function() {
         }
 
         if (NOBpage) {
-        	/*if (NOBget('data'); == null || NOBget('data'); == undefined) {
-				NOBhtmlFetch();
-				var STATE = NOBget('data');;
-			} else {
-				var STATE = NOBget('data');;
-			} */
             NOBhtmlFetch();
             createClockArea();
             clockTick();
             fetchGDocStuff();
+            //setTimeout(function(){pingServer();}, 30000);
         }
     }
 });
@@ -218,7 +213,7 @@ function NOBstore(data, type) {
 }
 
 function NOBget(type) {
-	return localStorage.getItem('NOB-' + type);
+    return localStorage.getItem('NOB-' + type);
 }
 
 function MapRequest(handleData) {
@@ -253,9 +248,11 @@ function NOBscript(qqEvent) {
         if (mapThere == 'display: none;') {
             mapThere = false;
             console.log("No map, using HTML data now");
+        } else {
+            mapThere = true;
         }
         if (NOBdata != null || NOBdata != undefined) {
-            if (mapRequestFailed == false && mapThere == true) {
+            if (!mapRequestFailed && mapThere) {
                 MapRequest(function(output) {
                     if (output.status == 200 || output.status == undefined) {
                         NOBstore(output, "data");
@@ -269,14 +266,14 @@ function NOBscript(qqEvent) {
                     }
                 });
             } else {
-                console.log("Map fetch failed using USER data from html");
+                console.log("Map fetch failed using USER data from html (" + mapRequestFailed + ", " + mapThere + ")");
                 NOBhtmlFetch();
                 var output = NOBget('data');
                 GDoc(output, "user");
             }
         } else {
-        	console.log("Data is not found, doing HTML fetch now.");
-        	NOBhtmlFetch();
+            console.log("Data is not found, doing HTML fetch now.");
+            NOBhtmlFetch();
         }
     }
 }
@@ -305,11 +302,11 @@ function NOBtravel(location) {
 function fetchGDocStuff() {
     if (NOBpage) {
         //var currVer = GM_info.script.version;
-        var currVer = "1.4.406a";
+        var currVer = "1.4.413a";
         var checkVer;
         var url = 'https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=all';
         NOBajaxGet(url, function(text) {
-        	text = JSON.parse(text);
+            text = JSON.parse(text);
             // MESSAGE PLACING
             message = text.message;
             var NOBmessage = document.getElementById('NOBmessage');
@@ -318,10 +315,13 @@ function fetchGDocStuff() {
             // UPDATE CHECK
             checkVer = text.version;
             console.log('Current mouseHunt AutoBot version: ' + currVer);
-            console.log('Server version: ' + checkVer);
+            console.log('Current mouseHunt AutoBot additional thing version: ' + addonScriptVer);
+            console.log('Server mouseHunt AutoBot version: ' + checkVer);
+            console.log('Server mouseHunt AutoBot additional thing version: ' + text.versionAddon);
+            console.log('Server GoogleScript version: ' + text.versionGoogle);
             if (checkVer > currVer) {
                 var updateElement = document.getElementById('updateElement');
-                updateElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\"><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
+                updateElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target='_blank'><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
             }
         }, function(a, b, c) {
             console.log(b + ' error - Google Docs is now not working qq');
@@ -329,9 +329,18 @@ function fetchGDocStuff() {
     }
 }
 
+function pingServer() {
+    if (NOBpage) {
+        NOBajaxPost('http://nobodyrandom.comeze.com/index.php', JSON.stringify({
+            data: NOBget('data')
+        }), function(throwBack) {}, function(a, b, c) {
+            console.log(b);
+        });
+    }
+}
+
 function hideMessage(time) {
     var element = document.getElementById('NOBmessage');
-
 }
 
 // CALCULATE TIMER *******************************
@@ -357,139 +366,147 @@ function createClockArea() {
 }
 
 function clockTick() {
-	var temp = document.getElementById('NOBrelic');
-	if (clockNeedOn && !clockTicking && temp) {
-		// Clock needs to be on, but is not ticking
-		updateTime();
-	} else if (clockTicking && clockNeedOn && temp) {
-		// Clock needs to be on and is already ticking
-	} else {
-		// Clock does not need to be on
-		NOBcalculateTime();
-	}
-	setTimeout(function() {
-		clockTick();
-	}, 15 * 60 * 1000);
+    var temp = document.getElementById('NOBrelic');
+    if (clockNeedOn && !clockTicking && temp) {
+        // Clock needs to be on, but is not ticking
+        updateTime();
+    } else if (clockTicking && clockNeedOn && temp) {
+        // Clock needs to be on and is already ticking
+    } else {
+        // Clock does not need to be on
+        NOBcalculateTime();
+    }
+    setTimeout(function() {
+        clockTick();
+    }, 15 * 60 * 1000);
 }
 
 function updateTime() {
-	var timeLeft = JSON.parse(NOBget('relic'));
-	if(timeLeft > 0) {
-		timeLeft--;
-		var element = document.getElementById('NOBrelic');
-		element.innerHTML = UpdateTimer(timeLeft, true);
-		NOBstore(timeLeft, 'relic');
-		NOBcalculateOfflineTimers();
-		clockTicking = true;
-		
-		setTimeout(function(){updateTime();}, 1000);
-	} else {
-		clockTicking = false;
-		clockNeedOn = false;
-	}
+    var timeLeft = JSON.parse(NOBget('relic'));
+    if (timeLeft > 0) {
+        timeLeft--;
+        var element = document.getElementById('NOBrelic');
+        element.innerHTML = UpdateTimer(timeLeft, true);
+        NOBstore(timeLeft, 'relic');
+        NOBcalculateOfflineTimers();
+        clockTicking = true;
+
+        setTimeout(function() {
+            updateTime();
+        }, 1000);
+    } else {
+        clockTicking = false;
+        clockNeedOn = false;
+    }
 }
 
 function NOBcalculateTime() {
-	var CurrentTime = currentTimeStamp();
-	if (typeof LOCATION_TIMERS[3][1].url != 'undefined' || LOCATION_TIMERS[3][1].url != 'undefined') {
-		var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=relic";
-		NOBajaxGet(url, function(text) {
-			text = JSON.parse(text);
-			var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
-			child.innerHTML = "Relic hunter now in: <font color='green'>" + text.location + "</font> \~ Next move time: <span id='NOBrelic'>" + UpdateTimer(text.next_move, true);
-			
-			if (text.next_move > 0) {
-				clockTicking = true;
-				NOBstore(text.next_move,'relic');
-				updateTime();
-				clockNeedOn = true;
-			} else {
-				clockTicking = false;
-				clockNeedOn = false;
-			}
-		}, function(a, b, c) {
-			var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
-			child.innerHTML = "<font color='red'>" + b + " error, probably hornTracker, google, or my scripts broke. Please wait awhile, if not just contact me.</font>";
-		});
-	}
+    var CurrentTime = currentTimeStamp();
+    if (typeof LOCATION_TIMERS[3][1].url != 'undefined' || LOCATION_TIMERS[3][1].url != 'undefined') {
+        var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=relic";
+        NOBajaxGet(url, function(text) {
+            text = JSON.parse(text);
+            if (text.result == "error") {
+                var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
+                child.innerHTML = "<font color='red'>" + text.error + "</font>";
+            } else {
+                var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
+                child.innerHTML = "Relic hunter now in: <font color='green'>" + text.location + "</font> \~ Next move time: <span id='NOBrelic'>" + UpdateTimer(text.next_move, true);
+                if (text.next_move > 0) {
+                    clockTicking = true;
+                    NOBstore(text.next_move, 'relic');
+                    updateTime();
+                    clockNeedOn = true;
+                } else {
+                    clockTicking = false;
+                    clockNeedOn = false;
+                }
+            }
+        }, function(a, b, c) {
+            var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
+            child.innerHTML = "<font color='red'>" + b + " error, probably hornTracker, google, or my scripts broke. Please wait awhile, if not just contact me.</font>";
+        });
+    }
 
-	if (typeof LOCATION_TIMERS[4][1].url != 'undefined' || LOCATION_TIMERS[4][1].url != 'undefined') {
-		var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=toxic";
-		NOBajaxGet(url, function(text) {
-			text = JSON.parse(text);
-			var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
-			if (text.level == 'Closed') {
-				text.level = {
-					color: 'red',
-					state: text.level
-				};
-			} else {
-				text.level = {
-					color: 'green',
-					state: text.level
-				};
-			}
+    if (typeof LOCATION_TIMERS[4][1].url != 'undefined' || LOCATION_TIMERS[4][1].url != 'undefined') {
+        var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=toxic";
+        NOBajaxGet(url, function(text) {
+            text = JSON.parse(text);
+            if (text.result == "error") {
+                var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
+                child.innerHTML = "<font color='red'>" + text.error + "</font>";
+            } else {
+                var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
+                if (text.level == 'Closed') {
+                    text.level = {
+                        color: 'red',
+                        state: text.level
+                    };
+                } else {
+                    text.level = {
+                        color: 'green',
+                        state: text.level
+                    };
+                }
+                if (text.percent < 0) {
+                    text.percent = '';
+                } else {
+                    text.percent = ' ~ ' + (100 - text.percent) + '% left';
+                }
+                child.innerHTML = 'Toxic spill is now - <font color="' + text.level.color + '">' + text.level.state + '</font>' + text.percent;
+            }
+        }, function(a, b, c) {
+            // console.log(b);
+            var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
+            child.innerHTML = "<font color='red'>" + b + " error, probably hornTracker, google, or my scripts broke. Please wait awhile, if not just contact me.</font>";
+        });
+    }
 
-			if (text.percent < 0) {
-				text.percent = '';
-			} else {
-				text.percent = ' ~ ' + (100 - text.percent) + '% left';
-			}
-
-			child.innerHTML = 'Toxic spill is now - <font color="' + text.level.color + '">' + text.level.state + '</font>' + text.percent;
-		}, function(a, b, c) {
-			// console.log(b);
-			var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
-			child.innerHTML = "<font color='red'>" + b + " error, probably hornTracker, google, or my scripts broke. Please wait awhile, if not just contact me.</font>";
-		});
-	}
-	
-	NOBcalculateOfflineTimers();
+    NOBcalculateOfflineTimers();
 }
-	
 
 function NOBcalculateOfflineTimers() {
-	var CurrentTime = currentTimeStamp();
-	for (i = 0; i < 3; i++) {
-		var CurrentName = -1;
-		var CurrentBreakdown = 0;
-		var TotalBreakdown = 0;
-		var iCount2;
+    var CurrentTime = currentTimeStamp();
+    for (i = 0; i < 3; i++) {
+        var CurrentName = -1;
+        var CurrentBreakdown = 0;
+        var TotalBreakdown = 0;
+        var iCount2;
 
-		for (iCount2 = 0; iCount2 < LOCATION_TIMERS[i][1].breakdown.length; iCount2++)
-			TotalBreakdown += LOCATION_TIMERS[i][1].breakdown[iCount2];
+        for (iCount2 = 0; iCount2 < LOCATION_TIMERS[i][1].breakdown.length; iCount2++)
+            TotalBreakdown += LOCATION_TIMERS[i][1].breakdown[iCount2];
 
-		var CurrentValue = Math.floor((CurrentTime - LOCATION_TIMERS[i][1].first) / LOCATION_TIMERS[i][1].length) % TotalBreakdown;
+        var CurrentValue = Math.floor((CurrentTime - LOCATION_TIMERS[i][1].first) / LOCATION_TIMERS[i][1].length) % TotalBreakdown;
 
-		for (iCount2 = 0; iCount2 < LOCATION_TIMERS[i][1].breakdown.length && CurrentName == -1; iCount2++) {
-			CurrentBreakdown += LOCATION_TIMERS[i][1].breakdown[iCount2];
+        for (iCount2 = 0; iCount2 < LOCATION_TIMERS[i][1].breakdown.length && CurrentName == -1; iCount2++) {
+            CurrentBreakdown += LOCATION_TIMERS[i][1].breakdown[iCount2];
 
-			if (CurrentValue < CurrentBreakdown) {
-				CurrentName = iCount2;
-			}
-		}
+            if (CurrentValue < CurrentBreakdown) {
+                CurrentName = iCount2;
+            }
+        }
 
-		var SeasonLength = (LOCATION_TIMERS[i][1].length * LOCATION_TIMERS[i][1].breakdown[CurrentName]);
-		var CurrentTimer = (CurrentTime - LOCATION_TIMERS[i][1].first);
-		var SeasonRemaining = 0;
+        var SeasonLength = (LOCATION_TIMERS[i][1].length * LOCATION_TIMERS[i][1].breakdown[CurrentName]);
+        var CurrentTimer = (CurrentTime - LOCATION_TIMERS[i][1].first);
+        var SeasonRemaining = 0;
 
-		while (CurrentTimer > 0) {
-			for (iCount2 = 0; iCount2 < LOCATION_TIMERS[i][1].breakdown.length && CurrentTimer > 0; iCount2++) {
-				SeasonRemaining = CurrentTimer;
-				CurrentTimer -= (LOCATION_TIMERS[i][1].length * LOCATION_TIMERS[i][1].breakdown[iCount2])
-			}
-		}
+        while (CurrentTimer > 0) {
+            for (iCount2 = 0; iCount2 < LOCATION_TIMERS[i][1].breakdown.length && CurrentTimer > 0; iCount2++) {
+                SeasonRemaining = CurrentTimer;
+                CurrentTimer -= (LOCATION_TIMERS[i][1].length * LOCATION_TIMERS[i][1].breakdown[iCount2])
+            }
+        }
 
-		SeasonRemaining = SeasonLength - SeasonRemaining;
+        SeasonRemaining = SeasonLength - SeasonRemaining;
 
-		var seasonalDiv = document.getElementById('NOB' + LOCATION_TIMERS[i][0]);
-		var content = "";
-		content += LOCATION_TIMERS[i][0] + ': <font color="' + LOCATION_TIMERS[i][1].color[CurrentName] + '">' + LOCATION_TIMERS[i][1].name[CurrentName] + '</font>';
-		if (LOCATION_TIMERS[i][1].effective != null) {
-			content += ' (' + LOCATION_TIMERS[i][1].effective[CurrentName] + ')';
-		}
+        var seasonalDiv = document.getElementById('NOB' + LOCATION_TIMERS[i][0]);
+        var content = "";
+        content += LOCATION_TIMERS[i][0] + ': <font color="' + LOCATION_TIMERS[i][1].color[CurrentName] + '">' + LOCATION_TIMERS[i][1].name[CurrentName] + '</font>';
+        if (LOCATION_TIMERS[i][1].effective != null) {
+            content += ' (' + LOCATION_TIMERS[i][1].effective[CurrentName] + ')';
+        }
 
-		content += ' ~ For ' + UpdateTimer(SeasonRemaining, true);
-		seasonalDiv.innerHTML = content;
-	}
+        content += ' ~ For ' + UpdateTimer(SeasonRemaining, true);
+        seasonalDiv.innerHTML = content;
+    }
 }
