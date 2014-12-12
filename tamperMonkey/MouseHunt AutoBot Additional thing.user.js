@@ -318,7 +318,10 @@ function fetchGDocStuff() {
             // UPDATE CHECK
             checkVer = text.version;
             console.log('Current mouseHunt AutoBot version: ' + currVer);
-            console.log('Server version: ' + checkVer);
+            console.log('Current mouseHunt AutoBot additional thing version: ' + addonScriptVer);
+            console.log('Server mouseHunt AutoBot version: ' + checkVer);
+            console.log('Server mouseHunt AutoBot additional thing version: ' + text.versionAddon);
+            console.log('Server GoogleScript version: ' + text.versionGoogle);
             if (checkVer > currVer) {
                 var updateElement = document.getElementById('updateElement');
                 updateElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target='_blank'><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
