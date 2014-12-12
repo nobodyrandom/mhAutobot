@@ -397,7 +397,7 @@ function NOBcalculateTime() {
 			text = JSON.parse(text);
 			if (text.result == "error") {
 				var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
-				child.innerHTML = text.error;
+				child.innerHTML = "<font color='red'>" + text.error + "</font>";
 			} else {
 				var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
 				child.innerHTML = "Relic hunter now in: <font color='green'>" + text.location + "</font> \~ Next move time: <span id='NOBrelic'>" + UpdateTimer(text.next_move, true);
@@ -423,7 +423,7 @@ function NOBcalculateTime() {
 			text = JSON.parse(text);
 			if (text.result == "error") {
 				var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
-				child.innerHTML = text.error;
+				child.innerHTML = "<font color='red'>" + text.error + "</font>";
 			} else {
 				var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
 				if (text.level == 'Closed') {
