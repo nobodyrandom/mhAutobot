@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.212
+// @version    	1.1.213
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -15,7 +15,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.1.212';
+unsafeWindow.addonScriptVer = '1.1.213';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -395,17 +395,21 @@ function NOBcalculateTime() {
 		var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=relic";
 		NOBajaxGet(url, function(text) {
 			text = JSON.parse(text);
-			var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
-			child.innerHTML = "Relic hunter now in: <font color='green'>" + text.location + "</font> \~ Next move time: <span id='NOBrelic'>" + UpdateTimer(text.next_move, true);
-			
-			if (text.next_move > 0) {
-				clockTicking = true;
-				NOBstore(text.next_move,'relic');
-				updateTime();
-				clockNeedOn = true;
+			if (text.result == "error") {
+				var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
+				child.innerHTML = text.error;
 			} else {
-				clockTicking = false;
-				clockNeedOn = false;
+				var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
+				child.innerHTML = "Relic hunter now in: <font color='green'>" + text.location + "</font> \~ Next move time: <span id='NOBrelic'>" + UpdateTimer(text.next_move, true);
+				if (text.next_move > 0) {
+					clockTicking = true;
+					NOBstore(text.next_move,'relic');
+					updateTime();
+					clockNeedOn = true;
+				} else {
+					clockTicking = false;
+					clockNeedOn = false;
+				}
 			}
 		}, function(a, b, c) {
 			var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
@@ -417,26 +421,29 @@ function NOBcalculateTime() {
 		var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=toxic";
 		NOBajaxGet(url, function(text) {
 			text = JSON.parse(text);
-			var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
-			if (text.level == 'Closed') {
-				text.level = {
-					color: 'red',
-					state: text.level
-				};
+			if (text.result == "error") {
+				var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
+				child.innerHTML = text.error;
 			} else {
-				text.level = {
-					color: 'green',
-					state: text.level
-				};
+				var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
+				if (text.level == 'Closed') {
+					text.level = {
+						color: 'red',
+						state: text.level
+					};
+				} else {
+					text.level = {
+						color: 'green',
+						state: text.level
+					};
+				}
+				if (text.percent < 0) {
+					text.percent = '';
+				} else {
+					text.percent = ' ~ ' + (100 - text.percent) + '% left';
+				}
+				child.innerHTML = 'Toxic spill is now - <font color="' + text.level.color + '">' + text.level.state + '</font>' + text.percent;
 			}
-
-			if (text.percent < 0) {
-				text.percent = '';
-			} else {
-				text.percent = ' ~ ' + (100 - text.percent) + '% left';
-			}
-
-			child.innerHTML = 'Toxic spill is now - <font color="' + text.level.color + '">' + text.level.state + '</font>' + text.percent;
 		}, function(a, b, c) {
 			// console.log(b);
 			var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
