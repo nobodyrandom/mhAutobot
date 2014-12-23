@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	1.4.413b
+// @version    	1.4.414b
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application with the newest version supported and many other features and fixes. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN
-// @require     https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=28021
+// @require     https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=28053
 // @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot, https://devcnn.wordpress.com/
 // @updateURL	https://greasyfork.org/scripts/6514-mousehunt-autobot-enhanced-revamp/code/MouseHunt%20AutoBot%20ENHANCED%20+%20REVAMP.user.js
 // @downloadURL	https://greasyfork.org/scripts/6514-mousehunt-autobot-enhanced-revamp/code/MouseHunt%20AutoBot%20ENHANCED%20+%20REVAMP.user.js
@@ -2405,13 +2405,13 @@ scriptNode = null;														\
 
     // change the function call of horn
     var hornButtonLink = document.getElementsByClassName(strHornButton)[0].firstChild;
-    if (hornButtonLink.length > 0) {
+    /*if (hornButtonLink.length > 0) {
         hornButtonLink = hornButtonLink[0].firstChild;
     } else {
         strHornButton = 'mousehuntHud-huntersHorn-container';
         strCampButton = 'camp active';
         hornButtonLink = document.getElementsByClassName(strHornButton)[0].firstChild;
-    }
+    }*/
     var oriStr = hornButtonLink.getAttribute('onclick').toString();
     var index = oriStr.indexOf('return false;');
     var modStr = oriStr.substring(0, index) + 'soundedHorn();' + oriStr.substring(index);
