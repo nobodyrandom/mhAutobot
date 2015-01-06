@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.215
+// @version    	1.1.216
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -282,7 +282,7 @@ unsafeWindow.showHideTimers = function() {
     $("#loadTimersElement").toggle();
 }
 
-function NOBtravel(location) {
+unsafeWindow.NOBtravel = function(location) {
     if (NOBpage) {
         var url = "https://www.mousehuntgame.com/managers/ajax/users/changeenvironment.php";
         var data = {
@@ -292,8 +292,8 @@ function NOBtravel(location) {
         };
         NOBajaxPost(url, data, function(r) {
             console.log(r);
-        }, function(e) {
-            console.log(e)
+        }, function(a, b, c) {
+            console.log(a, b, c);
         });
     }
 }
