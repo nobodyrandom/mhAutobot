@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.217
+// @version    	1.1.218
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -240,6 +240,25 @@ function MapRequest(handleData) {
     });
 }
 
+var counter = 0; var dots = "";
+function NOBloading(location, name) {
+	var element = document.getElementById(location);
+	if (counter < 10) {
+		for(var i=0;i<counter;i++) {dots = dots + ".";}
+	} else {
+		dots = "";
+		counter = 0;
+	}
+	element.innerHTML = "Loading" + dots;
+	counter++;
+	
+	timeoutVar1 = setTimeout(function() {NOBloading(location);}, 1000);
+}
+
+function NOBstopLoading(name) {
+	clearTimeout(timeoutVar1);
+}
+
 // VARS DONE ******************************* COMMENCE CODE
 unsafeWindow.NOBscript = function(qqEvent) {
     if (NOBpage) {
@@ -305,8 +324,10 @@ function fetchGDocStuff() {
         //var currVer = "1.4.400a";
         var checkVer;
         var url = 'https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=all';
-        document.getElementById('NOBmessage').innerHTML = "Loading...";
+        document.getElementById('NOBmessage').innerHTML = "Loading";
+        NOBloading('NOBmessage');
         NOBajaxGet(url, function(text) {
+        	NOBstopLoading();
             text = JSON.parse(text);
             // MESSAGE PLACING
             message = text.message;
@@ -325,6 +346,7 @@ function fetchGDocStuff() {
                 updateElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target='_blank'><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
             }
         }, function(a, b, c) {
+        	NOBstopLoading();
             console.log(b + ' error - Google Docs is now not working qq');
             if(b == "timeout")
             	document.getElementById('NOBmessage').innerHTML = "Google Docs is being slow again ._.";
