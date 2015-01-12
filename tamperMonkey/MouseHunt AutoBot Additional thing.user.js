@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.216
+// @version    	1.1.217
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -15,7 +15,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.1.216';
+unsafeWindow.addonScriptVer = '1.1.217';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -305,6 +305,7 @@ function fetchGDocStuff() {
         //var currVer = "1.4.400a";
         var checkVer;
         var url = 'https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=all';
+        document.getElementById('NOBmessage').innerHTML = "Loading...";
         NOBajaxGet(url, function(text) {
             text = JSON.parse(text);
             // MESSAGE PLACING
@@ -325,6 +326,8 @@ function fetchGDocStuff() {
             }
         }, function(a, b, c) {
             console.log(b + ' error - Google Docs is now not working qq');
+            if(b == "timeout")
+            	document.getElementById('NOBmessage').innerHTML = "Google Docs is being slow again ._.";
         });
     }
 }
