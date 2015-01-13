@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name        MouseHunt AutoBot REVAMP
+// @name        MouseHunt AutoBot REVAMP minified
 // @author      NobodyRandom
 // @version    	1.4.417ma
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application with the newest version supported and many other features and fixes. REVAMPED VERSION of ORIGINAL by Ooi
