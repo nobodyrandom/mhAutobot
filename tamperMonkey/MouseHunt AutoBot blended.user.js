@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	1.4.417b
+// @version    	1.4.418b
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application with the newest version supported and many other features and fixes. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN
 // @require     https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=31746
 // @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot, https://devcnn.wordpress.com/
@@ -1885,27 +1885,35 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<tr>';
                 preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
                 preferenceHTMLStr += '<a title="Auto Popup on KR"><b>Auto KR Popup</b></a>';
-                preferenceHTMLStr += '<a title="Select the script algorithm based on certain event / location"><b>Event or Location</b></a>';
                 preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
                 preferenceHTMLStr += '</td>';
                 preferenceHTMLStr += '<td style="height:24px">';
-                preferenceHTMLStr += '<input type="radio" id="autopopkrTrue" name="autopopkrInput" value="true"/> True';
+                preferenceHTMLStr += '<input type="radio" id="autopopkrTrue" name="autopopkrInput" value="true" /> True';
                 preferenceHTMLStr += '   ';
-                preferenceHTMLStr += '<input type="radio" id="autopopkrFalse" name="autopopkrInput" value="false" checked="checked"/> False';
-                preferenceHTMLStr += '<select name="algo" onChange="window.localStorage.setItem(\'eventLocation\', value); document.getElementById(\'event\').value=window.localStorage.getItem(\'eventLocation\');">';
-                preferenceHTMLStr += '<option value="None" selected>None</option>';
-                preferenceHTMLStr += '<option value="Charge Egg 2014">Charge Egg 2014</option>';
-                preferenceHTMLStr += '<option value="Charge Egg 2014(17)">Charge Egg 2014(17)</option>';
-                preferenceHTMLStr += '<option value="Burroughs Rift(Red)">Burroughs Rift(Red)</option>';
-                preferenceHTMLStr += '<option value="Burroughs Rift(Green)">Burroughs Rift(Green)</option>';
-                preferenceHTMLStr += '<option value="Halloween 2014">Halloween 2014</option>';
-                preferenceHTMLStr += '<option value="Sunken City">Sunken City</option>';
-                preferenceHTMLStr += '<option value="All LG Area">All LG Area</option>';
-                preferenceHTMLStr += '</select> Current Selection : ';
-                preferenceHTMLStr += '<input type="text" id="event" name="event" value="' + eventLocation + '"/>';
+                preferenceHTMLStr += '<input type="radio" id="autopopkrFalse" name="autopopkrInput" value="false" checked="checked" /> False';
                 preferenceHTMLStr += '</td>';
                 preferenceHTMLStr += '</tr>';
             }
+            
+            preferenceHTMLStr += '<tr>';
+            preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+            preferenceHTMLStr += '<a title="Select the script algorithm based on certain event / location"><b>Event or Location</b></a>';
+            preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+            preferenceHTMLStr += '</td>';
+            preferenceHTMLStr += '<td style="height:24px">';
+            preferenceHTMLStr += '<select name="algo" onChange="window.localStorage.setItem(\'eventLocation\', value); document.getElementById(\'event\').value=window.localStorage.getItem(\'eventLocation\');">';
+            preferenceHTMLStr += '<option value="None" selected>None</option>';
+            preferenceHTMLStr += '<option value="Charge Egg 2014">Charge Egg 2014</option>';
+            preferenceHTMLStr += '<option value="Charge Egg 2014(17)">Charge Egg 2014(17)</option>';
+			preferenceHTMLStr += '<option value="Burroughs Rift(Red)">Burroughs Rift(Red)</option>';
+			preferenceHTMLStr += '<option value="Burroughs Rift(Green)">Burroughs Rift(Green)</option>';
+			preferenceHTMLStr += '<option value="Halloween 2014">Halloween 2014</option>';
+			preferenceHTMLStr += '<option value="Sunken City">Sunken City</option>';
+            preferenceHTMLStr += '<option value="All LG Area">All LG Area</option>';
+            preferenceHTMLStr += '</select> Current Selection : ';
+            preferenceHTMLStr += '<input type="text" id="event" name="event" value="' + eventLocation + '"/>';
+            preferenceHTMLStr += '</td>';
+            preferenceHTMLStr += '</tr>';
 
             preferenceHTMLStr += '<tr>';
             preferenceHTMLStr += '<td style="height:24px; text-align:right;" colspan="2">';
