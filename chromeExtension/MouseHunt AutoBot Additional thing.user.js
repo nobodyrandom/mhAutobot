@@ -320,8 +320,8 @@ function NOBtravel(location) {
 // Update + message fetch
 function fetchGDocStuff() {
     if (NOBpage) {
-        var currVer = GM_info.script.version;
-        //var currVer = "1.4.400a";
+        //var currVer = GM_info.script.version;
+        var currVer = "1.4.419a";
         var checkVer;
         var url = 'https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=all';
         document.getElementById('NOBmessage').innerHTML = "Loading";

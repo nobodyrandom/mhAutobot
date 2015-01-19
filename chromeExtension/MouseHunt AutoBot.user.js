@@ -91,7 +91,7 @@ var timerRefreshInterval = 1;
 // WARNING - Do not modify the code below unless you know how to read and write the script.
 
 // All global variable declaration and default value
-var scriptVersion = GM_info.script.version;
+var scriptVersion = "1.4.419";
 var fbPlatform = false;
 var hiFivePlatform = false;
 var mhPlatform = false;
