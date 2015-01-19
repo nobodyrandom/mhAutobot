@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	1.4.413b
+// @version    	1.4.419b
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application with the newest version supported and many other features and fixes. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN
-// @require     https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=28021
+// @require     https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=31746
 // @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot, https://devcnn.wordpress.com/
 // @updateURL	https://greasyfork.org/scripts/6514-mousehunt-autobot-enhanced-revamp/code/MouseHunt%20AutoBot%20ENHANCED%20+%20REVAMP.user.js
 // @downloadURL	https://greasyfork.org/scripts/6514-mousehunt-autobot-enhanced-revamp/code/MouseHunt%20AutoBot%20ENHANCED%20+%20REVAMP.user.js
@@ -641,7 +641,7 @@ function cursedCity() {
         if (charmArmed.indexOf('Bravery') > -1 || charmArmed.indexOf('Shine') > -1 || charmArmed.indexOf('Clarity') > -1) {
             disarmTrap('trinket');
         }
-        checkThenArm(null, "trinket", "Super Luck");
+        //checkThenArm(null, "trinket", "Super Luck");
     } else {
         for (var i = 0; i < 3; ++i) {
             curses[i] = getPageVariableForChrome('user.quests.QuestLostCity.minigame.curses[' + i + '].active');
@@ -1885,27 +1885,35 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<tr>';
                 preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
                 preferenceHTMLStr += '<a title="Auto Popup on KR"><b>Auto KR Popup</b></a>';
-                preferenceHTMLStr += '<a title="Select the script algorithm based on certain event / location"><b>Event or Location</b></a>';
                 preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
                 preferenceHTMLStr += '</td>';
                 preferenceHTMLStr += '<td style="height:24px">';
-                preferenceHTMLStr += '<input type="radio" id="autopopkrTrue" name="autopopkrInput" value="true"/> True';
+                preferenceHTMLStr += '<input type="radio" id="autopopkrTrue" name="autopopkrInput" value="true" /> True';
                 preferenceHTMLStr += '   ';
-                preferenceHTMLStr += '<input type="radio" id="autopopkrFalse" name="autopopkrInput" value="false" checked="checked"/> False';
-                preferenceHTMLStr += '<select name="algo" onChange="window.localStorage.setItem(\'eventLocation\', value); document.getElementById(\'event\').value=window.localStorage.getItem(\'eventLocation\');">';
-                preferenceHTMLStr += '<option value="None" selected>None</option>';
-                preferenceHTMLStr += '<option value="Charge Egg 2014">Charge Egg 2014</option>';
-                preferenceHTMLStr += '<option value="Charge Egg 2014(17)">Charge Egg 2014(17)</option>';
-                preferenceHTMLStr += '<option value="Burroughs Rift(Red)">Burroughs Rift(Red)</option>';
-                preferenceHTMLStr += '<option value="Burroughs Rift(Green)">Burroughs Rift(Green)</option>';
-                preferenceHTMLStr += '<option value="Halloween 2014">Halloween 2014</option>';
-                preferenceHTMLStr += '<option value="Sunken City">Sunken City</option>';
-                preferenceHTMLStr += '<option value="All LG Area">All LG Area</option>';
-                preferenceHTMLStr += '</select> Current Selection : ';
-                preferenceHTMLStr += '<input type="text" id="event" name="event" value="' + eventLocation + '"/>';
+                preferenceHTMLStr += '<input type="radio" id="autopopkrFalse" name="autopopkrInput" value="false" checked="checked" /> False';
                 preferenceHTMLStr += '</td>';
                 preferenceHTMLStr += '</tr>';
             }
+            
+            preferenceHTMLStr += '<tr>';
+            preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+            preferenceHTMLStr += '<a title="Select the script algorithm based on certain event / location"><b>Event or Location</b></a>';
+            preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+            preferenceHTMLStr += '</td>';
+            preferenceHTMLStr += '<td style="height:24px">';
+            preferenceHTMLStr += '<select name="algo" onChange="window.localStorage.setItem(\'eventLocation\', value); document.getElementById(\'event\').value=window.localStorage.getItem(\'eventLocation\');">';
+            preferenceHTMLStr += '<option value="None" selected>None</option>';
+            preferenceHTMLStr += '<option value="Charge Egg 2014">Charge Egg 2014</option>';
+            preferenceHTMLStr += '<option value="Charge Egg 2014(17)">Charge Egg 2014(17)</option>';
+			preferenceHTMLStr += '<option value="Burroughs Rift(Red)">Burroughs Rift(Red)</option>';
+			preferenceHTMLStr += '<option value="Burroughs Rift(Green)">Burroughs Rift(Green)</option>';
+			preferenceHTMLStr += '<option value="Halloween 2014">Halloween 2014</option>';
+			preferenceHTMLStr += '<option value="Sunken City">Sunken City</option>';
+            preferenceHTMLStr += '<option value="All LG Area">All LG Area</option>';
+            preferenceHTMLStr += '</select> Current Selection : ';
+            preferenceHTMLStr += '<input type="text" id="event" name="event" value="' + eventLocation + '"/>';
+            preferenceHTMLStr += '</td>';
+            preferenceHTMLStr += '</tr>';
 
             preferenceHTMLStr += '<tr>';
             preferenceHTMLStr += '<td style="height:24px; text-align:right;" colspan="2">';
@@ -2405,13 +2413,13 @@ scriptNode = null;														\
 
     // change the function call of horn
     var hornButtonLink = document.getElementsByClassName(strHornButton)[0].firstChild;
-    if (hornButtonLink.length > 0) {
+    /*if (hornButtonLink.length > 0) {
         hornButtonLink = hornButtonLink[0].firstChild;
     } else {
         strHornButton = 'mousehuntHud-huntersHorn-container';
         strCampButton = 'camp active';
         hornButtonLink = document.getElementsByClassName(strHornButton)[0].firstChild;
-    }
+    }*/
     var oriStr = hornButtonLink.getAttribute('onclick').toString();
     var index = oriStr.indexOf('return false;');
     var modStr = oriStr.substring(0, index) + 'soundedHorn();' + oriStr.substring(index);

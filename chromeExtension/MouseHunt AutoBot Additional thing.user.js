@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.215
+// @version    	1.1.218
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -15,7 +15,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-var addonScriptVer = '1.1.215';
+var addonScriptVer = '1.1.218';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -240,6 +240,25 @@ function MapRequest(handleData) {
     });
 }
 
+var counter = 0; var dots = "";
+function NOBloading(location, name) {
+	var element = document.getElementById(location);
+	if (counter < 10) {
+		for(var i=0;i<counter;i++) {dots = dots + ".";}
+	} else {
+		dots = "";
+		counter = 0;
+	}
+	element.innerHTML = "Loading" + dots;
+	counter++;
+	
+	timeoutVar1 = setTimeout(function() {NOBloading(location);}, 1000);
+}
+
+function NOBstopLoading(name) {
+	clearTimeout(timeoutVar1);
+}
+
 // VARS DONE ******************************* COMMENCE CODE
 function NOBscript(qqEvent) {
     if (NOBpage) {
@@ -292,8 +311,8 @@ function NOBtravel(location) {
         };
         NOBajaxPost(url, data, function(r) {
             console.log(r);
-        }, function(e) {
-            console.log(e)
+        }, function(a, b, c) {
+            console.log(a, b, c);
         });
     }
 }
@@ -301,11 +320,14 @@ function NOBtravel(location) {
 // Update + message fetch
 function fetchGDocStuff() {
     if (NOBpage) {
-        //var currVer = GM_info.script.version;
-        var currVer = "1.4.413a";
+        var currVer = GM_info.script.version;
+        //var currVer = "1.4.400a";
         var checkVer;
         var url = 'https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=all';
+        document.getElementById('NOBmessage').innerHTML = "Loading";
+        NOBloading('NOBmessage');
         NOBajaxGet(url, function(text) {
+        	NOBstopLoading();
             text = JSON.parse(text);
             // MESSAGE PLACING
             message = text.message;
@@ -324,7 +346,10 @@ function fetchGDocStuff() {
                 updateElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target='_blank'><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
             }
         }, function(a, b, c) {
+        	NOBstopLoading();
             console.log(b + ' error - Google Docs is now not working qq');
+            if(b == "timeout")
+            	document.getElementById('NOBmessage').innerHTML = "Google Docs is being slow again ._.";
         });
     }
 }
