@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	1.4.418b
+// @version    	1.4.419b
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application with the newest version supported and many other features and fixes. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN
 // @require     https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=31746
 // @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot, https://devcnn.wordpress.com/
@@ -641,7 +641,7 @@ function cursedCity() {
         if (charmArmed.indexOf('Bravery') > -1 || charmArmed.indexOf('Shine') > -1 || charmArmed.indexOf('Clarity') > -1) {
             disarmTrap('trinket');
         }
-        checkThenArm(null, "trinket", "Super Luck");
+        //checkThenArm(null, "trinket", "Super Luck");
     } else {
         for (var i = 0; i < 3; ++i) {
             curses[i] = getPageVariableForChrome('user.quests.QuestLostCity.minigame.curses[' + i + '].active');
