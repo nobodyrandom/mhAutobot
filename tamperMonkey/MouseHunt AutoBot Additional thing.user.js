@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.220
+// @version    	1.1.221
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -15,7 +15,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.1.219';
+unsafeWindow.addonScriptVer = '1.1.221';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -272,7 +272,7 @@ function NOBstopLoading(name) {
 unsafeWindow.NOBscript = function(qqEvent) {
     if (NOBpage) {
         var NOBdata = NOBget('data');
-        var mapThere = document.getElementById('hudmapitem').style;
+        var mapThere = document.getElementById('hudmapitem').style.cssText;
         if (mapThere == 'display: none;') {
             mapThere = false;
             console.log("No map, using HTML data now");
@@ -382,13 +382,13 @@ unsafeWindow.NOBraffle = function() {
     $(".tabs a:eq(1)").click();
     setTimeout(function() {
         var ballot = $(".notificationMessageList .tab:eq(1) .sendBallot");
-        for (i = ballot.length; i > 0; i--) {
+        for (var i = ballot.length; i > 0; i--) {
             ballot[i].click();
         }
         setTimeout(function() {
             $("a.messengerUINotificationClose").click();
-        }, 4000);
-    }, 2000);
+        }, 6000);
+    }, 3000);
 }
 
 // CALCULATE TIMER *******************************
