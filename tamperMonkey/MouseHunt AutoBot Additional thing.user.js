@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.219
+// @version    	1.1.220
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -377,7 +377,7 @@ function hideMessage(time) {
     var element = document.getElementById('NOBmessage');
 }
 
-function NOBraffle() {
+unsafeWindow.NOBraffle = function() {
     $("#hgbar_messages").click();
     $(".tabs a:eq(1)").click();
     setTimeout(function() {
