@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
-// @require		http://www.parsecdn.com/js/parse-1.3.3.min.js
+// @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.223
+// @version    	1.1.224
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -16,7 +16,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.1.223';
+unsafeWindow.addonScriptVer = '1.1.224';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
