@@ -24,8 +24,8 @@
 // // Reload MouseHunt page manually if edit this script while running it for immediate effect.
 // // Extra delay time before sounding the horn. (in seconds)
 // // Default: 1 - 5
-var hornTimeDelayMin = 1;
-var hornTimeDelayMax = 150;
+var hornTimeDelayMin = 10;
+var hornTimeDelayMax = 180;
 
 // // Bot aggressively by ignore all safety measure such as check horn image visible before sounding it. (true/false)
 // // Note: Highly recommended to turn off because it increase the chances of getting caugh in botting.

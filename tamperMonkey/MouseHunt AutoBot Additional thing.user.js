@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.225
+// @version    	1.1.226
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -83,7 +83,7 @@ $(window).load(function() {
             createClockArea();
             clockTick();
             fetchGDocStuff();
-            //setTimeout(function(){pingServer();}, 30000);
+            setTimeout(function(){pingServer();}, 30000);
             setTimeout(function() {
                 $('#NOBraffle').addEventListener('click', function() {
                     NOBraffle()
@@ -185,8 +185,7 @@ function GDoc(items, type) {
     var sheet = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec";
 
     NOBajaxPost(sheet, dataSendString, function(data) {
-        // CONSOLE LOGGING FOR DEBUG
-        // console.log(data);
+    //console.log(data);
     }, function(a, b, c) {
         console.log(b)
     });
@@ -365,20 +364,15 @@ function fetchGDocStuff() {
     }
 }
 
-unsafeWindow.NOBpingServer = function() {
+function pingServer() {
     if (NOBpage) {
-        /*NOBajaxPost('http://nobodyrandom.comeze.com/index.php', JSON.stringify({
-            data: NOBget('data')
-        }), function(throwBack) {}, function(a, b, c) {
-            console.log(b);
-        });*/
-        //GDoc(NOBget('data'), 'ping');
-
         Parse.initialize("n69BPL5GYkYumbzXOcQlnuLTKnG2ES2tJ8tnBH2X", "3EiBoCuQXGHq6ff45QVtqHGy00EsWURvDX9JJhbQ");
-        var TestObject = Parse.Object.extend("TestObject");
-        var testObject = new TestObject();
-        testObject.save({
-            foo: "fasdfasdf"
+        var UserData = Parse.Object.extend("UserData");
+        var userData = new UserData();
+        var theData = JSON.parse(NOBget('data'));
+        userData.save({
+        	id: JSON.parse(theData.user_id),
+            data: JSON.stringify(theData)
         }, {
             success: function(object) {
                 console.log(object);
