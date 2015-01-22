@@ -1,8 +1,9 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
+// @require		http://www.parsecdn.com/js/parse-1.3.3.min.js
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.221
+// @version    	1.1.223
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -15,7 +16,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.1.221';
+unsafeWindow.addonScriptVer = '1.1.223';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -85,7 +86,9 @@ $(window).load(function() {
             fetchGDocStuff();
             //setTimeout(function(){pingServer();}, 30000);
             setTimeout(function() {
-                $('#NOBraffle').addEventListener('click', NOBraffle, false);
+                $('#NOBraffle').addEventListener('click', function() {
+                    NOBraffle()
+                }, false);
             }, 4000);
         }
     }
@@ -363,12 +366,27 @@ function fetchGDocStuff() {
     }
 }
 
-function pingServer() {
+unsafeWindow.NOBpingServer = function() {
     if (NOBpage) {
-        NOBajaxPost('http://nobodyrandom.comeze.com/index.php', JSON.stringify({
+        /*NOBajaxPost('http://nobodyrandom.comeze.com/index.php', JSON.stringify({
             data: NOBget('data')
         }), function(throwBack) {}, function(a, b, c) {
             console.log(b);
+        });*/
+        //GDoc(NOBget('data'), 'ping');
+
+        Parse.initialize("n69BPL5GYkYumbzXOcQlnuLTKnG2ES2tJ8tnBH2X", "3EiBoCuQXGHq6ff45QVtqHGy00EsWURvDX9JJhbQ");
+        var TestObject = Parse.Object.extend("TestObject");
+        var testObject = new TestObject();
+        testObject.save({
+            foo: "fasdfasdf"
+        }, {
+            success: function(object) {
+                console.log(object);
+            },
+            error: function(model, error) {
+                console.log(error);
+            }
         });
     }
 }
@@ -378,8 +396,11 @@ function hideMessage(time) {
 }
 
 unsafeWindow.NOBraffle = function() {
-    $("#hgbar_messages").click();
-    $(".tabs a:eq(1)").click();
+    if (!($(".tabs a:eq(1)").length > 0))
+        $("#hgbar_messages").click();
+    setTimeout(function() {
+        $(".tabs a:eq(1)").click();
+    }, 1000);
     setTimeout(function() {
         var ballot = $(".notificationMessageList .tab:eq(1) .sendBallot");
         for (var i = ballot.length; i > 0; i--) {
@@ -387,8 +408,8 @@ unsafeWindow.NOBraffle = function() {
         }
         setTimeout(function() {
             $("a.messengerUINotificationClose").click();
-        }, 6000);
-    }, 3000);
+        }, 7000);
+    }, 4000);
 }
 
 // CALCULATE TIMER *******************************
