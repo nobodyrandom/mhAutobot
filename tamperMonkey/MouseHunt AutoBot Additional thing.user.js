@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.227
+// @version    	1.2.000
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -371,7 +371,8 @@ function pingServer() {
         var userData = new UserData();
         var theData = JSON.parse(NOBget('data'));
         userData.save({
-        	id: JSON.parse(theData.user_id),
+        	user_id: JSON.stringify(theData.sn_user_id),
+            name: JSON.stringify(theData.username),
             data: JSON.stringify(theData)
         }, {
             success: function(userData) {
