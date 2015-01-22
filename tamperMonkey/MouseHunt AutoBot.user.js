@@ -1005,7 +1005,7 @@ function embedTimer(targetPage) {
                 }
 
                 var timersElementToggle = document.createElement('a');
-                var text = document.createTextNode('Click to toggle timers');
+                var text = document.createTextNode('Toggle timers');
                 timersElementToggle.href = '#';
                 timersElementToggle.setAttribute('id', 'timersElementToggle');
                 timersElementToggle.appendChild(text);
@@ -1024,7 +1024,7 @@ function embedTimer(targetPage) {
                 loadLinkToUpdateDiv.setAttribute('id', 'gDocArea');
                 var tempSpan2 = document.createElement('span');
                 var loadLinkToUpdate = document.createElement('a');
-                text = document.createTextNode('Click to submit to GDoc');
+                text = document.createTextNode('Submit info to GDoc');
                 loadLinkToUpdate.href = '#';
                 loadLinkToUpdate.setAttribute('id', 'gDocLink');
                 loadLinkToUpdate.appendChild(text);
@@ -1033,13 +1033,17 @@ function embedTimer(targetPage) {
                 loadLinkToUpdateDiv.appendChild(tempSpan2);
                 timerDivElement.appendChild(loadLinkToUpdateDiv);
                 loadLinkToUpdate.addEventListener('click', NOBscript, false);
-
-                text = ' &#126; <a href="javascript:window.open(\'https://docs.google.com/spreadsheet/ccc?key=0Ag_KH_nuVUjbdGtldjJkWUJ4V1ZpUDVwd1FVM0RTM1E#gid=5\');" target=_blank>Click to go to GDoc</a>';
+                
+                text = ' &#126; <a href="javascript:window.open(\'https://docs.google.com/spreadsheet/ccc?key=0Ag_KH_nuVUjbdGtldjJkWUJ4V1ZpUDVwd1FVM0RTM1E#gid=5\');" target=_blank>Go to GDoc</a>';
                 var tempDiv = document.createElement('span');
                 tempDiv.innerHTML = text;
+                text = ' &#126; <a id="NOBraffle" href="#" target=_blank>Return raffle tickets</a>';
+                tempSpan2 = document.createElement('span');
+                tempSpan2.innerHTML = text;
                 var tempSpan = document.createElement('span');
-                tempSpan.innerHTML = ' &#126; <a href="javascript:window.open(\'http://goo.gl/forms/ayRsnizwL1\');" target=_blank>Click to submit a bug report/feedback</a>';
+                tempSpan.innerHTML = ' &#126; <a href="javascript:window.open(\'http://goo.gl/forms/ayRsnizwL1\');" target=_blank>Submit a bug report/feedback</a>';
                 loadLinkToUpdateDiv.appendChild(tempDiv);
+                loadLinkToUpdateDiv.appendChild(tempSpan2);
                 loadLinkToUpdateDiv.appendChild(tempSpan);
 
                 text = null;
