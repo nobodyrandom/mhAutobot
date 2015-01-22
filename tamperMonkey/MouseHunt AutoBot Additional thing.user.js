@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.226
+// @version    	1.1.227
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -366,7 +366,7 @@ function fetchGDocStuff() {
 
 function pingServer() {
     if (NOBpage) {
-        Parse.initialize("n69BPL5GYkYumbzXOcQlnuLTKnG2ES2tJ8tnBH2X", "3EiBoCuQXGHq6ff45QVtqHGy00EsWURvDX9JJhbQ");
+        Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
         var UserData = Parse.Object.extend("UserData");
         var userData = new UserData();
         var theData = JSON.parse(NOBget('data'));
@@ -374,10 +374,10 @@ function pingServer() {
         	id: JSON.parse(theData.user_id),
             data: JSON.stringify(theData)
         }, {
-            success: function(object) {
-                console.log(object);
+            success: function(userData) {
+                console.log(userData);
             },
-            error: function(model, error) {
+            error: function(userData, error) {
                 console.log(error);
             }
         });
