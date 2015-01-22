@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom
-// @version    	1.4.420a
+// @version    	1.4.421a
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application with the newest version supported and many other features and fixes. REVAMPED VERSION of ORIGINAL by Ooi
 // @require		https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=32949
 // @namespace   https://greasyfork.org/users/6398
@@ -1037,7 +1037,7 @@ function embedTimer(targetPage) {
                 text = ' &#126; <a href="javascript:window.open(\'https://docs.google.com/spreadsheet/ccc?key=0Ag_KH_nuVUjbdGtldjJkWUJ4V1ZpUDVwd1FVM0RTM1E#gid=5\');" target=_blank>Go to GDoc</a>';
                 var tempDiv = document.createElement('span');
                 tempDiv.innerHTML = text;
-                text = ' &#126; <a id="NOBraffle" href="#" target=_blank>Return raffle tickets</a>';
+                text = ' &#126; <a id="NOBraffle" href="#">Return raffle tickets</a>';
                 tempSpan2 = document.createElement('span');
                 tempSpan2.innerHTML = text;
                 var tempSpan = document.createElement('span');
