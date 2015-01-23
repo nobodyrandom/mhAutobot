@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.2.001
+// @version    	1.2.002
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -15,7 +15,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.2.001';
+unsafeWindow.addonScriptVer = '1.2.002';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -367,19 +367,22 @@ function fetchGDocStuff() {
 function pingServer() {
     if (NOBpage) {
     	var theData = JSON.parse(NOBget('data'));
+    	var userData = NOBget('NOBparse');
+    	
         Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
         var UserData = Parse.Object.extend("UserData");
         var userData = new UserData();
         
         userData.set("user_id", JSON.stringify(theData.sn_user_id));
         userData.set("name", JSON.stringify(theData.username));
-        userData.set("script_ver", "testver");
+        userData.set("script_ver", GM_info.script.version);
         userData.set("data", JSON.stringify(theData));
         
         userData.save(null, {
             success: function(userData) {
                 //console.log(userData);
                 console.log("Success Parse");
+                NOBstore(userData, 'NOBparse');
             },
             error: function(userData, error) {
                 console.log("Parse failed - " + error);
