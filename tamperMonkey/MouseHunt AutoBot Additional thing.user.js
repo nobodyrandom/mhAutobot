@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.2.000
+// @version    	1.2.001
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -84,11 +84,11 @@ $(window).load(function() {
             clockTick();
             fetchGDocStuff();
             setTimeout(function(){pingServer();}, 30000);
-            setTimeout(function() {
+            /*setTimeout(function() {
                 $('#NOBraffle').addEventListener('click', function() {
                     NOBraffle()
                 }, false);
-            }, 4000);
+            }, 4000);*/
         }
     }
 });
@@ -366,20 +366,23 @@ function fetchGDocStuff() {
 
 function pingServer() {
     if (NOBpage) {
+    	var theData = JSON.parse(NOBget('data'));
         Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
         var UserData = Parse.Object.extend("UserData");
         var userData = new UserData();
-        var theData = JSON.parse(NOBget('data'));
-        userData.save({
-        	user_id: JSON.stringify(theData.sn_user_id),
-            name: JSON.stringify(theData.username),
-            data: JSON.stringify(theData)
-        }, {
+        
+        userData.set("user_id", JSON.stringify(theData.sn_user_id));
+        userData.set("name", JSON.stringify(theData.username));
+        userData.set("script_ver", "testver");
+        userData.set("data", JSON.stringify(theData));
+        
+        userData.save(null, {
             success: function(userData) {
-                console.log(userData);
+                //console.log(userData);
+                console.log("Success Parse");
             },
             error: function(userData, error) {
-                console.log(error);
+                console.log("Parse failed - " + error);
             }
         });
     }
