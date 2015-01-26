@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.2.003
+// @version    	1.2.004
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -371,10 +371,21 @@ function pingServer() {
     	
         Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
         var UserData = Parse.Object.extend("UserData");
+        var findOld = new Parse.Query(UserData);
+        findOld.equalTo("user_id", theData.sn_user_id);
+        findOld.find({
+        	success: function(results) {
+        		for (var i = 0; i < results.length-1; i++) {
+        			var theObject = results[i];
+        			theObject.destroy();
+        		}
+        	}
+        });
+        
         var userData = new UserData();
         
-        userData.set("user_id", JSON.stringify(theData.sn_user_id));
-        userData.set("name", JSON.stringify(theData.username));
+        userData.set("user_id", theData.sn_user_id);
+        userData.set("name", theData.username);
         userData.set("script_ver", GM_info.script.version);
         userData.set("data", JSON.stringify(theData));
         
