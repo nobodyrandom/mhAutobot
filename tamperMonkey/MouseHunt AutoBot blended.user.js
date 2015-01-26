@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	1.4.502b
+// @version    	1.4.503b
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application with the newest version supported and many other features and fixes. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @require     https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=33028
@@ -2631,13 +2631,15 @@ function trapCheck() {
     displayTimer("Checking The Trap...", "Checking trap now...", "Checking trap now...");
 
     // simulate mouse click on the camp button
+    /*var campElement = document.getElementsByClassName('campbutton')[0].firstChild;
     fireEvent(campElement, 'click');
-    campElement = null;
+    campElement = null;*/
 
+    reloadWithMessage("Reloading page for trap check...", false);
     // reload the page if click on camp button fail
-    window.setTimeout(function() {
+    /*window.setTimeout(function() {
         reloadWithMessage("Fail to click on camp button. Reloading...", false);
-    }, 5000);
+    }, 5000);*/
 }
 
 // ################################################################################################
