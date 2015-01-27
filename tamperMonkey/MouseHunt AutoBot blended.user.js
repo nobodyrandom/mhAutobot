@@ -1899,7 +1899,7 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '</td>';
                 preferenceHTMLStr += '</tr>';
             }
-            
+
             preferenceHTMLStr += '<tr>';
             preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
             preferenceHTMLStr += '<a title="Select the script algorithm based on certain event / location"><b>Event or Location</b></a>';
@@ -1910,10 +1910,10 @@ function embedTimer(targetPage) {
             preferenceHTMLStr += '<option value="None" selected>None</option>';
             preferenceHTMLStr += '<option value="Charge Egg 2014">Charge Egg 2014</option>';
             preferenceHTMLStr += '<option value="Charge Egg 2014(17)">Charge Egg 2014(17)</option>';
-			preferenceHTMLStr += '<option value="Burroughs Rift(Red)">Burroughs Rift(Red)</option>';
-			preferenceHTMLStr += '<option value="Burroughs Rift(Green)">Burroughs Rift(Green)</option>';
-			preferenceHTMLStr += '<option value="Halloween 2014">Halloween 2014</option>';
-			preferenceHTMLStr += '<option value="Sunken City">Sunken City</option>';
+            preferenceHTMLStr += '<option value="Burroughs Rift(Red)">Burroughs Rift(Red)</option>';
+            preferenceHTMLStr += '<option value="Burroughs Rift(Green)">Burroughs Rift(Green)</option>';
+            preferenceHTMLStr += '<option value="Halloween 2014">Halloween 2014</option>';
+            preferenceHTMLStr += '<option value="Sunken City">Sunken City</option>';
             preferenceHTMLStr += '<option value="All LG Area">All LG Area</option>';
             preferenceHTMLStr += '</select> Current Selection : ';
             preferenceHTMLStr += '<input type="text" id="event" name="event" value="' + eventLocation + '"/>';

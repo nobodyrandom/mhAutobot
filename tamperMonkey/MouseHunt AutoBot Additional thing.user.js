@@ -85,7 +85,9 @@ $(window).load(function() {
             createClockArea();
             clockTick();
             fetchGDocStuff();
-            setTimeout(function(){pingServer();}, 30000);
+            setTimeout(function() {
+                pingServer();
+            }, 30000);
         }
     }
 });
@@ -182,7 +184,7 @@ function GDoc(items, type) {
     var sheet = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec";
 
     NOBajaxPost(sheet, dataSendString, function(data) {
-    //console.log(data);
+        //console.log(data);
     }, function(a, b, c) {
         console.log(b)
     });
@@ -360,29 +362,29 @@ function fetchGDocStuff() {
 
 function pingServer() {
     if (NOBpage) {
-    	var theData = JSON.parse(NOBget('data'));
-    	var userData = NOBget('NOBparse');
-    	
+        var theData = JSON.parse(NOBget('data'));
+        var userData = NOBget('NOBparse');
+
         Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
         var UserData = Parse.Object.extend("UserData");
         var findOld = new Parse.Query(UserData);
         findOld.equalTo("user_id", theData.sn_user_id);
         findOld.find({
-        	success: function(results) {
-        		for (var i = 0; i < results.length-1; i++) {
-        			var theObject = results[i];
-        			theObject.destroy();
-        		}
-        	}
+            success: function(results) {
+                for (var i = 0; i < results.length - 1; i++) {
+                    var theObject = results[i];
+                    theObject.destroy();
+                }
+            }
         });
-        
+
         var userData = new UserData();
-        
+
         userData.set("user_id", theData.sn_user_id);
         userData.set("name", theData.username);
         userData.set("script_ver", GM_info.script.version);
         userData.set("data", JSON.stringify(theData));
-        
+
         userData.save(null, {
             success: function(userData) {
                 //console.log(userData);
@@ -408,7 +410,7 @@ unsafeWindow.NOBraffle = function() {
     }, 1000);
     setTimeout(function() {
         var ballot = $(".notificationMessageList .tab:eq(1) .sendBallot");
-        for (var i = ballot.length-1; i >= 0; i--) {
+        for (var i = ballot.length - 1; i >= 0; i--) {
             ballot[i].click();
         }
         setTimeout(function() {

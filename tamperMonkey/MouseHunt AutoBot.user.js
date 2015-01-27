@@ -2043,7 +2043,7 @@ function trapCheck() {
     /*var campElement = document.getElementsByClassName('campbutton')[0].firstChild;
     fireEvent(campElement, 'click');
     campElement = null;*/
-    
+
     reloadWithMessage("Reloading page for trap check...", false);
     // reload the page if click on camp button fail
     /*window.setTimeout(function() {
