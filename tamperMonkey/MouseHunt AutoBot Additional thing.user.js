@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.2.006
+// @version    	1.2.007
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -361,7 +361,9 @@ function fetchGDocStuff() {
 function pingServer() {
     if (NOBpage) {
         var theData = JSON.parse(NOBget('data'));
-        var userData = NOBget('NOBparse');
+        if(typeof theData.user !== 'undefined') {
+        	theData = theData.user;
+        }
 
         Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
         var UserData = Parse.Object.extend("UserData");
