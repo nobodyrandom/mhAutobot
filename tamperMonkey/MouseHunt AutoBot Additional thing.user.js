@@ -3,6 +3,7 @@
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
 // @version    	1.2.007
+// @description	This is an additional file for NobodyRandom's version of MH autobot
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -15,7 +16,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.2.006';
+unsafeWindow.addonScriptVer = '1.2.007';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
