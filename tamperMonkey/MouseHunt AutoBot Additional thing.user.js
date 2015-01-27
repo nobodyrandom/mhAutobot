@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.2.005
+// @version    	1.2.006
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -15,7 +15,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.2.005';
+unsafeWindow.addonScriptVer = '1.2.006';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -75,9 +75,7 @@ $(window).load(function() {
             window.location.href.indexOf("mousehuntgame.com/canvas/index.php") != -1 ||
             window.location.href.indexOf("mousehuntgame.com/canvas/turn.php") != -1 ||
             window.location.href.indexOf("mousehuntgame.com/canvas/?") != -1) {
-            // if (!checkIntroContainer()) {
             NOBpage = true;
-            //}
         }
 
         if (NOBpage) {
