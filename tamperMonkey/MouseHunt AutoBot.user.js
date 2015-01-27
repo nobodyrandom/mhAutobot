@@ -1038,7 +1038,7 @@ function embedTimer(targetPage) {
                 text = ' &#126; <a href="javascript:window.open(\'https://docs.google.com/spreadsheet/ccc?key=0Ag_KH_nuVUjbdGtldjJkWUJ4V1ZpUDVwd1FVM0RTM1E#gid=5\');" target=_blank>Go to GDoc</a>';
                 var tempDiv = document.createElement('span');
                 tempDiv.innerHTML = text;
-                text = ' &#126; <strike><a id="NOBraffle" href="#">Return raffle tickets</a></strike>';
+                text = ' &#126; <strike><a id="NOBraffle" href="javascript: NOBraffle();">Return raffle tickets</a></strike>';
                 tempSpan2 = document.createElement('span');
                 tempSpan2.innerHTML = text;
                 var tempSpan = document.createElement('span');

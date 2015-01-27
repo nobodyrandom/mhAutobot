@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.2.004
+// @version    	1.2.005
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -15,13 +15,15 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.2.004';
+unsafeWindow.addonScriptVer = '1.2.005';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
 var mapRequestFailed = false;
 var clockTicking = false;
 var clockNeedOn = false;
+var counter = 0;
+var dots = "";
 
 var LOCATION_TIMERS = [
     ['Seasonal Garden', {
@@ -84,11 +86,6 @@ $(window).load(function() {
             clockTick();
             fetchGDocStuff();
             setTimeout(function(){pingServer();}, 30000);
-            /*setTimeout(function() {
-                $('#NOBraffle').addEventListener('click', function() {
-                    NOBraffle()
-                }, false);
-            }, 4000);*/
         }
     }
 });
@@ -243,9 +240,6 @@ function MapRequest(handleData) {
         }
     });
 }
-
-var counter = 0;
-var dots = "";
 
 function NOBloading(location, name) {
     var element = document.getElementById(location);
@@ -414,7 +408,7 @@ unsafeWindow.NOBraffle = function() {
     }, 1000);
     setTimeout(function() {
         var ballot = $(".notificationMessageList .tab:eq(1) .sendBallot");
-        for (var i = ballot.length; i > 0; i--) {
+        for (var i = ballot.length-1; i >= 0; i--) {
             ballot[i].click();
         }
         setTimeout(function() {
