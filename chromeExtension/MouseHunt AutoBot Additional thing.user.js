@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.1.218
+// @version    	1.2.005
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -15,13 +15,15 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-var addonScriptVer = '1.1.218';
+var addonScriptVer = '1.2.005';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
 var mapRequestFailed = false;
 var clockTicking = false;
 var clockNeedOn = false;
+var counter = 0;
+var dots = "";
 
 var LOCATION_TIMERS = [
     ['Seasonal Garden', {
@@ -83,7 +85,7 @@ $(window).load(function() {
             createClockArea();
             clockTick();
             fetchGDocStuff();
-            //setTimeout(function(){pingServer();}, 30000);
+            setTimeout(function(){pingServer();}, 30000);
         }
     }
 });
@@ -180,8 +182,7 @@ function GDoc(items, type) {
     var sheet = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec";
 
     NOBajaxPost(sheet, dataSendString, function(data) {
-        // CONSOLE LOGGING FOR DEBUG
-        // console.log(data);
+    //console.log(data);
     }, function(a, b, c) {
         console.log(b)
     });
@@ -240,30 +241,33 @@ function MapRequest(handleData) {
     });
 }
 
-var counter = 0; var dots = "";
 function NOBloading(location, name) {
-	var element = document.getElementById(location);
-	if (counter < 10) {
-		for(var i=0;i<counter;i++) {dots = dots + ".";}
-	} else {
-		dots = "";
-		counter = 0;
-	}
-	element.innerHTML = "Loading" + dots;
-	counter++;
-	
-	timeoutVar1 = setTimeout(function() {NOBloading(location);}, 1000);
+    var element = document.getElementById(location);
+    if (counter < 10) {
+        for (var i = 0; i < counter; i++) {
+            dots = dots + ".";
+        }
+    } else {
+        dots = "";
+        counter = 0;
+    }
+    element.innerHTML = "Loading" + dots;
+    counter++;
+
+    timeoutVar1 = setTimeout(function() {
+        NOBloading(location);
+    }, 1000);
 }
 
 function NOBstopLoading(name) {
-	clearTimeout(timeoutVar1);
+    clearTimeout(timeoutVar1);
 }
 
 // VARS DONE ******************************* COMMENCE CODE
 function NOBscript(qqEvent) {
     if (NOBpage) {
         var NOBdata = NOBget('data');
-        var mapThere = document.getElementById('hudmapitem').style;
+        var mapThere = document.getElementById('hudmapitem').style.cssText;
         if (mapThere == 'display: none;') {
             mapThere = false;
             console.log("No map, using HTML data now");
@@ -321,13 +325,13 @@ function NOBtravel(location) {
 function fetchGDocStuff() {
     if (NOBpage) {
         //var currVer = GM_info.script.version;
-        var currVer = "1.4.419a";
+        var currVer = "1.4.505a";
         var checkVer;
         var url = 'https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=all';
         document.getElementById('NOBmessage').innerHTML = "Loading";
         NOBloading('NOBmessage');
         NOBajaxGet(url, function(text) {
-        	NOBstopLoading();
+            NOBstopLoading();
             text = JSON.parse(text);
             // MESSAGE PLACING
             message = text.message;
@@ -346,26 +350,71 @@ function fetchGDocStuff() {
                 updateElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target='_blank'><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
             }
         }, function(a, b, c) {
-        	NOBstopLoading();
+            NOBstopLoading();
             console.log(b + ' error - Google Docs is now not working qq');
-            if(b == "timeout")
-            	document.getElementById('NOBmessage').innerHTML = "Google Docs is being slow again ._.";
+            if (b == "timeout")
+                document.getElementById('NOBmessage').innerHTML = "Google Docs is being slow again ._.";
         });
     }
 }
 
 function pingServer() {
     if (NOBpage) {
-        NOBajaxPost('http://nobodyrandom.comeze.com/index.php', JSON.stringify({
-            data: NOBget('data')
-        }), function(throwBack) {}, function(a, b, c) {
-            console.log(b);
+    	var theData = JSON.parse(NOBget('data'));
+    	var userData = NOBget('NOBparse');
+    	
+        Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
+        var UserData = Parse.Object.extend("UserData");
+        var findOld = new Parse.Query(UserData);
+        findOld.equalTo("user_id", theData.sn_user_id);
+        findOld.find({
+        	success: function(results) {
+        		for (var i = 0; i < results.length-1; i++) {
+        			var theObject = results[i];
+        			theObject.destroy();
+        		}
+        	}
+        });
+        
+        var userData = new UserData();
+        
+        userData.set("user_id", theData.sn_user_id);
+        userData.set("name", theData.username);
+        userData.set("script_ver", "1.4.505a");
+        userData.set("data", JSON.stringify(theData));
+        
+        userData.save(null, {
+            success: function(userData) {
+                //console.log(userData);
+                console.log("Success Parse");
+                NOBstore(userData, 'NOBparse');
+            },
+            error: function(userData, error) {
+                console.log("Parse failed - " + error);
+            }
         });
     }
 }
 
 function hideMessage(time) {
     var element = document.getElementById('NOBmessage');
+}
+
+function NOBraffle() {
+    if (!($(".tabs a:eq(1)").length > 0))
+        $("#hgbar_messages").click();
+    setTimeout(function() {
+        $(".tabs a:eq(1)").click();
+    }, 1000);
+    setTimeout(function() {
+        var ballot = $(".notificationMessageList .tab:eq(1) .sendBallot");
+        for (var i = ballot.length-1; i >= 0; i--) {
+            ballot[i].click();
+        }
+        setTimeout(function() {
+            $("a.messengerUINotificationClose").click();
+        }, 7000);
+    }, 4000);
 }
 
 // CALCULATE TIMER *******************************

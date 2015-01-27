@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	1.4.419b
+// @version    	1.4.505b
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application with the newest version supported and many other features and fixes. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN
-// @require     https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=31746
+// @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
+// @require     https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=33714
 // @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot, https://devcnn.wordpress.com/
 // @updateURL	https://greasyfork.org/scripts/6514-mousehunt-autobot-enhanced-revamp/code/MouseHunt%20AutoBot%20ENHANCED%20+%20REVAMP.user.js
 // @downloadURL	https://greasyfork.org/scripts/6514-mousehunt-autobot-enhanced-revamp/code/MouseHunt%20AutoBot%20ENHANCED%20+%20REVAMP.user.js
@@ -23,8 +24,8 @@
 // // Reload MouseHunt page manually if edit this script while running it for immediate effect.
 // // Extra delay time before sounding the horn. (in seconds)
 // // Default: 1 - 5
-var hornTimeDelayMin = 1;
-var hornTimeDelayMax = 150;
+var hornTimeDelayMin = 10;
+var hornTimeDelayMax = 180;
 
 // // Bot aggressively by ignore all safety measure such as check horn image visible before sounding it. (true/false)
 // // Note: Highly recommended to turn off because it increase the chances of getting caugh in botting.
@@ -1548,7 +1549,7 @@ function embedTimer(targetPage) {
                 }
 
                 var timersElementToggle = document.createElement('a');
-                var text = document.createTextNode('Click to toggle timers');
+                var text = document.createTextNode('Toggle timers');
                 timersElementToggle.href = '#';
                 timersElementToggle.setAttribute('id', 'timersElementToggle');
                 timersElementToggle.appendChild(text);
@@ -1567,7 +1568,7 @@ function embedTimer(targetPage) {
                 loadLinkToUpdateDiv.setAttribute('id', 'gDocArea');
                 var tempSpan2 = document.createElement('span');
                 var loadLinkToUpdate = document.createElement('a');
-                text = document.createTextNode('Click to submit to GDoc');
+                text = document.createTextNode('Submit info to GDoc');
                 loadLinkToUpdate.href = '#';
                 loadLinkToUpdate.setAttribute('id', 'gDocLink');
                 loadLinkToUpdate.appendChild(text);
@@ -1577,12 +1578,16 @@ function embedTimer(targetPage) {
                 timerDivElement.appendChild(loadLinkToUpdateDiv);
                 loadLinkToUpdate.addEventListener('click', NOBscript, false);
 
-                text = ' &#126; <a href="javascript:window.open(\'https://docs.google.com/spreadsheet/ccc?key=0Ag_KH_nuVUjbdGtldjJkWUJ4V1ZpUDVwd1FVM0RTM1E#gid=5\');" target=_blank>Click to go to GDoc</a>';
+                text = ' &#126; <a href="javascript:window.open(\'https://docs.google.com/spreadsheet/ccc?key=0Ag_KH_nuVUjbdGtldjJkWUJ4V1ZpUDVwd1FVM0RTM1E#gid=5\');" target=_blank>Go to GDoc</a>';
                 var tempDiv = document.createElement('span');
                 tempDiv.innerHTML = text;
+                text = ' &#126; <a id="NOBraffle" href="javascript: NOBraffle();">Return raffle tickets</a>';
+                tempSpan2 = document.createElement('span');
+                tempSpan2.innerHTML = text;
                 var tempSpan = document.createElement('span');
-                tempSpan.innerHTML = ' &#126; <a href="javascript:window.open(\'http://goo.gl/forms/ayRsnizwL1\');" target=_blank>Click to submit a bug report/feedback</a>';
+                tempSpan.innerHTML = ' &#126; <a href="javascript:window.open(\'http://goo.gl/forms/ayRsnizwL1\');" target=_blank>Submit a bug report/feedback</a>';
                 loadLinkToUpdateDiv.appendChild(tempDiv);
+                loadLinkToUpdateDiv.appendChild(tempSpan2);
                 loadLinkToUpdateDiv.appendChild(tempSpan);
 
                 text = null;
@@ -1888,9 +1893,9 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
                 preferenceHTMLStr += '</td>';
                 preferenceHTMLStr += '<td style="height:24px">';
-                preferenceHTMLStr += '<input type="radio" id="autopopkrTrue" name="autopopkrInput" value="true" /> True';
+                preferenceHTMLStr += '<input type="radio" id="autopopkrTrue" name="autopopkrInput" value="true"/> True';
                 preferenceHTMLStr += '   ';
-                preferenceHTMLStr += '<input type="radio" id="autopopkrFalse" name="autopopkrInput" value="false" checked="checked" /> False';
+                preferenceHTMLStr += '<input type="radio" id="autopopkrFalse" name="autopopkrInput" value="false" checked="checked"/> False';
                 preferenceHTMLStr += '</td>';
                 preferenceHTMLStr += '</tr>';
             }
@@ -2626,13 +2631,15 @@ function trapCheck() {
     displayTimer("Checking The Trap...", "Checking trap now...", "Checking trap now...");
 
     // simulate mouse click on the camp button
+    /*var campElement = document.getElementsByClassName('campbutton')[0].firstChild;
     fireEvent(campElement, 'click');
-    campElement = null;
+    campElement = null;*/
 
+    reloadWithMessage("Reloading page for trap check...", false);
     // reload the page if click on camp button fail
-    window.setTimeout(function() {
+    /*window.setTimeout(function() {
         reloadWithMessage("Fail to click on camp button. Reloading...", false);
-    }, 5000);
+    }, 5000);*/
 }
 
 // ################################################################################################
