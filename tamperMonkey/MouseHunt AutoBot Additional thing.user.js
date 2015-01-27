@@ -3,7 +3,7 @@
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
 // @version    	1.2.007
-// @description	This is an additional file for NobodyRandom's version of MH autobot
+// @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp)
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
