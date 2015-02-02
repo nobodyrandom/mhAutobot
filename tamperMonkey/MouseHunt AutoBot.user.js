@@ -23,7 +23,7 @@
 // // The variable in this section contain basic option will normally edit by most user to suit their own preference
 // // Reload MouseHunt page manually if edit this script while running it for immediate effect.
 // // Extra delay time before sounding the horn. (in seconds)
-// // Default: 1 - 5
+// // Default: 10 - 180
 var hornTimeDelayMin = 10;
 var hornTimeDelayMax = 180;
 
