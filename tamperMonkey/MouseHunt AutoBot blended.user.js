@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	1.4.508b
+// @version    	1.4.509b
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application with the newest version supported and many other features and fixes. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN... DOES NOT SUPPORT BETA UI YET (COMING OUT ON VER 1.5)
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @require     https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=34819
@@ -360,35 +360,6 @@ function checkIntroContainer() {
 }
 
 //// EMBEDING ENHANCED EDITION CODE
-function notifyMe(notice) {
-    // Let's check if the browser supports notifications
-    if (!("Notification" in window)) {
-        alert("This browser does not support desktop notification");
-    }
-
-    // Let's check if the user is okay to get some notification
-    else if (Notification.permission === "granted") {
-        // If it's okay let's create a notification
-        var notification = new Notification(notice);
-    }
-    // Otherwise, we need to ask the user for permission
-    // Note, Chrome does not implement the permission static property
-    // So we have to check for NOT 'denied' instead of 'default'
-    else if (Notification.permission !== 'denied') {
-        Notification.requestPermission(function(permission) {
-            // Whatever the user answers, we make sure we store the information
-            if (!('permission' in Notification)) {
-                Notification.permission = permission;
-            }
-
-            // If the user is okay, let's create a notification
-            if (permission === "granted") {
-                var notification = new Notification(notice);
-            }
-        });
-    }
-}
-
 function ZTalgo() {
     retrieveMouseList();
     var intervalZT = setInterval(
@@ -1167,7 +1138,7 @@ function checkJournalDate() {
 function action() {
     if (isKingReward) {
         kingRewardAction();
-        notifyMe('King\'s Reward - ' + getPageVariableForChrome('user.username'));
+        notify(getPageVariableForChrome('user.username'));
     } else if (pauseAtInvalidLocation && (huntLocation != currentLocation)) {
         // update timer
         displayTimer("Out of pre-defined hunting location...", "Out of pre-defined hunting location...", "Out of pre-defined hunting location...");
@@ -2480,8 +2451,8 @@ function kingRewardAction() {
     kingRewardCountdownTimer();
 }
 
-function notify() {
-    if (!Notification) {
+function notify(username) {
+    /*if (!Notification) {
         alert('Please us a modern version of Chrome, Firefox, Opera or Firefox.');
         return;
     }
@@ -2503,6 +2474,41 @@ function notify() {
         setTimeout(function() {
             notification.close();
         }, 5000);
+    } */
+    notifyMe('KR NOW - ' + username, 'http://3.bp.blogspot.com/_O2yZIhpq9E8/TBoAMw0fMNI/AAAAAAAAAxo/1ytaIxQQz4o/s1600/Subliminal+Message.JPG', "Kings Reward NOW");
+}
+
+function notifyMe(notice, icon, body) {
+    if (!("Notification" in window)) {
+        alert("This browser does not support desktop notification");
+    } else if (Notification.permission === "granted") {
+        var notification = new Notification(notice);
+    } else if (Notification.permission !== 'denied') {
+        Notification.requestPermission(function(permission) {
+            // Whatever the user answers, we make sure we store the information
+            if (!('permission' in Notification)) {
+                Notification.permission = permission;
+            }
+
+            // If the user is okay, let's create a notification
+            if (permission === "granted") {
+                var notification = new Notification(notice, {
+                    'icon': icon,
+                    'body': body
+                });
+
+                notification.onclick = function() {
+                    window.open("https://www.mousehuntgame.com/");
+                    notification.close();
+                }
+
+                notification.onshow = function() {
+                    setTimeout(function() {
+                        notification.close();
+                    }, 5000);
+                }
+            }
+        });
     }
 }
 
