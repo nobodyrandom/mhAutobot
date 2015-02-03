@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name        MouseHunt AutoBot REVAMP BETA UI
+// @name        MouseHunt AutoBot REVAMP for BETA UI
 // @author      NobodyRandom
 // @version    	1.5.011y
 // @description BETA AUTOBOT
