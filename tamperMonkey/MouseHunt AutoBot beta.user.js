@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP BETA
 // @author      NobodyRandom
-// @version    	1.5.008y
+// @version    	1.5.009y
 // @description BETA AUTOBOT
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @require		https://greasyfork.org/scripts/7866-mousehunt-autobot-additional-thing-beta/code/MouseHunt%20AutoBot%20Additional%20thing%20BETA.js?version=34950
@@ -905,7 +905,7 @@ function reloadWithMessage(msg, soundHorn) {
     displayTimer(msg, msg, msg, msg);
 
     // reload the page
-    reloadPage(soundHorn);
+    setTimeout(function(){reloadPage(soundHorn)}, 1000);
 
     msg = undefined;
     soundHorn = undefined;
@@ -935,7 +935,7 @@ function embedTimer(targetPage) {
             var titleElement = document.createElement('div');
             titleElement.setAttribute('id', 'titleElement');
             if (targetPage && aggressiveMode) {
-                titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target=\"_blank\">MouseHunt AutoBot (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing (version " + addonScriptVer + ")</b> - <font color='red'>Aggressive Mode</font>";
+                titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target=\"_blank\">MouseHunt AutoBot BETA (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing (version " + addonScriptVer + ")</b> - <font color='red'>Aggressive Mode</font>";
             } else {
                 titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target=\"_blank\">MouseHunt AutoBot (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing (version " + addonScriptVer + ")</b>";
             }
@@ -1811,17 +1811,13 @@ function embedScript() {
     scriptNode.setAttribute('id', 'scriptNode');
     scriptNode.setAttribute('type', 'text/javascript');
     scriptNode.setAttribute('soundedHornAtt', 'false');
-    scriptNode.innerHTML = '														\
-function soundedHorn()														\
-{																			\
-var scriptNode = document.getElementById("scriptNode");					\
-if (scriptNode)															\
-{																		\
-scriptNode.setAttribute("soundedHornAtt", "true");					\
-}																		\
-scriptNode = null;														\
-}																			\
-';
+    scriptNode.innerHTML = 'function soundedHorn() {\
+    var scriptNode = document.getElementById("scriptNode");\
+    if (scriptNode) {\
+    	scriptNode.setAttribute("soundedHornAtt", "true");\
+    }\
+    scriptNode = null;\
+    }';
 
     // find the head node and insert the script into it
     var headerElement;
@@ -1838,7 +1834,7 @@ scriptNode = null;														\
     var hornButtonLink = document.getElementsByClassName(hornbutton)[0].firstChild;
     var oriStr = hornButtonLink.getAttribute('onclick').toString();
     var index = oriStr.indexOf('return false;');
-    var modStr = oriStr.substring(0, index) + 'soundedHorn();' + oriStr.substring(index);
+    var modStr = oriStr.substring(0, index) + 'soundedHorn(); ' + oriStr.substring(index);
     hornButtonLink.setAttribute('onclick', modStr);
 
     hornButtonLink = null;
