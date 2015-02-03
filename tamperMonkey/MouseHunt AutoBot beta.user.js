@@ -125,6 +125,7 @@ var lastKingRewardSumTimeElement;
 var optionElement;
 var travelElement;
 var hornbutton = 'mousehuntHud-huntersHorn-container';
+var campbutton = 'camp';
 
 // start executing script
 exeScript();
@@ -710,7 +711,7 @@ function countdownTimer() {
 
         // reload the page so that the sound can be play
         // simulate mouse click on the camp button
-        fireEvent(document.getElementsByClassName('campbutton')[0].firstChild, 'click');
+        fireEvent(document.getElementsByClassName(campbutton)[0].firstChild, 'click');
 
         // reload the page if click on camp button fail
         window.setTimeout(function() {
@@ -1959,7 +1960,7 @@ function kingRewardCountdownTimer() {
         displayTimer("King's Reward - Reloading...", "Reloading...", "Reloading...");
 
         // simulate mouse click on the camp button
-        var campElement = document.getElementsByClassName('campbutton')[0].firstChild;
+        var campElement = document.getElementsByClassName(campbutton)[0].firstChild;
         fireEvent(campElement, 'click');
         campElement = null;
 
@@ -2041,11 +2042,11 @@ function trapCheck() {
     displayTimer("Checking The Trap...", "Checking trap now...", "Checking trap now...");
 
     // simulate mouse click on the camp button
-    /*var campElement = document.getElementsByClassName('campbutton')[0].firstChild;
+    var campElement = document.getElementsByClassName(campbutton)[0].firstChild;
     fireEvent(campElement, 'click');
-    campElement = null;*/
+    campElement = null;
 
-    reloadWithMessage("Reloading page for trap check...", false);
+    //reloadWithMessage("Reloading page for trap check...", false);
     // reload the page if click on camp button fail
     /*window.setTimeout(function() {
         reloadWithMessage("Fail to click on camp button. Reloading...", false);
