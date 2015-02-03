@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP BETA
 // @author      NobodyRandom
-// @version    	1.5.009y
+// @version    	1.5.010y
 // @description BETA AUTOBOT
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @require		https://greasyfork.org/scripts/7866-mousehunt-autobot-additional-thing-beta/code/MouseHunt%20AutoBot%20Additional%20thing%20BETA.js?version=34950
@@ -126,6 +126,7 @@ var optionElement;
 var travelElement;
 var hornbutton = 'mousehuntHud-huntersHorn-container';
 var campbutton = 'camp';
+var header = 'mousehuntHud-top';
 
 // start executing script
 exeScript();
@@ -672,10 +673,10 @@ function action() {
 
         // check if the horn image is visible
         var headerElement;
-        headerElement = document.getElementById('header');
+        headerElement = document.getElementsByClassName(header)[0];
         if (headerElement) {
             var headerStatus = headerElement.getAttribute('class');
-            if (headerStatus.indexOf("hornready") != -1) {
+            if (headerStatus.indexOf("hornReady") != -1) {
                 // if the horn image is visible, why do we need to wait any more, sound the horn!
                 soundHorn();
 
@@ -818,10 +819,10 @@ function countdownTimer() {
                         "-");
 
                     // agressive mode should sound the horn whenever it is possible to do so.
-                    var headerElement = document.getElementById('header');
+                    var headerElement = document.getElementsByClassName(header)[0];
                     if (headerElement) {
                         // the horn image appear before the timer end
-                        if (headerElement.getAttribute('class').indexOf("hornready") != -1) {
+                        if (headerElement.getAttribute('class').indexOf("hornReady") != -1) {
                             // who care, blow the horn first!
                             soundHorn();
 
@@ -1618,11 +1619,11 @@ function soundHorn() {
 
     if (!aggressiveMode) {
         // safety mode, check the horn image is there or not before sound the horn
-        var headerElement = document.getElementById('header');
+        var headerElement = document.getElementsByClassName(header)[0];
         if (headerElement) {
             // need to make sure that the horn image is ready before we can click on it
             var headerStatus = headerElement.getAttribute('class');
-            if (headerStatus.indexOf("hornready") != -1) {
+            if (headerStatus.indexOf("hornReady") != -1) {
                 // found the horn image, let's sound the horn!
 
                 // update timer
@@ -1724,11 +1725,11 @@ function afterSoundingHorn() {
     }
     scriptNode = null;
 
-    var headerElement = document.getElementById('header');
+    var headerElement = document.getElementsByClassName(header)[0];
     if (headerElement) {
         // double check if the horn image is still visible after the script already sound it
         var headerStatus = headerElement.getAttribute('class');
-        if (headerStatus.indexOf("hornready") != -1) {
+        if (headerStatus.indexOf("hornReady") != -1) {
             // seen like the horn is not functioning well
 
             // update timer
