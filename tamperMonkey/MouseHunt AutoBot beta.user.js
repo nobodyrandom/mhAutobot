@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP for BETA UI
 // @author      NobodyRandom
-// @version    	1.5.018y
+// @version    	1.5.019y
 // @description BETA MOUSEHUNT AUTOBOT
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @require		https://greasyfork.org/scripts/7866-mousehunt-autobot-additional-thing-beta/code/MouseHunt%20AutoBot%20Additional%20thing%20BETA.js?version=35066
@@ -129,7 +129,8 @@ var campbutton = 'camp';
 var header = 'mousehuntHud-top';
 
 // start executing script
-exeScript();
+$(window).load(exeScript);
+console.log("test run");
 
 function exeScript() {
     // check the trap check setting first
@@ -234,7 +235,6 @@ function exeScript() {
             window.location.href.indexOf("mousehuntgame.com/turn.php") != -1 ||
             window.location.href.indexOf("mousehuntgame.com/index.php") != -1) {
             // page to execute the script!
-			console.log("running on mh platform");
 			
             // make sure all the preference already loaded
             loadPreferenceSettingFromStorage();
