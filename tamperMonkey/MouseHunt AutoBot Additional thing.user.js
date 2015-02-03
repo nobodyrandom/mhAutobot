@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.2.009
+// @version    	1.2.010
 // @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp)
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -16,7 +16,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.2.008';
+unsafeWindow.addonScriptVer = '1.2.010';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -407,10 +407,11 @@ unsafeWindow.NOBraffle = function() {
     if (!($(".tabs a:eq(1)").length > 0))
         $("#hgbar_messages").click();
     setTimeout(function() {
-    	var temp = $('.tab');
-    	for(var i = 0; i < temp.length; i++)
-    		if (temp[i].dataset.tab == 'daily_draw') temp = temp[i];
-        temp.click();
+    	var tabs = $('.tab');
+    	var theTab = "";
+    	for(var i = 0; i < tabs.length; i++)
+    		if (tabs[i].dataset.tab == 'daily_draw') theTab = temp[i];
+        theTab.click();
     }, 1000);
     setTimeout(function() {
         var ballot = $(".notificationMessageList .tab:eq(1) .sendBallot");
@@ -421,6 +422,8 @@ unsafeWindow.NOBraffle = function() {
             $("a.messengerUINotificationClose").click();
         }, 7000);
     }, 4000);
+    tabs = null;
+    theTab = null;
 }
 
 // CALCULATE TIMER *******************************
