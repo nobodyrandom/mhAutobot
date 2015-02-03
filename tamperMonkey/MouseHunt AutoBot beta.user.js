@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP BETA UI
 // @author      NobodyRandom
-// @version    	1.5.010y
+// @version    	1.5.011y
 // @description BETA AUTOBOT
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @require		https://greasyfork.org/scripts/7866-mousehunt-autobot-additional-thing-beta/code/MouseHunt%20AutoBot%20Additional%20thing%20BETA.js?version=34950
@@ -1059,6 +1059,11 @@ function embedTimer(targetPage) {
                 loadTimersElement = null;
                 loadLinkToUpdate = null;
             } else {
+            	// try check if ajax was called
+            	if (doubleCheckLocation()) {
+            		exeScript();
+            	}
+            	
                 // player currently navigating other page instead of hunter camp
                 var helpTextElement = document.createElement('div');
                 helpTextElement.setAttribute('id', 'helpTextElement');
@@ -1559,6 +1564,16 @@ function displayKingRewardSumTime(timeStr) {
     timeStr = null;
 }
 
+function doubleCheckLocation() { //return true if location is camp page (this is to combat ajax loads)
+	var thePage = $('#mousehuntContainer')[0].className;
+	if (thePage == "PageCamp") {
+		thePage = null;
+		return true;
+	} else {
+		thePage = null;
+		return false;
+	}
+}
 // ################################################################################################
 //   Timer Function - End
 // ################################################################################################
