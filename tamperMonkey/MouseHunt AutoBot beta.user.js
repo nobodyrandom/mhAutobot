@@ -1062,8 +1062,9 @@ function embedTimer(targetPage) {
             	// try check if ajax was called
             	if (doubleCheckLocation()) {
             		exeScript();
+            		NOBinit();
             	} else {
-            		$('.camp a')[0].addEventListener('click', function() {setTimeout(function() {$('.hgAppContainer div')[0].remove(); exeScript();}, 1000);});
+            		$('.camp a')[0].addEventListener('click', function() {setTimeout(function() {$('.hgAppContainer div')[0].remove(); exeScript(); NOBinit();}, 1000);});
             	}
             	
                 // player currently navigating other page instead of hunter camp

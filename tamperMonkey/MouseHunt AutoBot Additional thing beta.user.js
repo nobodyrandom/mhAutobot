@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing BETA
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.3.003z
+// @version    	1.3.004z
 // @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) BETA
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -59,7 +59,8 @@ var LOCATION_TIMERS = [
 
 // SETTING BASE VARS DONE ******************************* INIT AJAX CALLS AND INIT CALLS
 // Function calls after page LOAD
-$(window).load(function() {
+$(window).load(NOBinit);
+function NOBinit() {
     if (!NOBhasPuzzle) {
         if (window.location.href == "http://www.mousehuntgame.com/" ||
             window.location.href == "http://www.mousehuntgame.com/#" ||
@@ -89,7 +90,7 @@ $(window).load(function() {
             }, 30000);
         }
     }
-});
+}
 
 function checkIntroContainer() {
     var gotIntroContainerDiv = false;
