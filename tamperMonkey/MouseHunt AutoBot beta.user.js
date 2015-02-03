@@ -6,8 +6,8 @@
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @require		https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=34819
 // @namespace   https://greasyfork.org/users/6398
-// @updateURL	https://github.com/nobodyrandom/mhAutobot/raw/beta-UI/tamperMonkey/MouseHunt%20AutoBot.user.js
-// @downloadURL	https://github.com/nobodyrandom/mhAutobot/raw/beta-UI/tamperMonkey/MouseHunt%20AutoBot.user.js
+// @updateURL	https://openuserjs.org/install/nobodyrandom/MouseHunt_AutoBot_REVAMP_BETA.user.js
+// @downloadURL	https://openuserjs.org/install/nobodyrandom/MouseHunt_AutoBot_REVAMP_BETA.user.js
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
