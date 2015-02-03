@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP for BETA UI
 // @author      NobodyRandom
-// @version    	1.5.016y
+// @version    	1.5.017y
 // @description BETA MOUSEHUNT AUTOBOT
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @require		https://greasyfork.org/scripts/7866-mousehunt-autobot-additional-thing-beta/code/MouseHunt%20AutoBot%20Additional%20thing%20BETA.js?version=35066
@@ -495,10 +495,10 @@ function retrieveData() {
 
     // get next horn time
     if (browser == "firefox") {
-        nextActiveTime = unsafeWindow.user.next_activeturn_seconds;
-        isKingReward = unsafeWindow.user.has_puzzle;
-        baitQuantity = unsafeWindow.user.bait_quantity;
-        currentLocation = unsafeWindow.user.location;
+        nextActiveTime = user.next_activeturn_seconds;
+        isKingReward = user.has_puzzle;
+        baitQuantity = user.bait_quantity;
+        currentLocation = user.location;
     } else if (browser == "opera") {
         nextActiveTime = user.next_activeturn_seconds;
         isKingReward = user.has_puzzle;
