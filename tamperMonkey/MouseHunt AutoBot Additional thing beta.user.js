@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name        MouseHunt AutoBot Additional thing
+// @name        MouseHunt AutoBot Additional thing BETA
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
 // @version    	1.3.000z

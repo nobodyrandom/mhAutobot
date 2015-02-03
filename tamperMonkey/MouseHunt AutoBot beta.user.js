@@ -4,7 +4,7 @@
 // @version    	1.5.005y
 // @description BETA AUTOBOT
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
-// @require		https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=34819
+// @require		https://greasyfork.org/scripts/7866-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=34940
 // @namespace   https://greasyfork.org/users/6398
 // @updateURL	https://openuserjs.org/install/nobodyrandom/MouseHunt_AutoBot_REVAMP_BETA.user.js
 // @downloadURL	https://openuserjs.org/install/nobodyrandom/MouseHunt_AutoBot_REVAMP_BETA.user.js
