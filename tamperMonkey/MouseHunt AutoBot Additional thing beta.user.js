@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing BETA
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.3.001z
+// @version    	1.3.002z
 // @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) BETA
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -268,7 +268,7 @@ function NOBstopLoading(name) {
 unsafeWindow.NOBscript = function(qqEvent) {
     if (NOBpage) {
         var NOBdata = NOBget('data');
-        var mapThere = document.getElementByClassName('treasureMap');
+        var mapThere = document.getElementsByClassName('treasureMap')[0];
         if (mapThere == null || mapThere == undefined || mapThere == "") {
             mapThere = false;
             console.log("No map, using HTML data now");
