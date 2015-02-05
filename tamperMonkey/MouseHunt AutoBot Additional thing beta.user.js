@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing BETA
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.3.005z
+// @version    	1.3.006z
 // @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) BETA
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -16,7 +16,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.3.005z';
+unsafeWindow.addonScriptVer = '1.3.006z';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -368,7 +368,32 @@ function pingServer() {
         }
 
         Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
+        Parse.User.logIn(NOBget('parseUser'), NOBget('parsePassword'), {
+		  success: function(user) {},
+		  error: function(user, error) {
+		  	var newUsername = theData.username;
+		  	var newPassword = theData.sn_user_id;
+		  	NOBstore(newUsername, 'parseUser');
+		  	NOBstore(newPassword, 'parsePassword');
+		  	var user = new Parse.User();
+			user.set("username", newUsername);
+			user.set("password", newPassword);
+			user.set("email", "abc@abc.com");
+ 
+			user.signUp(null, {
+			  success: function(user) {
+				// Hooray! Let them use the app now.
+				pingServer();
+			  },
+			  error: function(user, error) {
+				// Show the error message somewhere and let the user try again.
+				alert("Parse Error: " + error.code + " " + error.message);
+			  }
+			});
+		  }
+		});
         var UserData = Parse.Object.extend("UserData");
+        
         var findOld = new Parse.Query(UserData);
         findOld.containedIn("user_id", [theData.sn_user_id, JSON.stringify(theData.sn_user_id)]);
         findOld.find({
@@ -386,6 +411,7 @@ function pingServer() {
         userData.set("name", theData.username);
         userData.set("script_ver", GM_info.script.version);
         userData.set("data", JSON.stringify(theData));
+        userData.setACL(new Parse.ACL(Parse.User.current()));
 
         userData.save(null, {
             success: function(userData) {
@@ -397,6 +423,8 @@ function pingServer() {
                 console.log("Parse failed - " + error);
             }
         });
+        
+        Parse.User.logOut();
     }
 }
 
