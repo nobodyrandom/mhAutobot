@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.2.010
+// @version    	1.2.011
 // @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp)
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -16,7 +16,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.2.010';
+unsafeWindow.addonScriptVer = '1.2.011';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -367,7 +367,12 @@ function pingServer() {
         }
 
         Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
+        Parse.User.logIn("user", "password", {
+		  success: function(user) {},
+		  error: function(user, error) {console.log('Parse login failed: ' + error}
+		});
         var UserData = Parse.Object.extend("UserData");
+        
         var findOld = new Parse.Query(UserData);
         findOld.containedIn("user_id", [theData.sn_user_id, JSON.stringify(theData.sn_user_id)]);
         findOld.find({
@@ -385,6 +390,7 @@ function pingServer() {
         userData.set("name", theData.username);
         userData.set("script_ver", GM_info.script.version);
         userData.set("data", JSON.stringify(theData));
+        userData.setACL(new Parse.ACL(Parse.User.current()));
 
         userData.save(null, {
             success: function(userData) {
@@ -396,6 +402,8 @@ function pingServer() {
                 console.log("Parse failed - " + error);
             }
         });
+        
+        Parse.User.logOut();
     }
 }
 
