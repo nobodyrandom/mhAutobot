@@ -5,7 +5,7 @@
 
 ~~[Original](http://userscripts-mirror.org/scripts/show/78731.html) version made and owned by [Ooi Keng Siang](http://ooiks.com/blog/mousehunt-autobot) \(He no longer develops this code\)~~
 
-######Chrome version is now updated to 505a script - download it [here](https://github.com/nobodyrandom/mhAutobot/raw/master/chromeExtension.crx)
+######Chrome version is now updated to 517a script - download it [here](https://github.com/nobodyrandom/mhAutobot/raw/master/chromeExtension.crx)
 
 [REVAMP](https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) version adapts the original, with few bug fixes and etc \(ver a\)
 
@@ -23,6 +23,7 @@ Report all bugs to [GitHub](https://github.com/nobodyrandom/mhAutobot/issues) or
 Changelog - [GitHub](https://github.com/nobodyrandom/mhAutobot/commits/master)
 *****
 Additional features added:
+>*  Support for NEW beta UI (make sure you are on it for the bot to work)
 >*	Living Garden Spreadsheet -> [Google Drive](https://docs.google.com/spreadsheet/ccc?key=0Ag_KH_nuVUjbdGtldjJkWUJ4V1ZpUDVwd1FVM0RTM1E&usp=sharing) with run forecasting
 >*	(TODO: write up a instruction manual for the GDoc, but it should be pretty self explanatory)
 >*	Area clocks
