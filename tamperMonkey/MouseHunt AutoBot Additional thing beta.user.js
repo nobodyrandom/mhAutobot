@@ -445,7 +445,7 @@ unsafeWindow.NOBraffle = function() {
     if (!($(".tabs a:eq(1)").length > 0))
         $("#hgbar_messages").click();
     setTimeout(function() {
-        var tabs = $('.tab');
+        var tabs = $('a.tab');
         var theTab = "";
         for (var i = 0; i < tabs.length; i++)
             if (tabs[i].dataset.tab == 'daily_draw') theTab = tabs[i];
