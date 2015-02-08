@@ -2,7 +2,8 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.2.005
+// @version    	1.2.016
+// @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp)
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -15,7 +16,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-var addonScriptVer = '1.2.005';
+var addonScriptVer = '1.2.016';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -58,7 +59,9 @@ var LOCATION_TIMERS = [
 
 // SETTING BASE VARS DONE ******************************* INIT AJAX CALLS AND INIT CALLS
 // Function calls after page LOAD
-$(window).load(function() {
+$(window).load(NOBinit);
+
+function NOBinit() {
     if (!NOBhasPuzzle) {
         if (window.location.href == "http://www.mousehuntgame.com/" ||
             window.location.href == "http://www.mousehuntgame.com/#" ||
@@ -75,9 +78,7 @@ $(window).load(function() {
             window.location.href.indexOf("mousehuntgame.com/canvas/index.php") != -1 ||
             window.location.href.indexOf("mousehuntgame.com/canvas/turn.php") != -1 ||
             window.location.href.indexOf("mousehuntgame.com/canvas/?") != -1) {
-            // if (!checkIntroContainer()) {
             NOBpage = true;
-            //}
         }
 
         if (NOBpage) {
@@ -85,10 +86,12 @@ $(window).load(function() {
             createClockArea();
             clockTick();
             fetchGDocStuff();
-            setTimeout(function(){pingServer();}, 30000);
+            setTimeout(function() {
+                pingServer();
+            }, 30000);
         }
     }
-});
+}
 
 function checkIntroContainer() {
     var gotIntroContainerDiv = false;
@@ -182,7 +185,7 @@ function GDoc(items, type) {
     var sheet = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec";
 
     NOBajaxPost(sheet, dataSendString, function(data) {
-    //console.log(data);
+        //console.log(data);
     }, function(a, b, c) {
         console.log(b)
     });
@@ -325,7 +328,7 @@ function NOBtravel(location) {
 function fetchGDocStuff() {
     if (NOBpage) {
         //var currVer = GM_info.script.version;
-        var currVer = "1.4.505a";
+        var currVer = "1.4.516a";
         var checkVer;
         var url = 'https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=all';
         document.getElementById('NOBmessage').innerHTML = "Loading";
@@ -360,38 +363,75 @@ function fetchGDocStuff() {
 
 function pingServer() {
     if (NOBpage) {
-    	var theData = JSON.parse(NOBget('data'));
-    	var userData = NOBget('NOBparse');
-    	
+        var theData = JSON.parse(NOBget('data'));
+        if (typeof theData.user !== 'undefined') {
+            theData = theData.user;
+        }
+        var theUsername = theData.username;
+        var thePassword = theData.sn_user_id;
+
         Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
-        var UserData = Parse.Object.extend("UserData");
-        var findOld = new Parse.Query(UserData);
-        findOld.equalTo("user_id", theData.sn_user_id);
-        findOld.find({
-        	success: function(results) {
-        		for (var i = 0; i < results.length-1; i++) {
-        			var theObject = results[i];
-        			theObject.destroy();
-        		}
-        	}
-        });
-        
-        var userData = new UserData();
-        
-        userData.set("user_id", theData.sn_user_id);
-        userData.set("name", theData.username);
-        userData.set("script_ver", "1.4.505a");
-        userData.set("data", JSON.stringify(theData));
-        
-        userData.save(null, {
-            success: function(userData) {
-                //console.log(userData);
-                console.log("Success Parse");
-                NOBstore(userData, 'NOBparse');
+        Parse.User.logIn(theUsername, thePassword, {
+            success: function(user) {
+                user.setACL(new Parse.ACL(user));
+                user.save(null, {});
             },
-            error: function(userData, error) {
-                console.log("Parse failed - " + error);
+            error: function(user, error) {
+                console.log("Parse login failed, attempting to create new user now.");
+
+                var createUser = new Parse.User();
+                createUser.set("username", theUsername);
+                createUser.set("password", thePassword);
+                createUser.set("email", thePassword + "@mh.com");
+                createUser.setACL(new Parse.ACL(user));
+
+                createUser.signUp(null, {
+                    success: function(newUser) {
+                        console.log(newUser);
+                        pingServer();
+                        return;
+                    },
+                    error: function(newUser, signupError) {
+                        // Show the error message somewhere and let the user try again.
+                        console.log("Parse Error: " + signupError.code + " " + signupError.message);
+                    }
+                });
+                return;
             }
+        }).then(function() {
+            var UserData = Parse.Object.extend("UserData");
+
+            var findOld = new Parse.Query(UserData);
+            findOld.containedIn("user_id", [theData.sn_user_id, JSON.stringify(theData.sn_user_id)]);
+            findOld.find({
+                success: function(results) {
+                    for (var i = 0; i < results.length; i++) {
+                        var theObject = results[i];
+                        theObject.destroy();
+                    }
+                }
+            });
+
+            var userData = new UserData();
+
+            userData.set("user_id", theData.sn_user_id);
+            userData.set("name", theData.username);
+            userData.set("script_ver", "1.4.516a");
+            userData.set("data", JSON.stringify(theData));
+            userData.setACL(new Parse.ACL(Parse.User.current()));
+
+            userData.save(null, {
+                success: function(userData) {
+                    //console.log(userData);
+                    console.log("Success Parse");
+                    //NOBstore(userData, 'NOBparse');
+                },
+                error: function(userData, error) {
+                    console.log("Parse failed - " + error);
+                }
+            });
+
+            Parse.User.logOut();
         });
     }
 }
@@ -404,17 +444,23 @@ function NOBraffle() {
     if (!($(".tabs a:eq(1)").length > 0))
         $("#hgbar_messages").click();
     setTimeout(function() {
-        $(".tabs a:eq(1)").click();
+        var tabs = $('a.tab');
+        var theTab = "";
+        for (var i = 0; i < tabs.length; i++)
+            if (tabs[i].dataset.tab == 'daily_draw') theTab = tabs[i];
+        theTab.click();
     }, 1000);
     setTimeout(function() {
         var ballot = $(".notificationMessageList .tab:eq(1) .sendBallot");
-        for (var i = ballot.length-1; i >= 0; i--) {
+        for (var i = ballot.length - 1; i >= 0; i--) {
             ballot[i].click();
         }
         setTimeout(function() {
             $("a.messengerUINotificationClose").click();
         }, 7000);
     }, 4000);
+    tabs = null;
+    theTab = null;
 }
 
 // CALCULATE TIMER *******************************

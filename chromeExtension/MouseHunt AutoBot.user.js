@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom
-// @version    	1.4.505a
-// @description An advance user script to automate sounding the hunter horn in MouseHunt application with the newest version supported and many other features and fixes. REVAMPED VERSION of ORIGINAL by Ooi
-// @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
-// @require		https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=33714
+// @version    	1.4.516a
+// @description An advance user script to automate sounding the hunter horn in MouseHunt application with the newest version supported and many other features and fixes. REVAMPED VERSION of ORIGINAL by Ooi... Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
+// @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=35022
+// @require		https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=35779
 // @namespace   https://greasyfork.org/users/6398
 // @updateURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.user.js
 // @downloadURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.user.js
@@ -23,7 +23,7 @@
 // // The variable in this section contain basic option will normally edit by most user to suit their own preference
 // // Reload MouseHunt page manually if edit this script while running it for immediate effect.
 // // Extra delay time before sounding the horn. (in seconds)
-// // Default: 1 - 5
+// // Default: 10 - 180
 var hornTimeDelayMin = 10;
 var hornTimeDelayMax = 180;
 
@@ -92,7 +92,8 @@ var timerRefreshInterval = 1;
 // WARNING - Do not modify the code below unless you know how to read and write the script.
 
 // All global variable declaration and default value
-var scriptVersion = "1.4.505a";
+//var scriptVersion = GM_info.script.version;
+var scriptVersion = "1.4.516a";
 var fbPlatform = false;
 var hiFivePlatform = false;
 var mhPlatform = false;
@@ -2043,7 +2044,7 @@ function trapCheck() {
     /*var campElement = document.getElementsByClassName('campbutton')[0].firstChild;
     fireEvent(campElement, 'click');
     campElement = null;*/
-    
+
     reloadWithMessage("Reloading page for trap check...", false);
     // reload the page if click on camp button fail
     /*window.setTimeout(function() {
