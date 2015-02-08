@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing BETA
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.3.012z
+// @version    	1.3.013z
 // @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) BETA
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -16,7 +16,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.3.012z';
+unsafeWindow.addonScriptVer = '1.3.013z';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -374,8 +374,8 @@ function pingServer() {
                 console.log("Parse login success: " + user);
             },
             error: function(user, error) {
-                var newUsername = theData.username;
-                var newPassword = theData.sn_user_id;
+                var newUsername = JSON.parse(theData.username);
+                var newPassword = JSON.parse(theData.sn_user_id);
                 NOBstore(newUsername, 'parseUser');
                 NOBstore(newPassword, 'parsePassword');
                 var user = new Parse.User();
@@ -387,12 +387,14 @@ function pingServer() {
                     success: function(newUser) {
                         console.log(newUser);
                         pingServer();
+                        return;
                     },
                     error: function(newUser, signupError) {
                         // Show the error message somewhere and let the user try again.
                         console.log("Parse Error: " + signupError.code + " " + signupError.message);
                     }
                 });
+                return;
             }
         }).then(function() {
             var UserData = Parse.Object.extend("UserData");
