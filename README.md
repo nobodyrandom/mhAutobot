@@ -1,7 +1,7 @@
 [MouseHunt Autobot REVAMP](https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) and [ENHANCED + REVAMP](https://greasyfork.org/en/scripts/6514-mousehunt-autobot-enhanced-revamp)
 =========
 
-######NOTE: NEW UI IS NOT SUPPORTED JUST YET, VERSION 1.5 IS BEING DEVELOPPED AND WILL BE THE FIRST VERSION TO SUPPORT THAT UI
+######NOTE: NEW UI IS NOW SUPPORTED, VERSION 1.5 BETA IS NOW OUT, [download it here](https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui)
 
 ~~[Original](http://userscripts-mirror.org/scripts/show/78731.html) version made and owned by [Ooi Keng Siang](http://ooiks.com/blog/mousehunt-autobot) \(He no longer develops this code\)~~
 
