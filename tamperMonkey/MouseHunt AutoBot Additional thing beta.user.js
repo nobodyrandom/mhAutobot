@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing BETA
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.3.009z
+// @version    	1.3.010z
 // @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) BETA
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -16,7 +16,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.3.009z';
+unsafeWindow.addonScriptVer = '1.3.010z';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -369,7 +369,9 @@ function pingServer() {
 
         Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
         Parse.User.logIn(NOBget('parseUser'), NOBget('parsePassword'), {
-		  success: function(user) {},
+		  success: function(user) {
+		  	console.log("Parse login success: " + user);
+		  },
 		  error: function(user, error) {
 		  	var newUsername = theData.username;
 		  	var newPassword = theData.sn_user_id;
@@ -378,16 +380,16 @@ function pingServer() {
 		  	var user = new Parse.User();
 			user.set("username", newUsername);
 			user.set("password", newPassword);
-			user.set("email", newPassword + "@abc.com");
+			user.set("email", newPassword + "@mh.com");
  
 			user.signUp(null, {
-			  success: function(user) {
-				// Hooray! Let them use the app now.
+			  success: function(newUser) {
+			  	console.log(newUser);
 				pingServer();
 			  },
-			  error: function(user, error) {
+			  error: function(newUser, signupError) {
 				// Show the error message somewhere and let the user try again.
-				alert("Parse Error: " + error.code + " " + error.message);
+				console.log("Parse Error: " + signupError.code + " " + signupError.message);
 			  }
 			});
 		  }
