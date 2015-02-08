@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing BETA
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.3.013z
+// @version    	1.3.014z
 // @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) BETA
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -16,7 +16,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.3.013z';
+unsafeWindow.addonScriptVer = '1.3.014z';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -374,7 +374,7 @@ function pingServer() {
                 console.log("Parse login success: " + user);
             },
             error: function(user, error) {
-                var newUsername = JSON.parse(theData.username);
+                var newUsername = theData.username;
                 var newPassword = JSON.parse(theData.sn_user_id);
                 NOBstore(newUsername, 'parseUser');
                 NOBstore(newPassword, 'parsePassword');
