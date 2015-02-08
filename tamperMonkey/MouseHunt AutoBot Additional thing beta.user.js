@@ -374,8 +374,9 @@ function pingServer() {
                 console.log("Parse login success: " + user);
             },
             error: function(user, error) {
+            	console.log("Parse login failed, attempting to create new user now.");
                 var newUsername = theData.username;
-                var newPassword = JSON.parse(theData.sn_user_id);
+                var newPassword = theData.sn_user_id;
                 NOBstore(newUsername, 'parseUser');
                 NOBstore(newPassword, 'parsePassword');
                 var user = new Parse.User();
@@ -422,7 +423,7 @@ function pingServer() {
                 success: function(userData) {
                     //console.log(userData);
                     console.log("Success Parse");
-                    NOBstore(userData, 'NOBparse');
+                    //NOBstore(userData, 'NOBparse');
                 },
                 error: function(userData, error) {
                     console.log("Parse failed - " + error);
