@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.2.015
+// @version    	1.2.016
 // @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp)
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -16,7 +16,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.2.015';
+unsafeWindow.addonScriptVer = '1.2.016';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -59,7 +59,9 @@ var LOCATION_TIMERS = [
 
 // SETTING BASE VARS DONE ******************************* INIT AJAX CALLS AND INIT CALLS
 // Function calls after page LOAD
-$(window).load(function() {
+$(window).load(NOBinit);
+
+function NOBinit() {
     if (!NOBhasPuzzle) {
         if (window.location.href == "http://www.mousehuntgame.com/" ||
             window.location.href == "http://www.mousehuntgame.com/#" ||
@@ -85,11 +87,11 @@ $(window).load(function() {
             clockTick();
             fetchGDocStuff();
             setTimeout(function() {
-                //pingServer();
+                pingServer();
             }, 30000);
         }
     }
-});
+}
 
 function checkIntroContainer() {
     var gotIntroContainerDiv = false;
@@ -362,68 +364,75 @@ function fetchGDocStuff() {
 function pingServer() {
     if (NOBpage) {
         var theData = JSON.parse(NOBget('data'));
-        if(typeof theData.user !== 'undefined') {
-        	theData = theData.user;
+        if (typeof theData.user !== 'undefined') {
+            theData = theData.user;
         }
+        var theUsername = theData.username;
+        var thePassword = theData.sn_user_id;
 
         Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
-        Parse.User.logIn(NOBget('parseUser'), NOBget('parsePassword'), {
-		  success: function(user) {},
-		  error: function(user, error) {
-		  	var newUsername = theData.username;
-		  	var newPassword = theData.sn_user_id;
-		  	NOBstore(newUsername, 'parseUser');
-		  	NOBstore(newPassword, 'parsePassword');
-		  	var user = new Parse.User();
-			user.set("username", newUsername);
-			user.set("password", newPassword);
-			user.set("email", newPassword + "@abc.com");
- 
-			user.signUp(null, {
-			  success: function(user) {
-				// Hooray! Let them use the app now.
-				pingServer();
-			  },
-			  error: function(user, error) {
-				// Show the error message somewhere and let the user try again.
-				alert("Parse Error: " + error.code + " " + error.message);
-			  }
-			});
-		  }
-		});
-        var UserData = Parse.Object.extend("UserData");
-        
-        var findOld = new Parse.Query(UserData);
-        findOld.containedIn("user_id", [theData.sn_user_id, JSON.stringify(theData.sn_user_id)]);
-        findOld.find({
-            success: function(results) {
-                for (var i = 0; i < results.length; i++) {
-                    var theObject = results[i];
-                    theObject.destroy();
-                }
-            }
-        });
-
-        var userData = new UserData();
-
-        userData.set("user_id", theData.sn_user_id);
-        userData.set("name", theData.username);
-        userData.set("script_ver", GM_info.script.version);
-        userData.set("data", JSON.stringify(theData));
-        userData.setACL(new Parse.ACL(Parse.User.current()));
-
-        userData.save(null, {
-            success: function(userData) {
-                //console.log(userData);
-                console.log("Success Parse");
-                NOBstore(userData, 'NOBparse');
+        Parse.User.logIn(theUsername, thePassword, {
+            success: function(user) {
+                user.setACL(new Parse.ACL(user));
+                user.save(null, {});
             },
-            error: function(userData, error) {
-                console.log("Parse failed - " + error);
+            error: function(user, error) {
+                console.log("Parse login failed, attempting to create new user now.");
+
+                var createUser = new Parse.User();
+                createUser.set("username", theUsername);
+                createUser.set("password", thePassword);
+                createUser.set("email", thePassword + "@mh.com");
+                createUser.setACL(new Parse.ACL(user));
+
+                createUser.signUp(null, {
+                    success: function(newUser) {
+                        console.log(newUser);
+                        pingServer();
+                        return;
+                    },
+                    error: function(newUser, signupError) {
+                        // Show the error message somewhere and let the user try again.
+                        console.log("Parse Error: " + signupError.code + " " + signupError.message);
+                    }
+                });
+                return;
             }
+        }).then(function() {
+            var UserData = Parse.Object.extend("UserData");
+
+            var findOld = new Parse.Query(UserData);
+            findOld.containedIn("user_id", [theData.sn_user_id, JSON.stringify(theData.sn_user_id)]);
+            findOld.find({
+                success: function(results) {
+                    for (var i = 0; i < results.length; i++) {
+                        var theObject = results[i];
+                        theObject.destroy();
+                    }
+                }
+            });
+
+            var userData = new UserData();
+
+            userData.set("user_id", theData.sn_user_id);
+            userData.set("name", theData.username);
+            userData.set("script_ver", GM_info.script.version);
+            userData.set("data", JSON.stringify(theData));
+            userData.setACL(new Parse.ACL(Parse.User.current()));
+
+            userData.save(null, {
+                success: function(userData) {
+                    //console.log(userData);
+                    console.log("Success Parse");
+                    //NOBstore(userData, 'NOBparse');
+                },
+                error: function(userData, error) {
+                    console.log("Parse failed - " + error);
+                }
+            });
+
+            Parse.User.logOut();
         });
-        
-        Parse.User.logOut();
     }
 }
 
@@ -435,10 +444,10 @@ unsafeWindow.NOBraffle = function() {
     if (!($(".tabs a:eq(1)").length > 0))
         $("#hgbar_messages").click();
     setTimeout(function() {
-    	var tabs = $('.tab');
-    	var theTab = "";
-    	for(var i = 0; i < tabs.length; i++)
-    		if (tabs[i].dataset.tab == 'daily_draw') theTab = temp[i];
+        var tabs = $('a.tab');
+        var theTab = "";
+        for (var i = 0; i < tabs.length; i++)
+            if (tabs[i].dataset.tab == 'daily_draw') theTab = tabs[i];
         theTab.click();
     }, 1000);
     setTimeout(function() {

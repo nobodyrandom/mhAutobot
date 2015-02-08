@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing BETA
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.3.018z
+// @version    	1.3.019z
 // @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) BETA
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -16,7 +16,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.3.018z';
+unsafeWindow.addonScriptVer = '1.3.019z';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -373,18 +373,17 @@ function pingServer() {
         Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
         Parse.User.logIn(theUsername, thePassword, {
             success: function(user) {
-				user.setACL(new Parse.ACL(user));
-				user.save(null, {});
-                console.log("Parse login success: " + user);
+                user.setACL(new Parse.ACL(user));
+                user.save(null, {});
             },
             error: function(user, error) {
-            	console.log("Parse login failed, attempting to create new user now.");
-            	
+                console.log("Parse login failed, attempting to create new user now.");
+
                 var createUser = new Parse.User();
                 createUser.set("username", theUsername);
                 createUser.set("password", thePassword);
                 createUser.set("email", thePassword + "@mh.com");
-				createUser.setACL(new Parse.ACL(user));
+                createUser.setACL(new Parse.ACL(user));
 
                 createUser.signUp(null, {
                     success: function(newUser) {
@@ -431,7 +430,7 @@ function pingServer() {
                     console.log("Parse failed - " + error);
                 }
             });
-            
+
             Parse.User.logOut();
         });
     }
