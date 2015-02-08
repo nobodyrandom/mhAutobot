@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing BETA
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.3.015z
+// @version    	1.3.016z
 // @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) BETA
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -16,7 +16,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.3.015z';
+unsafeWindow.addonScriptVer = '1.3.016z';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -367,9 +367,11 @@ function pingServer() {
         if (typeof theData.user !== 'undefined') {
             theData = theData.user;
         }
+        var theUsername = theData.username;
+        var thePassword = theData.sn_user_id;
 
         Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
-        Parse.User.logIn(NOBget('parseUser'), NOBget('parsePassword'), {
+        Parse.User.logIn(theUsername, thePassword, {
             success: function(user) {
                 console.log("Parse login success: " + user);
             },
@@ -377,14 +379,14 @@ function pingServer() {
             	console.log("Parse login failed, attempting to create new user now.");
                 var newUsername = theData.username;
                 var newPassword = theData.sn_user_id;
-                NOBstore(newUsername, 'parseUser');
-                NOBstore(newPassword, 'parsePassword');
-                var user = new Parse.User();
-                user.set("username", newUsername);
-                user.set("password", newPassword);
-                user.set("email", newPassword + "@mh.com");
+                NOBstore(theUsername, 'parseUser');
+                NOBstore(thePassword, 'parsePassword');
+                var createUser = new Parse.User();
+                createUser.set("username", theUsername);
+                createUser.set("password", thePassword);
+                createUser.set("email", thePassword + "@mh.com");
 
-                user.signUp(null, {
+                createUser.signUp(null, {
                     success: function(newUser) {
                         console.log(newUser);
                         pingServer();
@@ -446,7 +448,7 @@ unsafeWindow.NOBraffle = function() {
         var tabs = $('.tab');
         var theTab = "";
         for (var i = 0; i < tabs.length; i++)
-            if (tabs[i].dataset.tab == 'daily_draw') theTab = temp[i];
+            if (tabs[i].dataset.tab == 'daily_draw') theTab = tabs[i];
         theTab.click();
     }, 1000);
     setTimeout(function() {
