@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing BETA
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.3.024z
+// @version    	1.3.025z
 // @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) BETA
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -16,7 +16,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.3.024z';
+unsafeWindow.addonScriptVer = '1.3.025z';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -371,48 +371,43 @@ unsafeWindow.pingServer = function() {
         var thePassword = theData.sn_user_id;
 
         Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
-        Parse.User.logIn(theUsername, thePassword, {
-            success: function(user) {
-            	console.log("Success parse login");
-                //user.setACL(new Parse.ACL(user));
-                //user.save(null, {});
-            },
-            error: function(user, error) {
-                console.log("Parse login failed, attempting to create new user now.");
+        Parse.User.logIn(theUsername, thePassword).then(function(user) {
+        	console.log("Success parse login");
+        	return Parse.Promise.as("Login success");
+        }, function(user, error) {
+        	console.log("Parse login failed, attempting to create new user now.");
 
-                var createUser = new Parse.User();
-                createUser.set("username", theUsername);
-                createUser.set("password", thePassword);
-                createUser.set("email", thePassword + "@mh.com");
-                //createUser.setACL(new Parse.ACL(user));
+			var createUser = new Parse.User();
+			createUser.set("username", theUsername);
+			createUser.set("password", thePassword);
+			createUser.set("email", thePassword + "@mh.com");
+			//createUser.setACL(new Parse.ACL(user));
 
-                createUser.signUp(null, {
-                    success: function(newUser) {
-                        console.log(newUser);
-                        pingServer();
-                        return;
-                    },
-                    error: function(newUser, signupError) {
-                        // Show the error message somewhere and let the user try again.
-                        console.log("Parse Error: " + signupError.code + " " + signupError.message);
-                    }
-                });
-                return;
-            }
-        }).then(function(user) {
+			createUser.signUp(null, {
+				success: function(newUser) {
+					console.log(newUser);
+					pingServer();
+					return Parse.Promise.error("There was an error.");;
+				},
+				error: function(newUser, signupError) {
+					// Show the error message somewhere and let the user try again.
+					console.log("Parse Error: " + signupError.code + " " + signupError.message);
+					return Parse.Promise.error("Error in signup");
+				}
+			});
+			return Parse.Promise.error("Failed login, attempted signup, rerunning code");;
+        }).then(function(success) {
         	var UserData = Parse.Object.extend("UserData");
 
             var findOld = new Parse.Query(UserData);
             findOld.containedIn("user_id", [theData.sn_user_id, JSON.stringify(theData.sn_user_id)]);
-            findOld.find({
-                success: function(results) {
-                    for (var i = 0; i < results.length; i++) {
-                        var theObject = results[i];
-                        theObject.destroy();
-                    }
-                    console.log("Done parse delete");
-                }
-            });
+            return findOld.find();
+        }).then(function(results) {
+        	for (var i = 0; i < results.length; i++) {
+				var theObject = results[i];
+				theObject.destroy();
+			}
+			console.log("Done parse delete");
         /*}, function(error) {
         	console.log("Login failed all together");
         }).then(function(UserData) {
@@ -436,8 +431,11 @@ unsafeWindow.pingServer = function() {
             });*/
         }).then(function(error) {
         	console.log(error);
-        	Parse.User.logOut();
-        	console.log("Parse logout");
+        	if (Parse.User.current() != null)
+        		Parse.User.logOut();
+        	console.log("Parse logout/end code");
+        }, function(error) {
+        	//HANDLE ERRORS HERE
         });
     }
 }
