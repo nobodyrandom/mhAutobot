@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing BETA
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.3.025z
+// @version    	1.3.026z
 // @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) BETA
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -16,7 +16,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.3.025z';
+unsafeWindow.addonScriptVer = '1.3.026z';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -408,8 +408,6 @@ unsafeWindow.pingServer = function() {
 				theObject.destroy();
 			}
 			console.log("Done parse delete");
-        /*}, function(error) {
-        	console.log("Login failed all together");
         }).then(function(UserData) {
             var userData = new UserData();
 
@@ -419,23 +417,20 @@ unsafeWindow.pingServer = function() {
             userData.set("data", JSON.stringify(theData));
             userData.setACL(new Parse.ACL(Parse.User.current()));
 
-            userData.save(null, {
-                success: function(userData) {
-                    //console.log(userData);
-                    console.log("Success Parse");
-                    //NOBstore(userData, 'NOBparse');
-                },
-                error: function(userData, error) {
-                    console.log("Parse failed - " + error);
-                }
-            });*/
-        }).then(function(error) {
-        	console.log(error);
-        	if (Parse.User.current() != null)
+            return userData.save();
+        }).then(function(results) {
+        	console.log("Success Parse");
+        }).then(function(message) {
+        	if(message != undefined || message != null)
+        		console.log("Parse error: " + error);
+        	if (Parse.User.current() != null) {
         		Parse.User.logOut();
-        	console.log("Parse logout/end code");
+        		console.log("Parse logout");
+        	}
+        	console.log("Parse end code");
         }, function(error) {
-        	//HANDLE ERRORS HERE
+        	if(error != undefined || error != null)
+        		console.log("Parse error: " + error);
         });
     }
 }
