@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing BETA
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.3.022z
+// @version    	1.3.023z
 // @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) BETA
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -16,7 +16,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.3.022z';
+unsafeWindow.addonScriptVer = '1.3.023z';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -373,6 +373,7 @@ unsafeWindow.pingServer = function() {
         Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
         Parse.User.logIn(theUsername, thePassword, {
             success: function(user) {
+            	console.log("Success parse login");
                 //user.setACL(new Parse.ACL(user));
                 //user.save(null, {});
             },
@@ -409,6 +410,7 @@ unsafeWindow.pingServer = function() {
                         var theObject = results[i];
                         theObject.destroy();
                     }
+                    console.log("Done parse delete");
                 }
             });
         /*}, function(error) {
@@ -434,6 +436,7 @@ unsafeWindow.pingServer = function() {
             });*/
         //}).then(function() {
         	Parse.User.logOut();
+        	console.log("Parse logout");
         //});
     }
 }
