@@ -2006,7 +2006,7 @@ function kingRewardCountdownTimer() {
 function checkResumeButton() {
     var found = false;
 
-    var linkElementList = document.getElementsByTagName('img');
+    /*var linkElementList = document.getElementsByTagName('img');
     if (linkElementList) {
         var i;
         for (i = 0; i < linkElementList.length; ++i) {
@@ -2036,7 +2036,30 @@ function checkResumeButton() {
         i = null;
     }
 
-    linkElementList = null;
+    linkElementList = null;*/
+    
+    var krFormClass = $('form')[0].className;
+    if (krFormClass.indexOf("noPuzzle") > -1) {
+		// found resume button
+
+		// simulate mouse click on the resume button
+		var resumeElement = $('.mousehuntPage-puzzle-form-complete-button')[0];
+		fireEvent(resumeElement, 'click');
+		resumeElement = null;
+
+		// reload url if click fail
+		window.setTimeout(function() {
+			reloadWithMessage("Fail to click on resume button. Reloading...", false);
+		}, 6000);
+
+		// recheck if the resume button is click because some time even the url reload also fail
+		window.setTimeout(function() {
+			checkResumeButton();
+		}, 10000);
+
+		found = true;
+		break;
+	}
 
     try {
         return (found);
