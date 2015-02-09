@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing BETA
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.3.026z
+// @version    	1.3.027z
 // @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) BETA
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -16,7 +16,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.3.026z';
+unsafeWindow.addonScriptVer = '1.3.027z';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -401,13 +401,15 @@ unsafeWindow.pingServer = function() {
 
             var findOld = new Parse.Query(UserData);
             findOld.containedIn("user_id", [theData.sn_user_id, JSON.stringify(theData.sn_user_id)]);
-            return findOld.find();
-        }).then(function(results) {
+            return {results: findOld.find(), UserData: UserData};
+        }).then(function(returnObj) {
+        	var results = returnObj.results;
         	for (var i = 0; i < results.length; i++) {
 				var theObject = results[i];
 				theObject.destroy();
 			}
 			console.log("Done parse delete");
+			return returnObj.UserData;
         }).then(function(UserData) {
             var userData = new UserData();
 
