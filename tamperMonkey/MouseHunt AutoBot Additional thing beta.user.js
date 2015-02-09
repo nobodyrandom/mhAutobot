@@ -427,9 +427,9 @@ function pingServer() {
         		console.log("Parse message: " + error);
         	if (Parse.User.current() != null) {
         		Parse.User.logOut();
-        		console.log("Parse logout");
+        		//console.log("Parse logout");
         	}
-        	console.log("Parse end code");
+        	//console.log("Parse end code");
         }, function(error) {
         	if(error != undefined || error != null)
         		console.log("Parse error: " + error);
