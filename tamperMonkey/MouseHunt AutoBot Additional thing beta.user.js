@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing BETA
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.3.027z
+// @version    	1.3.028z
 // @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) BETA
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -87,7 +87,7 @@ function NOBinit() {
             clockTick();
             fetchGDocStuff();
             setTimeout(function() {
-                //pingServer();
+                pingServer();
             }, 30000);
         }
     }
@@ -361,7 +361,7 @@ function fetchGDocStuff() {
     }
 }
 
-unsafeWindow.pingServer = function() {
+function pingServer() {
     if (NOBpage) {
         var theData = JSON.parse(NOBget('data'));
         if (typeof theData.user !== 'undefined') {
@@ -372,7 +372,7 @@ unsafeWindow.pingServer = function() {
 
         Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
         Parse.User.logIn(theUsername, thePassword).then(function(user) {
-        	console.log("Success parse login");
+        	//console.log("Success parse login");
         	return Parse.Promise.as("Login success");
         }, function(user, error) {
         	console.log("Parse login failed, attempting to create new user now.");
@@ -408,7 +408,7 @@ unsafeWindow.pingServer = function() {
 				var theObject = results[i];
 				theObject.destroy();
 			}
-			console.log("Done parse delete");
+			//console.log("Done parse delete");
 			return returnObj.UserData;
         }).then(function(UserData) {
             var userData = new UserData();
@@ -421,10 +421,10 @@ unsafeWindow.pingServer = function() {
 
             return userData.save();
         }).then(function(results) {
-        	console.log("Success Parse");
+        	//console.log("Success Parse");
         }).then(function(message) {
         	if(message != undefined || message != null)
-        		console.log("Parse error: " + error);
+        		console.log("Parse message: " + error);
         	if (Parse.User.current() != null) {
         		Parse.User.logOut();
         		console.log("Parse logout");
