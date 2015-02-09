@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing BETA
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.3.020z
+// @version    	1.3.021z
 // @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) BETA
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -16,7 +16,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.3.020z';
+unsafeWindow.addonScriptVer = '1.3.021z';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -373,8 +373,8 @@ function pingServer() {
         Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
         Parse.User.logIn(theUsername, thePassword, {
             success: function(user) {
-                user.setACL(new Parse.ACL(user));
-                user.save(null, {});
+                //user.setACL(new Parse.ACL(user));
+                //user.save(null, {});
             },
             error: function(user, error) {
                 console.log("Parse login failed, attempting to create new user now.");
@@ -383,7 +383,7 @@ function pingServer() {
                 createUser.set("username", theUsername);
                 createUser.set("password", thePassword);
                 createUser.set("email", thePassword + "@mh.com");
-                createUser.setACL(new Parse.ACL(user));
+                //createUser.setACL(new Parse.ACL(user));
 
                 createUser.signUp(null, {
                     success: function(newUser) {
@@ -398,8 +398,8 @@ function pingServer() {
                 });
                 return;
             }
-        }).then(function() {
-            var UserData = Parse.Object.extend("UserData");
+        });
+        	var UserData = Parse.Object.extend("UserData");
 
             var findOld = new Parse.Query(UserData);
             findOld.containedIn("user_id", [theData.sn_user_id, JSON.stringify(theData.sn_user_id)]);
@@ -411,7 +411,9 @@ function pingServer() {
                     }
                 }
             });
-
+        /*}, function(error) {
+        	console.log("Login failed all together");
+        }).then(function(UserData) {
             var userData = new UserData();
 
             userData.set("user_id", theData.sn_user_id);
@@ -429,7 +431,7 @@ function pingServer() {
                 error: function(userData, error) {
                     console.log("Parse failed - " + error);
                 }
-            });
+            });*/
         }).then(function() {
         	Parse.User.logOut();
         });
