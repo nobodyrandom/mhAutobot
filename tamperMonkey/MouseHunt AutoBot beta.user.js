@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP for BETA UI
 // @author      NobodyRandom
-// @version    	1.5.050y
+// @version    	1.5.051y
 // @description BETA MOUSEHUNT AUTOBOT for the BETA MH UI
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @require		https://greasyfork.org/scripts/7866-mousehunt-autobot-additional-thing-beta/code/MouseHunt%20AutoBot%20Additional%20thing%20BETA.js?version=36027
@@ -135,7 +135,7 @@ exeScript();
 function exeScript() {
     // check the trap check setting first
     if (trapCheckTimeDiff == 60) {
-        trapCheckTimeDiff = 00;
+        trapCheckTimeDiff = 0;
     } else if (trapCheckTimeDiff < 0 || trapCheckTimeDiff > 60) {
         // invalid value, just disable the trap check
         enableTrapCheck = false;
@@ -176,7 +176,7 @@ function exeScript() {
             mhMobilePlatform = true;
         } else {
             // from mousehunt game standard version
-            mhPlatform = true
+            mhPlatform = true;
         }
         version = undefined;
     } else if (window.location.href.indexOf("mousehunt.hi5.hitgrab.com") != -1) {
@@ -218,7 +218,7 @@ function exeScript() {
                 // fail to retrieve data, display error msg and reload the page
                 document.title = "Fail to retrieve data from page. Reloading in " + timeformat(errorReloadTime);
                 window.setTimeout(function() {
-                    reloadPage(false)
+                    reloadPage(false);
                 }, errorReloadTime * 1000);
             }
         } else {
@@ -253,7 +253,7 @@ function exeScript() {
                 // fail to retrieve data, display error msg and reload the page
                 document.title = "Fail to retrieve data from page. Reloading in " + timeformat(errorReloadTime);
                 window.setTimeout(function() {
-                    reloadPage(false)
+                    reloadPage(false);
                 }, errorReloadTime * 1000);
             }
         } else {
@@ -262,7 +262,7 @@ function exeScript() {
         }
     } else if (mhMobilePlatform) {
         // execute at all page of mobile version
-        if (true) {
+        //if (true) {
             // page to execute the script!
 
             // make sure all the preference already loaded
@@ -270,7 +270,7 @@ function exeScript() {
 
             // embed a place where timer show
             embedTimer(false);
-        }
+        //}
     } else if (hiFivePlatform) {
         if (window.location.href == "http://mousehunt.hi5.hitgrab.com/#" ||
             window.location.href.indexOf("http://mousehunt.hi5.hitgrab.com/?") != -1 ||
@@ -296,7 +296,7 @@ function exeScript() {
                 // fail to retrieve data, display error msg and reload the page
                 document.title = "Fail to retrieve data from page. Reloading in " + timeformat(errorReloadTime);
                 window.setTimeout(function() {
-                    reloadPage(false)
+                    reloadPage(false);
                 }, errorReloadTime * 1000);
             }
         } else {
@@ -318,7 +318,7 @@ function checkIntroContainer() {
     }
 
     try {
-        return (gotIntroContainerDiv);
+        return gotIntroContainerDiv;
     } finally {
         gotIntroContainerDiv = undefined;
     }
@@ -2105,7 +2105,8 @@ function browserDetection() {
 
     var userAgentStr = navigator.userAgent.toString().toLowerCase();
     if (userAgentStr.indexOf("firefox") >= 0) {
-        browserName = "firefox";
+        //browserName = "firefox";
+        browserName = "chrome";
     } else if (userAgentStr.indexOf("opera") >= 0) {
         browserName = "opera";
     } else if (userAgentStr.indexOf("chrome") >= 0) {
@@ -2114,7 +2115,7 @@ function browserDetection() {
     userAgentStr = null;
 
     try {
-        return (browserName);
+        return browserName;
     } finally {
         browserName = null;
     }
