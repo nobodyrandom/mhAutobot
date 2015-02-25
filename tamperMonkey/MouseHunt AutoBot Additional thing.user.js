@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.2.018
+// @version    	1.2.019
 // @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp)
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -16,7 +16,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.2.018';
+unsafeWindow.addonScriptVer = '1.2.019';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -460,8 +460,8 @@ unsafeWindow.NOBraffle = function() {
             ballot[i].click();
         }
         setTimeout(function() {
-            $("a.messengerUINotificationClose").click();
-        }, 7000);
+            $("a.messengerUINotificationClose")[0].click();
+        }, 7500);
     }, 4000);
     tabs = null;
     theTab = null;

@@ -2105,8 +2105,8 @@ function browserDetection() {
 
     var userAgentStr = navigator.userAgent.toString().toLowerCase();
     if (userAgentStr.indexOf("firefox") >= 0) {
-        //browserName = "firefox";
-        browserName = "chrome";
+        browserName = "firefox";
+        //browserName = "chrome";
     } else if (userAgentStr.indexOf("opera") >= 0) {
         browserName = "opera";
     } else if (userAgentStr.indexOf("chrome") >= 0) {
