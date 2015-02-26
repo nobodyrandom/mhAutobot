@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing BETA
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.3.031z
+// @version    	1.3.032z
 // @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) BETA
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -16,7 +16,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.3.031z';
+unsafeWindow.addonScriptVer = '1.3.032z';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -372,44 +372,47 @@ function pingServer() {
 
         Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
         Parse.User.logIn(theUsername, thePassword).then(function(user) {
-        	//console.log("Success parse login");
-        	return Parse.Promise.as("Login success");
+            //console.log("Success parse login");
+            return Parse.Promise.as("Login success");
         }, function(user, error) {
-        	console.log("Parse login failed, attempting to create new user now.");
+            console.log("Parse login failed, attempting to create new user now.");
 
-			var createUser = new Parse.User();
-			createUser.set("username", theUsername);
-			createUser.set("password", thePassword);
-			createUser.set("email", thePassword + "@mh.com");
-			//createUser.setACL(new Parse.ACL(user));
+            var createUser = new Parse.User();
+            createUser.set("username", theUsername);
+            createUser.set("password", thePassword);
+            createUser.set("email", thePassword + "@mh.com");
+            //createUser.setACL(new Parse.ACL(user));
 
-			createUser.signUp(null, {
-				success: function(newUser) {
-					console.log(newUser);
-					pingServer();
-					return Parse.Promise.error("There was an error.");;
-				},
-				error: function(newUser, signupError) {
-					// Show the error message somewhere and let the user try again.
-					console.log("Parse Error: " + signupError.code + " " + signupError.message);
-					return Parse.Promise.error("Error in signup");
-				}
-			});
-			return Parse.Promise.error("Failed login, attempted signup, rerunning code");;
+            createUser.signUp(null, {
+                success: function(newUser) {
+                    console.log(newUser);
+                    pingServer();
+                    return Parse.Promise.error("There was an error.");;
+                },
+                error: function(newUser, signupError) {
+                    // Show the error message somewhere and let the user try again.
+                    console.log("Parse Error: " + signupError.code + " " + signupError.message);
+                    return Parse.Promise.error("Error in signup");
+                }
+            });
+            return Parse.Promise.error("Failed login, attempted signup, rerunning code");;
         }).then(function(success) {
-        	var UserData = Parse.Object.extend("UserData");
+            var UserData = Parse.Object.extend("UserData");
 
             var findOld = new Parse.Query(UserData);
             findOld.containedIn("user_id", [theData.sn_user_id, JSON.stringify(theData.sn_user_id)]);
-            return {results: findOld.find(), UserData: UserData};
+            return {
+                results: findOld.find(),
+                UserData: UserData
+            };
         }).then(function(returnObj) {
-        	var results = returnObj.results;
-        	for (var i = 0; i < results.length; i++) {
-				var theObject = results[i];
-				theObject.destroy();
-			}
-			//console.log("Done parse delete");
-			return returnObj.UserData;
+            var results = returnObj.results;
+            for (var i = 0; i < results.length; i++) {
+                var theObject = results[i];
+                theObject.destroy();
+            }
+            //console.log("Done parse delete");
+            return returnObj.UserData;
         }).then(function(UserData) {
             var userData = new UserData();
 
@@ -421,18 +424,18 @@ function pingServer() {
 
             return userData.save();
         }).then(function(results) {
-        	//console.log("Success Parse");
+            //console.log("Success Parse");
         }).then(function(message) {
-        	if(message != undefined || message != null)
-        		console.log("Parse message: " + error);
-        	if (Parse.User.current() != null) {
-        		Parse.User.logOut();
-        		//console.log("Parse logout");
-        	}
-        	//console.log("Parse end code");
+            if (message != undefined || message != null)
+                console.log("Parse message: " + error);
+            if (Parse.User.current() != null) {
+                Parse.User.logOut();
+                //console.log("Parse logout");
+            }
+            //console.log("Parse end code");
         }, function(error) {
-        	if(error != undefined || error != null)
-        		console.log("Parse error: " + error);
+            if (error != undefined || error != null)
+                console.log("Parse error: " + error);
         });
     }
 }
@@ -444,7 +447,7 @@ function hideMessage(time) {
 unsafeWindow.NOBraffle = function() {
     if (!($(".tabs a:eq(1)").length > 0))
         $("#hgbar_messages").click();
-        //messenger.UI['notification'].togglePopup();
+    //messenger.UI['notification'].togglePopup();
     setTimeout(function() {
         var tabs = $('a.tab');
         var theTab = "";
@@ -453,7 +456,7 @@ unsafeWindow.NOBraffle = function() {
         theTab.click();
     }, 1000);
     setTimeout(function() {
-        var ballot = $(".notificationMessageList .tab:eq(1) .sendBallot");
+        var ballot = $(".notificationMessageList input.sendBallot");
         for (var i = ballot.length - 1; i >= 0; i--) {
             ballot[i].click();
         }
