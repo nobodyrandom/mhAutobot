@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	1.4.521b
+// @version    	1.4.522b
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application with the newest version supported and many other features and fixes. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN... Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require		https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @require     https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=38592
@@ -98,7 +98,7 @@ var bestDraconic = ['Dragon Lance', 'Ice Maiden'];
 var bestRiftLuck = ['Multi-Crystal Laser', 'Crystal Tower'];
 var bestRiftPower = ['Focused Crystal Laser', 'Crystal Tower'];
 var bestPowerBase = ['Tidal Base', 'Golden Tournament Base', 'Spellbook Base'];
-var bestLuckBase = ['Rift Base', 'Tidal Base', 'Horse Jade Base'];
+var bestLuckBase = ['Rift Base', 'Tidal Base', 'Sheep Jade Base', 'Horse Jade Base'];
 var bestAttBasae = ['Birthday Drag', 'Cheesecake Base'];
 var bestSalt = ['Super Salt', 'Grub Salt'];
 var wasteCharm = ['Tarnished', 'Wealth'];
@@ -1440,7 +1440,7 @@ function embedTimer(targetPage) {
             var timerDivElement = document.createElement('div');
 
             var hr1Element = document.createElement('hr');
-            timerDivElement.appendChild(hr1Element);
+            //timerDivElement.appendChild(hr1Element);
             hr1Element = null;
 
             // show bot title and version
