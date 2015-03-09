@@ -17,6 +17,7 @@
 // @include		https://apps.facebook.com/mousehunt/*
 // @include		http://hi5.com/friend/games/MouseHunt*
 // @include		http://mousehunt.hi5.hitgrab.com/*
+// @grant		unsafeWindow
 // ==/UserScript==
 
 // == Basic User Preference Setting (Begin) ==
@@ -132,7 +133,7 @@ exeScript();
 function exeScript() {
     // check the trap check setting first
     if (trapCheckTimeDiff == 60) {
-        trapCheckTimeDiff = 00;
+        trapCheckTimeDiff = 0;
     } else if (trapCheckTimeDiff < 0 || trapCheckTimeDiff > 60) {
         // invalid value, just disable the trap check
         enableTrapCheck = false;
@@ -173,7 +174,7 @@ function exeScript() {
             mhMobilePlatform = true;
         } else {
             // from mousehunt game standard version
-            mhPlatform = true
+            mhPlatform = true;
         }
         version = undefined;
     } else if (window.location.href.indexOf("mousehunt.hi5.hitgrab.com") != -1) {
@@ -215,7 +216,7 @@ function exeScript() {
                 // fail to retrieve data, display error msg and reload the page
                 document.title = "Fail to retrieve data from page. Reloading in " + timeformat(errorReloadTime);
                 window.setTimeout(function() {
-                    reloadPage(false)
+                    reloadPage(false);
                 }, errorReloadTime * 1000);
             }
         } else {
@@ -250,7 +251,7 @@ function exeScript() {
                 // fail to retrieve data, display error msg and reload the page
                 document.title = "Fail to retrieve data from page. Reloading in " + timeformat(errorReloadTime);
                 window.setTimeout(function() {
-                    reloadPage(false)
+                    reloadPage(false);
                 }, errorReloadTime * 1000);
             }
         } else {
@@ -1810,17 +1811,13 @@ function embedScript() {
     scriptNode.setAttribute('id', 'scriptNode');
     scriptNode.setAttribute('type', 'text/javascript');
     scriptNode.setAttribute('soundedHornAtt', 'false');
-    scriptNode.innerHTML = '														\
-function soundedHorn()														\
-{																			\
-var scriptNode = document.getElementById("scriptNode");					\
-if (scriptNode)															\
-{																		\
-scriptNode.setAttribute("soundedHornAtt", "true");					\
-}																		\
-scriptNode = null;														\
-}																			\
-';
+    scriptNode.innerHTML = 'function soundedHorn() {\
+    var scriptNode = document.getElementById("scriptNode");\
+    if (scriptNode) {\
+    	scriptNode.setAttribute("soundedHornAtt", "true");\
+    }\
+    scriptNode = null;\
+    }';
 
     // find the head node and insert the script into it
     var headerElement;
