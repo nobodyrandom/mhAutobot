@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom
-// @version    	1.4.523a
+// @version    	1.4.524a
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application with the newest version supported and many other features and fixes. REVAMPED VERSION of ORIGINAL by Ooi... Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require		https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @require		https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=38592
@@ -49,7 +49,7 @@ var checkTimeDelayMax = 120;
 // // Play sound when encounter king's reward (true/false)
 var isKingWarningSound = false;
 
-// // Reload the the page according to kingPauseTimeMax when encount King Reward. (true/false)
+// // Reload the the page according to kingPauseTimeMax when encountering King Reward. (true/false)
 // // Note: No matter how many time you refresh, the King's Reward won't go away unless you resolve it manually.
 var reloadKingReward = false;
 
@@ -1835,6 +1835,17 @@ scriptNode = null;														\
 
     // change the function call of horn
     var hornButtonLink = document.getElementsByClassName('hornbutton')[0].firstChild;
+
+    var testNewUI = document.getElementById('header');
+    if (testNewUI != null) {
+        // old UI
+        isNewUI = false;
+    } else {
+        // new UI
+        isNewUI = true;
+        alert('You are on the new UI please install the BETA version of the bot instead.\nFound here: http://goo.gl/phsHNg');
+    }
+
     var oriStr = hornButtonLink.getAttribute('onclick').toString();
     var index = oriStr.indexOf('return false;');
     var modStr = oriStr.substring(0, index) + 'soundedHorn();' + oriStr.substring(index);
