@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	1.4.522b
+// @version    	1.4.523b
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application with the newest version supported and many other features and fixes. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN... Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require		https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @require     https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=38592
@@ -49,7 +49,7 @@ var checkTimeDelayMax = 120;
 // // Play sound when encounter king's reward (true/false)
 var isKingWarningSound = false;
 
-// // Reload the the page according to kingPauseTimeMax when encount King Reward. (true/false)
+// // Reload the the page according to kingPauseTimeMax when encountering King Reward. (true/false)
 // // Note: No matter how many time you refresh, the King's Reward won't go away unless you resolve it manually.
 var reloadKingReward = false;
 
@@ -90,7 +90,7 @@ var timerRefreshInterval = 1;
 // // Best weapon/base pre-determined by user. Edit ur best weapon/trap in ascending order. e.g. [best, better, good]
 var bestPhysical = ['Chrome MonstroBot', 'Sandstorm MonstroBot', 'Sandtail Sentinel'];
 var bestTactical = ['Sphynx Wrath'];
-var bestHydro = ['Chrome Phantasmic Oasis Trap', 'Phantasmic Oasis Trap', 'Oasis Water Node Trap'];
+var bestHydro = ['School of Sharks', 'Rune Shark Trap', 'Chrome Phantasmic Oasis Trap', 'Phantasmic Oasis Trap', 'Oasis Water Node Trap'];
 var bestArcane = ['Grand Arcanum Trap', 'Arcane Blast Trap', 'Arcane Capturing Rod Of Nev'];
 var bestShadow = ['Clockwork Portal Trap', 'Reaper\'s Perch', 'Clockapult of Time', 'Clockapult of Winter Past', 'Maniacal Brain Extractor'];
 var bestForgotten = ['Tarannosaurus Rex Trap', 'The Forgotten Art of Dance'];
@@ -138,7 +138,7 @@ var mouseList = [];
 var eventLocation;
 var arming = false;
 var best = 0;
-var maxSaltCharged = 24;
+var maxSaltCharged = 26;
 
 // element in page
 var titleElement;
