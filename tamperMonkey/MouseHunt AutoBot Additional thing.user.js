@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.2.020
+// @version    	1.2.021
 // @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp)
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -16,7 +16,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.2.020';
+unsafeWindow.addonScriptVer = '1.2.021';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -343,11 +343,8 @@ function fetchGDocStuff() {
 
             // UPDATE CHECK
             checkVer = text.version;
-            console.log('Current mouseHunt AutoBot version: ' + currVer);
-            console.log('Current mouseHunt AutoBot additional thing version: ' + addonScriptVer);
-            console.log('Server mouseHunt AutoBot version: ' + checkVer);
-            console.log('Server mouseHunt AutoBot additional thing version: ' + text.versionAddon);
-            console.log('Server GoogleScript version: ' + text.versionGoogle);
+            console.log('Current MH AutoBot version: ' + currVer + ' / Server MH AutoBot version: ' + checkVer);
+            console.log('Current MH AutoBot additional thing version: ' + addonScriptVer + ' / Server MH AutoBot additional thing version: ' + text.versionAddon);
             if (checkVer > currVer) {
                 var updateElement = document.getElementById('updateElement');
                 updateElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target='_blank'><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
