@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom
-// @version    	1.4.524a
+// @version    	1.4.525a
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application with the newest version supported and many other features and fixes. REVAMPED VERSION of ORIGINAL by Ooi... Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require		https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @require		https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=38592
@@ -1831,8 +1831,6 @@ function embedScript() {
     headerElement = null;
 
     // change the function call of horn
-    var hornButtonLink = document.getElementsByClassName('hornbutton')[0].firstChild;
-
     var testNewUI = document.getElementById('header');
     if (testNewUI != null) {
         // old UI
@@ -1841,8 +1839,10 @@ function embedScript() {
         // new UI
         isNewUI = true;
         alert('You are on the new UI please install the BETA version of the bot instead.\nFound here: http://goo.gl/phsHNg');
+        throw new Error("Wrong script version.");
     }
-
+	
+	var hornButtonLink = document.getElementsByClassName('hornbutton')[0].firstChild;
     var oriStr = hornButtonLink.getAttribute('onclick').toString();
     var index = oriStr.indexOf('return false;');
     var modStr = oriStr.substring(0, index) + 'soundedHorn();' + oriStr.substring(index);
