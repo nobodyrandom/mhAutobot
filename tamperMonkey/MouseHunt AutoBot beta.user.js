@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP for BETA UI
 // @author      NobodyRandom
-// @version    	1.5.055y
+// @version    	1.5.056y
 // @description BETA MOUSEHUNT AUTOBOT for the BETA MH UI
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @require		https://greasyfork.org/scripts/7866-mousehunt-autobot-additional-thing-beta/code/MouseHunt%20AutoBot%20Additional%20thing%20BETA.js?version=38591
@@ -1852,18 +1852,18 @@ function embedScript() {
     headerElement = null;
 
     // change the function call of horn
-    var hornButtonLink = document.getElementsByClassName(hornbutton)[0].firstChild;
-
     var testNewUI = document.getElementById('header');
     if (testNewUI != null) {
         // old UI
         isNewUI = false;
         alert('You are on the old UI please install the original version of the bot instead.\nFound here: http://goo.gl/DGvpEY');
+        throw new Error("Wrong script version.");
     } else {
         // new UI
         isNewUI = true;
     }
 
+	var hornButtonLink = document.getElementsByClassName(hornbutton)[0].firstChild;
     var oriStr = hornButtonLink.getAttribute('onclick').toString();
     var index = oriStr.indexOf('return false;');
     var modStr = oriStr.substring(0, index) + 'soundedHorn(); ' + oriStr.substring(index);
