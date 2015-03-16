@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP for BETA UI
 // @author      NobodyRandom
-// @version    	1.5.057y
+// @version    	1.5.058y
 // @description BETA MOUSEHUNT AUTOBOT for the BETA MH UI
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @require		https://greasyfork.org/scripts/7866-mousehunt-autobot-additional-thing-beta/code/MouseHunt%20AutoBot%20Additional%20thing%20BETA.js?version=40326
@@ -1028,6 +1028,7 @@ function embedTimer(targetPage) {
 
                 var loadLinkToUpdateDiv = document.createElement('div');
                 loadLinkToUpdateDiv.setAttribute('id', 'gDocArea');
+                loadLinkToUpdateDiv.setAttribute('style', 'float: left;');
                 var tempSpan2 = document.createElement('span');
                 var loadLinkToUpdate = document.createElement('a');
                 text = document.createTextNode('Submit info to GDoc');
