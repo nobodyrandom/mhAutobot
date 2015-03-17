@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	1.4.527b
+// @version    	1.4.528b
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application with the newest version supported and many other features and fixes. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN... Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require		https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
-// @require     https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=40325
+// @require     https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=41363
 // @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot, https://devcnn.wordpress.com/
 // @updateURL	https://greasyfork.org/scripts/6514-mousehunt-autobot-enhanced-revamp/code/MouseHunt%20AutoBot%20ENHANCED%20+%20REVAMP.user.js
 // @downloadURL	https://greasyfork.org/scripts/6514-mousehunt-autobot-enhanced-revamp/code/MouseHunt%20AutoBot%20ENHANCED%20+%20REVAMP.user.js
@@ -17,6 +17,7 @@
 // @include		https://apps.facebook.com/mousehunt/*
 // @include		http://hi5.com/friend/games/MouseHunt*
 // @include		http://mousehunt.hi5.hitgrab.com/*
+// @grant		unsafeWindow
 // ==/UserScript==
 
 // == Basic User Preference Setting (Begin) ==
@@ -171,7 +172,7 @@ function exeScript() {
         }
     }
     if (trapCheckTimeDiff == 60) {
-        trapCheckTimeDiff = 00;
+        trapCheckTimeDiff = 0;
     } else if (trapCheckTimeDiff < 0 || trapCheckTimeDiff > 60) {
         // invalid value, just disable the trap check
         enableTrapCheck = false;
@@ -212,7 +213,7 @@ function exeScript() {
             mhMobilePlatform = true;
         } else {
             // from mousehunt game standard version
-            mhPlatform = true
+            mhPlatform = true;
         }
         version = undefined;
     } else if (window.location.href.indexOf("mousehunt.hi5.hitgrab.com") != -1) {
@@ -254,7 +255,7 @@ function exeScript() {
                 // fail to retrieve data, display error msg and reload the page
                 document.title = "Fail to retrieve data from page. Reloading in " + timeformat(errorReloadTime);
                 window.setTimeout(function() {
-                    reloadPage(false)
+                    reloadPage(false);
                 }, errorReloadTime * 1000);
             }
         } else {
@@ -289,7 +290,7 @@ function exeScript() {
                 // fail to retrieve data, display error msg and reload the page
                 document.title = "Fail to retrieve data from page. Reloading in " + timeformat(errorReloadTime);
                 window.setTimeout(function() {
-                    reloadPage(false)
+                    reloadPage(false);
                 }, errorReloadTime * 1000);
             }
         } else {
@@ -1524,6 +1525,7 @@ function embedTimer(targetPage) {
                 var text = document.createTextNode('Toggle timers');
                 timersElementToggle.href = '#';
                 timersElementToggle.setAttribute('id', 'timersElementToggle');
+                timersElementToggle.setAttribute('style', 'float: left;');
                 timersElementToggle.appendChild(text);
                 timerDivElement.appendChild(timersElementToggle);
                 timersElementToggle.addEventListener("click", showHideTimers, false);
@@ -1534,7 +1536,7 @@ function embedTimer(targetPage) {
                 loadTimersElement.setAttribute('style', 'display: none;');
                 timerDivElement.appendChild(loadTimersElement);
 
-                timerDivElement.appendChild(document.createElement('br'));
+                timerDivElement.appendChild(/*document.createElement('br')*/document.createTextNode(' &#126; '));
 
                 var loadLinkToUpdateDiv = document.createElement('div');
                 loadLinkToUpdateDiv.setAttribute('id', 'gDocArea');

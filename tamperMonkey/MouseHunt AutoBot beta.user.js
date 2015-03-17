@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP for BETA UI
 // @author      NobodyRandom
-// @version    	1.5.058y
+// @version    	1.5.059y
 // @description BETA MOUSEHUNT AUTOBOT for the BETA MH UI
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
-// @require		https://greasyfork.org/scripts/7866-mousehunt-autobot-additional-thing-beta/code/MouseHunt%20AutoBot%20Additional%20thing%20BETA.js?version=40326
+// @require		https://greasyfork.org/scripts/7866-mousehunt-autobot-additional-thing-beta/code/MouseHunt%20AutoBot%20Additional%20thing%20BETA.js?version=41364
 // @namespace   https://greasyfork.org/users/6398
 // @updateURL	https://greasyfork.org/scripts/7865-mousehunt-autobot-revamp-for-beta-ui/code/MouseHunt%20AutoBot%20REVAMP%20for%20BETA%20UI.user.js
 // @downloadURL	https://greasyfork.org/scripts/7865-mousehunt-autobot-revamp-for-beta-ui/code/MouseHunt%20AutoBot%20REVAMP%20for%20BETA%20UI.user.js
@@ -1014,6 +1014,7 @@ function embedTimer(targetPage) {
                 var text = document.createTextNode('Toggle timers');
                 timersElementToggle.href = '#';
                 timersElementToggle.setAttribute('id', 'timersElementToggle');
+                timersElementToggle.setAttribute('style', 'float: left;');
                 timersElementToggle.appendChild(text);
                 timerDivElement.appendChild(timersElementToggle);
                 timersElementToggle.addEventListener("click", showHideTimers, false);
@@ -1024,7 +1025,7 @@ function embedTimer(targetPage) {
                 loadTimersElement.setAttribute('style', 'display: none;');
                 timerDivElement.appendChild(loadTimersElement);
 
-                timerDivElement.appendChild(document.createElement('br'));
+                timerDivElement.appendChild(/*document.createElement('br')*/document.createTextNode(' &#126; '));
 
                 var loadLinkToUpdateDiv = document.createElement('div');
                 loadLinkToUpdateDiv.setAttribute('id', 'gDocArea');
