@@ -1015,7 +1015,7 @@ function embedTimer(targetPage) {
                 var holder = document.createElement('div');
                 holder.setAttribute('style', 'float: left;');
                 var temp = document.createElement('span');
-                temp.innerHTML = "' &#126; '";
+                temp.innerHTML = '" &#126; "';
                 holder.appendChild(timersElementToggle);
                 holder.appendChild(temp);
                 timerDivElement.appendChild(holder);
