@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	1.4.529b
+// @version    	1.4.530b
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application with the newest version supported and many other features and fixes. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN... Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require		https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @require     https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=41363
@@ -1525,11 +1525,11 @@ function embedTimer(targetPage) {
                 var text = document.createTextNode('Toggle timers');
                 timersElementToggle.href = '#';
                 timersElementToggle.setAttribute('id', 'timersElementToggle');
-                timersElementToggle.setAttribute('style', 'float: left;');
                 timersElementToggle.appendChild(text);
                 var holder = document.createElement('div');
+                holder.setAttribute('style', 'float: left;');
                 var temp = document.createElement('span');
-                temp.innerHTML = " &#126; ";
+                temp.innerHTML = "' &#126; '";
                 holder.appendChild(timersElementToggle);
                 holder.appendChild(temp);
                 timerDivElement.appendChild(holder);
