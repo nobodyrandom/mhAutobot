@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom
-// @version    	1.4.528a
+// @version    	1.4.529a
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application with the newest version supported and many other features and fixes. REVAMPED VERSION of ORIGINAL by Ooi... Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require		https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @require		https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=41363
@@ -294,7 +294,7 @@ function exeScript() {
                 // fail to retrieve data, display error msg and reload the page
                 document.title = "Fail to retrieve data from page. Reloading in " + timeformat(errorReloadTime);
                 window.setTimeout(function() {
-                    reloadPage(false)
+                    reloadPage(false);
                 }, errorReloadTime * 1000);
             }
         } else {
@@ -316,7 +316,7 @@ function checkIntroContainer() {
     }
 
     try {
-        return (gotIntroContainerDiv);
+        return gotIntroContainerDiv;
     } finally {
         gotIntroContainerDiv = undefined;
     }
@@ -905,7 +905,7 @@ function reloadWithMessage(msg, soundHorn) {
     displayTimer(msg, msg, msg, msg);
 
     // reload the page
-    reloadPage(soundHorn);
+    setTimeout(function(){reloadPage(soundHorn)}, 1000);
 
     msg = undefined;
     soundHorn = undefined;
@@ -927,9 +927,9 @@ function embedTimer(targetPage) {
         if (headerElement) {
             var timerDivElement = document.createElement('div');
 
-            var hr1Element = document.createElement('hr');
+            //var hr1Element = document.createElement('hr');
             //timerDivElement.appendChild(hr1Element);
-            hr1Element = null;
+            //hr1Element = null;
 
             // show bot title and version
             var titleElement = document.createElement('div');
@@ -1013,16 +1013,23 @@ function embedTimer(targetPage) {
                 timersElementToggle.setAttribute('id', 'timersElementToggle');
                 timersElementToggle.setAttribute('style', 'float: left;');
                 timersElementToggle.appendChild(text);
-                timerDivElement.appendChild(timersElementToggle);
+                var holder = document.createElement('div');
+                var temp = document.createElement('span');
+                temp.innerHTML = " &#126; ";
+                holder.appendChild(timersElementToggle);
+                holder.appendChild(temp);
+                timerDivElement.appendChild(holder);
                 timersElementToggle.addEventListener("click", showHideTimers, false);
+                holder = null;
                 text = null;
+                temp = null;
 
                 var loadTimersElement = document.createElement('div');
                 loadTimersElement.setAttribute('id', 'loadTimersElement');
                 loadTimersElement.setAttribute('style', 'display: none;');
                 timerDivElement.appendChild(loadTimersElement);
 
-                timerDivElement.appendChild(/*document.createElement('br')*/document.createTextNode(' &#126; '));
+                //timerDivElement.appendChild(/*document.createElement('br')*/document.createTextNode(' &#126; '));
 
                 var loadLinkToUpdateDiv = document.createElement('div');
                 loadLinkToUpdateDiv.setAttribute('id', 'gDocArea');

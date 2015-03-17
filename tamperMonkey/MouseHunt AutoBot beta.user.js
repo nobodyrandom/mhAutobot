@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP for BETA UI
 // @author      NobodyRandom
-// @version    	1.5.059y
+// @version    	1.5.060y
 // @description BETA MOUSEHUNT AUTOBOT for the BETA MH UI
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @require		https://greasyfork.org/scripts/7866-mousehunt-autobot-additional-thing-beta/code/MouseHunt%20AutoBot%20Additional%20thing%20BETA.js?version=41364
@@ -930,9 +930,9 @@ function embedTimer(targetPage) {
         if (headerElement) {
             var timerDivElement = document.createElement('div');
 
-            var hr1Element = document.createElement('hr');
-            timerDivElement.appendChild(hr1Element);
-            hr1Element = null;
+            //var hr1Element = document.createElement('hr');
+            //timerDivElement.appendChild(hr1Element);
+            //hr1Element = null;
 
             // show bot title and version
             var titleElement = document.createElement('div');
@@ -1016,16 +1016,23 @@ function embedTimer(targetPage) {
                 timersElementToggle.setAttribute('id', 'timersElementToggle');
                 timersElementToggle.setAttribute('style', 'float: left;');
                 timersElementToggle.appendChild(text);
-                timerDivElement.appendChild(timersElementToggle);
+                var holder = document.createElement('div');
+                var temp = document.createElement('span');
+                temp.innerHTML = " &#126; ";
+                holder.appendChild(timersElementToggle);
+                holder.appendChild(temp);
+                timerDivElement.appendChild(holder);
                 timersElementToggle.addEventListener("click", showHideTimers, false);
+                holder = null;
                 text = null;
+                temp = null;
 
                 var loadTimersElement = document.createElement('div');
                 loadTimersElement.setAttribute('id', 'loadTimersElement');
                 loadTimersElement.setAttribute('style', 'display: none;');
                 timerDivElement.appendChild(loadTimersElement);
 
-                timerDivElement.appendChild(/*document.createElement('br')*/document.createTextNode(' &#126; '));
+                //timerDivElement.appendChild(/*document.createElement('br')*/document.createTextNode(' &#126; '));
 
                 var loadLinkToUpdateDiv = document.createElement('div');
                 loadLinkToUpdateDiv.setAttribute('id', 'gDocArea');
@@ -1934,17 +1941,17 @@ function notify() {
         icon: 'http://3.bp.blogspot.com/_O2yZIhpq9E8/TBoAMw0fMNI/AAAAAAAAAxo/1ytaIxQQz4o/s1600/Subliminal+Message.JPG',
         body: "Kings Reward NOW"
     });
-
+    
     notification.onclick = function() {
-        window.open("https://www.mousehuntgame.com/");
-        notification.close();
-    }
+		window.open("https://www.mousehuntgame.com/");
+		notification.close();
+	}
 
-    notification.onshow = function() {
-        setTimeout(function() {
-            notification.close();
-        }, 5000);
-    }
+	notification.onshow = function() {
+		setTimeout(function() {
+			notification.close();
+		}, 5000);
+	}
 }
 
 function playKingRewardSound() {
