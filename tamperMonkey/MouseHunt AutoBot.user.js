@@ -1011,6 +1011,7 @@ function embedTimer(targetPage) {
                 var text = document.createTextNode('Toggle timers');
                 timersElementToggle.href = '#';
                 timersElementToggle.setAttribute('id', 'timersElementToggle');
+                timersElementToggle.setAttribute('style', 'float: left;');
                 timersElementToggle.appendChild(text);
                 timerDivElement.appendChild(timersElementToggle);
                 timersElementToggle.addEventListener("click", showHideTimers, false);
@@ -1021,7 +1022,7 @@ function embedTimer(targetPage) {
                 loadTimersElement.setAttribute('style', 'display: none;');
                 timerDivElement.appendChild(loadTimersElement);
 
-                timerDivElement.appendChild(document.createElement('br'));
+                timerDivElement.appendChild(/*document.createElement('br')*/document.createTextNode(' &#126; '));
 
                 var loadLinkToUpdateDiv = document.createElement('div');
                 loadLinkToUpdateDiv.setAttribute('id', 'gDocArea');

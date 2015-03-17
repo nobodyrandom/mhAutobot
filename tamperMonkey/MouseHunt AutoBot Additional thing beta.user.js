@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing BETA
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.3.033z
+// @version    	1.3.034z
 // @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) BETA
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -16,7 +16,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.3.033z';
+unsafeWindow.addonScriptVer = '1.3.034z';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -485,6 +485,8 @@ function createClockArea() {
 
     for (i = 0; i < LOCATION_TIMERS.length; i++)
         parent.insertBefore(child[i], parent.firstChild);
+    
+    parent.insertBefore(document.createElement('br'), parent.firstChild);
 }
 
 function clockTick() {
