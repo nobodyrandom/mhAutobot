@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP for firefox
 // @author      NobodyRandom
-// @version    	1.12
+// @version    	1.13
 // @description BETA MOUSEHUNT AUTOBOT for the BETA MH UI
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @namespace   https://greasyfork.org/users/6398
@@ -139,7 +139,7 @@ function exeScript() {
     if (debug) {
         console.log("START exeScript()");
     }
-    try {
+    //try {
     	console.log("Try block");
         // check the trap check setting first
         if (trapCheckTimeDiff == 60) {
@@ -314,11 +314,11 @@ function exeScript() {
                 embedTimer(false);
             }
         }
-    } catch (err) {
+    /*} catch (err) {
         console.log(err);
     } finally {
     	console.log("END exeScript()");
-    }
+    }*/
 }
 function checkIntroContainer() {
     if (debug) console.log("START checkIntroContainer");
