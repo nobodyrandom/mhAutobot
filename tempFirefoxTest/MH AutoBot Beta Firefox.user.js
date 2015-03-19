@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP for firefox
 // @author      NobodyRandom
-// @version    	1.10
+// @version    	1.11
 // @description BETA MOUSEHUNT AUTOBOT for the BETA MH UI
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @namespace   https://greasyfork.org/users/6398
@@ -140,6 +140,7 @@ function exeScript() {
         console.log("START exeScript()");
     }
     try {
+    	console.log("Try block");
         // check the trap check setting first
         if (trapCheckTimeDiff == 60) {
             trapCheckTimeDiff = 0;
