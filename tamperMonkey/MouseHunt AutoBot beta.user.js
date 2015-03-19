@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP for BETA UI
 // @author      NobodyRandom
-// @version    	1.5.061y
+// @version    	1.5.062y
 // @description BETA MOUSEHUNT AUTOBOT for the BETA MH UI
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @require		https://greasyfork.org/scripts/7866-mousehunt-autobot-additional-thing-beta/code/MouseHunt%20AutoBot%20Additional%20thing%20BETA.js?version=41364
@@ -1018,7 +1018,7 @@ function embedTimer(targetPage) {
                 var holder = document.createElement('div');
                 holder.setAttribute('style', 'float: left;');
                 var temp = document.createElement('span');
-                temp.innerHTML = '" &#126; "';
+                temp.innerHTML = '&#160;&#126;&#160;';
                 holder.appendChild(timersElementToggle);
                 holder.appendChild(temp);
                 timerDivElement.appendChild(holder);
@@ -1026,6 +1026,7 @@ function embedTimer(targetPage) {
                 holder = null;
                 text = null;
                 temp = null;
+                //$('#overlayContainer')[0].style.cssText = "";
 
                 var loadTimersElement = document.createElement('div');
                 loadTimersElement.setAttribute('id', 'loadTimersElement');
