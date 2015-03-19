@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP for firefox
 // @author      NobodyRandom
-// @version    	1.7
+// @version    	1.8
 // @description BETA MOUSEHUNT AUTOBOT for the BETA MH UI
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @namespace   https://greasyfork.org/users/6398
@@ -17,6 +17,7 @@
 // @grant		unsafeWindow
 // ==/UserScript==
 
+// @require		https://openuserjs.org/src/libs/nobodyrandom/MH_AutoBot_Addon_Firefox.js?ver=4
 var debug = true;
 if(debug) console.log(GM_info.script.version + " + " + /*addonScriptVer*/);
 // == Basic User Preference Setting (Begin) ==
@@ -133,7 +134,8 @@ var isNewUI = false;
 //exeScript();
 
 function exeScript() {
-    if(debug) if(debug) console.log(("START exeScript()");
+try {
+    if(debug) console.log(("START exeScript()");
     // check the trap check setting first
     if (trapCheckTimeDiff == 60) {
         trapCheckTimeDiff = 0;
@@ -307,6 +309,8 @@ function exeScript() {
             embedTimer(false);
         }
     }
+    }
+    catch(err) {console.log(err);}
 }
 
 function checkIntroContainer() {
@@ -490,8 +494,6 @@ function retrieveDataFirst() {
     gotHornTime = undefined;
     gotPuzzle = undefined;
     gotBaitQuantity = undefined;
-    
-    //if(debug) console.log("Retrieve Success: " + retrieveSuccess + " - " + gotHornTime + " + " + gotPuzzle + " + " + gotBaitQuantity);
     
     try {
         return retrieveSuccess;
@@ -1005,7 +1007,7 @@ function embedTimer(targetPage) {
             titleElement.setAttribute('id', 'titleElement');
             if(debug) console.log("Clear 3");
             if (targetPage && aggressiveMode) {
-                titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target=\"_blank\">MouseHunt AutoBot BETA (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing (version " + addonScriptVer + ")</b> - <font color='red'>Aggressive Mode</font>";
+                titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target=\"_blank\">MouseHunt AutoBot BETA (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing (version " /*+ addonScriptVer*/ + ")</b> - <font color='red'>Aggressive Mode</font>";
             } else {
                 titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target=\"_blank\">MouseHunt AutoBot (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing (version " /*+ addonScriptVer*/ + ")</b>";
             }
