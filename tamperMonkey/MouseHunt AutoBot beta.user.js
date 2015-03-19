@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP for BETA UI
 // @author      NobodyRandom
-// @version    	1.5.064y
+// @version    	1.5.065y
 // @description BETA MOUSEHUNT AUTOBOT for the BETA MH UI
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @require		https://greasyfork.org/scripts/7866-mousehunt-autobot-additional-thing-beta/code/MouseHunt%20AutoBot%20Additional%20thing%20BETA.js?version=41364
@@ -1004,7 +1004,7 @@ function embedTimer(targetPage) {
                     var loadTimeElement = document.createElement('div');
                     loadTimeElement.setAttribute('id', 'loadTimeElement');
                     loadTimeElement.innerHTML = "<b>Last Page Load: </b>" + nowDate.toDateString() + " " + nowDate.toTimeString().substring(0, 8);
-                    timerDivElement.appendChild(loadTimeElement);
+                    //timerDivElement.appendChild(loadTimeElement);
 
                     loadTimeElement = null;
                     nowDate = null;
