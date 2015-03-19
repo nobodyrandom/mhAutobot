@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP for firefox
 // @author      NobodyRandom
-// @version    	1.19
+// @version    	1.20
 // @description BETA MOUSEHUNT AUTOBOT for the BETA MH UI
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @namespace   https://greasyfork.org/users/6398
@@ -746,6 +746,7 @@ function action() {
         var headerElement;
         headerElement = document.getElementsByClassName(header)[0];
         if (headerElement) {
+        	if (debug) console.log("Clear B2");
             var headerStatus = headerElement.getAttribute('class');
             if (headerStatus.indexOf("hornReady") != -1) {
                 // if the horn image is visible, why do we need to wait any more, sound the horn!
