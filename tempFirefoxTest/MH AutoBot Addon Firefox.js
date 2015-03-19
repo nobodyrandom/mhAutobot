@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing firefox
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.0
+// @version    	1.1
 // @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) BETA
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -17,7 +17,7 @@
 
 var debug = true;
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.0';
+unsafeWindow.addonScriptVer = '1.1';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -63,6 +63,7 @@ var LOCATION_TIMERS = [
 $(window).load(NOBinit);
 
 function NOBinit() {
+	if(debug) console.log("START NOBinit()");
     if (!NOBhasPuzzle) {
         if (window.location.href == "http://www.mousehuntgame.com/" ||
             window.location.href == "http://www.mousehuntgame.com/#" ||
@@ -121,7 +122,7 @@ function NOBajaxGet(url, callback, throwError) {
             timeout: 5000,
             statusCode: {
                 200: function() {
-                    console.log("Success get - " + url);
+                    if(debug) console.log("Success get - " + url);
                     //Success Message
                 }
             },
@@ -141,7 +142,7 @@ function NOBajaxPost(url, data, callback, throwError) {
             timeout: 5000,
             statusCode: {
                 200: function() {
-                    console.log("Success post - " + url);
+                    if(debug) console.log("Success post - " + url);
                     //Success Message
                 }
             },
@@ -186,9 +187,9 @@ function GDoc(items, type) {
     var sheet = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec";
 
     NOBajaxPost(sheet, dataSendString, function(data) {
-        //console.log(data);
+        //if(debug) console.log(data);
     }, function(a, b, c) {
-        console.log(b)
+        if(debug) console.log(b)
     });
 }
 
@@ -235,11 +236,11 @@ function MapRequest(handleData) {
         dataType: "json",
         timeout: 5000,
         success: function(data) {
-            // console.log(data);
+            // if(debug) console.log(data);
             handleData(data);
         },
         error: function(error) {
-            console.log("Map Request Failed");
+            if(debug) console.log("Map Request Failed");
             handleData(error);
         }
     });
@@ -274,7 +275,7 @@ unsafeWindow.NOBscript = function(qqEvent) {
         var mapThere = document.getElementsByClassName('treasureMap')[0];
         if (mapThere == null || mapThere == undefined || mapThere == "") {
             mapThere = false;
-            console.log("No map, using HTML data now");
+            if(debug) console.log("No map, using HTML data now");
         } else {
             mapThere = true;
         }
@@ -285,7 +286,7 @@ unsafeWindow.NOBscript = function(qqEvent) {
                         NOBstore(output, "data");
                         GDoc(JSON.stringify(output), "map");
                     } else {
-                        console.log(output);
+                        if(debug) console.log(output);
                         mapRequestFailed = true;
                         NOBhtmlFetch();
                         output = NOBget('data');
@@ -293,13 +294,13 @@ unsafeWindow.NOBscript = function(qqEvent) {
                     }
                 });
             } else {
-                console.log("Map fetch failed using USER data from html (" + mapRequestFailed + ", " + mapThere + ")");
+                if(debug) console.log("Map fetch failed using USER data from html (" + mapRequestFailed + ", " + mapThere + ")");
                 NOBhtmlFetch();
                 var output = NOBget('data');
                 GDoc(output, "user");
             }
         } else {
-            console.log("Data is not found, doing HTML fetch now.");
+            if(debug) console.log("Data is not found, doing HTML fetch now.");
             NOBhtmlFetch();
         }
     }
@@ -318,9 +319,9 @@ unsafeWindow.NOBtravel = function(location) {
             'uh': user.unique_hash
         };
         NOBajaxPost(url, data, function(r) {
-            console.log(r);
+            if(debug) console.log(r);
         }, function(a, b, c) {
-            console.log(a, b, c);
+            if(debug) console.log(a, b, c);
         });
     }
 }
@@ -344,15 +345,15 @@ function fetchGDocStuff() {
 
             // UPDATE CHECK
             checkVer = text.version;
-            console.log('Current MH AutoBot version: ' + currVer + ' / Server MH AutoBot version: ' + checkVer);
-            console.log('Current MH AutoBot additional thing version: ' + addonScriptVer + ' / Server MH AutoBot additional thing version: ' + text.versionAddon);
+            if(debug) console.log('Current MH AutoBot version: ' + currVer + ' / Server MH AutoBot version: ' + checkVer);
+            if(debug) console.log('Current MH AutoBot additional thing version: ' + addonScriptVer + ' / Server MH AutoBot additional thing version: ' + text.versionAddon);
             if (checkVer > currVer) {
                 var updateElement = document.getElementById('updateElement');
                 updateElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target='_blank'><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
             }
         }, function(a, b, c) {
             NOBstopLoading();
-            console.log(b + ' error - Google Docs is now not working qq');
+            if(debug) console.log(b + ' error - Google Docs is now not working qq');
             if (b == "timeout")
                 document.getElementById('NOBmessage').innerHTML = "Google Docs is being slow again ._.";
         });
@@ -370,10 +371,10 @@ function pingServer() {
 
         Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
         Parse.User.logIn(theUsername, thePassword).then(function(user) {
-            //console.log("Success parse login");
+            //if(debug) console.log("Success parse login");
             return Parse.Promise.as("Login success");
         }, function(user, error) {
-            console.log("Parse login failed, attempting to create new user now.");
+            if(debug) console.log("Parse login failed, attempting to create new user now.");
 
             var createUser = new Parse.User();
             createUser.set("username", theUsername);
@@ -383,13 +384,13 @@ function pingServer() {
 
             createUser.signUp(null, {
                 success: function(newUser) {
-                    console.log(newUser);
+                    if(debug) console.log(newUser);
                     pingServer();
                     return Parse.Promise.error("There was an error.");;
                 },
                 error: function(newUser, signupError) {
                     // Show the error message somewhere and let the user try again.
-                    console.log("Parse Error: " + signupError.code + " " + signupError.message);
+                    if(debug) console.log("Parse Error: " + signupError.code + " " + signupError.message);
                     return Parse.Promise.error("Error in signup");
                 }
             });
@@ -409,7 +410,7 @@ function pingServer() {
                 var theObject = results[i];
                 theObject.destroy();
             }
-            //console.log("Done parse delete");
+            //if(debug) console.log("Done parse delete");
             return returnObj.UserData;
         }).then(function(UserData) {
             var userData = new UserData();
@@ -422,18 +423,18 @@ function pingServer() {
 
             return userData.save();
         }).then(function(results) {
-            //console.log("Success Parse");
+            //if(debug) console.log("Success Parse");
         }).then(function(message) {
             if (message != undefined || message != null)
-                console.log("Parse message: " + error);
+                if(debug) console.log("Parse message: " + error);
             if (Parse.User.current() != null) {
                 Parse.User.logOut();
-                //console.log("Parse logout");
+                //if(debug) console.log("Parse logout");
             }
-            //console.log("Parse end code");
+            //if(debug) console.log("Parse end code");
         }, function(error) {
             if (error != undefined || error != null)
-                console.log("Parse error: " + error);
+                if(debug) console.log("Parse error: " + error);
         });
     }
 }
@@ -581,7 +582,7 @@ function NOBcalculateTime() {
                 child.innerHTML = 'Toxic spill is now - <font color="' + text.level.color + '">' + text.level.state + '</font>' + text.percent;
             }
         }, function(a, b, c) {
-            // console.log(b);
+            // if(debug) console.log(b);
             var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
             child.innerHTML = "<font color='red'>" + b + " error, probably hornTracker, google, or my scripts broke. Please wait awhile, if not just contact me.</font>";
         });
