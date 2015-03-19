@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP for firefox
 // @author      NobodyRandom
-// @version    	1.18
+// @version    	1.19
 // @description BETA MOUSEHUNT AUTOBOT for the BETA MH UI
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @namespace   https://greasyfork.org/users/6398
@@ -1146,14 +1146,14 @@ function embedTimer(targetPage) {
             } else {
                 // try check if ajax was called
                 if (doubleCheckLocation()) {
-                    //exeScript();
-                    NOBinit();
+                    exeScript();
+                    //NOBinit();
                 } else {
                     $('.camp a')[0].addEventListener('click', function () {
                         setTimeout(function () {
                             $('.hgAppContainer div')[0].remove();
-                            //exeScript();
-                            NOBinit();
+                            exeScript();
+                            //NOBinit();
                         }, 1000);
                     });
                 }
