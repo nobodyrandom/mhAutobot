@@ -4,7 +4,7 @@
 // @version    	1.5
 // @description BETA MOUSEHUNT AUTOBOT for the BETA MH UI
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
-// @require		https://openuserjs.org/src/libs/nobodyrandom/MH_AutoBot_Addon_Firefox.js?ver=2
+// @require		https://openuserjs.org/src/libs/nobodyrandom/MH_AutoBot_Addon_Firefox.js?ver=4
 // @namespace   https://greasyfork.org/users/6398
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -131,7 +131,7 @@ var header = 'mousehuntHud-top';
 var isNewUI = false;
 
 // start executing script
-exeScript();
+//exeScript();
 
 function exeScript() {
     if(debug) if(debug) console.log(("START exeScript()");
