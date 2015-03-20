@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing firefox
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.6
+// @version    	1.7
 // @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) BETA
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -13,11 +13,12 @@
 // @include		https://apps.facebook.com/mousehunt/*
 // @include		http://hi5.com/friend/games/MouseHunt*
 // @include		http://mousehunt.hi5.hitgrab.com/*
+// @grant		unsafeWindow
 // ==/UserScript==
 
 var debug = true;
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.6';
+unsafeWindow.addonScriptVer = '1.7';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
