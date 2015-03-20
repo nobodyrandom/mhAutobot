@@ -1099,7 +1099,7 @@ function embedTimer(targetPage) {
                 timersElementToggle.setAttribute('id', 'timersElementToggle');
                 timersElementToggle.appendChild(text);
                 timerDivElement.appendChild(timersElementToggle);
-                //timersElementToggle.addEventListener("click", showHideTimers, false);
+                //timersElementToggle.addEventListener("click", NOBshowHideTimers, false);
                 text = null;
 
                 var loadTimersElement = document.createElement('div');
