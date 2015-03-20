@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing firefox
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.5
+// @version    	1.6
 // @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) BETA
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -17,7 +17,7 @@
 
 var debug = true;
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.5';
+unsafeWindow.addonScriptVer = '1.6';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -528,7 +528,7 @@ function updateTime() {
         var element = document.getElementById('NOBrelic');
         element.innerHTML = updateTimer(timeLeft, true);
         nobStore(timeLeft, 'relic');
-        NOBcalculateOfflineTimers();
+        nobCalculateOfflineTimers();
         clockTicking = true;
 
         setTimeout(function () {
@@ -578,17 +578,19 @@ function clockTick() {
 }
 
 function NOBcalculateTime() {
-    var CurrentTime = currentTimeStamp();
+    //var CurrentTime = currentTimeStamp();
+    var url;
     if (typeof LOCATION_TIMERS[3][1].url != 'undefined' || LOCATION_TIMERS[3][1].url != 'undefined') {
-        var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=relic";
+    	var child;
+        url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=relic";
         nobAjaxGet(url, function (text) {
             text = JSON.parse(text);
             if (text.result == "error") {
-                var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
+                child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
                 child.innerHTML = "<font color='red'>" + text.error + "</font>";
             } else {
-                var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
-                child.innerHTML = "Relic hunter now in: <font color='green'>" + text.location + "</font> \~ Next move time: <span id='NOBrelic'>" + updateTimer(text.next_move, true);
+                child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
+                child.innerHTML = "Relic hunter now in: <font color='green'>" + text.location + "</font> &#126; Next move time: <span id='NOBrelic'>" + updateTimer(text.next_move, true);
                 if (text.next_move > 0) {
                     clockTicking = true;
                     nobStore(text.next_move, 'relic');
@@ -600,20 +602,21 @@ function NOBcalculateTime() {
                 }
             }
         }, function (a, b, c) {
-            var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
+            child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
             child.innerHTML = "<font color='red'>" + b + " error, probably hornTracker, google, or my scripts broke. Please wait awhile, if not just contact me.</font>";
         });
     }
 
     if (typeof LOCATION_TIMERS[4][1].url != 'undefined' || LOCATION_TIMERS[4][1].url != 'undefined') {
-        var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=toxic";
+    	var child;
+        url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=toxic";
         nobAjaxGet(url, function (text) {
             text = JSON.parse(text);
             if (text.result == "error") {
-                var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
+                child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
                 child.innerHTML = "<font color='red'>" + text.error + "</font>";
             } else {
-                var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
+                child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
                 if (text.level == 'Closed') {
                     text.level = {
                         color: 'red',
@@ -628,21 +631,21 @@ function NOBcalculateTime() {
                 if (text.percent < 0) {
                     text.percent = '';
                 } else {
-                    text.percent = ' ~ ' + (100 - text.percent) + '% left';
+                    text.percent = ' &#126; ' + (100 - text.percent) + '% left';
                 }
                 child.innerHTML = 'Toxic spill is now - <font color="' + text.level.color + '">' + text.level.state + '</font>' + text.percent;
             }
         }, function (a, b, c) {
             // if(debug) console.log(b);
-            var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
+            child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
             child.innerHTML = "<font color='red'>" + b + " error, probably hornTracker, google, or my scripts broke. Please wait awhile, if not just contact me.</font>";
         });
     }
 
-    NOBcalculateOfflineTimers();
+    nobCalculateOfflineTimers();
 }
 
-function NOBcalculateOfflineTimers() {
+function nobCalculateOfflineTimers() {
     var CurrentTime = currentTimeStamp();
     var i;
     for (i = 0; i < 3; i++) {
@@ -672,7 +675,7 @@ function NOBcalculateOfflineTimers() {
         while (CurrentTimer > 0) {
             for (iCount2 = 0; iCount2 < LOCATION_TIMERS[i][1].breakdown.length && CurrentTimer > 0; iCount2++) {
                 SeasonRemaining = CurrentTimer;
-                CurrentTimer -= (LOCATION_TIMERS[i][1].length * LOCATION_TIMERS[i][1].breakdown[iCount2])
+                CurrentTimer -= (LOCATION_TIMERS[i][1].length * LOCATION_TIMERS[i][1].breakdown[iCount2]);
             }
         }
 
@@ -685,7 +688,7 @@ function NOBcalculateOfflineTimers() {
             content += ' (' + LOCATION_TIMERS[i][1].effective[CurrentName] + ')';
         }
 
-        content += ' ~ For ' + updateTimer(SeasonRemaining, true);
+        content += ' &#126; For ' + updateTimer(SeasonRemaining, true);
         seasonalDiv.innerHTML = content;
     }
 }
