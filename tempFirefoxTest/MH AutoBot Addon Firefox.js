@@ -61,7 +61,7 @@ var LOCATION_TIMERS = [
 
 // SETTING BASE VARS DONE ******************************* INIT AJAX CALLS AND INIT CALLS
 // Function calls after page LOAD
-//$(window).load(NOBinit);
+$(window).load(NOBinit);
 
 function NOBinit() {
     if (debug) {
