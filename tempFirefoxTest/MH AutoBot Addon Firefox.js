@@ -67,7 +67,7 @@ var LOCATION_TIMERS = [
 
 // SETTING BASE VARS DONE ******************************* INIT AJAX CALLS AND INIT CALLS
 // Function calls after page LOAD
-$(window).load(NOBinit);
+//$(window).load(NOBinit);
 
 function NOBinit() {
     if (debug) {
@@ -93,7 +93,7 @@ function NOBinit() {
             NOBpage = true;
         }
 
-        /*if (NOBpage) {
+        if (NOBpage) {
             nobHTMLFetch();
             createClockArea();
             clockTick();
@@ -101,7 +101,7 @@ function NOBinit() {
             setTimeout(function() {
                 pingServer();
             }, 30000);
-        }*/
+        }
     }
 }
 
