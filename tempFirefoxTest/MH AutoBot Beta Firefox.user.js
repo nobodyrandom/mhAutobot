@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP for firefox
 // @author      NobodyRandom
-// @version    	1.29
+// @version    	1.30
 // @description BETA MOUSEHUNT AUTOBOT for the BETA MH UI
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @namespace   https://greasyfork.org/users/6398
@@ -131,6 +131,9 @@ var header = 'mousehuntHud-top';
 var isNewUI = false;
 
 // start executing script
+if (debug) {
+    console.log("TRIGGER 1st exeScript()");
+}
 exeScript();
 
 var debug = true;
@@ -1151,12 +1154,18 @@ function embedTimer(targetPage) {
             } else {
                 // try check if ajax was called
                 if (doubleCheckLocation()) {
+					if (debug) {
+						console.log("TRIGGER 2nd exeScript()");
+					}
                     exeScript();
                     //NOBinit();
                 } else {
                     $('.camp a')[0].addEventListener('click', function () {
                         setTimeout(function () {
                             $('.hgAppContainer div')[0].remove();
+                            if (debug) {
+								console.log("TRIGGER 2nd exeScript()");
+							}
                             exeScript();
                             //NOBinit();
                         }, 1000);
