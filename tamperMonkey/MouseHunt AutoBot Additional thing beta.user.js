@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing BETA
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.3.035z
+// @version    	1.3.036z
 // @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) BETA
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -17,7 +17,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.3.035z';
+unsafeWindow.addonScriptVer = '1.3.036z';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -538,7 +538,7 @@ function NOBcalculateTime() {
                 child.innerHTML = "<font color='red'>" + text.error + "</font>";
             } else {
                 var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
-                child.innerHTML = "Relic hunter now in: <font color='green'>" + text.location + "</font> \~ Next move time: <span id='NOBrelic'>" + UpdateTimer(text.next_move, true);
+                child.innerHTML = "Relic hunter now in: <font color='green'>" + text.location + "</font> \~ Next move time: <span id='NOBrelic'>" + updateTimer(text.next_move, true);
                 if (text.next_move > 0) {
                     clockTicking = true;
                     nobStore(text.next_move, 'relic');
