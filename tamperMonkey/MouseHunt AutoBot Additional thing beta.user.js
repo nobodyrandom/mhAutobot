@@ -17,6 +17,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
+var debug = false;
 unsafeWindow.addonScriptVer = '1.3.037z';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
