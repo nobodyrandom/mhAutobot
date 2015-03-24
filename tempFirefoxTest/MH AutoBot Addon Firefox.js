@@ -17,10 +17,10 @@
 // ==/UserScript==
 
 var debug = true;
-if (window.top != window.self) {
+/*if (window.top != window.self) {
 	if(debug) console.log("In IFRAME - addon");
     return;
-}
+}*/
 
 // SETTING BASE VARS *******************************
 unsafeWindow.addonScriptVer = '1.8';
