@@ -4,7 +4,7 @@
 // @version    	1.39
 // @description BETA MOUSEHUNT AUTOBOT for the BETA MH UI
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
-// @require		https://openuserjs.org/src/libs/nobodyrandom/MH_AutoBot_Addon_Firefox.js?ver=9
+// @require		https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/tempFirefoxTest/MH%20AutoBot%20Addon%20Firefox.js?ver=1
 // @namespace   https://greasyfork.org/users/6398
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
