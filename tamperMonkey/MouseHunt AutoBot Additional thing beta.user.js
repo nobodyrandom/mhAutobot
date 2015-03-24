@@ -366,7 +366,7 @@ function fetchGDocStuff() {
 function pingServer() {
     if (NOBpage) {
         var theData = JSON.parse(nobGet('data'));
-        if (!theData.user) {
+        if (theData.user) {
             theData = theData.user;
         }
         var theUsername = theData.username;
