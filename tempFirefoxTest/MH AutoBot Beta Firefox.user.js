@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP for firefox
 // @author      NobodyRandom
-// @version    	1.34
+// @version    	1.35
 // @description BETA MOUSEHUNT AUTOBOT for the BETA MH UI
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
+// @require		https://openuserjs.org/src/libs/nobodyrandom/MH_AutoBot_Addon_Firefox.js?ver=7
 // @namespace   https://greasyfork.org/users/6398
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -18,7 +19,6 @@
 // @run-at		document-end
 // ==/UserScript==
 
-// @require		https://openuserjs.org/src/libs/nobodyrandom/MH_AutoBot_Addon_Firefox.js?ver=7
 var debug = true;
 if (debug) console.log(GM_info.script.version + " + " /*+ addonScriptVer*/);
 // == Basic User Preference Setting (Begin) ==
