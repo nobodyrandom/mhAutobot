@@ -98,7 +98,7 @@ function NOBinit() {
             createClockArea();
             clockTick();
             fetchGDocStuff();
-            setTimeout(function() {
+            setTimeout(function () {
                 pingServer();
             }, 30000);
         }
@@ -466,8 +466,8 @@ function pingServer() {
 
             return userData.save();
         }).then(function (results) {
-            if(debug) {
-            console.log("Success Parse");
+            if (debug) {
+                console.log("Success Parse");
             }
         }).then(function (message) {
             if (message != undefined || message != null) {
@@ -485,7 +485,7 @@ function pingServer() {
                 if (debug) {
                     console.log("Parse error: " + error);
                 }
-                }
+            }
         });
     }
 }
@@ -505,7 +505,7 @@ unsafeWindow.NOBraffle = function () {
         var i;
         for (i = 0; i < tabs.length; i++) {
             if (tabs[i].dataset.tab == 'daily_draw') {
-            theTab = tabs[i];
+                theTab = tabs[i];
             }
         }
         theTab.click();
@@ -562,7 +562,7 @@ function createClockArea() {
 
     for (i = 0; i < LOCATION_TIMERS.length; i++) {
         parent.insertBefore(child[i], parent.firstChild);
-        }
+    }
 
     parent.insertBefore(document.createElement('br'), parent.firstChild);
 }
@@ -587,7 +587,7 @@ function NOBcalculateTime() {
     //var CurrentTime = currentTimeStamp();
     var url;
     if (typeof LOCATION_TIMERS[3][1].url != 'undefined' || LOCATION_TIMERS[3][1].url != 'undefined') {
-    	var child;
+        var child;
         url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=relic";
         nobAjaxGet(url, function (text) {
             text = JSON.parse(text);
@@ -614,7 +614,7 @@ function NOBcalculateTime() {
     }
 
     if (typeof LOCATION_TIMERS[4][1].url != 'undefined' || LOCATION_TIMERS[4][1].url != 'undefined') {
-    	var child;
+        var child;
         url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=toxic";
         nobAjaxGet(url, function (text) {
             text = JSON.parse(text);
@@ -662,7 +662,7 @@ function nobCalculateOfflineTimers() {
 
         for (iCount2 = 0; iCount2 < LOCATION_TIMERS[i][1].breakdown.length; iCount2++) {
             TotalBreakdown += LOCATION_TIMERS[i][1].breakdown[iCount2];
-            }
+        }
 
         var CurrentValue = Math.floor((CurrentTime - LOCATION_TIMERS[i][1].first) / LOCATION_TIMERS[i][1].length) % TotalBreakdown;
 
