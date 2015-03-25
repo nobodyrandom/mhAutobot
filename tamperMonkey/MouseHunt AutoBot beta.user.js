@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP for BETA UI
 // @author      NobodyRandom
-// @version    	1.5.067y
+// @version    	1.5.068y
 // @description BETA MOUSEHUNT AUTOBOT for the BETA MH UI
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @require		https://greasyfork.org/scripts/7866-mousehunt-autobot-additional-thing-beta/code/MouseHunt%20AutoBot%20Additional%20thing%20BETA.js?version=42542
@@ -486,7 +486,7 @@ function retrieveDataFirst() {
     gotBaitQuantity = undefined;
 
     try {
-        return (retrieveSuccess);
+        return retrieveSuccess;
     } finally {
         retrieveSuccess = undefined;
     }
@@ -523,7 +523,7 @@ function retrieveData() {
         // fail to retrieve data, might be due to slow network
 
         // reload the page to see it fix the problem
-        window.setTimeout(function() {
+        window.setTimeout(function () {
             reloadWithMessage("Fail to retrieve data. Reloading...", false);
         }, 5000);
     } else {
@@ -691,7 +691,7 @@ function action() {
 
         if (isHornSounding == false) {
             // start timer
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 countdownTimer()
             }, timerRefreshInterval * 1000);
         }
@@ -717,7 +717,7 @@ function countdownTimer() {
         fireEvent(document.getElementsByClassName(campbutton)[0].firstChild, 'click');
 
         // reload the page if click on camp button fail
-        window.setTimeout(function() {
+        window.setTimeout(function () {
             reloadWithMessage("Fail to click on camp button. Reloading...", false);
         }, 5000);
     } else if (pauseAtInvalidLocation && (huntLocation != currentLocation)) {
@@ -841,7 +841,7 @@ function countdownTimer() {
             // set king reward sum time
             displayKingRewardSumTime(timeFormatLong(lastKingRewardSumTime));
 
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 (countdownTimer)()
             }, timerRefreshInterval * 1000);
         }
@@ -908,7 +908,9 @@ function reloadWithMessage(msg, soundHorn) {
     displayTimer(msg, msg, msg, msg);
 
     // reload the page
-    setTimeout(function(){reloadPage(soundHorn)}, 1000);
+    setTimeout(function () {
+        reloadPage(soundHorn)
+    }, 1000);
 
     msg = undefined;
     soundHorn = undefined;
@@ -1669,7 +1671,7 @@ function soundHorn() {
                 headerStatus = null;
 
                 // double check if the horn was already sounded
-                window.setTimeout(function() {
+                window.setTimeout(function () {
                     afterSoundingHorn()
                 }, 5000);
             } else if (headerStatus.indexOf("hornsounding") != -1 || headerStatus.indexOf("hornsounded") != -1) {
@@ -1683,7 +1685,7 @@ function soundHorn() {
                 headerStatus = null;
 
                 // load the new data
-                window.setTimeout(function() {
+                window.setTimeout(function () {
                     afterSoundingHorn()
                 }, 5000);
             } else if (headerStatus.indexOf("hornwaiting") != -1) {
@@ -1702,7 +1704,7 @@ function soundHorn() {
                 headerStatus = null;
 
                 // loop again
-                window.setTimeout(function() {
+                window.setTimeout(function () {
                     countdownTimer()
                 }, timerRefreshInterval * 1000);
             } else {
@@ -1721,7 +1723,7 @@ function soundHorn() {
                 headerStatus = null;
 
                 // double check if the horn was already sounded
-                window.setTimeout(function() {
+                window.setTimeout(function () {
                     afterSoundingHorn()
                 }, 5000);
             }
@@ -1742,7 +1744,7 @@ function soundHorn() {
         fireEvent(document.getElementsByClassName(hornbutton)[0].firstChild, 'click');
 
         // double check if the horn was already sounded
-        window.setTimeout(function() {
+        window.setTimeout(function () {
             afterSoundingHorn()
         }, 3000);
     }
@@ -1784,7 +1786,7 @@ function afterSoundingHorn() {
                 hornRetry = 0;
             } else {
                 // check again later
-                window.setTimeout(function() {
+                window.setTimeout(function () {
                     afterSoundingHorn()
                 }, 1000);
             }
@@ -1808,7 +1810,7 @@ function afterSoundingHorn() {
                 hornRetry = 0;
             } else {
                 // check again later
-                window.setTimeout(function() {
+                window.setTimeout(function () {
                     afterSoundingHorn()
                 }, 3000);
             }
@@ -1826,7 +1828,7 @@ function afterSoundingHorn() {
             headerStatus = null;
 
             // script continue as normal
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 countdownTimer()
             }, timerRefreshInterval * 1000);
 
@@ -1943,21 +1945,22 @@ function notify() {
         body: "Kings Reward NOW"
     });
     
-    notification.onclick = function() {
+    notification.onclick = function () {
 		window.open("https://www.mousehuntgame.com/");
 		notification.close();
 	}
 
-	notification.onshow = function() {
-		setTimeout(function() {
+    notification.onshow = function () {
+        window.setTimeout(function () {
 			notification.close();
 		}, 5000);
 	}
 }
 
 function playKingRewardSound() {
+    notify();
     if (isKingWarningSound) {
-        var hornAudio = new Audio('https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3');
+        unsafeWindow.hornAudio = new Audio('https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3');
         hornAudio.play();
         var targetArea = document.getElementsByTagName('body');
         var child = document.createElement('button');
@@ -1971,9 +1974,10 @@ function playKingRewardSound() {
         snippet = null;
     }
 
-	notify();
     if (autopopkr)
+        window.setTimeout(function () {
         alert("Kings Reward NOW");
+        }, 2000);
 }
 
 function kingRewardCountdownTimer() {
@@ -2003,7 +2007,7 @@ function kingRewardCountdownTimer() {
         campElement = null;
 
         // reload the page if click on the camp button fail
-        window.setTimeout(function() {
+        window.setTimeout(function () {
             reloadWithMessage("Fail to click on camp button. Reloading...", false);
         }, 5000);
     } else {
@@ -2018,7 +2022,7 @@ function kingRewardCountdownTimer() {
         displayKingRewardSumTime(timeFormatLong(lastKingRewardSumTime));
 
         if (!checkResumeButton()) {
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 (kingRewardCountdownTimer)()
             }, timerRefreshInterval * 1000);
         }
@@ -2070,12 +2074,12 @@ function checkResumeButton() {
 		resumeElement = null;
 
 		// reload url if click fail
-		window.setTimeout(function() {
+        window.setTimeout(function () {
 			reloadWithMessage("Fail to click on resume button. Reloading...", false);
 		}, 6000);
 
 		// recheck if the resume button is click because some time even the url reload also fail
-		window.setTimeout(function() {
+        window.setTimeout(function () {
 			checkResumeButton();
 		}, 10000);
 

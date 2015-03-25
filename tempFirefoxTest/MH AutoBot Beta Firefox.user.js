@@ -142,8 +142,6 @@ if (debug) {
 }
 exeScript();
 
-var debug = true;
-
 function exeScript() {
     if (debug) {
         console.log("START exeScript()");
