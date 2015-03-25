@@ -1956,14 +1956,13 @@ function notify() {
 }
 
 function playKingRewardSound() {
-    notify();
     if (isKingWarningSound) {
         var hornAudio = new Audio('https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3');
         hornAudio.play();
         var targetArea = document.getElementsByTagName('body');
         var child = document.createElement('button');
         child.setAttribute('id', "stopAudio");
-        child.setAttribute('style', 'position: fixed;');
+        child.setAttribute('style', 'position: fixed; bottom: 0;');
         child.setAttribute('onclick', 'hornAudio.pause();');
         child.innerHTML = "CLICK ME TO STOP THIS ANNOYING MUSIC";
         targetArea[0].appendChild(child);
@@ -1972,6 +1971,7 @@ function playKingRewardSound() {
         snippet = null;
     }
 
+	notify();
     if (autopopkr)
         alert("Kings Reward NOW");
 }
