@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	1.4.534b
+// @version    	1.4.535b
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application with the newest version supported and many other features and fixes. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN... Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require		https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @require     https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=41363
@@ -299,7 +299,7 @@ function exeScript() {
         }
     } else if (mhMobilePlatform) {
         // execute at all page of mobile version
-        if (true) {
+        //if (true) {
             // page to execute the script!
 
             // make sure all the preference already loaded
@@ -307,7 +307,7 @@ function exeScript() {
 
             // embed a place where timer show
             embedTimer(false);
-        }
+        //}
     } else if (hiFivePlatform) {
         if (window.location.href == "http://mousehunt.hi5.hitgrab.com/#" ||
             window.location.href.indexOf("http://mousehunt.hi5.hitgrab.com/?") != -1 ||
@@ -992,7 +992,7 @@ function retrieveDataFirst() {
     gotBaitQuantity = undefined;
 
     try {
-        return (retrieveSuccess);
+        return retrieveSuccess;
     } finally {
         retrieveSuccess = undefined;
     }
@@ -1419,7 +1419,9 @@ function reloadWithMessage(msg, soundHorn) {
     displayTimer(msg, msg, msg, msg);
 
     // reload the page
-    setTimeout(function(){reloadPage(soundHorn)}, 1000);
+    setTimeout(function () {
+        reloadPage(soundHorn)
+    }, 1000);
 
     msg = undefined;
     soundHorn = undefined;
@@ -2527,12 +2529,12 @@ function notifyMe(notice, icon, body) {
 function playKingRewardSound() {
     notify();
     if (isKingWarningSound) {
-        var hornAudio = new Audio('https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3');
+        unsafeWindow.hornAudio = new Audio('https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3');
         hornAudio.play();
         var targetArea = document.getElementsByTagName('body');
         var child = document.createElement('button');
         child.setAttribute('id', "stopAudio");
-        child.setAttribute('style', 'position: fixed;');
+        child.setAttribute('style', 'position: fixed; bottom: 0;');
         child.setAttribute('onclick', 'hornAudio.pause();');
         child.innerHTML = "CLICK ME TO STOP THIS ANNOYING MUSIC";
         targetArea[0].appendChild(child);
@@ -2542,7 +2544,9 @@ function playKingRewardSound() {
     }
 
     if (autopopkr)
+        window.setTimeout(function () {
         alert("Kings Reward NOW");
+        }, 2000);
 }
 
 function kingRewardCountdownTimer() {
@@ -2682,7 +2686,7 @@ function browserDetection() {
     userAgentStr = null;
 
     try {
-        return (browserName);
+        return browserName;
     } finally {
         browserName = null;
     }

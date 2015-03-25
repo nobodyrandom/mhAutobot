@@ -1878,7 +1878,7 @@ function embedScript() {
 	var hornButtonLink = document.getElementsByClassName(hornbutton)[0].firstChild;
     var oriStr = hornButtonLink.getAttribute('onclick').toString();
     var index = oriStr.indexOf('return false;');
-    var modStr = oriStr.substring(0, index) + 'soundedHorn(); ' + oriStr.substring(index);
+    var modStr = oriStr.substring(0, index) + 'soundedHorn();' + oriStr.substring(index);
     hornButtonLink.setAttribute('onclick', modStr);
 
     hornButtonLink = null;
@@ -2132,7 +2132,6 @@ function browserDetection() {
     var userAgentStr = navigator.userAgent.toString().toLowerCase();
     if (userAgentStr.indexOf("firefox") >= 0) {
         browserName = "firefox";
-        //browserName = "chrome";
     } else if (userAgentStr.indexOf("opera") >= 0) {
         browserName = "opera";
     } else if (userAgentStr.indexOf("chrome") >= 0) {
