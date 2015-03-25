@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP for firefox
 // @author      NobodyRandom
-// @version    	1.41
+// @version    	1.42
 // @description BETA MOUSEHUNT AUTOBOT for the BETA MH UI
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @require		https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/tempFirefoxTest/MH%20AutoBot%20Addon%20Firefox.js?ver=1
@@ -2025,7 +2025,7 @@ unsafeWindow.kingRewardAction = function() {
     }
 
     kingPauseTime = kingPauseTimeMax;
-    kingRewardCountdownTimer();
+    //kingRewardCountdownTimer();
 }
 
 function notify() {
