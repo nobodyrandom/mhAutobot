@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing firefox
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.8
+// @version    	1.9
 // @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) BETA
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @license 	GNU GPL v2.0
@@ -68,9 +68,9 @@ var LOCATION_TIMERS = [
 
 // SETTING BASE VARS DONE ******************************* INIT AJAX CALLS AND INIT CALLS
 // Function calls after page LOAD
-//$(window).load(NOBinit);
+$(window).load(NOBinit);
 
-function NOBinit() {
+unsafeWindow.NOBinit = function() {
     if (debug) {
         console.log("START NOBinit()");
     }
