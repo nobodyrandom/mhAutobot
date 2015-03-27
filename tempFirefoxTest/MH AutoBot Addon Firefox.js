@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing firefox
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.9
+// @version    	1.10
 // @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) BETA
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @license 	GNU GPL v2.0
@@ -104,7 +104,7 @@ unsafeWindow.NOBinit = function() {
             }, 30000);
         }
     }
-}
+};
 
 function checkIntroContainer() {
     var gotIntroContainerDiv = false;
