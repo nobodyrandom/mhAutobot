@@ -5,7 +5,7 @@ var debug = true;
 }*/
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.8';
+var addonScriptVer = '1.8';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -51,7 +51,7 @@ var LOCATION_TIMERS = [
 // Function calls after page LOAD
 $(window).load(NOBinit);
 
-unsafeWindow.NOBinit = function() {
+function NOBinit() {
     if (debug) {
         console.log("START NOBinit()");
     }
@@ -85,7 +85,7 @@ unsafeWindow.NOBinit = function() {
             }, 30000);
         }
     }
-};
+}
 
 function checkIntroContainer() {
     var gotIntroContainerDiv = false;
@@ -272,7 +272,7 @@ function nobStopLoading(name) {
 }
 
 // VARS DONE ******************************* COMMENCE CODE
-unsafeWindow.NOBscript = function (qqEvent) {
+function NOBscript(qqEvent) {
     if (NOBpage) {
         var NOBdata = nobGet('data');
         var mapThere = document.getElementsByClassName('treasureMap')[0];
@@ -315,13 +315,13 @@ unsafeWindow.NOBscript = function (qqEvent) {
             nobHTMLFetch();
         }
     }
-};
+}
 
-unsafeWindow.NOBshowHideTimers = function () {
+function NOBshowHideTimers() {
     $("#loadTimersElement").toggle();
-};
+}
 
-unsafeWindow.NOBtravel = function (location) {
+/*unsafeWindow.NOBtravel = function (location) {
     if (NOBpage) {
         var url = "https://www.mousehuntgame.com/managers/ajax/users/changeenvironment.php";
         var data = {
@@ -337,7 +337,7 @@ unsafeWindow.NOBtravel = function (location) {
             console.log(a, b, c);
         });
     }
-};
+};*/
 
 // Update + message fetch
 function fetchGDocStuff() {
@@ -476,7 +476,7 @@ function pingServer() {
     var element = document.getElementById('NOBmessage');
 }*/
 
-unsafeWindow.NOBraffle = function () {
+function NOBraffle() {
     if (!($(".tabs a:eq(1)").length > 0)) {
         $("#hgbar_messages").click();
     }
@@ -502,7 +502,7 @@ unsafeWindow.NOBraffle = function () {
             $("a.messengerUINotificationClose")[0].click();
         }, 7500);
     }, 4000);
-};
+}
 
 // CALCULATE TIMER *******************************
 function currentTimeStamp() {
