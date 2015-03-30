@@ -1,22 +1,3 @@
-// ==UserScript==
-// @name        MouseHunt AutoBot Additional thing firefox
-// @author      NobodyRandom
-// @namespace   https://greasyfork.org/users/6398
-// @version    	1.10
-// @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) BETA
-// @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
-// @license 	GNU GPL v2.0
-// @include		http://mousehuntgame.com/*
-// @include		https://mousehuntgame.com/*
-// @include		http://www.mousehuntgame.com/*
-// @include		https://www.mousehuntgame.com/*
-// @include		http://apps.facebook.com/mousehunt/*
-// @include		https://apps.facebook.com/mousehunt/*
-// @include		http://hi5.com/friend/games/MouseHunt*
-// @include		http://mousehunt.hi5.hitgrab.com/*
-// @grant		unsafeWindow
-// ==/UserScript==
-
 var debug = true;
 /*if (window.top != window.self) {
 	if(debug) console.log("In IFRAME - addon");
