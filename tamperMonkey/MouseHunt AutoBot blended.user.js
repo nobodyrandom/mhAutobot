@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	1.4.535b
+// @version    	1.4.536b
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application with the newest version supported and many other features and fixes. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN... Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require		https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @require     https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=41363
@@ -106,6 +106,7 @@ var wasteCharm = ['Tarnished', 'Wealth'];
 var redSpongeCharm = ['Red Double', 'Red Sponge'];
 var yellowSpongeCharm = ['Yellow Double', 'Yellow Sponge'];
 var spongeCharm = ['Double Sponge', 'Sponge'];
+var coalCharm = ['Magmatic Crystal', 'Black Powder', 'Dusty Coal'];
 // == Advance User Preference Setting (End) ==
 
 // WARNING - Do not modify the code below unless you know how to read and write the script.
@@ -404,6 +405,12 @@ function eventLocationCheck() {
         case 'Charge Egg 2014(17)':
             checkCharge(17);
             break;
+        case 'Gnawnian Express(Empty)':
+        	gnawnianExpress(false);
+        	break;
+        case 'Gnawnian Express(Full)':
+        	gnawnianExpress(true);
+        	break;
         case 'Burroughs Rift(Red)':
             BurroughRift(19, 20);
             break;
@@ -656,6 +663,34 @@ function sandCrypts() {
     return;
 }
 
+function gnawnianExpress(load) {
+	var onTrain = getPageVariableForChrome('user.quests.QuestTrainStation.on_train');
+	if (onTrain == 'false') {
+		if (charmArmed.indexOf('Supply Schedule') > -1 || charmArmed.indexOf('Roof Rack') > -1 || charmArmed.indexOf('Greasy Glob') > -1 || charmArmed.indexOf('Door Guard') > -1 || charmArmed.indexOf('Dusty Coal') > -1  || charmArmed.indexOf('Black Powder') > -1 || charmArmed.indexOf('Magmatic Crystal') > -1)
+			disarmTrap('trinket');
+	} else {
+		var phase = document.getElementsByClassName('zoneName')[0].innerText;
+		phase = phase.substr(7, phase.length);
+		console.debug('Current Active Train Phase: ' + phase);
+		switch (phase) {
+			case 'Supply Depot':
+				checkThenArm(null, 'trinket', 'Supply Schedule');
+				loadTrain('depot', load);
+				break;
+			case 'Raider River':
+				// Need to write raider code
+				loadTrain('raider', load);
+				break;
+			case 'Daredevil Canyon':
+				checkThenArm('best', 'trinket', coalCharm);
+				loadTrain('canyon', load);
+				break;
+			default:
+				break;
+		}
+	}
+}
+
 function retrieveMouseList() {
     fireEvent(document.getElementById('effectiveness'), 'click');
     var sec = 5;
@@ -712,6 +747,18 @@ function checkCharge(stopDischargeAt) {
     } catch (e) {
         return console.debug(e.message);
     }
+}
+
+function loadTrain(location, load) {
+	try {
+		if (load) {
+			fireEvent(document.getElementsByClassName('phaseButton')[0], 'click');
+		}
+		return;
+	} catch (e) {
+		console.debug(e.message);
+		return;
+	}
 }
 
 function checkThenArm(sort, category, name) //category = weapon/base/charm/trinket/bait
@@ -1900,6 +1947,8 @@ function embedTimer(targetPage) {
             preferenceHTMLStr += '<option value="Halloween 2014">Halloween 2014</option>';
             preferenceHTMLStr += '<option value="Sunken City">Sunken City</option>';
             preferenceHTMLStr += '<option value="All LG Area">All LG Area</option>';
+            preferenceHTMLStr += '<option value="Gnawnian Express(Empty)">Gnawnian Express(Empty)</option>';
+            preferenceHTMLStr += '<option value="Gnawnian Express(Full)">Gnawnian Express(Full)</option>';
             preferenceHTMLStr += '</select> Current Selection : ';
             preferenceHTMLStr += '<input type="text" id="event" name="event" value="' + eventLocation + '"/>';
             preferenceHTMLStr += '</td>';

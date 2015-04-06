@@ -357,7 +357,8 @@ function fetchGDocStuff() {
             }
         }, function (a, b, c) {
             nobStopLoading();
-            console.log(b + ' error - Google Docs is now not working qq');
+            console.log(b + ' error - Google Docs is now not working qq, retrying in 2 minutes.');
+            window.setTimeout(fetchGDocStuff(), 120000);
             if (b == "timeout")
                 document.getElementById('NOBmessage').innerHTML = "Google Docs is being slow again ._.";
         });
@@ -451,7 +452,7 @@ unsafeWindow.NOBraffle = function () {
     if (!($(".tabs a:eq(1)").length > 0))
         $("#hgbar_messages").click();
     //messenger.UI['notification'].togglePopup();
-    setTimeout(function () {
+    window.setTimeout(function () {
         var tabs = $('a.tab');
         var theTab = "";
         for (var i = 0; i < tabs.length; i++)
