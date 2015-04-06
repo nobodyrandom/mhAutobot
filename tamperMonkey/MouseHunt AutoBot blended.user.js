@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	1.4.538b
+// @version    	1.4.539b
 // @description An advance user script to automate sounding the hunter horn in MouseHunt application with the newest version supported and many other features and fixes. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN... Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require		https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @require     https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=41363
@@ -106,6 +106,9 @@ var wasteCharm = ['Tarnished', 'Wealth'];
 var redSpongeCharm = ['Red Double', 'Red Sponge'];
 var yellowSpongeCharm = ['Yellow Double', 'Yellow Sponge'];
 var spongeCharm = ['Double Sponge', 'Sponge'];
+var supplyDepotTrap = ['Supply Grabber', 'S.L.A.C. II', 'The Law Draw', 'S.L.A.C.'];
+var raiderRiverTrap = ['Bandit Deflector', 'S.L.A.C. II', 'The Law Draw', 'S.L.A.C.'];
+var daredevilCanyonTrap = ['Engine Doubler', 'S.L.A.C. II', 'The Law Draw', 'S.L.A.C.'];
 var coalCharm = ['Magmatic Crystal', 'Black Powder', 'Dusty Coal'];
 // == Advance User Preference Setting (End) ==
 
@@ -665,6 +668,7 @@ function sandCrypts() {
 
 function gnawnianExpress(load) {
 	var onTrain = getPageVariableForChrome('user.quests.QuestTrainStation.on_train');
+	var charmArmed = getPageVariableForChrome('user.trinket_name');
 	if (onTrain == 'false') {
 		if (charmArmed.indexOf('Supply Schedule') > -1 || charmArmed.indexOf('Roof Rack') > -1 || charmArmed.indexOf('Greasy Glob') > -1 || charmArmed.indexOf('Door Guard') > -1 || charmArmed.indexOf('Dusty Coal') > -1  || charmArmed.indexOf('Black Powder') > -1 || charmArmed.indexOf('Magmatic Crystal') > -1)
 			disarmTrap('trinket');
@@ -674,20 +678,43 @@ function gnawnianExpress(load) {
 		console.debug('Current Active Train Phase: ' + phase);
 		switch (phase) {
 			case 'Supply Depot':
-				// Need to check on supply schedule armament
+				checkThenArm('best', 'weapon', supplyDepotTrap);
 				var supplyHoarder = parseInt(document.getElementsByClassName('supplyHoarderTab')[0].innerText.substr(0,1));
 				if (supplyHoarder == 0) {
+					console.debug("Looking for supply hoarder");
 					checkThenArm(null, 'trinket', 'Supply Schedule');
 				} else {
+					console.debug("Supply hoarder is present. Disarming charm now...");
 					disarmTrap('trinket');
 				}
 				loadTrain('depot', load);
 				break;
 			case 'Raider River':
-				// Need to write raider code
+				checkThenArm('best', 'weapon', raiderRiverTrap);
+				var attacking = document.getElementsByClassName('attacked');
+				for (var i = 0; i < attacking.length; i++) {
+					if (attacking[i].tagName == 'DIV')
+						attacking = attacking.className.substr(0, attacking.className.indexOf(' '));;
+				}
+				console.debug("Raiders are attacking " + attacking);
+				switch (attacking) {
+				case 'roof':
+					checkThenArm(null, 'trinket', 'Roof Rack');
+					break;
+				case 'door':
+					checkThenArm(null, 'trinket', 'Door Guard');
+					break;
+				case 'rails':
+					checkThenArm(null, 'trinket', 'Greasy Glob');
+				default:
+					console.debug('Bot is confused, raiders are not attacking?');
+					disarmTrap('trinket');
+					break;
+				}
 				loadTrain('raider', load);
 				break;
 			case 'Daredevil Canyon':
+				checkThenArm('best', 'weapon', daredevilCanyonTrap);
 				checkThenArm('best', 'trinket', coalCharm);
 				loadTrain('canyon', load);
 				break;
@@ -758,7 +785,22 @@ function checkCharge(stopDischargeAt) {
 function loadTrain(location, load) {
 	try {
 		if (load) {
-			fireEvent(document.getElementsByClassName('phaseButton')[0], 'click');
+			switch(location) {
+				case 'raider':
+					var repellents = parseInt(document.getElementsByClassName('mouseRepellent')[0].getElementsByClassName('quantity')[0].innerText);
+					if (repellents >= 10)
+						fireEvent(document.getElementsByClassName('phaseButton')[0], 'click');
+					break;
+				case 'canyon':
+					var timeLeft = document.getElementsByClassName('phaseTimer')[0].innerText.substr(10);
+					// Fire only when time left is less than 16 mins :P (needs checking if works)
+					if(parseInt(temp.substr(0, temp.indexOf(':'))) == 0 && parseInt(temp.substr(temp.indexOf(':') + 1)) <= 16)
+						fireEvent(document.getElementsByClassName('phaseButton')[0], 'click');
+					break;
+				default:
+					fireEvent(document.getElementsByClassName('phaseButton')[0], 'click');
+					break;
+			}
 		}
 		return;
 	} catch (e) {
