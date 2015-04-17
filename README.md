@@ -5,7 +5,7 @@
 
 ~~[Original](http://userscripts-mirror.org/scripts/show/78731.html) version made and owned by [Ooi Keng Siang](http://ooiks.com/blog/mousehunt-autobot) \(He no longer develops this code\)~~
 
-######Chrome version is now updated to 517a script - download it [here](https://github.com/nobodyrandom/mhAutobot/raw/master/chromeExtension.crx)
+######Chrome version is now updated to 549c script - download it [here](https://github.com/nobodyrandom/mhAutobot/raw/master/chromeExtension.crx)
 
 [REVAMP](https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) version adapts the original, with few bug fixes and etc \(ver a\)
 
@@ -28,10 +28,11 @@ Additional features added:
 >*	(TODO: write up a instruction manual for the GDoc, but it should be pretty self explanatory)
 >*	Area clocks
 >*	Auto Kings Reward popup (check the settings)
+>*	Auto return raffle tickets
 >*  Cleaned code
 >*  Removed not working sound player and replaced with HTML5 one, pls comment if problem occurs
 >*  Browser notif and tiggers are now fixed ^.^
 >*	KR auto resume etc are now fixed
->*  (ver b ONLY) Integrated CnN's bots for automization on areas
+>*  (ver b ONLY) Integrated CnN's bots for automization on areas + automization on G Express
 
 #####Sorrry I am new to GitHub, GM and actually anything at all so if there's something wrong pls email me or submit a bug report asap so I can fix it
