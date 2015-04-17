@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom
-// @version    	1.4.519a
-// @description An advance user script to automate sounding the hunter horn in MouseHunt application with the newest version supported and many other features and fixes. REVAMPED VERSION of ORIGINAL by Ooi... Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
+// @version    	1.4.549c
+// @description Currently the most advanced script for automizing MouseHunt. Supports ALL new areas. REVAMPED VERSION of ORIGINAL by Ooi - Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require		https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
-// @require		https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=35978
+// @require		https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=46706
 // @namespace   https://greasyfork.org/users/6398
 // @updateURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.user.js
 // @downloadURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.user.js
@@ -17,6 +17,7 @@
 // @include		https://apps.facebook.com/mousehunt/*
 // @include		http://hi5.com/friend/games/MouseHunt*
 // @include		http://mousehunt.hi5.hitgrab.com/*
+// @grant		unsafeWindow
 // ==/UserScript==
 
 // == Basic User Preference Setting (Begin) ==
@@ -49,7 +50,7 @@ var checkTimeDelayMax = 120;
 // // Play sound when encounter king's reward (true/false)
 var isKingWarningSound = false;
 
-// // Reload the the page according to kingPauseTimeMax when encount King Reward. (true/false)
+// // Reload the the page according to kingPauseTimeMax when encountering King Reward. (true/false)
 // // Note: No matter how many time you refresh, the King's Reward won't go away unless you resolve it manually.
 var reloadKingReward = false;
 
@@ -93,7 +94,7 @@ var timerRefreshInterval = 1;
 
 // All global variable declaration and default value
 //var scriptVersion = GM_info.script.version;
-var scriptVersion = "1.4.519a";
+var scriptVersion = "1.4.549c";
 var fbPlatform = false;
 var hiFivePlatform = false;
 var mhPlatform = false;
@@ -125,6 +126,7 @@ var kingTimeElement;
 var lastKingRewardSumTimeElement;
 var optionElement;
 var travelElement;
+var isNewUI = false;
 
 // start executing script
 exeScript();
@@ -132,7 +134,7 @@ exeScript();
 function exeScript() {
     // check the trap check setting first
     if (trapCheckTimeDiff == 60) {
-        trapCheckTimeDiff = 00;
+        trapCheckTimeDiff = 0;
     } else if (trapCheckTimeDiff < 0 || trapCheckTimeDiff > 60) {
         // invalid value, just disable the trap check
         enableTrapCheck = false;
@@ -173,7 +175,7 @@ function exeScript() {
             mhMobilePlatform = true;
         } else {
             // from mousehunt game standard version
-            mhPlatform = true
+            mhPlatform = true;
         }
         version = undefined;
     } else if (window.location.href.indexOf("mousehunt.hi5.hitgrab.com") != -1) {
@@ -215,7 +217,7 @@ function exeScript() {
                 // fail to retrieve data, display error msg and reload the page
                 document.title = "Fail to retrieve data from page. Reloading in " + timeformat(errorReloadTime);
                 window.setTimeout(function() {
-                    reloadPage(false)
+                    reloadPage(false);
                 }, errorReloadTime * 1000);
             }
         } else {
@@ -250,7 +252,7 @@ function exeScript() {
                 // fail to retrieve data, display error msg and reload the page
                 document.title = "Fail to retrieve data from page. Reloading in " + timeformat(errorReloadTime);
                 window.setTimeout(function() {
-                    reloadPage(false)
+                    reloadPage(false);
                 }, errorReloadTime * 1000);
             }
         } else {
@@ -259,7 +261,7 @@ function exeScript() {
         }
     } else if (mhMobilePlatform) {
         // execute at all page of mobile version
-        if (true) {
+        //if (true) {
             // page to execute the script!
 
             // make sure all the preference already loaded
@@ -267,7 +269,7 @@ function exeScript() {
 
             // embed a place where timer show
             embedTimer(false);
-        }
+        //}
     } else if (hiFivePlatform) {
         if (window.location.href == "http://mousehunt.hi5.hitgrab.com/#" ||
             window.location.href.indexOf("http://mousehunt.hi5.hitgrab.com/?") != -1 ||
@@ -293,7 +295,7 @@ function exeScript() {
                 // fail to retrieve data, display error msg and reload the page
                 document.title = "Fail to retrieve data from page. Reloading in " + timeformat(errorReloadTime);
                 window.setTimeout(function() {
-                    reloadPage(false)
+                    reloadPage(false);
                 }, errorReloadTime * 1000);
             }
         } else {
@@ -315,7 +317,7 @@ function checkIntroContainer() {
     }
 
     try {
-        return (gotIntroContainerDiv);
+        return gotIntroContainerDiv;
     } finally {
         gotIntroContainerDiv = undefined;
     }
@@ -482,7 +484,7 @@ function retrieveDataFirst() {
     gotBaitQuantity = undefined;
 
     try {
-        return (retrieveSuccess);
+        return retrieveSuccess;
     } finally {
         retrieveSuccess = undefined;
     }
@@ -519,7 +521,7 @@ function retrieveData() {
         // fail to retrieve data, might be due to slow network
 
         // reload the page to see it fix the problem
-        window.setTimeout(function() {
+        window.setTimeout(function () {
             reloadWithMessage("Fail to retrieve data. Reloading...", false);
         }, 5000);
     } else {
@@ -687,7 +689,7 @@ function action() {
 
         if (isHornSounding == false) {
             // start timer
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 countdownTimer()
             }, timerRefreshInterval * 1000);
         }
@@ -713,7 +715,7 @@ function countdownTimer() {
         fireEvent(document.getElementsByClassName('campbutton')[0].firstChild, 'click');
 
         // reload the page if click on camp button fail
-        window.setTimeout(function() {
+        window.setTimeout(function () {
             reloadWithMessage("Fail to click on camp button. Reloading...", false);
         }, 5000);
     } else if (pauseAtInvalidLocation && (huntLocation != currentLocation)) {
@@ -837,7 +839,7 @@ function countdownTimer() {
             // set king reward sum time
             displayKingRewardSumTime(timeFormatLong(lastKingRewardSumTime));
 
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 (countdownTimer)()
             }, timerRefreshInterval * 1000);
         }
@@ -904,7 +906,9 @@ function reloadWithMessage(msg, soundHorn) {
     displayTimer(msg, msg, msg, msg);
 
     // reload the page
-    reloadPage(soundHorn);
+    setTimeout(function () {
+        reloadPage(soundHorn)
+    }, 1000);
 
     msg = undefined;
     soundHorn = undefined;
@@ -926,17 +930,17 @@ function embedTimer(targetPage) {
         if (headerElement) {
             var timerDivElement = document.createElement('div');
 
-            var hr1Element = document.createElement('hr');
-            timerDivElement.appendChild(hr1Element);
-            hr1Element = null;
+            //var hr1Element = document.createElement('hr');
+            //timerDivElement.appendChild(hr1Element);
+            //hr1Element = null;
 
             // show bot title and version
             var titleElement = document.createElement('div');
             titleElement.setAttribute('id', 'titleElement');
             if (targetPage && aggressiveMode) {
-                titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target=\"_blank\">MouseHunt AutoBot (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing (version " + addonScriptVer + ")</b> - <font color='red'>Aggressive Mode</font>";
+                titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target=\"_blank\">MouseHunt AutoBot REVAMP (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing (version " + addonScriptVer + ")</b> - <font color='red'>Aggressive Mode</font>";
             } else {
-                titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target=\"_blank\">MouseHunt AutoBot (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing (version " + addonScriptVer + ")</b>";
+                titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target=\"_blank\">MouseHunt AutoBot REVAMP (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing (version " + addonScriptVer + ")</b>";
             }
             timerDivElement.appendChild(titleElement);
             titleElement = null;
@@ -1000,7 +1004,7 @@ function embedTimer(targetPage) {
                     var loadTimeElement = document.createElement('div');
                     loadTimeElement.setAttribute('id', 'loadTimeElement');
                     loadTimeElement.innerHTML = "<b>Last Page Load: </b>" + nowDate.toDateString() + " " + nowDate.toTimeString().substring(0, 8);
-                    timerDivElement.appendChild(loadTimeElement);
+                    //timerDivElement.appendChild(loadTimeElement);
 
                     loadTimeElement = null;
                     nowDate = null;
@@ -1011,19 +1015,28 @@ function embedTimer(targetPage) {
                 timersElementToggle.href = '#';
                 timersElementToggle.setAttribute('id', 'timersElementToggle');
                 timersElementToggle.appendChild(text);
-                timerDivElement.appendChild(timersElementToggle);
+                var holder = document.createElement('div');
+                holder.setAttribute('style', 'float: left;');
+                var temp = document.createElement('span');
+                temp.innerHTML = '&#160;&#126;&#160;';
+                holder.appendChild(timersElementToggle);
+                holder.appendChild(temp);
+                timerDivElement.appendChild(holder);
                 timersElementToggle.addEventListener("click", showHideTimers, false);
+                holder = null;
                 text = null;
+                temp = null;
 
                 var loadTimersElement = document.createElement('div');
                 loadTimersElement.setAttribute('id', 'loadTimersElement');
                 loadTimersElement.setAttribute('style', 'display: none;');
                 timerDivElement.appendChild(loadTimersElement);
 
-                timerDivElement.appendChild(document.createElement('br'));
+                //timerDivElement.appendChild(/*document.createElement('br')*/document.createTextNode(' &#126; '));
 
                 var loadLinkToUpdateDiv = document.createElement('div');
                 loadLinkToUpdateDiv.setAttribute('id', 'gDocArea');
+                loadLinkToUpdateDiv.setAttribute('style', 'float: left;');
                 var tempSpan2 = document.createElement('span');
                 var loadLinkToUpdate = document.createElement('a');
                 text = document.createTextNode('Submit info to GDoc');
@@ -1637,7 +1650,7 @@ function soundHorn() {
                 headerStatus = null;
 
                 // double check if the horn was already sounded
-                window.setTimeout(function() {
+                window.setTimeout(function () {
                     afterSoundingHorn()
                 }, 5000);
             } else if (headerStatus.indexOf("hornsounding") != -1 || headerStatus.indexOf("hornsounded") != -1) {
@@ -1810,17 +1823,13 @@ function embedScript() {
     scriptNode.setAttribute('id', 'scriptNode');
     scriptNode.setAttribute('type', 'text/javascript');
     scriptNode.setAttribute('soundedHornAtt', 'false');
-    scriptNode.innerHTML = '														\
-function soundedHorn()														\
-{																			\
-var scriptNode = document.getElementById("scriptNode");					\
-if (scriptNode)															\
-{																		\
-scriptNode.setAttribute("soundedHornAtt", "true");					\
-}																		\
-scriptNode = null;														\
-}																			\
-';
+    scriptNode.innerHTML = 'function soundedHorn() {\
+    var scriptNode = document.getElementById("scriptNode");\
+    if (scriptNode) {\
+    	scriptNode.setAttribute("soundedHornAtt", "true");\
+    }\
+    scriptNode = null;\
+    }';
 
     // find the head node and insert the script into it
     var headerElement;
@@ -1834,6 +1843,17 @@ scriptNode = null;														\
     headerElement = null;
 
     // change the function call of horn
+    var testNewUI = document.getElementById('header');
+    if (testNewUI != null) {
+        // old UI
+        isNewUI = false;
+    } else {
+        // new UI
+        isNewUI = true;
+        alert('You are on the new UI please install the BETA version of the bot instead.\nFound here: http://goo.gl/phsHNg');
+        throw new Error("Wrong script version.");
+    }
+	
     var hornButtonLink = document.getElementsByClassName('hornbutton')[0].firstChild;
     var oriStr = hornButtonLink.getAttribute('onclick').toString();
     var index = oriStr.indexOf('return false;');
@@ -1909,8 +1929,8 @@ function notify() {
         notification.close();
     }
 
-    notification.onshow = function() {
-        setTimeout(function() {
+    notification.onshow = function () {
+        window.setTimeout(function () {
             notification.close();
         }, 5000);
     }
@@ -1924,7 +1944,7 @@ function playKingRewardSound() {
         var targetArea = document.getElementsByTagName('body');
         var child = document.createElement('button');
         child.setAttribute('id', "stopAudio");
-        child.setAttribute('style', 'position: fixed;');
+        child.setAttribute('style', 'position: fixed; bottom: 0;');
         child.setAttribute('onclick', 'hornAudio.pause();');
         child.innerHTML = "CLICK ME TO STOP THIS ANNOYING MUSIC";
         targetArea[0].appendChild(child);
@@ -1934,7 +1954,9 @@ function playKingRewardSound() {
     }
 
     if (autopopkr)
-        alert("Kings Reward NOW");
+        window.setTimeout(function () {
+        	alert("Kings Reward NOW");
+        }, 2000);
 }
 
 function kingRewardCountdownTimer() {
@@ -2074,7 +2096,7 @@ function browserDetection() {
     userAgentStr = null;
 
     try {
-        return (browserName);
+        return browserName;
     } finally {
         browserName = null;
     }

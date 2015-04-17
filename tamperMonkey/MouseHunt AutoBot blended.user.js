@@ -669,9 +669,13 @@ function sandCrypts() {
 function gnawnianExpress(load) {
 	var onTrain = getPageVariableForChrome('user.quests.QuestTrainStation.on_train');
 	var charmArmed = getPageVariableForChrome('user.trinket_name');
+	var trapArmed = getPageVariableForChrome('user.weapon_name');
 	if (onTrain == 'false') {
 		if (charmArmed.indexOf('Supply Schedule') > -1 || charmArmed.indexOf('Roof Rack') > -1 || charmArmed.indexOf('Greasy Glob') > -1 || charmArmed.indexOf('Door Guard') > -1 || charmArmed.indexOf('Dusty Coal') > -1  || charmArmed.indexOf('Black Powder') > -1 || charmArmed.indexOf('Magmatic Crystal') > -1)
 			disarmTrap('trinket');
+		
+		if (trapArmed.indexOf('Supply Grabber') > -1 || trapArmed.indexOf('Bandit Deflector') > -1 || trapArmed.indexOf('Engine Doubler') > -1)
+			checkThenArm('best', 'weapon', ['S.L.A.C. II', 'The Law Draw', 'S.L.A.C.']);
 	} else {
 		var phase = document.getElementsByClassName('phaseName')[0].innerText;
 		phase = phase.substr(7, phase.length);
@@ -2868,7 +2872,7 @@ function disarmTrap(trapSelector) {
                         fireEvent(x[i], 'click');
                         clearInterval(intervalDT);
                         intervalDT = null;
-                        return (console.debug('Disarmed'));
+                        return (console.debug('Disarmed ' + trapSeletor));
                     }
                 }
 

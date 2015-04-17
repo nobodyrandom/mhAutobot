@@ -1025,7 +1025,6 @@ function embedTimer(targetPage) {
                 holder = null;
                 text = null;
                 temp = null;
-                //$('#overlayContainer')[0].style.cssText = "";
 
                 var loadTimersElement = document.createElement('div');
                 loadTimersElement.setAttribute('id', 'loadTimersElement');
@@ -1955,7 +1954,7 @@ function playKingRewardSound() {
 
     if (autopopkr)
         window.setTimeout(function () {
-        alert("Kings Reward NOW");
+        	alert("Kings Reward NOW");
         }, 2000);
 }
 

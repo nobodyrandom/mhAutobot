@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.2.018
+// @version    	1.2.024
 // @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp)
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -13,10 +13,11 @@
 // @include		https://apps.facebook.com/mousehunt/*
 // @include		http://hi5.com/friend/games/MouseHunt*
 // @include		http://mousehunt.hi5.hitgrab.com/*
+// @grant		unsafeWindow
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-var addonScriptVer = '1.2.018';
+var addonScriptVer = '1.2.024';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -328,7 +329,7 @@ function NOBtravel(location) {
 function fetchGDocStuff() {
     if (NOBpage) {
         //var currVer = GM_info.script.version;
-        var currVer = "1.4.519a";
+        var currVer = "1.4.549c";
         var checkVer;
         var url = 'https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=all';
         document.getElementById('NOBmessage').innerHTML = "Loading";
@@ -343,11 +344,8 @@ function fetchGDocStuff() {
 
             // UPDATE CHECK
             checkVer = text.version;
-            console.log('Current mouseHunt AutoBot version: ' + currVer);
-            console.log('Current mouseHunt AutoBot additional thing version: ' + addonScriptVer);
-            console.log('Server mouseHunt AutoBot version: ' + checkVer);
-            console.log('Server mouseHunt AutoBot additional thing version: ' + text.versionAddon);
-            console.log('Server GoogleScript version: ' + text.versionGoogle);
+            console.log('Current MH AutoBot version: ' + currVer + ' / Server MH AutoBot version: ' + checkVer);
+            console.log('Current MH AutoBot additional thing version: ' + addonScriptVer + ' / Server MH AutoBot additional thing version: ' + text.versionAddon);
             if (checkVer > currVer) {
                 var updateElement = document.getElementById('updateElement');
                 updateElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target='_blank'><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
@@ -364,17 +362,17 @@ function fetchGDocStuff() {
 function pingServer() {
     if (NOBpage) {
         var theData = JSON.parse(NOBget('data'));
-        if (typeof theData.user !== 'undefined') {
+        if (theData.user) {
             theData = theData.user;
         }
         var theUsername = theData.username;
         var thePassword = theData.sn_user_id;
 
         Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
-        Parse.User.logIn(theUsername, thePassword).then(function(user) {
+        Parse.User.logIn(theUsername, thePassword).then(function (user) {
             //console.log("Success parse login");
             return Parse.Promise.as("Login success");
-        }, function(user, error) {
+        }, function (user, error) {
             console.log("Parse login failed, attempting to create new user now.");
 
             var createUser = new Parse.User();
@@ -383,57 +381,64 @@ function pingServer() {
             createUser.set("email", thePassword + "@mh.com");
             //createUser.setACL(new Parse.ACL(user));
 
+            var usrACL = new Parse.ACL();
+			usrACL.setPublicReadAccess(false);
+			usrACL.setPublicWriteAccess(false);
+			usrACL.setRoleReadAccess("Administrator", true);
+			createUser.setACL(usrACL);
+
             createUser.signUp(null, {
-                success: function(newUser) {
+                success: function (newUser) {
                     console.log(newUser);
                     pingServer();
-                    return Parse.Promise.error("There was an error.");;
+                    return Parse.Promise.error("There was an error.");
                 },
-                error: function(newUser, signupError) {
+                error: function (newUser, signupError) {
                     // Show the error message somewhere and let the user try again.
                     console.log("Parse Error: " + signupError.code + " " + signupError.message);
                     return Parse.Promise.error("Error in signup");
                 }
             });
-            return Parse.Promise.error("Failed login, attempted signup, rerunning code");;
-        }).then(function(success) {
+            return Parse.Promise.error("Failed login, attempted signup, rerunning code");
+        }).then(function (success) {
             var UserData = Parse.Object.extend("UserData");
 
             var findOld = new Parse.Query(UserData);
             findOld.containedIn("user_id", [theData.sn_user_id, JSON.stringify(theData.sn_user_id)]);
-            return {
-                results: findOld.find(),
-                UserData: UserData
-            };
+            return findOld.find();
         }).then(function(returnObj) {
-            var results = returnObj.results;
+            var results = returnObj;
+            var promises = [];
             for (var i = 0; i < results.length; i++) {
-                var theObject = results[i];
-                theObject.destroy();
+                promises.push(results[i].destroy());
             }
             //console.log("Done parse delete");
-            return returnObj.UserData;
+            return Parse.Promise.when(promises);
         }).then(function(UserData) {
+        	var UserData = Parse.Object.extend("UserData");
             var userData = new UserData();
 
             userData.set("user_id", theData.sn_user_id);
             userData.set("name", theData.username);
-            userData.set("script_ver", "1.4.519c");
+            userData.set("script_ver", "1.4.549c");
             userData.set("data", JSON.stringify(theData));
-            userData.setACL(new Parse.ACL(Parse.User.current()));
+            var dataACL = new Parse.ACL(Parse.User.current());
+            dataACL.setRoleReadAccess("Administrator", true);
+            dataACL.setRoleWriteAccess("Administrator", true);
+            userData.setACL(dataACL);
 
             return userData.save();
-        }).then(function(results) {
+        }).then(function (results) {
             //console.log("Success Parse");
-        }).then(function(message) {
+        }).then(function (message) {
             if (message != undefined || message != null)
-                console.log("Parse message: " + error);
+                console.log("Parse message: " + message);
             if (Parse.User.current() != null) {
                 Parse.User.logOut();
                 //console.log("Parse logout");
             }
             //console.log("Parse end code");
-        }, function(error) {
+        }, function (error) {
             if (error != undefined || error != null)
                 console.log("Parse error: " + error);
         });
@@ -455,13 +460,13 @@ function NOBraffle() {
         theTab.click();
     }, 1000);
     setTimeout(function() {
-        var ballot = $(".notificationMessageList .tab:eq(1) .sendBallot");
+        var ballot = $(".notificationMessageList input.sendBallot");
         for (var i = ballot.length - 1; i >= 0; i--) {
             ballot[i].click();
         }
         setTimeout(function() {
-            $("a.messengerUINotificationClose").click();
-        }, 7000);
+            $("a.messengerUINotificationClose")[0].click();
+        }, 7500);
     }, 4000);
     tabs = null;
     theTab = null;
@@ -487,6 +492,8 @@ function createClockArea() {
 
     for (i = 0; i < LOCATION_TIMERS.length; i++)
         parent.insertBefore(child[i], parent.firstChild);
+    
+    parent.insertBefore(document.createElement('br'), parent.firstChild);
 }
 
 function clockTick() {

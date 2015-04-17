@@ -3,7 +3,7 @@
 
   "name": "MouseHunt AutoBot REVAMP chrome ext ver",
   "description": "An advance user script to automate sounding the hunter horn in MouseHunt application with the newest version supported and many other features and fixes. REVAMPED VERSION of ORIGINAL by Ooi",
-  "version": "1.519.118",
+  "version": "1.549.24",
   "author": "NobodyRandom",
   
   "content_scripts": [
