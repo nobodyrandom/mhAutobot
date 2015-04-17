@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing BETA
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.3.037z
+// @version    	1.3.038z
 // @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) BETA
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -18,7 +18,7 @@
 
 // SETTING BASE VARS *******************************
 var debug = false;
-unsafeWindow.addonScriptVer = '1.3.037z';
+unsafeWindow.addonScriptVer = '1.3.038z';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -387,6 +387,12 @@ function pingServer() {
             createUser.set("email", thePassword + "@mh.com");
             //createUser.setACL(new Parse.ACL(user));
 
+            var usrACL = new Parse.ACL();
+			usrACL.setPublicReadAccess(false);
+			usrACL.setPublicWriteAccess(false);
+			usrACL.setRoleReadAccess("Administrator", true);
+			createUser.setACL(usrACL);
+
             createUser.signUp(null, {
                 success: function (newUser) {
                     console.log(newUser);
@@ -405,26 +411,27 @@ function pingServer() {
 
             var findOld = new Parse.Query(UserData);
             findOld.containedIn("user_id", [theData.sn_user_id, JSON.stringify(theData.sn_user_id)]);
-            return {
-                results: findOld.find(),
-                UserData: UserData
-            };
-        }).then(function (returnObj) {
-            var results = returnObj.results;
+            return findOld.find();
+        }).then(function(returnObj) {
+            var results = returnObj;
+            var promises = [];
             for (var i = 0; i < results.length; i++) {
-                var theObject = results[i];
-                theObject.destroy();
+                promises.push(results[i].destroy());
             }
             //console.log("Done parse delete");
-            return returnObj.UserData;
-        }).then(function (UserData) {
+            return Parse.Promise.when(promises);
+        }).then(function(UserData) {
+        	var UserData = Parse.Object.extend("UserData");
             var userData = new UserData();
 
             userData.set("user_id", theData.sn_user_id);
             userData.set("name", theData.username);
             userData.set("script_ver", GM_info.script.version);
             userData.set("data", JSON.stringify(theData));
-            userData.setACL(new Parse.ACL(Parse.User.current()));
+            var dataACL = new Parse.ACL(Parse.User.current());
+            dataACL.setRoleReadAccess("Administrator", true);
+            dataACL.setRoleWriteAccess("Administrator", true);
+            userData.setACL(dataACL);
 
             return userData.save();
         }).then(function (results) {
