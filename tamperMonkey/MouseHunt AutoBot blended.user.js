@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	1.4.544b
+// @version    	1.4.545b
 // @description Currently the most advanced script for automizing MouseHunt. Supports ALL new areas. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN - Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require		https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @require     https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=41363
@@ -1096,6 +1096,7 @@ function retrieveDataFirst() {
 }
 
 function retrieveData() {
+	console.log("Run retrieveData()");
     var browser = browserDetection();
 
     // get next horn time
@@ -1235,6 +1236,7 @@ function checkJournalDate() {
 }
 
 function action() {
+	console.log("Run action()");
     if (isKingReward) {
         kingRewardAction();
         notify(getPageVariableForChrome('user.username'));
@@ -2382,6 +2384,7 @@ function soundHorn() {
 }
 
 function afterSoundingHorn() {
+	console.log("Run afterSoundingHorn()");
     var scriptNode = document.getElementById("scriptNode");
     if (scriptNode) {
         scriptNode.setAttribute("soundedHornAtt", "false");
