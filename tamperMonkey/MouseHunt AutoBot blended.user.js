@@ -818,7 +818,9 @@ function checkThenArm(sort, category, name) //category = weapon/base/charm/trink
 
         var trapArmed;
         var userVariable = getPageVariableForChrome("user." + category + "_name");
-        if (sort == 'best') {
+        
+        // If current setup is in one of the 'best', this stupid thing assumes its OK =,=
+       if (sort == 'best') {
             for (var i = 0; i < name.length; i++) {
                 if (userVariable.indexOf(name[i]) == 0) {
                     trapArmed = true;
