@@ -829,6 +829,11 @@ function checkThenArm(sort, category, name) //category = weapon/base/charm/trink
             trapArmed = (userVariable.indexOf(name) == 0);
         }
 
+		// OVERRIDE FOR AJAX (NEED REDO ASAP, but works for now)
+		var retryPageVariable = document.getElementById('hud_trapLabel').innerText;
+		if(retryPageVariable == "Charm:" && category == "trinket")
+			trapArmed = true;
+
         if (!trapArmed) {
             var intervalCTA = setInterval(
                 function() {
