@@ -968,8 +968,8 @@ function clickTrapSelector(strSelect) //strSelect = weapon/base/charm/trinket/ba
 
 function objToString(obj, str) {
         return str = obj.data;
-    }
-    //// END EMBED
+}
+//// END EMBED
 
 function retrieveDataFirst() {
     var gotHornTime = false;
