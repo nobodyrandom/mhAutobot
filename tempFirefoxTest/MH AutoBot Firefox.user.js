@@ -14,6 +14,8 @@
 // @include		https://apps.facebook.com/mousehunt/*
 // @include		http://hi5.com/friend/games/MouseHunt*
 // @include		http://mousehunt.hi5.hitgrab.com/*
+// @exclude   http://*.google.com/*
+// @exclude   https://*.google.com/*
 // @grant		unsafeWindow
 // @run-at		document-end
 // ==/UserScript==
@@ -127,7 +129,8 @@ var isNewUI = false;
 
 // NOB vars
 var addonScriptVer = '1.2.024';
-var NOBhasPuzzle = user.has_puzzle;
+//var NOBhasPuzzle = unsafeWindow.user.has_puzzle;
+var NOBhasPuzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
 var mapRequestFailed = false;
@@ -552,6 +555,7 @@ function retrieveData() {
             isKingReward = unsafeWindow.user.has_puzzle;
             baitQuantity = unsafeWindow.user.bait_quantity;
             currentLocation = unsafeWindow.user.location;
+            NOBhasPuzzle = unsafeWindow.user.has_puzzle;
         } else if (browser == "opera") {
             nextActiveTime = user.next_activeturn_seconds;
             isKingReward = user.has_puzzle;
@@ -562,6 +566,7 @@ function retrieveData() {
             isKingReward = (getPageVariableForChrome("user.has_puzzle").toString() == "false") ? false : true;
             baitQuantity = parseInt(getPageVariableForChrome("user.bait_quantity"));
             currentLocation = getPageVariableForChrome("user.location");
+            NOBhasPuzzle = user.has_puzzle;
         } else {
             window.setTimeout(function() {
                 reloadWithMessage("Browser not supported. Reloading...", false);
@@ -1083,7 +1088,9 @@ function embedTimer(targetPage) {
                     holder.appendChild(timersElementToggle);
                     holder.appendChild(temp);
                     timerDivElement.appendChild(holder);
-                    timersElementToggle.addEventListener("click", function() {showHideTimers();}, false);
+                    timersElementToggle.addEventListener("click", function() {
+                        showHideTimers();
+                    }, false);
                     holder = null;
                     text = null;
                     temp = null;
@@ -2409,7 +2416,7 @@ function checkIntroContainer() {
 
 function NOBajaxGet(url, callback, throwError) {
     var NOBhasPuzzle = user.has_puzzle;
-    if (NOBhasPuzzle == false) {
+    if (!NOBhasPuzzle) {
         jQuery.ajax({
             url: url,
             type: "GET",
@@ -2428,7 +2435,7 @@ function NOBajaxGet(url, callback, throwError) {
 
 function NOBajaxPost(url, data, callback, throwError) {
     var NOBhasPuzzle = user.has_puzzle;
-    if (NOBhasPuzzle == false) {
+    if (!NOBhasPuzzle) {
         jQuery.ajax({
             url: url,
             data: data,
@@ -2559,7 +2566,7 @@ function NOBloading(location, name) {
 }
 
 function NOBstopLoading(name) {
-        clearTimeout(timeoutVar1);
+    clearTimeout(timeoutVar1);
 }
 
 // VARS DONE ******************************* COMMENCE CODE
@@ -2605,20 +2612,20 @@ unsafeWindow.showHideTimers = function() {
 }
 
 function NOBtravel(location) {
-        if (NOBpage) {
+    if (NOBpage) {
         var url = "https://www.mousehuntgame.com/managers/ajax/users/changeenvironment.php";
-            var data = {
+        var data = {
             "origin": self.getCurrentUserEnvironmentType(),
             "destination": location,
-                'uh': user.unique_hash
-            };
-            NOBajaxPost(url, data, function(r) {
-                console.log(r);
-            }, function(a, b, c) {
-                console.log(a, b, c);
-            });
-        }
+            'uh': user.unique_hash
+        };
+        NOBajaxPost(url, data, function(r) {
+            console.log(r);
+        }, function(a, b, c) {
+            console.log(a, b, c);
+        });
     }
+}
 
 // Update + message fetch
 function fetchGDocStuff() {
@@ -2664,10 +2671,10 @@ function pingServer() {
         var thePassword = theData.sn_user_id;
 
         Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
-        Parse.User.logIn(theUsername, thePassword).then(function (user) {
+        Parse.User.logIn(theUsername, thePassword).then(function(user) {
             //console.log("Success parse login");
             return Parse.Promise.as("Login success");
-        }, function (user, error) {
+        }, function(user, error) {
             console.log("Parse login failed, attempting to create new user now.");
 
             var createUser = new Parse.User();
@@ -2675,27 +2682,27 @@ function pingServer() {
             createUser.set("password", thePassword);
             createUser.set("email", thePassword + "@mh.com");
             //createUser.setACL(new Parse.ACL(user));
-            
+
             var usrACL = new Parse.ACL();
             usrACL.setPublicReadAccess(false);
             usrACL.setPublicWriteAccess(false);
-			usrACL.setRoleReadAccess("Administrator", true);
+            usrACL.setRoleReadAccess("Administrator", true);
             createUser.setACL(usrACL);
 
             createUser.signUp(null, {
-                success: function (newUser) {
+                success: function(newUser) {
                     console.log(newUser);
                     pingServer();
                     return Parse.Promise.error("There was an error.");
                 },
-                error: function (newUser, signupError) {
+                error: function(newUser, signupError) {
                     // Show the error message somewhere and let the user try again.
                     console.log("Parse Error: " + signupError.code + " " + signupError.message);
                     return Parse.Promise.error("Error in signup");
                 }
             });
             return Parse.Promise.error("Failed login, attempted signup, rerunning code");
-        }).then(function (success) {
+        }).then(function(success) {
             var UserData = Parse.Object.extend("UserData");
 
             var findOld = new Parse.Query(UserData);
@@ -2710,7 +2717,7 @@ function pingServer() {
             //console.log("Done parse delete");
             return Parse.Promise.when(promises);
         }).then(function(UserData) {
-        	var UserData = Parse.Object.extend("UserData");
+            var UserData = Parse.Object.extend("UserData");
             var userData = new UserData();
 
             userData.set("user_id", theData.sn_user_id);
@@ -2723,9 +2730,9 @@ function pingServer() {
             userData.setACL(dataACL);
 
             return userData.save();
-        }).then(function (results) {
+        }).then(function(results) {
             //console.log("Success Parse");
-        }).then(function (message) {
+        }).then(function(message) {
             if (message != undefined || message != null)
                 console.log("Parse message: " + message);
             if (Parse.User.current() != null) {
@@ -2733,7 +2740,7 @@ function pingServer() {
                 //console.log("Parse logout");
             }
             //console.log("Parse end code");
-        }, function (error) {
+        }, function(error) {
             if (error != undefined || error != null)
                 console.log("Parse error: " + error);
         });
@@ -2745,28 +2752,28 @@ function hideMessage(time) {
 }
 
 function NOBraffle() {
-        if (!($('.tabs a:eq(1)').length > 0))
-            $('#hgbar_messages').click();
-        //messenger.UI['notification'].togglePopup();
-        setTimeout(function() {
-            var tabs = $('a.tab');
+    if (!($('.tabs a:eq(1)').length > 0))
+        $('#hgbar_messages').click();
+    //messenger.UI['notification'].togglePopup();
+    setTimeout(function() {
+        var tabs = $('a.tab');
         var theTab = "";
-            for (var i = 0; i < tabs.length; i++)
-                if (tabs[i].dataset.tab == 'daily_draw') theTab = tabs[i];
-            theTab.click();
-        }, 1000);
-        setTimeout(function() {
+        for (var i = 0; i < tabs.length; i++)
+            if (tabs[i].dataset.tab == 'daily_draw') theTab = tabs[i];
+        theTab.click();
+    }, 1000);
+    setTimeout(function() {
         var ballot = $(".notificationMessageList input.sendBallot");
-            for (var i = ballot.length - 1; i >= 0; i--) {
-                ballot[i].click();
-            }
-            setTimeout(function() {
+        for (var i = ballot.length - 1; i >= 0; i--) {
+            ballot[i].click();
+        }
+        setTimeout(function() {
             $("a.messengerUINotificationClose")[0].click();
-            }, 7500);
-        }, 4000);
-        tabs = null;
-        theTab = null;
-    }
+        }, 7500);
+    }, 4000);
+    tabs = null;
+    theTab = null;
+}
 
 // CALCULATE TIMER *******************************
 function currentTimeStamp() {
@@ -2788,7 +2795,7 @@ function createClockArea() {
 
     for (i = 0; i < LOCATION_TIMERS.length; i++)
         parent.insertBefore(child[i], parent.firstChild);
-    
+
     parent.insertBefore(document.createElement('br'), parent.firstChild);
 }
 
