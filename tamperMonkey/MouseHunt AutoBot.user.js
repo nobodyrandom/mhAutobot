@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom
 // @version    	2.0.1a
-// @description Currently the most advanced script for automizing MouseHunt. Supports ALL new areas. REVAMPED VERSION of ORIGINAL by Ooi - Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
+// @description Currently the most advanced script for automizing MouseHunt. Supports ALL new areas and FIREFOX. Revamped version of original by Ooi - Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require		https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @namespace   https://greasyfork.org/users/6398
 // @updateURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.user.js
@@ -16,8 +16,8 @@
 // @include		https://apps.facebook.com/mousehunt/*
 // @include		http://hi5.com/friend/games/MouseHunt*
 // @include		http://mousehunt.hi5.hitgrab.com/*
-// @exclude   http://*.google.com/*
-// @exclude   https://*.google.com/*
+// @exclude		http://*.google.com/*
+// @exclude		https://*.google.com/*
 // @grant		unsafeWindow
 // @run-at		document-end
 // ==/UserScript==
