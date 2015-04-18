@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	1.4.553b
+// @version    	1.4.554b
 // @description Currently the most advanced script for automizing MouseHunt. Supports ALL new areas. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN - Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require		https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @require     https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=46706
@@ -23,6 +23,7 @@
 // == Basic User Preference Setting (Begin) ==
 // // The variable in this section contain basic option will normally edit by most user to suit their own preference
 // // Reload MouseHunt page manually if edit this script while running it for immediate effect.
+
 // // Extra delay time before sounding the horn. (in seconds)
 // // Default: 10 - 180
 var hornTimeDelayMin = 10;
@@ -369,7 +370,7 @@ function checkIntroContainer() {
 function ZTalgo() {
     retrieveMouseList();
     var intervalZT = setInterval(
-        function() {
+        function () {
             if (mouseList.length > 0) {
                 if (checkMouse("Chess Master")) {
                     //arm Uncharged Scholar Charm & Checkmate Cheese
@@ -432,7 +433,6 @@ function eventLocationCheck() {
         default:
             break;
     }
-    return;
 }
 
 function Halloween2014() {
@@ -560,7 +560,7 @@ function livingGarden() {
 }
 
 function lostCity() {
-    var isCursed = (document.getElementsByClassName('stateBlessed hidden').length > 0) ? true : false;
+	var isCursed = (document.getElementsByClassName('stateBlessed hidden').length > 0);
     console.debug('Cursed = ' + isCursed);
 
     //disarm searcher charm when cursed is lifted    
@@ -873,10 +873,12 @@ function checkThenArm(sort, category, name) //category = weapon/base/charm/trink
 			//trapArmed = true;
 		}
 
+		// Try to queue trap arming
         if (!trapArmed) {
             var intervalCTA = setInterval(
                 function() {
                     if (arming == false) {
+                    	console.log("Queueing arming - " + name);
                         clickThenArmTrapInterval(sort, category, name);
                         clearInterval(intervalCTA);
                         intervalCTA = null;
@@ -889,11 +891,13 @@ function checkThenArm(sort, category, name) //category = weapon/base/charm/trink
 
 function clickThenArmTrapInterval(sort, trap, name) //sort = power/luck/attraction
     {
+    	// Process trap arming queue
         clickTrapSelector(trap);
         var index;
         var sec = 5;
         var intervalCTATI = setInterval(
             function() {
+            	console.log("Processing queue item: " + name);
                 if (armTrap(sort, name) == true) {
                     clearInterval(intervalCTATI);
                     arming = false;
@@ -906,7 +910,7 @@ function clickThenArmTrapInterval(sort, trap, name) //sort = power/luck/attracti
                         sec = 5;
                     }
                 }
-            }, 1500);
+            }, 1000);
         return;
     }
 
