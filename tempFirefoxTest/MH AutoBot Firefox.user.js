@@ -1042,7 +1042,7 @@ function embedTimer(targetPage) {
                     holder.appendChild(timersElementToggle);
                     holder.appendChild(temp);
                     timerDivElement.appendChild(holder);
-                    timersElementToggle.addEventListener("click", showHideTimers, false);
+                    timersElementToggle.addEventListener("click", unsafeWindow.showHideTimers, false);
                     holder = null;
                     text = null;
                     temp = null;
@@ -2551,9 +2551,9 @@ function NOBloading(location, name) {
 
 function NOBstopLoading(name) {
         clearTimeout(timeoutVar1);
-    }
-    // VARS DONE ******************************* COMMENCE CODE
+}
 
+// VARS DONE ******************************* COMMENCE CODE
 function NOBscript(qqEvent) {
     if (NOBpage) {
         var NOBdata = NOBget('data');
@@ -2590,6 +2590,7 @@ function NOBscript(qqEvent) {
         }
     }
 }
+
 unsafeWindow.showHideTimers = function() {
     $('#loadTimersElement').toggle();
 }
@@ -2609,8 +2610,8 @@ function NOBtravel(location) {
             });
         }
     }
-    // Update + message fetch
 
+// Update + message fetch
 function fetchGDocStuff() {
     if (NOBpage) {
         var currVer = GM_info.script.version;
@@ -2754,8 +2755,8 @@ function NOBraffle() {
         tabs = null;
         theTab = null;
     }
-    // CALCULATE TIMER *******************************
 
+// CALCULATE TIMER *******************************
 function currentTimeStamp() {
     return parseInt(new Date().getTime().toString().substring(0, 10));
 }
