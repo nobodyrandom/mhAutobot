@@ -1042,7 +1042,7 @@ function embedTimer(targetPage) {
                     holder.appendChild(timersElementToggle);
                     holder.appendChild(temp);
                     timerDivElement.appendChild(holder);
-                    timersElementToggle.addEventListener("click", unsafeWindow.showHideTimers, false);
+                    timersElementToggle.addEventListener("click", unsafeWindow.showHideTimers(), false);
                     holder = null;
                     text = null;
                     temp = null;
