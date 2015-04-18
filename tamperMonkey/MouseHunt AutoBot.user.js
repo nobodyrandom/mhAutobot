@@ -261,13 +261,13 @@ function exeScript() {
     } else if (mhMobilePlatform) {
         // execute at all page of mobile version
         //if (true) {
-            // page to execute the script!
+        // page to execute the script!
 
-            // make sure all the preference already loaded
-            loadPreferenceSettingFromStorage();
+        // make sure all the preference already loaded
+        loadPreferenceSettingFromStorage();
 
-            // embed a place where timer show
-            embedTimer(false);
+        // embed a place where timer show
+        embedTimer(false);
         //}
     } else if (hiFivePlatform) {
         if (window.location.href == "http://mousehunt.hi5.hitgrab.com/#" ||
@@ -520,7 +520,7 @@ function retrieveData() {
         // fail to retrieve data, might be due to slow network
 
         // reload the page to see it fix the problem
-        window.setTimeout(function () {
+        window.setTimeout(function() {
             reloadWithMessage("Fail to retrieve data. Reloading...", false);
         }, 5000);
     } else {
@@ -688,7 +688,7 @@ function action() {
 
         if (isHornSounding == false) {
             // start timer
-            window.setTimeout(function () {
+            window.setTimeout(function() {
                 countdownTimer()
             }, timerRefreshInterval * 1000);
         }
@@ -714,7 +714,7 @@ function countdownTimer() {
         fireEvent(document.getElementsByClassName('campbutton')[0].firstChild, 'click');
 
         // reload the page if click on camp button fail
-        window.setTimeout(function () {
+        window.setTimeout(function() {
             reloadWithMessage("Fail to click on camp button. Reloading...", false);
         }, 5000);
     } else if (pauseAtInvalidLocation && (huntLocation != currentLocation)) {
@@ -838,7 +838,7 @@ function countdownTimer() {
             // set king reward sum time
             displayKingRewardSumTime(timeFormatLong(lastKingRewardSumTime));
 
-            window.setTimeout(function () {
+            window.setTimeout(function() {
                 (countdownTimer)()
             }, timerRefreshInterval * 1000);
         }
@@ -905,7 +905,7 @@ function reloadWithMessage(msg, soundHorn) {
     displayTimer(msg, msg, msg, msg);
 
     // reload the page
-    setTimeout(function () {
+    setTimeout(function() {
         reloadPage(soundHorn)
     }, 1000);
 
@@ -1649,7 +1649,7 @@ function soundHorn() {
                 headerStatus = null;
 
                 // double check if the horn was already sounded
-                window.setTimeout(function () {
+                window.setTimeout(function() {
                     afterSoundingHorn()
                 }, 5000);
             } else if (headerStatus.indexOf("hornsounding") != -1 || headerStatus.indexOf("hornsounded") != -1) {
@@ -1852,8 +1852,8 @@ function embedScript() {
         alert('You are on the new UI please install the BETA version of the bot instead.\nFound here: http://goo.gl/phsHNg');
         throw new Error("Wrong script version.");
     }
-	
-	var hornButtonLink = document.getElementsByClassName('hornbutton')[0].firstChild;
+
+    var hornButtonLink = document.getElementsByClassName('hornbutton')[0].firstChild;
     var oriStr = hornButtonLink.getAttribute('onclick').toString();
     var index = oriStr.indexOf('return false;');
     var modStr = oriStr.substring(0, index) + 'soundedHorn();' + oriStr.substring(index);
@@ -1928,8 +1928,8 @@ function notify() {
         notification.close();
     }
 
-    notification.onshow = function () {
-        window.setTimeout(function () {
+    notification.onshow = function() {
+        window.setTimeout(function() {
             notification.close();
         }, 5000);
     }
@@ -1953,8 +1953,8 @@ function playKingRewardSound() {
     }
 
     if (autopopkr)
-        window.setTimeout(function () {
-        	alert("Kings Reward NOW");
+        window.setTimeout(function() {
+            alert("Kings Reward NOW");
         }, 2000);
 }
 

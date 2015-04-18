@@ -842,7 +842,7 @@ function checkThenArm(sort, category, name) //category = weapon/base/charm/trink
 			var theCharmArmed = document.getElementById('hud_trapPower').innerText;
 			if (sort == 'best') {
 				for (var i = 0; i < name.length; i++) {
-					console.log(theCharmArmed + " + " + name[i]);
+					//console.log(theCharmArmed + " + " + name[i]);
 					
 					if (name[i].length > 13) {
 						tempName = name[i].substring(0, 13);
@@ -857,7 +857,7 @@ function checkThenArm(sort, category, name) //category = weapon/base/charm/trink
 					}
 				}
 			} else {
-				console.log(theCharmArmed + " + " + name);
+				//console.log(theCharmArmed + " + " + name);
 				
 				if (name.length > 13) {
 					tempName = name.substring(0, 13);
