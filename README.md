@@ -12,7 +12,7 @@
 [ENHANCED + REVAMP](https://greasyfork.org/en/scripts/6514-mousehunt-autobot-enhanced-revamp) version adapted from version made and owned by [CNN](https://devcnn.wordpress.com/) \(ver b\) \(Just a note, he was **banned** for making and using the ENHANCED version, so up to you if you dare use it\)
 
 To install this version, please use [greasyFork](https://greasyfork.org/en/scripts/6092-mousehunt-autobot) or [OpenUserJS](https://openuserjs.org/scripts/nobodyrandom/MouseHunt_AutoBot_REVAMP)
-Note: this version of the code includes two separate files which should automatically instal itself. If features such as 'Send to GDoc' does not work, please install [the second file](https://greasyfork.org/en/scripts/6094-mousehunt-autobot-additional-thing) as well.
+Note: this version of the code includes two separate files which should automatically install itself. If features such as 'Send to GDoc' does not work, please install [the second file](https://greasyfork.org/en/scripts/6094-mousehunt-autobot-additional-thing) as well.
 
 #####PRECAUTION: Use this script at your own risk as this is against the rule of Mousehunt.
 *****
@@ -22,7 +22,7 @@ Report all bugs to [GitHub](https://github.com/nobodyrandom/mhAutobot/issues) or
 
 Changelog - [GitHub](https://github.com/nobodyrandom/mhAutobot/commits/master)
 *****
-Additional features added:
+Features:
 >*  Support for NEW beta UI (make sure you are on it for the bot to work)
 >*	Living Garden Spreadsheet -> [Google Drive](https://docs.google.com/spreadsheet/ccc?key=0Ag_KH_nuVUjbdGtldjJkWUJ4V1ZpUDVwd1FVM0RTM1E&usp=sharing) with run forecasting
 >*	(TODO: write up a instruction manual for the GDoc, but it should be pretty self explanatory)
