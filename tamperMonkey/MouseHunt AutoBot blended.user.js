@@ -900,20 +900,20 @@ function clickThenArmTrapInterval(sort, trap, name) //sort = power/luck/attracti
             	console.debug("Processing queue item: " + name);
             	var tryArming = armTrap(sort, name);
                 if (tryArming == 'found') {
-                	console.log(name + " found.");
+                	//console.log(name + " found.");
                     clearInterval(intervalCTATI);
                     arming = false;
                     intervalCTATI = null;
                     return;
                 } else if (tryArming == 'not found') {
-                	console.log(name + ' not found.');
+                	//console.log(name + ' not found.');
                 	clickTrapSelector(trap);
                 	clearInterval(intervalCTATI);
                 	arming = false;
                 	intervalCTATI = null;
                 	return;
                 } else {
-                	console.log('Looping again');
+                	//console.log('Looping again');
                     --sec;
                     if (sec <= 0) {
                         clickTrapSelector(trap);
