@@ -23,16 +23,16 @@ Report all bugs to [GitHub](https://github.com/nobodyrandom/mhAutobot/issues) or
 Changelog - [GitHub](https://github.com/nobodyrandom/mhAutobot/commits/master)
 *****
 Features:
->*  Support for NEW beta UI (make sure you are on it for the bot to work)
+>*  Support for NEW beta UI
 >*	Living Garden Spreadsheet -> [Google Drive](https://docs.google.com/spreadsheet/ccc?key=0Ag_KH_nuVUjbdGtldjJkWUJ4V1ZpUDVwd1FVM0RTM1E&usp=sharing) with run forecasting
->*	(TODO: write up a instruction manual for the GDoc, but it should be pretty self explanatory)
->*	Area clocks
+>*	Area clocks via "Toggle Timers"
 >*	Auto Kings Reward popup (check the settings)
 >*	Auto return raffle tickets
 >*  Cleaned code
->*  Removed not working sound player and replaced with HTML5 one, pls comment if problem occurs
+>*  Removed not working sound player and replaced with a working HTML5 one
 >*  Browser notif and tiggers are now fixed ^.^
 >*	KR auto resume etc are now fixed
 >*  (ver b ONLY) Integrated CnN's bots for automization on areas + automization on G Express
+>*	(TODO: write up a instruction manual for the GDoc, but it should be pretty self explanatory)
 
 #####Sorrry I am new to GitHub, GM and actually anything at all so if there's something wrong pls email me or submit a bug report asap so I can fix it
