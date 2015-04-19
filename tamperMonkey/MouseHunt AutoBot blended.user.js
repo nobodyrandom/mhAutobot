@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	1.4.556b
+// @version    	1.4.557b
 // @description Currently the most advanced script for automizing MouseHunt. Supports ALL new areas. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN - Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require		https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @require     https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=46706
@@ -878,7 +878,7 @@ function checkThenArm(sort, category, name) //category = weapon/base/charm/trink
             var intervalCTA = setInterval(
                 function() {
                     if (arming == false) {
-                    	console.log("Queueing arming - " + name);
+                    	console.debug("Queueing arming - " + name);
                         clickThenArmTrapInterval(sort, category, name);
                         clearInterval(intervalCTA);
                         intervalCTA = null;
@@ -897,19 +897,23 @@ function clickThenArmTrapInterval(sort, trap, name) //sort = power/luck/attracti
         var sec = 5;
         var intervalCTATI = setInterval(
             function() {
-            	console.log("Processing queue item: " + name);
+            	console.debug("Processing queue item: " + name);
             	var tryArming = armTrap(sort, name);
                 if (tryArming == 'found') {
+                	console.log(name + " found.");
                     clearInterval(intervalCTATI);
                     arming = false;
                     intervalCTATI = null;
                     return;
                 } else if (tryArming == 'not found') {
+                	console.log(name + ' not found.');
+                	clickTrapSelector(trap);
                 	clearInterval(intervalCTATI);
                 	arming = false;
                 	intervalCTATI = null;
                 	return;
                 } else {
+                	console.log('Looping again');
                     --sec;
                     if (sec <= 0) {
                         clickTrapSelector(trap);
@@ -952,7 +956,7 @@ function armTrap(sort, name) {
                 return armTrap(sort, nameArray);
             } else {
                 console.debug('No traps found');
-                return 'not found';
+                //return 'not found';
             }
         } else {
         	return 'not found';
