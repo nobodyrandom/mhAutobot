@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	1.4.559b
+// @version    	1.4.560b
 // @description Currently the most advanced script for automizing MouseHunt. Supports ALL new areas. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN - Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require		https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @require     https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=46706
@@ -132,6 +132,7 @@ var kingPauseTime;
 var baitQuantity = -1;
 var huntLocation;
 var currentLocation;
+var tryingToArm;
 var today = new Date();
 var checkTime = (today.getMinutes() >= trapCheckTimeDiff) ? 3600 + (trapCheckTimeDiff * 60) - (today.getMinutes() * 60 + today.getSeconds()) : (trapCheckTimeDiff * 60) - (today.getMinutes() * 60 + today.getSeconds());
 today = undefined;
@@ -874,7 +875,8 @@ function checkThenArm(sort, category, name) //category = weapon/base/charm/trink
 		}
 
 		// Try to queue trap arming
-        if (!trapArmed) {
+        if (!trapArmed && tryingToArm != name) {
+        	tryingToArm = name;
             var intervalCTA = setInterval(
                 function() {
                     if (arming == false) {
@@ -884,7 +886,7 @@ function checkThenArm(sort, category, name) //category = weapon/base/charm/trink
                         intervalCTA = null;
                         return;
                     }
-                }, 4000);
+                }, 2000);
         }
         return;
     }
@@ -900,20 +902,17 @@ function clickThenArmTrapInterval(sort, trap, name) //sort = power/luck/attracti
             	console.debug("Processing queue item: " + name);
             	var tryArming = armTrap(sort, name);
                 if (tryArming == 'found') {
-                	//console.log(name + " found.");
                     clearInterval(intervalCTATI);
                     arming = false;
                     intervalCTATI = null;
                     return;
                 } else if (tryArming == 'not found') {
-                	//console.log(name + ' not found.');
                 	clickTrapSelector(trap);
                 	clearInterval(intervalCTATI);
                 	arming = false;
                 	intervalCTATI = null;
                 	return;
                 } else {
-                	//console.log('Looping again');
                     --sec;
                     if (sec <= 0) {
                         clickTrapSelector(trap);
