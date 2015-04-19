@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	1.4.555b
+// @version    	1.4.556b
 // @description Currently the most advanced script for automizing MouseHunt. Supports ALL new areas. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN - Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require		https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @require     https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=46706
@@ -898,11 +898,17 @@ function clickThenArmTrapInterval(sort, trap, name) //sort = power/luck/attracti
         var intervalCTATI = setInterval(
             function() {
             	console.log("Processing queue item: " + name);
-                if (armTrap(sort, name) == true) {
+            	var tryArming = armTrap(sort, name);
+                if (tryArming == 'found') {
                     clearInterval(intervalCTATI);
                     arming = false;
                     intervalCTATI = null;
                     return;
+                } else if (tryArming == 'not found') {
+                	clearInterval(intervalCTATI);
+                	arming = false;
+                	intervalCTATI = null;
+                	return;
                 } else {
                     --sec;
                     if (sec <= 0) {
@@ -934,7 +940,7 @@ function armTrap(sort, name) {
                 if (nameElement.indexOf(name) == 0) {
                     fireEvent(tagElement[j], 'click');
                     console.debug(name + ' armed');
-                    return true;
+                    return 'found';
                 }
             }
         }
@@ -946,13 +952,13 @@ function armTrap(sort, name) {
                 return armTrap(sort, nameArray);
             } else {
                 console.debug('No traps found');
-                return false;
+                return 'not found';
             }
         } else {
-        	return false;
+        	return 'not found';
         }
     }
-    return false;
+    return 'not found';
 }
 
 function clickTrapSelector(strSelect) //strSelect = weapon/base/charm/trinket/bait
