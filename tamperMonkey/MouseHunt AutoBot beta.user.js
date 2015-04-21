@@ -280,7 +280,7 @@ function exeScript() {
             window.location.href.indexOf("mousehuntgame.com/turn.php") != -1 ||
             window.location.href.indexOf("mousehuntgame.com/index.php") != -1) {
             // page to execute the script!
-			
+
             // make sure all the preference already loaded
             loadPreferenceSettingFromStorage();
 
@@ -308,13 +308,13 @@ function exeScript() {
     } else if (mhMobilePlatform) {
         // execute at all page of mobile version
         //if (true) {
-            // page to execute the script!
+        // page to execute the script!
 
-            // make sure all the preference already loaded
-            loadPreferenceSettingFromStorage();
+        // make sure all the preference already loaded
+        loadPreferenceSettingFromStorage();
 
-            // embed a place where timer show
-            embedTimer(false);
+        // embed a place where timer show
+        embedTimer(false);
         //}
     } else if (hiFivePlatform) {
         if (window.location.href == "http://mousehunt.hi5.hitgrab.com/#" ||
@@ -541,11 +541,11 @@ function retrieveData() {
 
     // get next horn time
     if (browser == "firefox") {
-            nextActiveTime = unsafeWindow.user.next_activeturn_seconds;
-            isKingReward = unsafeWindow.user.has_puzzle;
-            baitQuantity = unsafeWindow.user.bait_quantity;
-            currentLocation = unsafeWindow.user.location;
-            NOBhasPuzzle = unsafeWindow.user.has_puzzle;
+        nextActiveTime = unsafeWindow.user.next_activeturn_seconds;
+        isKingReward = unsafeWindow.user.has_puzzle;
+        baitQuantity = unsafeWindow.user.bait_quantity;
+        currentLocation = unsafeWindow.user.location;
+        NOBhasPuzzle = unsafeWindow.user.has_puzzle;
     } else if (browser == "opera") {
         nextActiveTime = user.next_activeturn_seconds;
         isKingReward = user.has_puzzle;
@@ -556,7 +556,7 @@ function retrieveData() {
         isKingReward = (getPageVariableForChrome("user.has_puzzle").toString() == "false") ? false : true;
         baitQuantity = parseInt(getPageVariableForChrome("user.bait_quantity"));
         currentLocation = getPageVariableForChrome("user.location");
-            NOBhasPuzzle = user.has_puzzle;
+        NOBhasPuzzle = user.has_puzzle;
     } else {
         window.setTimeout(function() {
             reloadWithMessage("Browser not supported. Reloading...", false);
@@ -569,7 +569,7 @@ function retrieveData() {
         // fail to retrieve data, might be due to slow network
 
         // reload the page to see it fix the problem
-            window.setTimeout(function() {
+        window.setTimeout(function() {
             reloadWithMessage("Fail to retrieve data. Reloading...", false);
         }, 5000);
     } else {
@@ -737,7 +737,7 @@ function action() {
 
         if (isHornSounding == false) {
             // start timer
-                window.setTimeout(function() {
+            window.setTimeout(function() {
                 countdownTimer()
             }, timerRefreshInterval * 1000);
         }
@@ -1070,9 +1070,9 @@ function embedTimer(targetPage) {
                 holder.appendChild(timersElementToggle);
                 holder.appendChild(temp);
                 timerDivElement.appendChild(holder);
-                    timersElementToggle.addEventListener("click", function() {
-                        showHideTimers();
-                    }, false);
+                timersElementToggle.addEventListener("click", function() {
+                    showHideTimers();
+                }, false);
                 holder = null;
                 text = null;
                 temp = null;
@@ -1120,14 +1120,14 @@ function embedTimer(targetPage) {
                 loadTimersElement = null;
                 loadLinkToUpdate = null;
             } else {
-            	// try check if ajax was called
-            	if (doubleCheckLocation()) {
-            		exeScript();
-            		NOBinit();
-            	} else {
-            		$('.camp a')[0].addEventListener('click', function() {setTimeout(function() {$('.hgAppContainer div')[0].remove(); exeScript(); NOBinit();}, 1000);});
-            	}
-            	
+                // try check if ajax was called
+                if (doubleCheckLocation()) {
+                    exeScript();
+                    NOBinit();
+                } else {
+                    $('.camp a')[0].addEventListener('click', function() {setTimeout(function() {$('.hgAppContainer div')[0].remove(); exeScript(); NOBinit();}, 1000);});
+                }
+
                 // player currently navigating other page instead of hunter camp
                 var helpTextElement = document.createElement('div');
                 helpTextElement.setAttribute('id', 'helpTextElement');
@@ -1629,14 +1629,14 @@ function displayKingRewardSumTime(timeStr) {
 }
 
 function doubleCheckLocation() { //return true if location is camp page (this is to combat ajax loads)
-	var thePage = $('#mousehuntContainer')[0].className;
-	if (thePage == "PageCamp") {
-		thePage = null;
-		return true;
-	} else {
-		thePage = null;
-		return false;
-	}
+    var thePage = $('#mousehuntContainer')[0].className;
+    if (thePage == "PageCamp") {
+        thePage = null;
+        return true;
+    } else {
+        thePage = null;
+        return false;
+    }
 }
 // ################################################################################################
 //   Timer Function - End
@@ -1922,7 +1922,7 @@ function embedScript() {
         isNewUI = true;
     }
 
-	var hornButtonLink = document.getElementsByClassName(hornbutton)[0].firstChild;
+    var hornButtonLink = document.getElementsByClassName(hornbutton)[0].firstChild;
     var oriStr = hornButtonLink.getAttribute('onclick').toString();
     var index = oriStr.indexOf('return false;');
     var modStr = oriStr.substring(0, index) + 'soundedHorn();' + oriStr.substring(index);
@@ -1991,17 +1991,17 @@ function notify() {
         icon: 'http://3.bp.blogspot.com/_O2yZIhpq9E8/TBoAMw0fMNI/AAAAAAAAAxo/1ytaIxQQz4o/s1600/Subliminal+Message.JPG',
         body: "Kings Reward NOW"
     });
-    
+
     notification.onclick = function() {
-		window.open("https://www.mousehuntgame.com/");
-		notification.close();
-	}
+        window.open("https://www.mousehuntgame.com/");
+        notification.close();
+    }
 
     notification.onshow = function() {
         window.setTimeout(function() {
-			notification.close();
-		}, 5000);
-	}
+            notification.close();
+        }, 5000);
+    }
 }
 
 function playKingRewardSound() {
@@ -2023,7 +2023,7 @@ function playKingRewardSound() {
 
     if (autopopkr)
         window.setTimeout(function() {
-        alert("Kings Reward NOW");
+            alert("Kings Reward NOW");
         }, 2000);
 }
 
@@ -2080,59 +2080,59 @@ function checkResumeButton() {
     var found = false;
 
     /*var linkElementList = document.getElementsByTagName('img');
-    if (linkElementList) {
-        var i;
-        for (i = 0; i < linkElementList.length; ++i) {
-            // check if it is a resume button
-            if (linkElementList[i].getAttribute('src').indexOf("resume_hunting_blue.gif") != -1) {
-                // found resume button
+     if (linkElementList) {
+     var i;
+     for (i = 0; i < linkElementList.length; ++i) {
+     // check if it is a resume button
+     if (linkElementList[i].getAttribute('src').indexOf("resume_hunting_blue.gif") != -1) {
+     // found resume button
 
-                // simulate mouse click on the horn
-                var resumeElement = linkElementList[i].parentNode;
-                fireEvent(resumeElement, 'click');
-                resumeElement = null;
+     // simulate mouse click on the horn
+     var resumeElement = linkElementList[i].parentNode;
+     fireEvent(resumeElement, 'click');
+     resumeElement = null;
 
-                // reload url if click fail
-                window.setTimeout(function() {
-                    reloadWithMessage("Fail to click on resume button. Reloading...", false);
-                }, 6000);
+     // reload url if click fail
+     window.setTimeout(function() {
+     reloadWithMessage("Fail to click on resume button. Reloading...", false);
+     }, 6000);
 
-                // recheck if the resume button is click because some time even the url reload also fail
-                window.setTimeout(function() {
-                    checkResumeButton();
-                }, 10000);
+     // recheck if the resume button is click because some time even the url reload also fail
+     window.setTimeout(function() {
+     checkResumeButton();
+     }, 10000);
 
-                found = true;
-                break;
-            }
-        }
-        i = null;
-    }
+     found = true;
+     break;
+     }
+     }
+     i = null;
+     }
 
-    linkElementList = null;*/
-    
+     linkElementList = null;*/
+
     var krFormClass = $('form')[0].className;
     if (krFormClass.indexOf("noPuzzle") > -1) {
-		// found resume button
+        // found resume button
 
-		// simulate mouse click on the resume button
-		var resumeElement = $('.mousehuntPage-puzzle-form-complete-button')[0];
-		fireEvent(resumeElement, 'click');
-		resumeElement = null;
+        // simulate mouse click on the resume button
+        var resumeElement = $('.mousehuntPage-puzzle-form-complete-button')[0];
+        fireEvent(resumeElement, 'click');
+        resumeElement = null;
 
-		// reload url if click fail
+        // reload url if click fail
         window.setTimeout(function () {
-			reloadWithMessage("Fail to click on resume button. Reloading...", false);
-		}, 6000);
+            reloadWithMessage("Fail to click on resume button. Reloading...", false);
+        }, 6000);
 
-		// recheck if the resume button is click because some time even the url reload also fail
+        // recheck if the resume button is click because some time even the url reload also fail
         window.setTimeout(function () {
-			checkResumeButton();
-		}, 10000);
+            checkResumeButton();
+        }, 10000);
 
-		found = true;
-	}
-	krFormClass = null;
+        found = true;
+    }
+    krFormClass = null;
 
     try {
         return (found);
@@ -2155,14 +2155,14 @@ function trapCheck() {
 
     // simulate mouse click on the camp button
     /*var campElement = document.getElementsByClassName('campbutton')[0].firstChild;
-    fireEvent(campElement, 'click');
-      campElement = null;*/
+     fireEvent(campElement, 'click');
+     campElement = null;*/
 
     reloadWithMessage("Reloading page for trap check...", false);
     // reload the page if click on camp button fail
     /*window.setTimeout(function() {
-        reloadWithMessage("Fail to click on camp button. Reloading...", false);
-    }, 5000);*/
+     reloadWithMessage("Fail to click on camp button. Reloading...", false);
+     }, 5000);*/
 }
 
 // ################################################################################################
@@ -2381,37 +2381,34 @@ if (debug) console.log("RUN NOBinit()");
 $(window).load(NOBinit);
 
 function NOBinit() {
-        if (!NOBhasPuzzle) {
-            if (window.location.href == 'http://www.mousehuntgame.com/' ||
-                window.location.href == 'http://www.mousehuntgame.com/#' ||
-                window.location.href == 'http://www.mousehuntgame.com/?switch_to=standard' ||
-                window.location.href == 'https://www.mousehuntgame.com/' ||
-                window.location.href == 'https://www.mousehuntgame.com/#' ||
-                window.location.href == 'https://www.mousehuntgame.com/?switch_to=standard' ||
-                window.location.href.indexOf('mousehuntgame.com/turn.php') != -1 ||
-                window.location.href.indexOf('mousehuntgame.com/index.php') != -1 ||
-                window.location.href == 'http://www.mousehuntgame.com/canvas/' ||
-                window.location.href == 'http://www.mousehuntgame.com/canvas/#' ||
-                window.location.href == 'https://www.mousehuntgame.com/canvas/' ||
-                window.location.href == 'https://www.mousehuntgame.com/canvas/#' ||
-                window.location.href.indexOf('mousehuntgame.com/canvas/index.php') != -1 ||
-                window.location.href.indexOf('mousehuntgame.com/canvas/turn.php') != -1 ||
-                window.location.href.indexOf('mousehuntgame.com/canvas/?') != -1) {
-                NOBpage = true;
-            }
-
-            if (NOBpage) {
-            nobHTMLFetch();
-                createClockArea();
-                clockTick();
-                fetchGDocStuff();
-            setTimeout(function () {
-                    pingServer();
-                }, 30000);
-            }
+    if (!NOBhasPuzzle) {
+        if (window.location.href == 'http://www.mousehuntgame.com/' ||
+            window.location.href == 'http://www.mousehuntgame.com/#' ||
+            window.location.href == 'http://www.mousehuntgame.com/?switch_to=standard' ||
+            window.location.href == 'https://www.mousehuntgame.com/' ||
+            window.location.href == 'https://www.mousehuntgame.com/#' ||
+            window.location.href == 'https://www.mousehuntgame.com/?switch_to=standard' ||
+            window.location.href.indexOf('mousehuntgame.com/turn.php') != -1 ||
+            window.location.href.indexOf('mousehuntgame.com/index.php') != -1 ||
+            window.location.href == 'http://www.mousehuntgame.com/canvas/' ||
+            window.location.href == 'http://www.mousehuntgame.com/canvas/#' ||
+            window.location.href == 'https://www.mousehuntgame.com/canvas/' ||
+            window.location.href == 'https://www.mousehuntgame.com/canvas/#' ||
+            window.location.href.indexOf('mousehuntgame.com/canvas/index.php') != -1 ||
+            window.location.href.indexOf('mousehuntgame.com/canvas/turn.php') != -1 ||
+            window.location.href.indexOf('mousehuntgame.com/canvas/?') != -1) {
+            NOBpage = true;
         }
-    } catch (e) {
-        console.log("NOBinit() ERROR - " + e)
+
+        if (NOBpage) {
+            nobHTMLFetch();
+            createClockArea();
+            clockTick();
+            fetchGDocStuff();
+            setTimeout(function () {
+                pingServer();
+            }, 30000);
+        }
     }
 }
 
@@ -2772,8 +2769,8 @@ function pingServer() {
 }
 
 /*function hideMessage(time) {
-    var element = document.getElementById('NOBmessage');
-}*/
+ var element = document.getElementById('NOBmessage');
+ }*/
 
 function NOBraffle() {
     if (!($('.tabs a:eq(1)').length > 0))
