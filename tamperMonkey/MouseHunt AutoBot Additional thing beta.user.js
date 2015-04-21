@@ -65,21 +65,21 @@ $(window).load(NOBinit);
 
 function NOBinit() {
     if (!NOBhasPuzzle) {
-        if (window.location.href == "http://www.mousehuntgame.com/" ||
-            window.location.href == "http://www.mousehuntgame.com/#" ||
-            window.location.href == "http://www.mousehuntgame.com/?switch_to=standard" ||
-            window.location.href == "https://www.mousehuntgame.com/" ||
-            window.location.href == "https://www.mousehuntgame.com/#" ||
-            window.location.href == "https://www.mousehuntgame.com/?switch_to=standard" ||
-            window.location.href.indexOf("mousehuntgame.com/turn.php") != -1 ||
-            window.location.href.indexOf("mousehuntgame.com/index.php") != -1 ||
-            window.location.href == "http://www.mousehuntgame.com/canvas/" ||
-            window.location.href == "http://www.mousehuntgame.com/canvas/#" ||
-            window.location.href == "https://www.mousehuntgame.com/canvas/" ||
-            window.location.href == "https://www.mousehuntgame.com/canvas/#" ||
-            window.location.href.indexOf("mousehuntgame.com/canvas/index.php") != -1 ||
-            window.location.href.indexOf("mousehuntgame.com/canvas/turn.php") != -1 ||
-            window.location.href.indexOf("mousehuntgame.com/canvas/?") != -1) {
+            if (window.location.href == 'http://www.mousehuntgame.com/' ||
+                window.location.href == 'http://www.mousehuntgame.com/#' ||
+                window.location.href == 'http://www.mousehuntgame.com/?switch_to=standard' ||
+                window.location.href == 'https://www.mousehuntgame.com/' ||
+                window.location.href == 'https://www.mousehuntgame.com/#' ||
+                window.location.href == 'https://www.mousehuntgame.com/?switch_to=standard' ||
+                window.location.href.indexOf('mousehuntgame.com/turn.php') != -1 ||
+                window.location.href.indexOf('mousehuntgame.com/index.php') != -1 ||
+                window.location.href == 'http://www.mousehuntgame.com/canvas/' ||
+                window.location.href == 'http://www.mousehuntgame.com/canvas/#' ||
+                window.location.href == 'https://www.mousehuntgame.com/canvas/' ||
+                window.location.href == 'https://www.mousehuntgame.com/canvas/#' ||
+                window.location.href.indexOf('mousehuntgame.com/canvas/index.php') != -1 ||
+                window.location.href.indexOf('mousehuntgame.com/canvas/turn.php') != -1 ||
+                window.location.href.indexOf('mousehuntgame.com/canvas/?') != -1) {
             NOBpage = true;
         }
 

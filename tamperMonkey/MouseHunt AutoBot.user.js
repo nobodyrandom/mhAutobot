@@ -782,7 +782,7 @@ function countdownTimer() {
         fireEvent(document.getElementsByClassName('campbutton')[0].firstChild, 'click');
 
         // reload the page if click on camp button fail
-        window.setTimeout(function() {
+        window.setTimeout(function () {
             reloadWithMessage("Fail to click on camp button. Reloading...", false);
         }, 5000);
     } else if (pauseAtInvalidLocation && (huntLocation != currentLocation)) {
@@ -906,7 +906,7 @@ function countdownTimer() {
             // set king reward sum time
             displayKingRewardSumTime(timeFormatLong(lastKingRewardSumTime));
 
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 (countdownTimer)()
             }, timerRefreshInterval * 1000);
         }
@@ -973,7 +973,7 @@ function reloadWithMessage(msg, soundHorn) {
     displayTimer(msg, msg, msg, msg);
 
     // reload the page
-    setTimeout(function() {
+    setTimeout(function () {
         reloadPage(soundHorn)
     }, 1000);
 
