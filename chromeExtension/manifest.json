@@ -5,6 +5,7 @@
   "description": "An advance user script to automate sounding the hunter horn in MouseHunt application with the newest version supported and many other features and fixes. REVAMPED VERSION of ORIGINAL by Ooi",
   "version": "1.549.24",
   "author": "NobodyRandom",
+  "update_url": "",
   
   "content_scripts": [
 	{
