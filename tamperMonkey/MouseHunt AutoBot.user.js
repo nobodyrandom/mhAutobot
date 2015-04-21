@@ -1454,7 +1454,7 @@ if (document.getElementById(\'PlayKingRewardSoundInputTrue\').checked == true) {
 if (document.getElementById(\'KingRewardResumeInputTrue\').checked == true) { window.localStorage.setItem(\'KingRewardResume\', \'true\'); } else { window.localStorage.setItem(\'KingRewardResume\', \'false\'); }	\
 window.localStorage.setItem(\'KingRewardResumeTime\', document.getElementById(\'KingRewardResumeTimeInput\').value);	\
 if (document.getElementById(\'PauseLocationInputTrue\').checked == true) { window.localStorage.setItem(\'PauseLocation\', \'true\'); } else { window.localStorage.setItem(\'PauseLocation\', \'false\'); }	\
-if (document.getElementById(\'autopopkrTrue\').checked == true) { window.localStorage.setItem(\'autopopkr\', \'true\'); } else { window.localStorage.setItem(\'autopopkr\', \'false\'); }	\
+if (document.getElementById(\'autopopkrTrue\').checked == true) { window.localStorage.setItem(\'autoPopupKR\', \'true\'); } else { window.localStorage.setItem(\'autoPopupKR\', \'false\'); }	\
 ';
                 if (fbPlatform) {
                     if (secureConnection)
@@ -1597,9 +1597,9 @@ function loadPreferenceSettingFromStorage() {
     }
     pauseLocationTemp = undefined;
 
-    var autopopkrTemp = getStorage("autopopkr");
+    var autopopkrTemp = getStorage("autoPopupKR");
     if (autopopkrTemp == undefined || autopopkrTemp == null) {
-        setStorage("autopopkr", autopopkr.toString());
+        setStorage("autoPopupKR", autopopkr.toString());
     } else if (autopopkrTemp == true || autopopkrTemp.toLowerCase() == "true") {
         autopopkr = true;
     } else {

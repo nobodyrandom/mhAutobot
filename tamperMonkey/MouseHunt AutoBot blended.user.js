@@ -30,7 +30,7 @@ var hornTimeDelayMin = 10;
 var hornTimeDelayMax = 180;
 
 // // Bot aggressively by ignore all safety measure such as check horn image visible before sounding it. (true/false)
-// // Note: Highly recommended to turn off because it increase the chances of getting caugh in botting.
+// // Note: Highly recommended to turn off because it increase the chances of getting caught in botting.
 // // Note: It will ignore the hornTimeDelayMin and hornTimeDelayMax.
 // // Note: It may take a little bit extra of CPU processing power.
 var aggressiveMode = false;
@@ -64,7 +64,7 @@ var kingPauseTimeMax = 18000;
 var pauseAtInvalidLocation = true;
 
 // // CUSTOM Preference to popup on KR
-var autopopkr = true;
+var autoPopupKR = true;
 
 // == Basic User Preference Setting (End) ==
 
@@ -76,7 +76,7 @@ var autopopkr = true;
 // // Display timer and message in page title. (true/false)
 var showTimerInTitle = true;
 
-// // Embed a timer in page to show next hunter horn timer, highly recommanded to turn on. (true/false)
+// // Embed a timer in page to show next hunter horn timer, highly recommended to turn on. (true/false)
 // // Note: You may not access some option like pause at invalid location if you turn this off.
 var showTimerInPage = true;
 
@@ -140,7 +140,7 @@ var hornRetryMax = 10;
 var hornRetry = 0;
 var nextActiveTime = 900;
 var timerInterval = 2;
-var checkMouseResult = null;
+//var checkMouseResult = null;
 var mouseList = [];
 var eventLocation;
 var arming = false;
@@ -173,7 +173,7 @@ function exeScript() {
         console.debug('Class element "passive" not found');
         trapCheckTimeDiff = getStorage('TrapCheckTimeOffset');
         if (trapCheckTimeDiff == null) {
-            trapCheckTimeDiff = 00;
+            trapCheckTimeDiff = 0;
             setStorage("TrapCheckTimeOffset", trapCheckTimeDiff);
         }
     }
@@ -186,8 +186,9 @@ function exeScript() {
 
     if (showTimerInTitle) {
         // check if they are running in iFrame
+        var contentElement;
         if (window.location.href.indexOf("apps.facebook.com/mousehunt/") != -1) {
-            var contentElement = document.getElementById('pagelet_canvas_content');
+            contentElement = document.getElementById('pagelet_canvas_content');
             if (contentElement) {
                 var breakFrameDivElement = document.createElement('div');
                 breakFrameDivElement.setAttribute('id', 'breakFrameDivElement');
@@ -196,7 +197,7 @@ function exeScript() {
             }
             contentElement = undefined;
         } else if (window.location.href.indexOf("hi5.com/friend/games/MouseHunt") != -1) {
-            var contentElement = document.getElementById('apps-canvas-body');
+            contentElement = document.getElementById('apps-canvas-body');
             if (contentElement) {
                 var breakFrameDivElement = document.createElement('div');
                 breakFrameDivElement.setAttribute('id', 'breakFrameDivElement');
@@ -227,12 +228,8 @@ function exeScript() {
         hiFivePlatform = true;
     }
 
-    // check if user running in https secure connection
-    if (window.location.href.indexOf("https://") != -1) {
-        secureConnection = true;
-    } else {
-        secureConnection = false;
-    }
+    // check if user running in https secure connection, true/false
+    secureConnection = (window.location.href.indexOf("https://") != -1);
 
     if (fbPlatform) {
         if (window.location.href == "http://www.mousehuntgame.com/canvas/" ||
@@ -265,7 +262,7 @@ function exeScript() {
                 }, errorReloadTime * 1000);
             }
         } else {
-            // not in huntcamp, just show the title of autobot version
+            // not in hunters camp, just show the title of autobot version
             embedTimer(false);
         }
     } else if (mhPlatform) {
@@ -300,7 +297,7 @@ function exeScript() {
                 }, errorReloadTime * 1000);
             }
         } else {
-            // not in huntcamp, just show the title of autobot version
+            // not in hunters camp, just show the title of autobot version
             embedTimer(false);
         }
     } else if (mhMobilePlatform) {
@@ -343,7 +340,7 @@ function exeScript() {
                 }, errorReloadTime * 1000);
             }
         } else {
-            // not in huntcamp, just show the title of autobot version
+            // not in hunters camp, just show the title of autobot version
             embedTimer(false);
         }
     }
@@ -368,6 +365,7 @@ function checkIntroContainer() {
 }
 
 //// EMBEDING ENHANCED EDITION CODE
+// TODO: This thing was never fired =,=
 function ZTalgo() {
     retrieveMouseList();
     var intervalZT = setInterval(
@@ -442,7 +440,7 @@ function Halloween2014() {
     if (currentLocation.indexOf("Haunted Terrortories") > -1) {
         var areaName = document.getElementsByClassName('halloween2014Hud-areaDetails-name')[0].innerHTML;
         var warning = document.getElementsByClassName('halloween2014Hud-areaDetails-warning active').length;
-        var isWarning = (warning > 0) ? true : false;
+        var isWarning = (warning > 0);
         console.debug('Current Area Name: ' + areaName + " Warning: " + isWarning);
         if (isWarning) {
             var trickContainer = document.getElementsByClassName('halloween2014Hud-bait trick_cheese clear-block')[0];
@@ -699,7 +697,7 @@ function gnawnianExpress(load) {
 				var attacking = document.getElementsByClassName('attacked');
 				for (var i = 0; i < attacking.length; i++) {
 					if (attacking[i].tagName == 'DIV')
-						attacking = attacking[i].className.substr(0, attacking[i].className.indexOf(' '));;
+						attacking = attacking[i].className.substr(0, attacking[i].className.indexOf(' '));
 				}
 				console.debug("Raiders are attacking " + attacking);
 				switch (attacking) {
@@ -756,6 +754,7 @@ function retrieveMouseList() {
     return;
 }
 
+// TODO: This stupid thing is part of zugzwags thing
 function checkMouse(mouseName) {
     for (var i = 0; i < mouseList.length; ++i) {
         if (mouseList[i].indexOf(mouseName) > -1) {
@@ -800,7 +799,7 @@ function loadTrain(location, load) {
 				case 'canyon':
 					var timeLeft = document.getElementsByClassName('phaseTimer')[0].innerText.substr(10);
 					// Fire only when time left is less than 16 mins :P (needs checking if works)
-					if(parseInt(temp.substr(0, temp.indexOf(':'))) == 0 && parseInt(temp.substr(temp.indexOf(':') + 1)) <= 16)
+					if(parseInt(timeLeft.substr(0, timeLeft.indexOf(':'))) == 0 && parseInt(timeLeft.substr(timeLeft.indexOf(':') + 1)) <= 16)
 						fireEvent(document.getElementsByClassName('phaseButton')[0], 'click');
 					break;
 				default:
@@ -825,7 +824,7 @@ function checkThenArm(sort, category, name) //category = weapon/base/charm/trink
         var tempName;
         var userVariable = getPageVariableForChrome("user." + category + "_name");
         
-        // If current setup is in one of the 'best', this stupid thing assumes its OK =,=
+        // TODO: If current setup is in one of the 'best', this stupid thing assumes its OK =,=
        if (sort == 'best') {
             for (var i = 0; i < name.length; i++) {
                 if (userVariable.indexOf(name[i]) == 0) {
@@ -880,7 +879,7 @@ function checkThenArm(sort, category, name) //category = weapon/base/charm/trink
         	tryingToArm = name;
             var intervalCTA = setInterval(
                 function() {
-                    if (arming == false) {
+                    if (!arming) {
                     	console.debug("Queueing arming - " + name);
                         clickThenArmTrapInterval(sort, category, name);
                         clearInterval(intervalCTA);
@@ -896,7 +895,7 @@ function clickThenArmTrapInterval(sort, trap, name) //sort = power/luck/attracti
     {
     	// Process trap arming queue
         clickTrapSelector(trap);
-        var index;
+        //var index;
         var sec = 5;
         var intervalCTATI = setInterval(
             function() {
@@ -982,6 +981,7 @@ function clickTrapSelector(strSelect) //strSelect = weapon/base/charm/trinket/ba
         return (console.debug("Trap selector: " + strSelect + " clicked"));
     }
 
+// TODO: this thing is never fired
 function objToString(obj, str) {
         return str = obj.data;
 }
@@ -1061,7 +1061,7 @@ function retrieveDataFirst() {
                 hasPuzzleStartIndex += 12;
                 var hasPuzzleEndIndex = scriptString.indexOf(",", hasPuzzleStartIndex);
                 var hasPuzzleString = scriptString.substring(hasPuzzleStartIndex, hasPuzzleEndIndex);
-                isKingReward = (hasPuzzleString == 'false') ? false : true;
+                isKingReward = (hasPuzzleString != 'false');
 
                 gotPuzzle = true;
 
@@ -1101,7 +1101,6 @@ function retrieveDataFirst() {
 
             scriptString = undefined;
         }
-        i = undefined;
     }
     scriptElementList = undefined;
 
@@ -1172,7 +1171,7 @@ function retrieveData() {
         currentLocation = user.location;
     } else if (browser == "chrome") {
         nextActiveTime = parseInt(getPageVariableForChrome("user.next_activeturn_seconds"));
-        isKingReward = (getPageVariableForChrome("user.has_puzzle").toString() == "false") ? false : true;
+        isKingReward = (getPageVariableForChrome("user.has_puzzle").toString() != "false");
         baitQuantity = parseInt(getPageVariableForChrome("user.bait_quantity"));
         currentLocation = getPageVariableForChrome("user.location");
     } else {
@@ -1306,21 +1305,21 @@ function action() {
 
         if (fbPlatform) {
             if (secureConnection) {
-                displayLocation("<font color='red'>" + currentLocation + "</font> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='https://www.mousehuntgame.com/canvas/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
+                displayLocation("<span style='color: red; '>" + currentLocation + "</span> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='https://www.mousehuntgame.com/canvas/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
             } else {
-                displayLocation("<font color='red'>" + currentLocation + "</font> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='http://www.mousehuntgame.com/canvas/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
+                displayLocation("<span style='color: red; '>" + currentLocation + "</span> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='http://www.mousehuntgame.com/canvas/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
             }
         } else if (hiFivePlatform) {
             if (secureConnection) {
-                displayLocation("<font color='red'>" + currentLocation + "</font> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='https://mousehunt.hi5.hitgrab.com/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
+                displayLocation("<span style='color: red; '>" + currentLocation + "</span> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='https://mousehunt.hi5.hitgrab.com/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
             } else {
-                displayLocation("<font color='red'>" + currentLocation + "</font> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='http://mousehunt.hi5.hitgrab.com/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
+                displayLocation("<span style='color: red; '>" + currentLocation + "</span> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='http://mousehunt.hi5.hitgrab.com/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
             }
         } else if (mhPlatform) {
             if (secureConnection) {
-                displayLocation("<font color='red'>" + currentLocation + "</font> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='https://www.mousehuntgame.com/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
+                displayLocation("<span style='color: red; '>" + currentLocation + "</span> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='https://www.mousehuntgame.com/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
             } else {
-                displayLocation("<font color='red'>" + currentLocation + "</font> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='http://www.mousehuntgame.com/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
+                displayLocation("<span style='color: red; '>" + currentLocation + "</span> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='http://www.mousehuntgame.com/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
             }
         }
 
@@ -1341,9 +1340,9 @@ function action() {
         var isHornSounding = false;
 
         // check if the horn image is visible
+        //var headerElement = document.getElementById('header');
         var headerElement;
-        headerElement = document.getElementById('header');
-        headerElement = (strHornButton == 'hornbutton') ? document.getElementById('header') : headerElement = document.getElementById('mousehuntHud').firstChild;
+        headerElement = (strHornButton == 'hornbutton') ? document.getElementById('header') : document.getElementById('mousehuntHud').firstChild;
         if (headerElement) {
             var headerStatus = headerElement.getAttribute('class');
             if (headerStatus.indexOf("hornready") != -1) {
@@ -2018,7 +2017,7 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '</td>';
                 preferenceHTMLStr += '</tr>';
             }
-            if (autopopkr) {
+            if (autoPopupKR) {
                 preferenceHTMLStr += '<tr>';
                 preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
                 preferenceHTMLStr += '<a title="Auto Popup on KR"><b>Auto KR Popup</b></a>';
@@ -2079,7 +2078,7 @@ if (document.getElementById(\'PlayKingRewardSoundInputTrue\').checked == true) {
 if (document.getElementById(\'KingRewardResumeInputTrue\').checked == true) { window.localStorage.setItem(\'KingRewardResume\', \'true\'); } else { window.localStorage.setItem(\'KingRewardResume\', \'false\'); }	\
 window.localStorage.setItem(\'KingRewardResumeTime\', document.getElementById(\'KingRewardResumeTimeInput\').value);	\
 if (document.getElementById(\'PauseLocationInputTrue\').checked == true) { window.localStorage.setItem(\'PauseLocation\', \'true\'); } else { window.localStorage.setItem(\'PauseLocation\', \'false\'); }	\
-if (document.getElementById(\'autopopkrTrue\').checked == true) { window.localStorage.setItem(\'autopopkr\', \'true\'); } else { window.localStorage.setItem(\'autopopkr\', \'false\'); }	\
+if (document.getElementById(\'autopopkrTrue\').checked == true) { window.localStorage.setItem(\'autoPopupKR\', \'true\'); } else { window.localStorage.setItem(\'autoPopupKR\', \'false\'); }	\
 ';
             if (fbPlatform) {
                 if (secureConnection)
@@ -2219,13 +2218,13 @@ function loadPreferenceSettingFromStorage() {
     }
     pauseLocationTemp = undefined;
 
-    var autopopkrTemp = getStorage("autopopkr");
+    var autopopkrTemp = getStorage("autoPopupKR");
     if (autopopkrTemp == undefined || autopopkrTemp == null) {
-        setStorage("autopopkr", autopopkr.toString());
+        setStorage("autoPopupKR", autoPopupKR.toString());
     } else if (autopopkrTemp == true || autopopkrTemp.toLowerCase() == "true") {
-        autopopkr = true;
+        autoPopupKR = true;
     } else {
-        autopopkr = false;
+        autoPopupKR = false;
     }
     autopopkrTemp = undefined;
 
@@ -2713,7 +2712,7 @@ function playKingRewardSound() {
         snippet = null;
     }
 
-    if (autopopkr)
+    if (autoPopupKR)
         window.setTimeout(function () {
         alert("Kings Reward NOW");
         }, 2000);
