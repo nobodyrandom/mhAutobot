@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP for BETA UI
 // @author      NobodyRandom
-// @version    	2.0.3y
+// @version    	2.0.5y
 // @description BETA MOUSEHUNT AUTOBOT for the BETA MH UI - Currently the most advanced script for automizing MouseHunt. Supports ALL new areas and FIREFOX.
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @namespace   https://greasyfork.org/users/6398
@@ -120,12 +120,12 @@ var nextActiveTime = 900;
 var timerInterval = 2;
 
 // element in page
-var titleElement;
+//var titleElement;
 var nextHornTimeElement;
 var checkTimeElement;
 var kingTimeElement;
 var lastKingRewardSumTimeElement;
-var optionElement;
+//var optionElement;
 var travelElement;
 var hornbutton = 'mousehuntHud-huntersHorn-container';
 var campbutton = 'camp';
@@ -133,10 +133,11 @@ var header = 'mousehuntHud-top';
 var isNewUI = false;
 
 // NOB vars
+var debug = true;
 var addonScriptVer = '1.2.024';
 //var NOBhasPuzzle = unsafeWindow.user.has_puzzle;
 var NOBhasPuzzle;
-var NOBclockLoaded = false;
+//var NOBclockLoaded = false;
 var NOBpage = false;
 var mapRequestFailed = false;
 var clockTicking = false;
@@ -186,12 +187,14 @@ function exeScript() {
         enableTrapCheck = false;
     }
 
+    var contentElement;
+    var breakFrameDivElement;
     if (showTimerInTitle) {
         // check if they are running in iFrame
         if (window.location.href.indexOf("apps.facebook.com/mousehunt/") != -1) {
-            var contentElement = document.getElementById('pagelet_canvas_content');
+            contentElement = document.getElementById('pagelet_canvas_content');
             if (contentElement) {
-                var breakFrameDivElement = document.createElement('div');
+                breakFrameDivElement = document.createElement('div');
                 breakFrameDivElement.setAttribute('id', 'breakFrameDivElement');
                 breakFrameDivElement.innerHTML = "Timer cannot show on title page. You can <a href='http://www.mousehuntgame.com/canvas/'>run MouseHunt without iFrame (Facebook)</a> to enable timer on title page";
                 contentElement.parentNode.insertBefore(breakFrameDivElement, contentElement);
@@ -2593,13 +2596,19 @@ function nobStopLoading(name) {
 function NOBscript(qqEvent) {
     if (NOBpage) {
         var NOBdata = nobGet('data');
-        var mapThere = document.getElementById('hudmapitem').style.cssText;
-        if (mapThere == 'display: none;') {
-            mapThere = false;
-            console.log("No map, using HTML data now");
+        var mapThere = document.getElementById('hudmapitem');
+        if (mapThere !== null) {
+            mapThere = mapThere.style.cssText;
+            if (mapThere == 'display: none;') {
+                mapThere = false;
+                console.log("No map, using HTML data now");
+            } else {
+                mapThere = true;
+            }
         } else {
-            mapThere = true;
+            mapThere = false;
         }
+
         if (NOBdata != null || NOBdata != undefined) {
             if (!mapRequestFailed && mapThere) {
                 mapRequest(function (output) {
@@ -2625,7 +2634,7 @@ function NOBscript(qqEvent) {
             NOBhtmlFetch();
         }
     }
-};
+}
 
 unsafeWindow.showHideTimers = function () {
     $("#loadTimersElement").toggle();
@@ -2645,7 +2654,7 @@ function NOBtravel(location) {
             console.log(a, b, c);
         });
     }
-};
+}
 
 // Update + message fetch
 function fetchGDocStuff() {
@@ -2772,7 +2781,7 @@ function pingServer() {
  var element = document.getElementById('NOBmessage');
  }*/
 
-function NOBraffle() {
+unsafeWindow.NOBraffle = function() {
     if (!($('.tabs a:eq(1)').length > 0))
         $('#hgbar_messages').click();
     //messenger.UI['notification'].togglePopup();
