@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP chrome ext ver
 // @author      NobodyRandom
-// @version    	2.0.1c
+// @version    	2.0.2c
 // @description Currently the most advanced script for automizing MouseHunt. Supports ALL new areas and FIREFOX. Revamped version of original by Ooi - Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require		https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @namespace   https://greasyfork.org/users/6398
@@ -175,10 +175,10 @@ var LOCATION_TIMERS = [
 // start executing script
 var debug = true;
 if (debug) console.log('STARTING SCRIPT - ver: ' + scriptVersion);
-if (window.top != window.self) {
+/*if (window.top != window.self) {
     if (debug) console.log('In IFRAME');
-    return;
-}
+    //return;
+}*/
 exeScript();
 
 function exeScript() {

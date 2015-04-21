@@ -3,44 +3,45 @@
 
   "name": "MouseHunt AutoBot REVAMP chrome ext ver",
   "description": "An advance user script to automate sounding the hunter horn in MouseHunt application with the newest version supported and many other features and fixes. REVAMPED VERSION of ORIGINAL by Ooi",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "author": "NobodyRandom",
   "update_url": "https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/chromeExtensionUpdate.xml",
-  
+
   "content_scripts": [
 	{
 	  "matches": [
-	  "*://*.mousehuntgame.com/*",
-	  "*://mousehuntgame.com/*",
-	  "*://apps.facebook.com/mousehunt/*",
-	  "*://hi5.com/friend/games/MouseHunt*",
-	  "*://mousehunt.hi5.hitgrab.com/*"
+		"*://*.mousehuntgame.com/*",
+		"*://mousehuntgame.com/*",
+		"*://apps.facebook.com/mousehunt/*",
+		"*://hi5.com/friend/games/MouseHunt*",
+		"*://mousehunt.hi5.hitgrab.com/*"
 	  ],
 	  "include_globs": [
-	  "http://mousehuntgame.com/*",
-	  "https://mousehuntgame.com/*",
-	  "http://www.mousehuntgame.com/*",
-	  "https://www.mousehuntgame.com/*",
-	  "http://apps.facebook.com/mousehunt/*",
-	  "https://apps.facebook.com/mousehunt/*",
-	  "http://hi5.com/friend/games/MouseHunt/*",
-	  "http://mousehunt.hi5.hitgrab.com/*"
+		"http://mousehuntgame.com/*",
+		"https://mousehuntgame.com/*",
+		"http://www.mousehuntgame.com/*",
+		"https://www.mousehuntgame.com/*",
+		"http://apps.facebook.com/mousehunt/*",
+		"https://apps.facebook.com/mousehunt/*",
+		"http://hi5.com/friend/games/MouseHunt/*",
+		"http://mousehunt.hi5.hitgrab.com/*"
 	  ],
 	  "js": [
-	  "MouseHunt AutoBot chrome injector.js"
+		"MouseHunt AutoBot chrome injector.js"
 	  ],
 	  "run_at": "document_end",
 	  "all_frames": true
 	}
   ],
-  
+
   "web_accessible_resources": [
-  "MouseHunt%20AutoBot.user.js",
-  "MouseHunt%20AutoBot%20Additional%20thing.user.js",
-  "https://github.com/nobodyrandom/mhAutobot/raw/master/tamperMonkey/MouseHunt%20AutoBot.user.js",
-  "https://github.com/nobodyrandom/mhAutobot/raw/master/tamperMonkey/MouseHunt%20AutoBot%20Additional%20thing.user.js"
+	"MouseHunt%20AutoBot.user.js",
+	"MouseHunt%20AutoBot%20Additional%20thing.user.js",
+	"parse-1.4.2.min.js",
+	"https://github.com/nobodyrandom/mhAutobot/raw/master/tamperMonkey/MouseHunt%20AutoBot.user.js",
+	"https://github.com/nobodyrandom/mhAutobot/raw/master/tamperMonkey/MouseHunt%20AutoBot%20Additional%20thing.user.js"
   ],
-  
+
   "permissions": [
 	"activeTab",
 	"tabs",
