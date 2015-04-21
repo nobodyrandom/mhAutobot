@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name        MouseHunt AutoBot REVAMP
+// @name        MouseHunt AutoBot REVAMP chrome ext ver
 // @author      NobodyRandom
 // @version    	2.0.1c
 // @description Currently the most advanced script for automizing MouseHunt. Supports ALL new areas and FIREFOX. Revamped version of original by Ooi - Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
