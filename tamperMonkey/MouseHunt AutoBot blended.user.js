@@ -186,11 +186,11 @@ function exeScript() {
 
     if (showTimerInTitle) {
         // check if they are running in iFrame
-        var contentElement;
+        var contentElement, breakFrameDivElement;
         if (window.location.href.indexOf("apps.facebook.com/mousehunt/") != -1) {
             contentElement = document.getElementById('pagelet_canvas_content');
             if (contentElement) {
-                var breakFrameDivElement = document.createElement('div');
+                breakFrameDivElement = document.createElement('div');
                 breakFrameDivElement.setAttribute('id', 'breakFrameDivElement');
                 breakFrameDivElement.innerHTML = "Timer cannot show on title page. You can <a href='http://www.mousehuntgame.com/canvas/'>run MouseHunt without iFrame (Facebook)</a> to enable timer on title page";
                 contentElement.parentNode.insertBefore(breakFrameDivElement, contentElement);
@@ -199,12 +199,12 @@ function exeScript() {
         } else if (window.location.href.indexOf("hi5.com/friend/games/MouseHunt") != -1) {
             contentElement = document.getElementById('apps-canvas-body');
             if (contentElement) {
-                var breakFrameDivElement = document.createElement('div');
+                breakFrameDivElement = document.createElement('div');
                 breakFrameDivElement.setAttribute('id', 'breakFrameDivElement');
                 breakFrameDivElement.innerHTML = "Timer cannot show on title page. You can <a href='http://mousehunt.hi5.hitgrab.com/'>run MouseHunt without iFrame (Hi5)</a> to enable timer on title page";
                 contentElement.parentNode.insertBefore(breakFrameDivElement, contentElement);
             }
-            contentElement = undefined;
+            contentElement = breakFrameDivElement = undefined;
         }
     }
 
@@ -826,7 +826,8 @@ function checkThenArm(sort, category, name) //category = weapon/base/charm/trink
         
         // TODO: If current setup is in one of the 'best', this stupid thing assumes its OK =,=
        if (sort == 'best') {
-            for (var i = 0; i < name.length; i++) {
+           var i;
+            for (i = 0; i < name.length; i++) {
                 if (userVariable.indexOf(name[i]) == 0) {
                     trapArmed = true;
                     break;
@@ -836,12 +837,13 @@ function checkThenArm(sort, category, name) //category = weapon/base/charm/trink
             trapArmed = (userVariable.indexOf(name) == 0);
         }
 
-		// OVERRIDE FOR AJAX (NEED REDO ASAP, but works for now)
+		// OVERRIDE FOR AJAX (NEED REDO ASAP, but works for now) - charms
 		var retryPageVariable = document.getElementById('hud_trapLabel').innerText;
 		if (retryPageVariable == "Charm:" && category == "trinket") {
 			var theCharmArmed = document.getElementById('hud_trapPower').innerText;
 			if (sort == 'best') {
-				for (var i = 0; i < name.length; i++) {
+                var i;
+				for (i = 0; i < name.length; i++) {
 					//console.log(theCharmArmed + " + " + name[i]);
 					
 					if (name[i].length > 13) {
@@ -871,7 +873,9 @@ function checkThenArm(sort, category, name) //category = weapon/base/charm/trink
 				}
 			}
 			//trapArmed = true;
-		}
+		} else if (category == 'weapon' || category == 'base' || category == 'bait') {
+
+        }
 
 		// Try to queue trap arming
 		console.log("Last run: " + tryingToArm + ", this run: " + name);
