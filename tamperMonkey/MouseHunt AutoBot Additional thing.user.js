@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.2.026
+// @version    	1.2.027
 // @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp)
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -17,7 +17,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.2.026';
+unsafeWindow.addonScriptVer = '1.2.027';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -59,9 +59,9 @@ var LOCATION_TIMERS = [
 
 // SETTING BASE VARS DONE ******************************* INIT AJAX CALLS AND INIT CALLS
 // Function calls after page LOAD
-$(window).load(NOBinit);
+$(window).load(nobInit);
 
-function NOBinit() {
+function nobInit() {
     if (!NOBhasPuzzle) {
         if (window.location.href == "http://www.mousehuntgame.com/" ||
             window.location.href == "http://www.mousehuntgame.com/#" ||
@@ -82,7 +82,7 @@ function NOBinit() {
         }
 
         if (NOBpage) {
-            NOBhtmlFetch();
+            nobHTMLFetch();
             createClockArea();
             clockTick();
             fetchGDocStuff();
@@ -111,7 +111,7 @@ function checkIntroContainer() {
     }
 }
 
-function NOBajaxGet(url, callback, throwError) {
+function nobAjaxGet(url, callback, throwError) {
     var NOBhasPuzzle = user.has_puzzle;
     if (!NOBhasPuzzle) {
         jQuery.ajax({
@@ -130,7 +130,7 @@ function NOBajaxGet(url, callback, throwError) {
     }
 }
 
-function NOBajaxPost(url, data, callback, throwError) {
+function nobAjaxPost(url, data, callback, throwError) {
     var NOBhasPuzzle = user.has_puzzle;
     if (!NOBhasPuzzle) {
         jQuery.ajax({
@@ -150,7 +150,7 @@ function NOBajaxPost(url, data, callback, throwError) {
     }
 }
 
-function UpdateTimer(timeleft, inhours) {
+function updateTimer(timeleft, inhours) {
     var ReturnValue = "";
 
     var FirstPart, SecondPart, Size;
@@ -178,20 +178,20 @@ function UpdateTimer(timeleft, inhours) {
     return ReturnValue;
 }
 
-function GDoc(items, type) {
+function nobGDoc(items, type) {
     var dataSend = JSON.parse(items);
     dataSend.type = type;
     var dataSendString = JSON.stringify(dataSend);
     var sheet = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec";
 
-    NOBajaxPost(sheet, dataSendString, function(data) {
+    nobAjaxPost(sheet, dataSendString, function(data) {
         //console.log(data);
     }, function(a, b, c) {
         console.log(b)
     });
 }
 
-function NOBhtmlFetch() {
+function nobHTMLFetch() {
     var value = document.documentElement.innerHTML;
     if (value != null) {
         if (typeof value == "string") {
@@ -201,26 +201,26 @@ function NOBhtmlFetch() {
 
             if (StartPos != -1) {
                 var FullObjectText = value.substring(StartPos + 7, EndPos + 1);
-                NOBstore(JSON.parse(FullObjectText), "data");
+                nobStore(JSON.parse(FullObjectText), "data");
             }
         } else if (typeof value == "object") {
-            NOBstore(value, "data");
+            nobStore(value, "data");
         }
     }
     value = undefined;
 }
 
-function NOBstore(data, type) {
+function nobStore(data, type) {
     data = JSON.stringify(data);
     var name = "NOB-" + type;
     localStorage.setItem(name, data);
 }
 
-function NOBget(type) {
+function nobGet(type) {
     return localStorage.getItem('NOB-' + type);
 }
 
-function MapRequest(handleData) {
+function mapRequest(handleData) {
     var url = "https://www.mousehuntgame.com/managers/ajax/users/relichunter.php";
     var dataSend = {
         'action': 'info',
@@ -244,7 +244,7 @@ function MapRequest(handleData) {
     });
 }
 
-function NOBloading(location, name) {
+function nobLoading(location, name) {
     var element = document.getElementById(location);
     if (counter < 10) {
         for (var i = 0; i < counter; i++) {
@@ -258,18 +258,18 @@ function NOBloading(location, name) {
     counter++;
 
     timeoutVar1 = setTimeout(function() {
-        NOBloading(location);
+        nobLoading(location);
     }, 1000);
 }
 
-function NOBstopLoading(name) {
+function nobStopLoading(name) {
     clearTimeout(timeoutVar1);
 }
 
 // VARS DONE ******************************* COMMENCE CODE
 unsafeWindow.nobScript = function(qqEvent) {
     if (NOBpage) {
-        var NOBdata = NOBget('data');
+        var NOBdata = nobGet('data');
         var mapThere = document.getElementById('hudmapitem').style.cssText;
         if (mapThere == 'display: none;') {
             mapThere = false;
@@ -279,27 +279,27 @@ unsafeWindow.nobScript = function(qqEvent) {
         }
         if (NOBdata != null || NOBdata != undefined) {
             if (!mapRequestFailed && mapThere) {
-                MapRequest(function(output) {
+                mapRequest(function(output) {
                     if (output.status == 200 || output.status == undefined) {
-                        NOBstore(output, "data");
-                        GDoc(JSON.stringify(output), "map");
+                        nobStore(output, "data");
+                        nobGDoc(JSON.stringify(output), "map");
                     } else {
                         console.log(output);
                         mapRequestFailed = true;
-                        NOBhtmlFetch();
-                        output = NOBget('data');
-                        GDoc(output, "user");
+                        nobHTMLFetch();
+                        output = nobGet('data');
+                        nobGDoc(output, "user");
                     }
                 });
             } else {
                 console.log("Map fetch failed using USER data from html (" + mapRequestFailed + ", " + mapThere + ")");
-                NOBhtmlFetch();
-                var output = NOBget('data');
-                GDoc(output, "user");
+                nobHTMLFetch();
+                var output = nobGet('data');
+                nobGDoc(output, "user");
             }
         } else {
             console.log("Data is not found, doing HTML fetch now.");
-            NOBhtmlFetch();
+            nobHTMLFetch();
         }
     }
 }
@@ -308,7 +308,7 @@ unsafeWindow.showHideTimers = function() {
     $("#loadTimersElement").toggle();
 }
 
-unsafeWindow.NOBtravel = function(location) {
+unsafeWindow.nobTravel = function(location) {
     if (NOBpage) {
         var url = "https://www.mousehuntgame.com/managers/ajax/users/changeenvironment.php";
         var data = {
@@ -316,7 +316,7 @@ unsafeWindow.NOBtravel = function(location) {
             "destination": location,
             'uh': user.unique_hash
         };
-        NOBajaxPost(url, data, function(r) {
+        nobAjaxPost(url, data, function(r) {
             console.log(r);
         }, function(a, b, c) {
             console.log(a, b, c);
@@ -332,9 +332,9 @@ function fetchGDocStuff() {
         var checkVer;
         var url = 'https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=all';
         document.getElementById('NOBmessage').innerHTML = "Loading";
-        NOBloading('NOBmessage');
-        NOBajaxGet(url, function(text) {
-            NOBstopLoading();
+        nobLoading('NOBmessage');
+        nobAjaxGet(url, function(text) {
+            nobStopLoading();
             text = JSON.parse(text);
             // MESSAGE PLACING
             message = text.message;
@@ -351,7 +351,7 @@ function fetchGDocStuff() {
             }
         }, function(a, b, c) {
             setTimeout(function() {fetchGDocStuff();}, 300000);
-            NOBstopLoading();
+            nobStopLoading();
             console.log(b + ' error - Google Docs is now not working qq');
             if (b == "timeout")
                 document.getElementById('NOBmessage').innerHTML = "Google Docs is being slow again ._. retrying in 5 mins.";
@@ -361,7 +361,7 @@ function fetchGDocStuff() {
 
 function pingServer() {
     if (NOBpage) {
-        var theData = JSON.parse(NOBget('data'));
+        var theData = JSON.parse(nobGet('data'));
         if (theData.user) {
             theData = theData.user;
         }
@@ -456,7 +456,7 @@ function showNOBMessage() {
     document.getElementById('NOBmessage').style.display = 'block'
 }
 
-unsafeWindow.NOBraffle = function() {
+unsafeWindow.nobRaffle = function() {
     if (!($(".tabs a:eq(1)").length > 0))
         $("#hgbar_messages").click();
     //messenger.UI['notification'].togglePopup();
@@ -513,7 +513,7 @@ function clockTick() {
         // Clock needs to be on and is already ticking
     } else {
         // Clock does not need to be on
-        NOBcalculateTime();
+        nobCalculateTime();
     }
     setTimeout(function() {
         clockTick();
@@ -521,13 +521,13 @@ function clockTick() {
 }
 
 function updateTime() {
-    var timeLeft = JSON.parse(NOBget('relic'));
+    var timeLeft = JSON.parse(nobGet('relic'));
     if (timeLeft > 0) {
         timeLeft--;
         var element = document.getElementById('NOBrelic');
-        element.innerHTML = UpdateTimer(timeLeft, true);
-        NOBstore(timeLeft, 'relic');
-        NOBcalculateOfflineTimers();
+        element.innerHTML = updateTimer(timeLeft, true);
+        nobStore(timeLeft, 'relic');
+        nobCalculateOfflineTimers();
         clockTicking = true;
 
         setTimeout(function() {
@@ -539,24 +539,24 @@ function updateTime() {
     }
 }
 
-function NOBcalculateTime(runOnly) {
+function nobCalculateTime(runOnly) {
     if (runOnly != 'relic' & runOnly != 'toxic' & runOnly != 'none')
         runOnly = 'all';
 
     var CurrentTime = currentTimeStamp();
     if (runOnly == 'relic' && (typeof LOCATION_TIMERS[3][1].url != 'undefined' || LOCATION_TIMERS[3][1].url != 'undefined')) {
         var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=relic";
-        NOBajaxGet(url, function(text) {
+        nobAjaxGet(url, function(text) {
             text = JSON.parse(text);
             if (text.result == "error") {
                 var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
                 child.innerHTML = "<font color='red'>" + text.error + "</font>";
             } else {
                 var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
-                child.innerHTML = "Relic hunter now in: <font color='green'>" + text.location + "</font> \~ Next move time: <span id='NOBrelic'>" + UpdateTimer(text.next_move, true);
+                child.innerHTML = "Relic hunter now in: <font color='green'>" + text.location + "</font> \~ Next move time: <span id='NOBrelic'>" + updateTimer(text.next_move, true);
                 if (text.next_move > 0) {
                     clockTicking = true;
-                    NOBstore(text.next_move, 'relic');
+                    nobStore(text.next_move, 'relic');
                     updateTime();
                     clockNeedOn = true;
                 } else {
@@ -572,7 +572,7 @@ function NOBcalculateTime(runOnly) {
 
     if (runOnly == 'toxic' && (typeof LOCATION_TIMERS[4][1].url != 'undefined' || LOCATION_TIMERS[4][1].url != 'undefined')) {
         var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=toxic";
-        NOBajaxGet(url, function(text) {
+        nobAjaxGet(url, function(text) {
             text = JSON.parse(text);
             if (text.result == "error") {
                 var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
@@ -605,10 +605,10 @@ function NOBcalculateTime(runOnly) {
     }
 
     if (runOnly == 'all')
-        NOBcalculateOfflineTimers();
+        nobCalculateOfflineTimers();
 }
 
-function NOBcalculateOfflineTimers() {
+function nobCalculateOfflineTimers() {
     var CurrentTime = currentTimeStamp();
     for (i = 0; i < 3; i++) {
         var CurrentName = -1;
@@ -649,7 +649,7 @@ function NOBcalculateOfflineTimers() {
             content += ' (' + LOCATION_TIMERS[i][1].effective[CurrentName] + ')';
         }
 
-        content += ' ~ For ' + UpdateTimer(SeasonRemaining, true);
+        content += ' ~ For ' + updateTimer(SeasonRemaining, true);
         seasonalDiv.innerHTML = content;
     }
 }

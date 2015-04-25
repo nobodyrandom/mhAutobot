@@ -1123,7 +1123,7 @@ function embedTimer(targetPage) {
                     text = ' &#126; <a href="javascript:window.open(\'https://docs.google.com/spreadsheet/ccc?key=0Ag_KH_nuVUjbdGtldjJkWUJ4V1ZpUDVwd1FVM0RTM1E#gid=5\');" target=_blank>Go to GDoc</a>';
                     var tempDiv = document.createElement('span');
                     tempDiv.innerHTML = text;
-                    text = ' &#126; <a id="NOBraffle" href="javascript: NOBraffle();">Return raffle tickets</a>';
+                    text = ' &#126; <a id="nobRaffle" href="javascript: nobRaffle();">Return raffle tickets</a>';
                     tempSpan2 = document.createElement('span');
                     tempSpan2.innerHTML = text;
                     var tempSpan = document.createElement('span');
@@ -2550,7 +2550,7 @@ function MapRequest(handleData) {
     });
 }
 
-function NOBloading(location, name) {
+function nobLoading(location, name) {
     var element = document.getElementById(location);
     if (counter < 10) {
         for (var i = 0; i < counter; i++) {
@@ -2564,11 +2564,11 @@ function NOBloading(location, name) {
     counter++;
 
     timeoutVar1 = setTimeout(function() {
-        NOBloading(location);
+        nobLoading(location);
     }, 1000);
 }
 
-function NOBstopLoading(name) {
+function nobStopLoading(name) {
     clearTimeout(timeoutVar1);
 }
 
@@ -2611,10 +2611,10 @@ function nobScript(qqEvent) {
 }
 
 function showHideTimers() {
-    $("#loadTimersElement").toggle();
+    $('#loadTimersElement').toggle();
 }
 
-function NOBtravel(location) {
+function nobTravel(location) {
     if (NOBpage) {
         var url = "https://www.mousehuntgame.com/managers/ajax/users/changeenvironment.php";
         var data = {
@@ -2638,9 +2638,9 @@ function fetchGDocStuff() {
         var checkVer;
         var url = 'https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=all';
         document.getElementById('NOBmessage').innerHTML = "Loading";
-        NOBloading('NOBmessage');
+        nobLoading('NOBmessage');
         NOBajaxGet(url, function(text) {
-            NOBstopLoading();
+            nobStopLoading();
             text = JSON.parse(text);
             // MESSAGE PLACING
             message = text.message;
@@ -2656,7 +2656,7 @@ function fetchGDocStuff() {
                 updateElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target='_blank'><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
             }
         }, function(a, b, c) {
-            NOBstopLoading();
+            nobStopLoading();
             console.log(b + ' error - Google Docs is now not working qq');
             if (b == "timeout")
                 document.getElementById('NOBmessage').innerHTML = "Google Docs is being slow again ._.";
@@ -2754,7 +2754,7 @@ function hideMessage(time) {
     var element = document.getElementById('NOBmessage');
 }
 
-function NOBraffle() {
+function nobRaffle() {
     if (!($('.tabs a:eq(1)').length > 0))
         $('#hgbar_messages').click();
     //messenger.UI['notification'].togglePopup();
@@ -2811,7 +2811,7 @@ function clockTick() {
         // Clock needs to be on and is already ticking
     } else {
         // Clock does not need to be on
-        NOBcalculateTime();
+        nobCalculateTime();
     }
     setTimeout(function() {
         clockTick();
@@ -2825,7 +2825,7 @@ function updateTime() {
         var element = document.getElementById('NOBrelic');
         element.innerHTML = UpdateTimer(timeLeft, true);
         NOBstore(timeLeft, 'relic');
-        NOBcalculateOfflineTimers();
+        nobCalculateOfflineTimers();
         clockTicking = true;
 
         setTimeout(function() {
@@ -2837,7 +2837,7 @@ function updateTime() {
     }
 }
 
-function NOBcalculateTime() {
+function nobCalculateTime() {
     var CurrentTime = currentTimeStamp();
     if (typeof LOCATION_TIMERS[3][1].url != 'undefined' || LOCATION_TIMERS[3][1].url != 'undefined') {
         var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=relic";
@@ -2899,10 +2899,10 @@ function NOBcalculateTime() {
         });
     }
 
-    NOBcalculateOfflineTimers();
+    nobCalculateOfflineTimers();
 }
 
-function NOBcalculateOfflineTimers() {
+function nobCalculateOfflineTimers() {
     var CurrentTime = currentTimeStamp();
     for (i = 0; i < 3; i++) {
         var CurrentName = -1;
