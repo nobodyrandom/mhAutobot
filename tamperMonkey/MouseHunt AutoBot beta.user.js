@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP for BETA UI
 // @author      NobodyRandom
-// @version    	2.0.5y
+// @version    	2.0.6y
 // @description BETA MOUSEHUNT AUTOBOT for the BETA MH UI - Currently the most advanced script for automizing MouseHunt. Supports ALL new areas and FIREFOX.
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @namespace   https://greasyfork.org/users/6398
@@ -25,13 +25,14 @@
 // == Basic User Preference Setting (Begin) ==
 // // The variable in this section contain basic option will normally edit by most user to suit their own preference
 // // Reload MouseHunt page manually if edit this script while running it for immediate effect.
+
 // // Extra delay time before sounding the horn. (in seconds)
 // // Default: 10 - 180
 var hornTimeDelayMin = 10;
 var hornTimeDelayMax = 180;
 
 // // Bot aggressively by ignore all safety measure such as check horn image visible before sounding it. (true/false)
-// // Note: Highly recommended to turn off because it increase the chances of getting caugh in botting.
+// // Note: Highly recommended to turn off because it increase the chances of getting caught in botting.
 // // Note: It will ignore the hornTimeDelayMin and hornTimeDelayMax.
 // // Note: It may take a little bit extra of CPU processing power.
 var aggressiveMode = false;
@@ -65,7 +66,7 @@ var kingPauseTimeMax = 18000;
 var pauseAtInvalidLocation = true;
 
 // // CUSTOM Preference to popup on KR
-var autopopkr = true;
+var autoPopupKR = true;
 
 // == Basic User Preference Setting (End) ==
 
@@ -77,7 +78,7 @@ var autopopkr = true;
 // // Display timer and message in page title. (true/false)
 var showTimerInTitle = true;
 
-// // Embed a timer in page to show next hunter horn timer, highly recommanded to turn on. (true/false)
+// // Embed a timer in page to show next hunter horn timer, highly recommended to turn on. (true/false)
 // // Note: You may not access some option like pause at invalid location if you turn this off.
 var showTimerInPage = true;
 
@@ -2380,7 +2381,7 @@ function timeFormatLong(time) {
 // ################################################################################################
 // INIT AJAX CALLS AND INIT CALLS - Function calls after page LOAD
 
-if (debug) console.log("RUN NOBinit()");
+if (debug) console.log("RUN nobInit()");
 $(window).load(NOBinit);
 
 function NOBinit() {
@@ -2631,7 +2632,7 @@ function NOBscript(qqEvent) {
             }
         } else {
             console.log("Data is not found, doing HTML fetch now.");
-            NOBhtmlFetch();
+            nobHTMLFetch();
         }
     }
 }
@@ -2777,9 +2778,16 @@ function pingServer() {
     }
 }
 
-/*function hideMessage(time) {
- var element = document.getElementById('NOBmessage');
- }*/
+function hideNOBMessage(time) {
+    window.setTimeout(function() {
+        var element = document.getElementById('NOBmessage');
+        element.style.display = 'none';
+    }, time);
+}
+
+function showNOBMessage() {
+    document.getElementById('NOBmessage').style.display = 'block'
+}
 
 unsafeWindow.NOBraffle = function() {
     if (!($('.tabs a:eq(1)').length > 0))
@@ -2862,9 +2870,12 @@ function clockTick() {
     }, 15 * 60 * 1000);
 }
 
-function NOBcalculateTime() {
+function NOBcalculateTime(runOnly) {
+    if (runOnly != 'relic' & runOnly != 'toxic' & runOnly != 'none')
+        runOnly = 'all';
+
     //var CurrentTime = currentTimeStamp();
-    if (typeof LOCATION_TIMERS[3][1].url != 'undefined' || LOCATION_TIMERS[3][1].url != 'undefined') {
+    if (runOnly == 'relic' && (typeof LOCATION_TIMERS[3][1].url != 'undefined' || LOCATION_TIMERS[3][1].url != 'undefined')) {
         var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=relic";
         nobAjaxGet(url, function (text) {
             text = JSON.parse(text);
@@ -2890,7 +2901,7 @@ function NOBcalculateTime() {
         });
     }
 
-    if (typeof LOCATION_TIMERS[4][1].url != 'undefined' || LOCATION_TIMERS[4][1].url != 'undefined') {
+    if (runOnly == 'toxic' && (typeof LOCATION_TIMERS[4][1].url != 'undefined' || LOCATION_TIMERS[4][1].url != 'undefined')) {
         var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=toxic";
         nobAjaxGet(url, function (text) {
             text = JSON.parse(text);
@@ -2924,7 +2935,8 @@ function NOBcalculateTime() {
         });
     }
 
-    nobCalculateOfflineTimers();
+    if (runOnly == 'all')
+        nobCalculateOfflineTimers();
 }
 
 function nobCalculateOfflineTimers() {

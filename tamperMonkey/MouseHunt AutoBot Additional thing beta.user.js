@@ -305,7 +305,7 @@ unsafeWindow.NOBscript = function (qqEvent) {
             }
         } else {
             console.log("Data is not found, doing HTML fetch now.");
-            NOBhtmlFetch();
+            nobHTMLFetch();
         }
     }
 };

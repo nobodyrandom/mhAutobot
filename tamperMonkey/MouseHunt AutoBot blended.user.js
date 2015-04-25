@@ -17,7 +17,10 @@
 // @include		https://apps.facebook.com/mousehunt/*
 // @include		http://hi5.com/friend/games/MouseHunt*
 // @include		http://mousehunt.hi5.hitgrab.com/*
+// @exclude		http://*.google.com/*
+// @exclude		https://*.google.com/*
 // @grant		unsafeWindow
+// @run-at		document-end
 // ==/UserScript==
 
 // == Basic User Preference Setting (Begin) ==
@@ -158,6 +161,48 @@ var travelElement;
 var isNewUI = false;
 var strHornButton = 'hornbutton';
 var strCampButton = 'campbutton';
+
+// NOB vars
+var addonScriptVer = '1.2.024';
+//var NOBhasPuzzle = unsafeWindow.user.has_puzzle;
+var NOBhasPuzzle;
+var NOBclockLoaded = false;
+var NOBpage = false;
+var mapRequestFailed = false;
+var clockTicking = false;
+var clockNeedOn = false;
+var counter = 0;
+var dots = '';
+var LOCATION_TIMERS = [
+    ['Seasonal Garden', {
+        first: 1283616000,
+        length: 288000,
+        breakdown: [1, 1, 1, 1],
+        name: ['Summer', 'Autumn', 'Winter', 'Spring'],
+        color: ['Red', 'Orange', 'Blue', 'Green'],
+        effective: ['tactical', 'shadow', 'hydro', 'physical']
+    }],
+    ['Balack\'s Cove', {
+        first: 1294680060,
+        length: 1200,
+        breakdown: [48, 3, 2, 3],
+        name: ['Low', 'Medium (in)', 'High', 'Medium (out)'],
+        color: ['Green', 'Orange', 'Red', 'Orange']
+    }],
+    ['Forbidden Grove', {
+        first: 1285704000,
+        length: 14400,
+        breakdown: [4, 1],
+        name: ['Open', 'Closed'],
+        color: ['Green', 'Red']
+    }],
+    ['Relic Hunter', {
+        url: 'http://horntracker.com/backend/relichunter.php?functionCall=relichunt'
+    }],
+    ['Toxic Spill', {
+        url: 'http://horntracker.com/backend/new/toxic.php?functionCall=spill'
+    }]
+];
 
 // start executing script
 exeScript();
@@ -1783,7 +1828,7 @@ function embedTimer(targetPage) {
                 tempSpan2.appendChild(loadLinkToUpdate);
                 loadLinkToUpdateDiv.appendChild(tempSpan2);
                 timerDivElement.appendChild(loadLinkToUpdateDiv);
-                loadLinkToUpdate.addEventListener('click', NOBscript, false);
+                loadLinkToUpdate.addEventListener('click', nobScript, false);
 
                 text = ' &#126; <a href="javascript:window.open(\'https://docs.google.com/spreadsheet/ccc?key=0Ag_KH_nuVUjbdGtldjJkWUJ4V1ZpUDVwd1FVM0RTM1E#gid=5\');" target=_blank>Go to GDoc</a>';
                 var tempDiv = document.createElement('span');

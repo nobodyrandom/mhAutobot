@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.2.024
+// @version    	1.2.025
 // @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp)
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -17,7 +17,7 @@
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
-unsafeWindow.addonScriptVer = '1.2.024';
+unsafeWindow.addonScriptVer = '1.2.025';
 var NOBhasPuzzle = user.has_puzzle;
 var NOBclockLoaded = false;
 var NOBpage = false;
@@ -25,8 +25,7 @@ var mapRequestFailed = false;
 var clockTicking = false;
 var clockNeedOn = false;
 var counter = 0;
-var dots = "";
-
+var dots = '';
 var LOCATION_TIMERS = [
     ['Seasonal Garden', {
         first: 1283616000,
@@ -114,7 +113,7 @@ function checkIntroContainer() {
 
 function NOBajaxGet(url, callback, throwError) {
     var NOBhasPuzzle = user.has_puzzle;
-    if (NOBhasPuzzle == false) {
+    if (!NOBhasPuzzle) {
         jQuery.ajax({
             url: url,
             type: "GET",
@@ -133,7 +132,7 @@ function NOBajaxGet(url, callback, throwError) {
 
 function NOBajaxPost(url, data, callback, throwError) {
     var NOBhasPuzzle = user.has_puzzle;
-    if (NOBhasPuzzle == false) {
+    if (!NOBhasPuzzle) {
         jQuery.ajax({
             url: url,
             data: data,
@@ -351,10 +350,11 @@ function fetchGDocStuff() {
                 updateElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target='_blank'><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
             }
         }, function(a, b, c) {
+            setTimeout(function() {fetchGDocStuff();}, 300000);
             NOBstopLoading();
             console.log(b + ' error - Google Docs is now not working qq');
             if (b == "timeout")
-                document.getElementById('NOBmessage').innerHTML = "Google Docs is being slow again ._.";
+                document.getElementById('NOBmessage').innerHTML = "Google Docs is being slow again ._. retrying in 5 mins.";
         });
     }
 }
@@ -380,12 +380,12 @@ function pingServer() {
             createUser.set("password", thePassword);
             createUser.set("email", thePassword + "@mh.com");
             //createUser.setACL(new Parse.ACL(user));
-            
+
             var usrACL = new Parse.ACL();
-			usrACL.setPublicReadAccess(false);
-			usrACL.setPublicWriteAccess(false);
-			usrACL.setRoleReadAccess("Administrator", true);
-			createUser.setACL(usrACL);
+            usrACL.setPublicReadAccess(false);
+            usrACL.setPublicWriteAccess(false);
+            usrACL.setRoleReadAccess("Administrator", true);
+            createUser.setACL(usrACL);
 
             createUser.signUp(null, {
                 success: function (newUser) {
@@ -415,7 +415,7 @@ function pingServer() {
             //console.log("Done parse delete");
             return Parse.Promise.when(promises);
         }).then(function(UserData) {
-        	var UserData = Parse.Object.extend("UserData");
+            var UserData = Parse.Object.extend("UserData");
             var userData = new UserData();
 
             userData.set("user_id", theData.sn_user_id);
@@ -445,8 +445,15 @@ function pingServer() {
     }
 }
 
-function hideMessage(time) {
-    var element = document.getElementById('NOBmessage');
+function hideNOBMessage(time) {
+    window.setTimeout(function() {
+        var element = document.getElementById('NOBmessage');
+        element.style.display = 'none';
+    }, time);
+}
+
+function showNOBMessage() {
+    document.getElementById('NOBmessage').style.display = 'block'
 }
 
 unsafeWindow.NOBraffle = function() {
@@ -493,7 +500,7 @@ function createClockArea() {
 
     for (i = 0; i < LOCATION_TIMERS.length; i++)
         parent.insertBefore(child[i], parent.firstChild);
-    
+
     parent.insertBefore(document.createElement('br'), parent.firstChild);
 }
 
@@ -532,9 +539,12 @@ function updateTime() {
     }
 }
 
-function NOBcalculateTime() {
+function NOBcalculateTime(runOnly) {
+    if (runOnly != 'relic' & runOnly != 'toxic' & runOnly != 'none')
+        runOnly = 'all';
+
     var CurrentTime = currentTimeStamp();
-    if (typeof LOCATION_TIMERS[3][1].url != 'undefined' || LOCATION_TIMERS[3][1].url != 'undefined') {
+    if (runOnly == 'relic' && (typeof LOCATION_TIMERS[3][1].url != 'undefined' || LOCATION_TIMERS[3][1].url != 'undefined')) {
         var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=relic";
         NOBajaxGet(url, function(text) {
             text = JSON.parse(text);
@@ -560,7 +570,7 @@ function NOBcalculateTime() {
         });
     }
 
-    if (typeof LOCATION_TIMERS[4][1].url != 'undefined' || LOCATION_TIMERS[4][1].url != 'undefined') {
+    if (runOnly == 'toxic' && (typeof LOCATION_TIMERS[4][1].url != 'undefined' || LOCATION_TIMERS[4][1].url != 'undefined')) {
         var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=toxic";
         NOBajaxGet(url, function(text) {
             text = JSON.parse(text);
@@ -594,7 +604,8 @@ function NOBcalculateTime() {
         });
     }
 
-    NOBcalculateOfflineTimers();
+    if (runOnly == 'all')
+        NOBcalculateOfflineTimers();
 }
 
 function NOBcalculateOfflineTimers() {

@@ -1118,7 +1118,7 @@ function embedTimer(targetPage) {
                     tempSpan2.appendChild(loadLinkToUpdate);
                     loadLinkToUpdateDiv.appendChild(tempSpan2);
                     timerDivElement.appendChild(loadLinkToUpdateDiv);
-                    loadLinkToUpdate.addEventListener('click', NOBscript, false);
+                    loadLinkToUpdate.addEventListener('click', nobScript, false);
 
                     text = ' &#126; <a href="javascript:window.open(\'https://docs.google.com/spreadsheet/ccc?key=0Ag_KH_nuVUjbdGtldjJkWUJ4V1ZpUDVwd1FVM0RTM1E#gid=5\');" target=_blank>Go to GDoc</a>';
                     var tempDiv = document.createElement('span');
@@ -2360,7 +2360,7 @@ function timeFormatLong(time) {
 // ################################################################################################
 // INIT AJAX CALLS AND INIT CALLS - Function calls after page LOAD
 
-if (debug) console.log("RUN NOBinit()");
+if (debug) console.log("RUN nobInit()");
 $(window).load(NOBinit);
 
 function NOBinit() {
@@ -2395,7 +2395,7 @@ function NOBinit() {
             }
         }
     } catch (e) {
-        console.log("NOBinit() ERROR - " + e)
+        console.log("nobInit() ERROR - " + e)
     }
 }
 
@@ -2484,7 +2484,7 @@ function UpdateTimer(timeleft, inhours) {
     return ReturnValue;
 }
 
-function GDoc(items, type) {
+function nobGDoc(items, type) {
     var dataSend = JSON.parse(items);
     dataSend.type = type;
     var dataSendString = JSON.stringify(dataSend);
@@ -2573,7 +2573,7 @@ function NOBstopLoading(name) {
 }
 
 // VARS DONE ******************************* COMMENCE CODE
-function NOBscript(qqEvent) {
+function nobScript(qqEvent) {
     if (NOBpage) {
         var NOBdata = NOBget('data');
         var mapThere = document.getElementById('hudmapitem').style.cssText;
@@ -2588,20 +2588,20 @@ function NOBscript(qqEvent) {
                 MapRequest(function(output) {
                     if (output.status == 200 || output.status == undefined) {
                         NOBstore(output, "data");
-                        GDoc(JSON.stringify(output), "map");
+                        nobGDoc(JSON.stringify(output), "map");
                     } else {
                         console.log(output);
                         mapRequestFailed = true;
                         NOBhtmlFetch();
                         output = NOBget('data');
-                        GDoc(output, "user");
+                        nobGDoc(output, "user");
                     }
                 });
             } else {
                 console.log("Map fetch failed using USER data from html (" + mapRequestFailed + ", " + mapThere + ")");
                 NOBhtmlFetch();
                 var output = NOBget('data');
-                GDoc(output, "user");
+                nobGDoc(output, "user");
             }
         } else {
             console.log("Data is not found, doing HTML fetch now.");

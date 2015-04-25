@@ -1547,7 +1547,7 @@ function embedTimer(targetPage) {
                 tempSpan2.appendChild(loadLinkToUpdate);
                 loadLinkToUpdateDiv.appendChild(tempSpan2);
                 timerDivElement.appendChild(loadLinkToUpdateDiv);
-                loadLinkToUpdate.addEventListener('click', NOBscript, false);
+                loadLinkToUpdate.addEventListener('click', nobScript, false);
 
                 text = ' &#126; <a href="javascript:window.open(\'https://docs.google.com/spreadsheet/ccc?key=0Ag_KH_nuVUjbdGtldjJkWUJ4V1ZpUDVwd1FVM0RTM1E#gid=5\');" target=_blank>Go to GDoc</a>';
                 var tempDiv = document.createElement('span');
