@@ -37,12 +37,13 @@ Features:
 
 #####Sorrry I am new to GitHub, GM and actually anything at all so if there's something wrong pls email me or submit a bug report asap so I can fix it
 
+*****
 Explanations of the files included
 >   All main code is located in the tamperMonkey folder
 >   The build in the chromeExtension folder is specifically used to package the core version (REVAMP only) as a chrome installable package, as chrome no longer allows direct installation of user scripts
->   Builds within tamperMonkey folder
+>   Builds within tamperMonkey folder:
 >*  MouseHunt AutoBot.user.js => Main core with no enhancements what so ever
->** MouseHunt AutoBot Additional thing.user.js => Addon file to the core (No longer needed as of v2.0 and up)
+>*  MouseHunt AutoBot Additional thing.user.js => Addon file to the core (No longer needed as of v2.0 and up)
 >*  MouseHunt AutoBot beta.user.js => Main core with no enhancements for the MH BETA UI
->** MouseHunt AutoBot Additional thing beta.user.js => Addon file to the beta core (Also no longer need as of v2.0 and up)
+>*  MouseHunt AutoBot Additional thing beta.user.js => Addon file to the beta core (Also no longer need as of v2.0 and up)
 >*  MouseHunt AutoBot blended.user.js => Build with CNN's enhancements to automize trap arming/ cheese change etc. (Still requires the non-beta addon)
