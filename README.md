@@ -39,8 +39,10 @@ Features:
 
 *****
 Explanations of the files included
->   All main code is located in the tamperMonkey folder  return
->   The build in the chromeExtension folder is specifically used to package the core version (REVAMP only) as a chrome installable package, as chrome no longer allows direct installation of user scripts  return
+>   All main code is located in the tamperMonkey folder
+>
+>   The build in the chromeExtension folder is specifically used to package the core version (REVAMP only) as a chrome installable package, as chrome no longer allows direct installation of user scripts
+>
 >   Builds within tamperMonkey folder:
 >*  MouseHunt AutoBot.user.js => Main core with no enhancements what so ever
 >*  MouseHunt AutoBot Additional thing.user.js => Addon file to the core (No longer needed as of v2.0 and up)
