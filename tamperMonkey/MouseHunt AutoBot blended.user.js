@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	1.4.564b
+// @version    	1.4.565b
 // @description Currently the most advanced script for automizing MouseHunt. Supports ALL new areas. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN - Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require		https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @require     https://greasyfork.org/scripts/6094-mousehunt-autobot-additional-thing/code/MouseHunt%20AutoBot%20Additional%20thing.js?version=48468
@@ -66,7 +66,7 @@ var kingPauseTimeMax = 18000;
 // // Note: Make sure you set showTimerInPage to true in order to know what is happening.
 var pauseAtInvalidLocation = true;
 
-// // CUSTOM Preference to popup on KR
+// // Popup on KR or not, the script will throw out an alert box if true.
 var autoPopupKR = true;
 
 // == Basic User Preference Setting (End) ==
@@ -502,25 +502,29 @@ function Halloween2014() {
 }
 
 function BurroughRift(minMist, maxMist) {
-    //Tier 0: 0 Mist Canisters
-    //Tier 1/Yellow: 1-5 Mist Canisters
-    //Tier 2/Green: 6-18 Mist Canisters
-    //Tier 3/Red: 19-20 Mist Canisters
+    var currentLocation = getPageVariableForChrome("user.location");
+    console.debug(currentLocation);
+    if (currentLocation.indexOf("Burroughs Rift") > -1) {
+        //Tier 0: 0 Mist Canisters
+        //Tier 1/Yellow: 1-5 Mist Canisters
+        //Tier 2/Green: 6-18 Mist Canisters
+        //Tier 3/Red: 19-20 Mist Canisters
 
-    var currentMistQuantity = parseInt(document.getElementsByClassName('mistQuantity')[0].innerText);
-    var isMisting = getPageVariableForChrome('user.quests.QuestRiftBurroughs.is_misting');
-    var mistButton = document.getElementsByClassName('mistButton')[0];
-    console.debug('Current Mist Quantity: ' + currentMistQuantity);
-    console.debug('Is Misting: ' + isMisting);
-    console.debug('Min Mist: ' + minMist + " Max Mist: " + maxMist);
-    if (currentMistQuantity >= maxMist && isMisting == 'true') {
-        console.debug('Stop mist...');
-        fireEvent(mistButton, 'click');
-    } else if (currentMistQuantity <= minMist && isMisting == 'false') {
-        console.debug('Start mist...');
-        fireEvent(mistButton, 'click');
+        var currentMistQuantity = parseInt(document.getElementsByClassName('mistQuantity')[0].innerText);
+        var isMisting = getPageVariableForChrome('user.quests.QuestRiftBurroughs.is_misting');
+        var mistButton = document.getElementsByClassName('mistButton')[0];
+        console.debug('Current Mist Quantity: ' + currentMistQuantity);
+        console.debug('Is Misting: ' + isMisting);
+        console.debug('Min Mist: ' + minMist + " Max Mist: " + maxMist);
+        if (currentMistQuantity >= maxMist && isMisting == 'true') {
+            console.debug('Stop mist...');
+            fireEvent(mistButton, 'click');
+        } else if (currentMistQuantity <= minMist && isMisting == 'false') {
+            console.debug('Start mist...');
+            fireEvent(mistButton, 'click');
+        }
+        return;
     }
-    return;
 }
 
 function general() {
@@ -2159,6 +2163,7 @@ function embedTimer(targetPage) {
             preferenceHTMLStr += '</td>';
             preferenceHTMLStr += '<td style="height:24px">';
             preferenceHTMLStr += '<select name="algo" onChange="window.localStorage.setItem(\'eventLocation\', value); document.getElementById(\'event\').value=window.localStorage.getItem(\'eventLocation\');">';
+            preferenceHTMLStr += '<option value=""> </option>';
             preferenceHTMLStr += '<option value="None" selected>None</option>';
             preferenceHTMLStr += '<option value="Charge Egg 2014">Charge Egg 2014</option>';
             preferenceHTMLStr += '<option value="Charge Egg 2014(17)">Charge Egg 2014(17)</option>';

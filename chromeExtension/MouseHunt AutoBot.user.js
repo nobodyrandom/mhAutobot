@@ -65,7 +65,7 @@ var kingPauseTimeMax = 18000;
 var pauseAtInvalidLocation = true;
 
 // // CUSTOM Preference to popup on KR
-var autopopkr = true;
+var autoPopupKR = true;
 
 // == Basic User Preference Setting (End) ==
 
@@ -1416,7 +1416,7 @@ function embedTimer(targetPage) {
                     preferenceHTMLStr += '</td>';
                     preferenceHTMLStr += '</tr>';
                 }
-                if (autopopkr) {
+                if (autoPopupKR) {
                     preferenceHTMLStr += '<tr>';
                     preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
                     preferenceHTMLStr += '<a title="Auto Popup on KR"><b>Auto KR Popup</b></a>';
@@ -1600,11 +1600,11 @@ function loadPreferenceSettingFromStorage() {
 
     var autopopkrTemp = getStorage("autoPopupKR");
     if (autopopkrTemp == undefined || autopopkrTemp == null) {
-        setStorage("autoPopupKR", autopopkr.toString());
+        setStorage("autoPopupKR", autoPopupKR.toString());
     } else if (autopopkrTemp == true || autopopkrTemp.toLowerCase() == "true") {
-        autopopkr = true;
+        autoPopupKR = true;
     } else {
-        autopopkr = false;
+        autoPopupKR = false;
     }
     autopopkrTemp = undefined;
 }
@@ -2027,7 +2027,7 @@ function playKingRewardSound() {
         snippet = null;
     }
 
-    if (autopopkr)
+    if (autoPopupKR)
         window.setTimeout(function() {
             alert("Kings Reward NOW");
         }, 2000);

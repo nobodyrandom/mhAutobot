@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom
-// @version    	2.0.7a
+// @version    	2.0.8a
 // @description Currently the most advanced script for automizing MouseHunt. Supports ALL new areas and FIREFOX. Revamped version of original by Ooi - Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require		https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @namespace   https://greasyfork.org/users/6398
@@ -65,7 +65,7 @@ var kingPauseTimeMax = 18000;
 // // Note: Make sure you set showTimerInPage to true in order to know what is happening.
 var pauseAtInvalidLocation = true;
 
-// // CUSTOM Preference to popup on KR
+// // Popup on KR or not, the script will throw out an alert box if true.
 var autoPopupKR = true;
 
 // == Basic User Preference Setting (End) ==
@@ -1417,7 +1417,7 @@ function embedTimer(targetPage) {
                     preferenceHTMLStr += '</td>';
                     preferenceHTMLStr += '</tr>';
                 }
-                if (autopopkr) {
+                if (autoPopupKR) {
                     preferenceHTMLStr += '<tr>';
                     preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
                     preferenceHTMLStr += '<a title="Auto Popup on KR"><b>Auto KR Popup</b></a>';
@@ -1601,11 +1601,11 @@ function loadPreferenceSettingFromStorage() {
 
     var autopopkrTemp = getStorage("autoPopupKR");
     if (autopopkrTemp == undefined || autopopkrTemp == null) {
-        setStorage("autoPopupKR", autopopkr.toString());
+        setStorage("autoPopupKR", autoPopupKR.toString());
     } else if (autopopkrTemp == true || autopopkrTemp.toLowerCase() == "true") {
-        autopopkr = true;
+        autoPopupKR = true;
     } else {
-        autopopkr = false;
+        autoPopupKR = false;
     }
     autopopkrTemp = undefined;
 }
@@ -2028,7 +2028,7 @@ function playKingRewardSound() {
         snippet = null;
     }
 
-    if (autopopkr)
+    if (autoPopupKR)
         window.setTimeout(function() {
             alert("Kings Reward NOW");
         }, 2000);
