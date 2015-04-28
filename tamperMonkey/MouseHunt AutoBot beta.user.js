@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP for BETA UI
 // @author      NobodyRandom
-// @version    	2.0.8y
+// @version    	2.0.9y
 // @description BETA MOUSEHUNT AUTOBOT for the BETA MH UI - Currently the most advanced script for automizing MouseHunt. Supports ALL new areas and FIREFOX.
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @namespace   https://greasyfork.org/users/6398
@@ -1633,8 +1633,12 @@ function displayKingRewardSumTime(timeStr) {
 }
 
 function doubleCheckLocation() { //return true if location is camp page (this is to combat ajax loads)
-    var thePage = $('#mousehuntContainer')[0].className;
-    return (thePage == "PageCamp");
+    var thePage = $('#mousehuntContainer')[0];
+    if (thePage) {
+        return (thePage.className == "PageCamp");
+    } else {
+        return false;
+    }
 }
 // ################################################################################################
 //   Timer Function - End
