@@ -2,7 +2,7 @@
 // @name        MouseHunt AutoBot Additional thing
 // @author      NobodyRandom
 // @namespace   https://greasyfork.org/users/6398
-// @version    	1.2.027
+// @version    	1.2.028
 // @description	This is an additional file for NobodyRandom's version of MH autobot (https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp)
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -14,6 +14,7 @@
 // @include		http://hi5.com/friend/games/MouseHunt*
 // @include		http://mousehunt.hi5.hitgrab.com/*
 // @grant		unsafeWindow
+// @run-at		document-end
 // ==/UserScript==
 
 // SETTING BASE VARS *******************************
@@ -62,52 +63,40 @@ var LOCATION_TIMERS = [
 $(window).load(nobInit);
 
 function nobInit() {
-    if (!NOBhasPuzzle) {
-        if (window.location.href == "http://www.mousehuntgame.com/" ||
-            window.location.href == "http://www.mousehuntgame.com/#" ||
-            window.location.href == "http://www.mousehuntgame.com/?switch_to=standard" ||
-            window.location.href == "https://www.mousehuntgame.com/" ||
-            window.location.href == "https://www.mousehuntgame.com/#" ||
-            window.location.href == "https://www.mousehuntgame.com/?switch_to=standard" ||
-            window.location.href.indexOf("mousehuntgame.com/turn.php") != -1 ||
-            window.location.href.indexOf("mousehuntgame.com/index.php") != -1 ||
-            window.location.href == "http://www.mousehuntgame.com/canvas/" ||
-            window.location.href == "http://www.mousehuntgame.com/canvas/#" ||
-            window.location.href == "https://www.mousehuntgame.com/canvas/" ||
-            window.location.href == "https://www.mousehuntgame.com/canvas/#" ||
-            window.location.href.indexOf("mousehuntgame.com/canvas/index.php") != -1 ||
-            window.location.href.indexOf("mousehuntgame.com/canvas/turn.php") != -1 ||
-            window.location.href.indexOf("mousehuntgame.com/canvas/?") != -1) {
-            NOBpage = true;
-        }
-
-        if (NOBpage) {
-            nobHTMLFetch();
-            createClockArea();
-            clockTick();
-            fetchGDocStuff();
-            setTimeout(function() {
-                pingServer();
-            }, 30000);
-        }
-    }
-}
-
-function checkIntroContainer() {
-    var gotIntroContainerDiv = false;
-
-    var introContainerDiv = document.getElementById('introContainer');
-    if (introContainerDiv) {
-        introContainerDiv = undefined;
-        gotIntroContainerDiv = true;
-    } else {
-        gotIntroContainerDiv = false;
-    }
-
     try {
-        return (gotIntroContainerDiv);
-    } finally {
-        gotIntroContainerDiv = undefined;
+        if (!NOBhasPuzzle) {
+            if (window.location.href == "http://www.mousehuntgame.com/" ||
+                window.location.href == "http://www.mousehuntgame.com/#" ||
+                window.location.href == "http://www.mousehuntgame.com/?switch_to=standard" ||
+                window.location.href == "https://www.mousehuntgame.com/" ||
+                window.location.href == "https://www.mousehuntgame.com/#" ||
+                window.location.href == "https://www.mousehuntgame.com/?switch_to=standard" ||
+                window.location.href.indexOf("mousehuntgame.com/turn.php") != -1 ||
+                window.location.href.indexOf("mousehuntgame.com/index.php") != -1 ||
+                window.location.href == "http://www.mousehuntgame.com/canvas/" ||
+                window.location.href == "http://www.mousehuntgame.com/canvas/#" ||
+                window.location.href == "https://www.mousehuntgame.com/canvas/" ||
+                window.location.href == "https://www.mousehuntgame.com/canvas/#" ||
+                window.location.href.indexOf("mousehuntgame.com/canvas/index.php") != -1 ||
+                window.location.href.indexOf("mousehuntgame.com/canvas/turn.php") != -1 ||
+                window.location.href.indexOf("mousehuntgame.com/canvas/?") != -1) {
+                NOBpage = true;
+            }
+
+            if (NOBpage) {
+                nobHTMLFetch();
+                createClockArea();
+                clockTick();
+                fetchGDocStuff();
+                setTimeout(function() {
+                    pingServer();
+                }, 30000);
+                // Hide message after 1H :)
+                hideNOBMessage(3600000);
+            }
+        }
+    } catch (e) {
+        console.log("nobInit() ERROR - " + e);
     }
 }
 
@@ -119,7 +108,7 @@ function nobAjaxGet(url, callback, throwError) {
             type: "GET",
             timeout: 5000,
             statusCode: {
-                200: function() {
+                200: function () {
                     console.log("Success get - " + url);
                     //Success Message
                 }
@@ -139,7 +128,7 @@ function nobAjaxPost(url, data, callback, throwError) {
             type: "POST",
             timeout: 5000,
             statusCode: {
-                200: function() {
+                200: function () {
                     console.log("Success post - " + url);
                     //Success Message
                 }
@@ -220,7 +209,7 @@ function nobGet(type) {
     return localStorage.getItem('NOB-' + type);
 }
 
-function mapRequest(handleData) {
+function nobMapRequest(handleData) {
     var url = "https://www.mousehuntgame.com/managers/ajax/users/relichunter.php";
     var dataSend = {
         'action': 'info',
@@ -233,11 +222,11 @@ function mapRequest(handleData) {
         type: "POST",
         dataType: "json",
         timeout: 5000,
-        success: function(data) {
+        success: function (data) {
             // console.log(data);
             handleData(data);
         },
-        error: function(error) {
+        error: function (error) {
             console.log("Map Request Failed");
             handleData(error);
         }
@@ -257,7 +246,7 @@ function nobLoading(location, name) {
     element.innerHTML = "Loading" + dots;
     counter++;
 
-    timeoutVar1 = setTimeout(function() {
+    timeoutVar1 = setTimeout(function () {
         nobLoading(location);
     }, 1000);
 }
@@ -267,7 +256,7 @@ function nobStopLoading(name) {
 }
 
 // VARS DONE ******************************* COMMENCE CODE
-unsafeWindow.nobScript = function(qqEvent) {
+function nobScript(qqEvent) {
     if (NOBpage) {
         var NOBdata = nobGet('data');
         var mapThere = document.getElementById('hudmapitem').style.cssText;
@@ -277,9 +266,10 @@ unsafeWindow.nobScript = function(qqEvent) {
         } else {
             mapThere = true;
         }
+
         if (NOBdata != null || NOBdata != undefined) {
             if (!mapRequestFailed && mapThere) {
-                mapRequest(function(output) {
+                nobMapRequest(function(output) {
                     if (output.status == 200 || output.status == undefined) {
                         nobStore(output, "data");
                         nobGDoc(JSON.stringify(output), "map");
@@ -304,11 +294,11 @@ unsafeWindow.nobScript = function(qqEvent) {
     }
 }
 
-unsafeWindow.showHideTimers = function() {
+unsafeWindow.showHideTimers = function () {
     $("#loadTimersElement").toggle();
-}
+};
 
-unsafeWindow.nobTravel = function(location) {
+function nobTravel(location) {
     if (NOBpage) {
         var url = "https://www.mousehuntgame.com/managers/ajax/users/changeenvironment.php";
         var data = {
@@ -316,9 +306,9 @@ unsafeWindow.nobTravel = function(location) {
             "destination": location,
             'uh': user.unique_hash
         };
-        nobAjaxPost(url, data, function(r) {
+        nobAjaxPost(url, data, function (r) {
             console.log(r);
-        }, function(a, b, c) {
+        }, function (a, b, c) {
             console.log(a, b, c);
         });
     }
@@ -330,10 +320,11 @@ function fetchGDocStuff() {
         var currVer = GM_info.script.version;
         //var currVer = "1.4.400a";
         var checkVer;
-        var url = 'https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=all';
+        //var url = 'https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=all';
+
         document.getElementById('NOBmessage').innerHTML = "Loading";
         nobLoading('NOBmessage');
-        nobAjaxGet(url, function(text) {
+        /*nobAjaxGet(url, function(text) {
             nobStopLoading();
             text = JSON.parse(text);
             // MESSAGE PLACING
@@ -355,6 +346,31 @@ function fetchGDocStuff() {
             console.log(b + ' error - Google Docs is now not working qq');
             if (b == "timeout")
                 document.getElementById('NOBmessage').innerHTML = "Google Docs is being slow again ._. retrying in 5 mins.";
+        });*/
+
+        Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
+        Parse.Cloud.run('nobMessage', {}, {
+            success: function (data) {
+                nobStopLoading();
+                data = JSON.parse(data);
+                // MESSAGE PLACING
+                message = data.message;
+                var NOBmessage = document.getElementById('NOBmessage');
+                NOBmessage.innerHTML = message;
+
+                // UPDATE CHECK
+                checkVer = data.version;
+                console.log('Current MH AutoBot version: ' + currVer + ' / Server MH AutoBot version: ' + checkVer);
+                //console.log('Current MH AutoBot additional thing version: ' + addonScriptVer + ' / Server MH AutoBot additional thing version: ' + text.versionAddon);
+                if (checkVer > currVer) {
+                    var updateElement = document.getElementById('updateElement');
+                    updateElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target='_blank'><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
+                }
+            }, error: function (error) {
+                setTimeout(function() {fetchGDocStuff();}, 300000);
+                //nobStopLoading();
+                console.log(JSON.parse(error) + ' error - Google Docs is now not working qq... Retrying in 5 minutes');
+            }
         });
     }
 }
@@ -457,32 +473,30 @@ function showNOBMessage() {
 }
 
 unsafeWindow.nobRaffle = function() {
-    if (!($(".tabs a:eq(1)").length > 0))
-        $("#hgbar_messages").click();
+    if (!($('.tabs a:eq(1)').length > 0))
+        $('#hgbar_messages').click();
     //messenger.UI['notification'].togglePopup();
-    setTimeout(function() {
+    window.setTimeout(function () {
         var tabs = $('a.tab');
         var theTab = "";
         for (var i = 0; i < tabs.length; i++)
             if (tabs[i].dataset.tab == 'daily_draw') theTab = tabs[i];
         theTab.click();
     }, 1000);
-    setTimeout(function() {
+    window.setTimeout(function () {
         var ballot = $(".notificationMessageList input.sendBallot");
         for (var i = ballot.length - 1; i >= 0; i--) {
             ballot[i].click();
         }
-        setTimeout(function() {
+        window.setTimeout(function() {
             $("a.messengerUINotificationClose")[0].click();
         }, 7500);
     }, 4000);
-    tabs = null;
-    theTab = null;
-}
+};
 
 // CALCULATE TIMER *******************************
 function currentTimeStamp() {
-    return parseInt(new Date().getTime().toString().substring(0, 10));
+    return parseInt(new Date().getTime().toString().substring(0, 10), 10);
 }
 
 function createClockArea() {
@@ -515,7 +529,7 @@ function clockTick() {
         // Clock does not need to be on
         nobCalculateTime();
     }
-    setTimeout(function() {
+    window.setTimeout(function() {
         clockTick();
     }, 15 * 60 * 1000);
 }
@@ -543,10 +557,11 @@ function nobCalculateTime(runOnly) {
     if (runOnly != 'relic' & runOnly != 'toxic' & runOnly != 'none')
         runOnly = 'all';
 
-    var CurrentTime = currentTimeStamp();
-    if (runOnly == 'relic' && (typeof LOCATION_TIMERS[3][1].url != 'undefined' || LOCATION_TIMERS[3][1].url != 'undefined')) {
-        var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=relic";
-        nobAjaxGet(url, function(text) {
+    Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
+    //var CurrentTime = currentTimeStamp();
+    if ((runOnly == 'relic' || runOnly == 'all') && (typeof LOCATION_TIMERS[3][1].url != 'undefined' || LOCATION_TIMERS[3][1].url != 'undefined')) {
+        //var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=relic";
+        /*nobAjaxGet(url, function(text) {
             text = JSON.parse(text);
             if (text.result == "error") {
                 var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
@@ -567,11 +582,39 @@ function nobCalculateTime(runOnly) {
         }, function(a, b, c) {
             var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
             child.innerHTML = "<font color='red'>" + b + " error, probably hornTracker, google, or my scripts broke. Please wait awhile, if not just contact me.</font>";
+        });*/
+
+        Parse.Cloud.run('nobRelic', {}, {
+            success: function (data) {
+                data = JSON.parse(data);
+
+                if (data.result == "error") {
+                    var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
+                    child.innerHTML = "<font color='red'>" + data.error + "</font>";
+                } else {
+                    var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
+                    child.innerHTML = "Relic hunter now in: <font color='green'>" + data.location + "</font> \~ Next move time: <span id='NOBrelic'>" + updateTimer(data.next_move, true);
+                    if (data.next_move > 0) {
+                        clockTicking = true;
+                        nobStore(data.next_move, 'relic');
+                        updateTime();
+                        clockNeedOn = true;
+                    } else {
+                        clockTicking = false;
+                        clockNeedOn = false;
+                    }
+                }
+            }, error: function (error) {
+                error = JSON.parse(error);
+
+                var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
+                child.innerHTML = "<font color='red'>" + error + " error, probably hornTracker, google, or my scripts broke. Please wait awhile, if not just contact me.</font>";
+            }
         });
     }
 
-    if (runOnly == 'toxic' && (typeof LOCATION_TIMERS[4][1].url != 'undefined' || LOCATION_TIMERS[4][1].url != 'undefined')) {
-        var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=toxic";
+    if ((runOnly == 'toxic' || runOnly == 'all') && (typeof LOCATION_TIMERS[4][1].url != 'undefined' || LOCATION_TIMERS[4][1].url != 'undefined')) {
+        /*var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=toxic";
         nobAjaxGet(url, function(text) {
             text = JSON.parse(text);
             if (text.result == "error") {
@@ -593,7 +636,7 @@ function nobCalculateTime(runOnly) {
                 if (text.percent < 0) {
                     text.percent = '';
                 } else {
-                    text.percent = ' ~ ' + (100 - text.percent) + '% left';
+                    text.percent = ' &#126; ' + (100 - text.percent) + '% left';
                 }
                 child.innerHTML = 'Toxic spill is now - <font color="' + text.level.color + '">' + text.level.state + '</font>' + text.percent;
             }
@@ -601,6 +644,41 @@ function nobCalculateTime(runOnly) {
             // console.log(b);
             var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
             child.innerHTML = "<font color='red'>" + b + " error, probably hornTracker, google, or my scripts broke. Please wait awhile, if not just contact me.</font>";
+        });*/
+
+        Parse.Cloud.run('nobToxic', {}, {
+            success: function (data) {
+                data = JSON.parse(data);
+
+                if (data.result == "error") {
+                    var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
+                    child.innerHTML = "<font color='red'>" + data.error + "</font>";
+                } else {
+                    var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
+                    if (data.level == 'Closed') {
+                        data.level = {
+                            color: 'red',
+                            state: data.level
+                        };
+                    } else {
+                        data.level = {
+                            color: 'green',
+                            state: data.level
+                        };
+                    }
+                    if (data.percent < 0) {
+                        data.percent = '';
+                    } else {
+                        data.percent = ' &#126; ' + (100 - data.percent) + '% left';
+                    }
+                    child.innerHTML = 'Toxic spill is now - <font color="' + data.level.color + '">' + data.level.state + '</font>' + data.percent;
+                }
+            }, error: function (error) {
+                error = JSON.parse(error);
+
+                var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
+                child.innerHTML = "<font color='red'>" + error + " error, probably hornTracker, google, or my scripts broke. Please wait awhile, if not just contact me.</font>";
+            }
         });
     }
 
@@ -636,7 +714,7 @@ function nobCalculateOfflineTimers() {
         while (CurrentTimer > 0) {
             for (iCount2 = 0; iCount2 < LOCATION_TIMERS[i][1].breakdown.length && CurrentTimer > 0; iCount2++) {
                 SeasonRemaining = CurrentTimer;
-                CurrentTimer -= (LOCATION_TIMERS[i][1].length * LOCATION_TIMERS[i][1].breakdown[iCount2])
+                CurrentTimer -= (LOCATION_TIMERS[i][1].length * LOCATION_TIMERS[i][1].breakdown[iCount2]);
             }
         }
 
@@ -649,7 +727,7 @@ function nobCalculateOfflineTimers() {
             content += ' (' + LOCATION_TIMERS[i][1].effective[CurrentName] + ')';
         }
 
-        content += ' ~ For ' + updateTimer(SeasonRemaining, true);
+        content += ' &#126; For ' + updateTimer(SeasonRemaining, true);
         seasonalDiv.innerHTML = content;
     }
 }

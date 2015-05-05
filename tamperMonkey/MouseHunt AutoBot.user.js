@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom
-// @version    	2.0.10a
+// @version    	2.0.11a
 // @description Currently the most advanced script for automizing MouseHunt. Supports ALL new areas and FIREFOX. Revamped version of original by Ooi - Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
-// @require		https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
+// @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @namespace   https://greasyfork.org/users/6398
 // @updateURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.user.js
 // @downloadURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.user.js
@@ -2414,7 +2414,7 @@ function nobAjaxGet(url, callback, throwError) {
             type: "GET",
             timeout: 5000,
             statusCode: {
-                200: function() {
+                200: function () {
                     console.log("Success get - " + url);
                     //Success Message
                 }
@@ -2434,7 +2434,7 @@ function nobAjaxPost(url, data, callback, throwError) {
             type: "POST",
             timeout: 5000,
             statusCode: {
-                200: function() {
+                200: function () {
                     console.log("Success post - " + url);
                     //Success Message
                 }
@@ -2528,11 +2528,11 @@ function nobMapRequest(handleData) {
         type: "POST",
         dataType: "json",
         timeout: 5000,
-        success: function(data) {
+        success: function (data) {
             // console.log(data);
             handleData(data);
         },
-        error: function(error) {
+        error: function (error) {
             console.log("Map Request Failed");
             handleData(error);
         }
@@ -2552,7 +2552,7 @@ function nobLoading(location, name) {
     element.innerHTML = "Loading" + dots;
     counter++;
 
-    timeoutVar1 = setTimeout(function() {
+    timeoutVar1 = setTimeout(function () {
         nobLoading(location);
     }, 1000);
 }
@@ -2572,6 +2572,7 @@ function nobScript(qqEvent) {
         } else {
             mapThere = true;
         }
+
         if (NOBdata != null || NOBdata != undefined) {
             if (!mapRequestFailed && mapThere) {
                 nobMapRequest(function(output) {
@@ -2599,9 +2600,9 @@ function nobScript(qqEvent) {
     }
 }
 
-unsafeWindow.showHideTimers = function() {
+unsafeWindow.showHideTimers = function () {
     $("#loadTimersElement").toggle();
-}
+};
 
 function nobTravel(location) {
     if (NOBpage) {
@@ -2611,9 +2612,9 @@ function nobTravel(location) {
             "destination": location,
             'uh': user.unique_hash
         };
-        nobAjaxPost(url, data, function(r) {
+        nobAjaxPost(url, data, function (r) {
             console.log(r);
-        }, function(a, b, c) {
+        }, function (a, b, c) {
             console.log(a, b, c);
         });
     }
@@ -2709,19 +2710,19 @@ function pingServer() {
             createUser.setACL(usrACL);
 
             createUser.signUp(null, {
-                success: function(newUser) {
+                success: function (newUser) {
                     console.log(newUser);
                     pingServer();
                     return Parse.Promise.error("There was an error.");
                 },
-                error: function(newUser, signupError) {
+                error: function (newUser, signupError) {
                     // Show the error message somewhere and let the user try again.
                     console.log("Parse Error: " + signupError.code + " " + signupError.message);
                     return Parse.Promise.error("Error in signup");
                 }
             });
             return Parse.Promise.error("Failed login, attempted signup, rerunning code");
-        }).then(function(success) {
+        }).then(function (success) {
             var UserData = Parse.Object.extend("UserData");
 
             var findOld = new Parse.Query(UserData);
@@ -2749,9 +2750,9 @@ function pingServer() {
             userData.setACL(dataACL);
 
             return userData.save();
-        }).then(function(results) {
+        }).then(function (results) {
             //console.log("Success Parse");
-        }).then(function(message) {
+        }).then(function (message) {
             if (message != undefined || message != null)
                 console.log("Parse message: " + message);
             if (Parse.User.current() != null) {
@@ -2759,7 +2760,7 @@ function pingServer() {
                 //console.log("Parse logout");
             }
             //console.log("Parse end code");
-        }, function(error) {
+        }, function (error) {
             if (error != undefined || error != null)
                 console.log("Parse error: " + error);
         });
@@ -2777,7 +2778,7 @@ function showNOBMessage() {
     document.getElementById('NOBmessage').style.display = 'block'
 }
 
-function NOBraffle() {
+unsafeWindow.nobRaffle = function() {
     if (!($('.tabs a:eq(1)').length > 0))
         $('#hgbar_messages').click();
     //messenger.UI['notification'].togglePopup();
@@ -2797,9 +2798,7 @@ function NOBraffle() {
             $("a.messengerUINotificationClose")[0].click();
         }, 7500);
     }, 4000);
-    tabs = null;
-    theTab = null;
-}
+};
 
 // CALCULATE TIMER *******************************
 function currentTimeStamp() {
@@ -3021,7 +3020,7 @@ function nobCalculateOfflineTimers() {
         while (CurrentTimer > 0) {
             for (iCount2 = 0; iCount2 < LOCATION_TIMERS[i][1].breakdown.length && CurrentTimer > 0; iCount2++) {
                 SeasonRemaining = CurrentTimer;
-                CurrentTimer -= (LOCATION_TIMERS[i][1].length * LOCATION_TIMERS[i][1].breakdown[iCount2])
+                CurrentTimer -= (LOCATION_TIMERS[i][1].length * LOCATION_TIMERS[i][1].breakdown[iCount2]);
             }
         }
 
