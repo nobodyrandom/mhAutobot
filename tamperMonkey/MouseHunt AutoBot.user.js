@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom
-// @version    	2.0.9a
+// @version    	2.0.10a
 // @description Currently the most advanced script for automizing MouseHunt. Supports ALL new areas and FIREFOX. Revamped version of original by Ooi - Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require		https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @namespace   https://greasyfork.org/users/6398
@@ -2866,7 +2866,7 @@ function nobCalculateTime(runOnly) {
 
     Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
     //var CurrentTime = currentTimeStamp();
-    if (runOnly == 'relic' && (typeof LOCATION_TIMERS[3][1].url != 'undefined' || LOCATION_TIMERS[3][1].url != 'undefined')) {
+    if ((runOnly == 'relic' || runOnly == 'all') && (typeof LOCATION_TIMERS[3][1].url != 'undefined' || LOCATION_TIMERS[3][1].url != 'undefined')) {
         //var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=relic";
         /*nobAjaxGet(url, function(text) {
             text = JSON.parse(text);
@@ -2920,7 +2920,7 @@ function nobCalculateTime(runOnly) {
         });
     }
 
-    if (runOnly == 'toxic' && (typeof LOCATION_TIMERS[4][1].url != 'undefined' || LOCATION_TIMERS[4][1].url != 'undefined')) {
+    if ((runOnly == 'toxic' || runOnly == 'all') && (typeof LOCATION_TIMERS[4][1].url != 'undefined' || LOCATION_TIMERS[4][1].url != 'undefined')) {
         /*var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=toxic";
         nobAjaxGet(url, function(text) {
             text = JSON.parse(text);
@@ -2958,7 +2958,7 @@ function nobCalculateTime(runOnly) {
                 data = JSON.parse(data);
 
                 if (data.result == "error") {
-                    var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
+                    var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
                     child.innerHTML = "<font color='red'>" + data.error + "</font>";
                 } else {
                     var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
