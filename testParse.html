@@ -15,9 +15,9 @@ Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyN
 	}
 });*/
 console.log("START");
-Parse.User.logOut();
+//Parse.User.logOut();
 
-var query = new Parse.Query(Parse.User);
+/*var query = new Parse.Query(Parse.User);
 query.equalTo("username", "NobodyRandom");
 query.find({
 	success: function(users) {
@@ -26,6 +26,14 @@ query.find({
 			console.log(theUser);
 		}
 	}
+});*/
+
+Parse.Cloud.run('nobRelic', {}, {
+    success: function (data) {
+        console.log(JSON.parse(data));
+    }, error: function (error) {
+        console.log(error);
+    }
 });
 
 console.log("DONE");

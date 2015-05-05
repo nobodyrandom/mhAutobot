@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom
-// @version    	2.0.8a
+// @version    	2.0.9a
 // @description Currently the most advanced script for automizing MouseHunt. Supports ALL new areas and FIREFOX. Revamped version of original by Ooi - Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require		https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @namespace   https://greasyfork.org/users/6398
@@ -2625,10 +2625,11 @@ function fetchGDocStuff() {
         var currVer = GM_info.script.version;
         //var currVer = "1.4.400a";
         var checkVer;
-        var url = 'https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=all';
+        //var url = 'https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=all';
+
         document.getElementById('NOBmessage').innerHTML = "Loading";
         nobLoading('NOBmessage');
-        nobAjaxGet(url, function(text) {
+        /*nobAjaxGet(url, function(text) {
             nobStopLoading();
             text = JSON.parse(text);
             // MESSAGE PLACING
@@ -2650,6 +2651,31 @@ function fetchGDocStuff() {
             console.log(b + ' error - Google Docs is now not working qq');
             if (b == "timeout")
                 document.getElementById('NOBmessage').innerHTML = "Google Docs is being slow again ._. retrying in 5 mins.";
+        });*/
+
+        Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
+        Parse.Cloud.run('nobMessage', {}, {
+            success: function (data) {
+                nobStopLoading();
+                data = JSON.parse(data);
+                // MESSAGE PLACING
+                message = data.message;
+                var NOBmessage = document.getElementById('NOBmessage');
+                NOBmessage.innerHTML = message;
+
+                // UPDATE CHECK
+                checkVer = data.version;
+                console.log('Current MH AutoBot version: ' + currVer + ' / Server MH AutoBot version: ' + checkVer);
+                //console.log('Current MH AutoBot additional thing version: ' + addonScriptVer + ' / Server MH AutoBot additional thing version: ' + text.versionAddon);
+                if (checkVer > currVer) {
+                    var updateElement = document.getElementById('updateElement');
+                    updateElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target='_blank'><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
+                }
+            }, error: function (error) {
+                setTimeout(function() {fetchGDocStuff();}, 300000);
+                //nobStopLoading();
+                console.log(JSON.parse(error) + ' error - Google Docs is now not working qq... Retrying in 5 minutes');
+            }
         });
     }
 }
@@ -2838,10 +2864,11 @@ function nobCalculateTime(runOnly) {
     if (runOnly != 'relic' & runOnly != 'toxic' & runOnly != 'none')
         runOnly = 'all';
 
+    Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
     //var CurrentTime = currentTimeStamp();
     if (runOnly == 'relic' && (typeof LOCATION_TIMERS[3][1].url != 'undefined' || LOCATION_TIMERS[3][1].url != 'undefined')) {
-        var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=relic";
-        nobAjaxGet(url, function(text) {
+        //var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=relic";
+        /*nobAjaxGet(url, function(text) {
             text = JSON.parse(text);
             if (text.result == "error") {
                 var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
@@ -2862,11 +2889,39 @@ function nobCalculateTime(runOnly) {
         }, function(a, b, c) {
             var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
             child.innerHTML = "<font color='red'>" + b + " error, probably hornTracker, google, or my scripts broke. Please wait awhile, if not just contact me.</font>";
+        });*/
+
+        Parse.Cloud.run('nobRelic', {}, {
+            success: function (data) {
+                data = JSON.parse(data);
+
+                if (data.result == "error") {
+                    var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
+                    child.innerHTML = "<font color='red'>" + data.error + "</font>";
+                } else {
+                    var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
+                    child.innerHTML = "Relic hunter now in: <font color='green'>" + data.location + "</font> \~ Next move time: <span id='NOBrelic'>" + updateTimer(data.next_move, true);
+                    if (data.next_move > 0) {
+                        clockTicking = true;
+                        nobStore(data.next_move, 'relic');
+                        updateTime();
+                        clockNeedOn = true;
+                    } else {
+                        clockTicking = false;
+                        clockNeedOn = false;
+                    }
+                }
+            }, error: function (error) {
+                error = JSON.parse(error);
+
+                var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
+                child.innerHTML = "<font color='red'>" + error + " error, probably hornTracker, google, or my scripts broke. Please wait awhile, if not just contact me.</font>";
+            }
         });
     }
 
     if (runOnly == 'toxic' && (typeof LOCATION_TIMERS[4][1].url != 'undefined' || LOCATION_TIMERS[4][1].url != 'undefined')) {
-        var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=toxic";
+        /*var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=toxic";
         nobAjaxGet(url, function(text) {
             text = JSON.parse(text);
             if (text.result == "error") {
@@ -2896,6 +2951,41 @@ function nobCalculateTime(runOnly) {
             // console.log(b);
             var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
             child.innerHTML = "<font color='red'>" + b + " error, probably hornTracker, google, or my scripts broke. Please wait awhile, if not just contact me.</font>";
+        });*/
+
+        Parse.Cloud.run('nobToxic', {}, {
+            success: function (data) {
+                data = JSON.parse(data);
+
+                if (data.result == "error") {
+                    var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
+                    child.innerHTML = "<font color='red'>" + data.error + "</font>";
+                } else {
+                    var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
+                    if (data.level == 'Closed') {
+                        data.level = {
+                            color: 'red',
+                            state: data.level
+                        };
+                    } else {
+                        data.level = {
+                            color: 'green',
+                            state: data.level
+                        };
+                    }
+                    if (data.percent < 0) {
+                        data.percent = '';
+                    } else {
+                        data.percent = ' &#126; ' + (100 - data.percent) + '% left';
+                    }
+                    child.innerHTML = 'Toxic spill is now - <font color="' + data.level.color + '">' + data.level.state + '</font>' + data.percent;
+                }
+            }, error: function (error) {
+                error = JSON.parse(error);
+
+                var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
+                child.innerHTML = "<font color='red'>" + error + " error, probably hornTracker, google, or my scripts broke. Please wait awhile, if not just contact me.</font>";
+            }
         });
     }
 
