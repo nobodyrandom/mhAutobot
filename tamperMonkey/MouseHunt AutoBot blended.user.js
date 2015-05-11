@@ -3477,9 +3477,9 @@ function nobScript(qqEvent) {
     }
 }
 
-unsafeWindow.showHideTimers = function () {
+function showHideTimers() {
     $("#loadTimersElement").toggle();
-};
+}
 
 function nobTravel(location) {
     if (NOBpage) {
@@ -3679,33 +3679,33 @@ unsafeWindow.nobRaffle = function() {
 };
 
 // TODO: finish this
-unsafeWindow.nobPresent = function() {
-    var intState = 0;
-    var nobPresInt = window.setInterval(function() {
-        if (intState == 0 && !($('.tabs a:eq(1)').length > 0)) {
-            $('#hgbar_messages').click();
-            intState = 1;
-            return;
-        } else if ($('a.active.tab')[0].dataset.tab != '') {
-            var tabs = $('a.tab');
-            for (var i = 0; i < tabs.length; i++) {
-                if (tabs[i].dataset.tab == '') {
-                    tabs[i].click();
-                    return;
-                }
-            }
-        } else {
-            var presents = $();
-            for (var i = presents.length -1; i >= 0; i--) {
+/*unsafeWindow.nobPresent = function() {
+ var intState = 0;
+ var nobPresInt = window.setInterval(function() {
+ if (intState == 0 && !($('.tabs a:eq(1)').length > 0)) {
+ $('#hgbar_messages').click();
+ intState = 1;
+ return;
+ } else if ($('a.active.tab')[0].dataset.tab != '') {
+ var tabs = $('a.tab');
+ for (var i = 0; i < tabs.length; i++) {
+ if (tabs[i].dataset.tab == '') {
+ tabs[i].click();
+ return;
+ }
+ }
+ } else {
+ var presents = $();
+ for (var i = presents.length -1; i >= 0; i--) {
 
-            }
-            intState = 2;
-        }
-        if (intState == 2) {
-            $("a.messengerUINotificationClose")[0].click();
-        }
-    }, 1000);
-};
+ }
+ intState = 2;
+ }
+ if (intState == 2) {
+ $("a.messengerUINotificationClose")[0].click();
+ }
+ }, 1000);
+ };*/
 
 // CALCULATE TIMER *******************************
 function currentTimeStamp() {
@@ -3891,6 +3891,8 @@ function nobCalculateOfflineTimers() {
 
 // Attempt to inject addonCode made by user
 function runAddonCode(){
-    console.log("RUNNING ADDON CODE, SCRIPT IS NOW NOT SAFE DEPENDING ON WHAT YOU DID.");
-    eval(addonCode);
+    if (!NOBhasPuzzle && addonCode != "") {
+        console.log("%cRUNNING ADDON CODE, SCRIPT IS NOW NOT SAFE DEPENDING ON WHAT YOU DID.", "color: yellow; background: red; font-size: 50pt;");
+        eval(addonCode);
+    }
 }
