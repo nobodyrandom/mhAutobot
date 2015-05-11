@@ -236,12 +236,8 @@ function exeScript() {
             hiFivePlatform = true;
         }
 
-        // check if user running in https secure connection
-        if (window.location.href.indexOf("https://") != -1) {
-            secureConnection = true;
-        } else {
-            secureConnection = false;
-        }
+    // check if user running in https secure connection, true/false
+    secureConnection = (window.location.href.indexOf("https://") != -1);
 
         if (fbPlatform) {
             if (window.location.href == "http://www.mousehuntgame.com/canvas/" ||
