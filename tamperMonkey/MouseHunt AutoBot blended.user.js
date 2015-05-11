@@ -3678,34 +3678,34 @@ unsafeWindow.nobRaffle = function() {
     }, 4000);
 };
 
-// TODO: finish this
-/*unsafeWindow.nobPresent = function() {
- var intState = 0;
- var nobPresInt = window.setInterval(function() {
- if (intState == 0 && !($('.tabs a:eq(1)').length > 0)) {
- $('#hgbar_messages').click();
- intState = 1;
- return;
- } else if ($('a.active.tab')[0].dataset.tab != '') {
- var tabs = $('a.tab');
- for (var i = 0; i < tabs.length; i++) {
- if (tabs[i].dataset.tab == '') {
- tabs[i].click();
- return;
- }
- }
- } else {
- var presents = $();
- for (var i = presents.length -1; i >= 0; i--) {
-
- }
- intState = 2;
- }
- if (intState == 2) {
- $("a.messengerUINotificationClose")[0].click();
- }
- }, 1000);
- };*/
+unsafeWindow.nobPresent = function() {
+    var intState = 0;
+    var nobPresInt = window.setInterval(function() {
+        if (intState == 0 && !($('.tabs a:eq(1)').length > 0)) {
+            $('#hgbar_messages').click();
+            intState = 1;
+            return;
+        } else if ($('a.active.tab')[0].dataset.tab != 'gifts') {
+            var tabs = $('a.tab');
+            for (var i = 0; i < tabs.length; i++) {
+                if (tabs[i].dataset.tab == 'gifts') {
+                    tabs[i].click();
+                    return;
+                }
+            }
+        } else {
+            var presents = $('input.acceptAndSend');
+            for (var i = presents.length -1; i >= 0; i--) {
+                presents[i].click();
+            }
+            intState = 2;
+            return;
+        }
+        if (intState == 2) {
+            $("a.messengerUINotificationClose")[0].click();
+        }
+    }, 1000);
+};
 
 // CALCULATE TIMER *******************************
 function currentTimeStamp() {
