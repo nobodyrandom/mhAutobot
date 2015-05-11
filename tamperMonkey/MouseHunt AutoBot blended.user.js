@@ -3696,7 +3696,7 @@ unsafeWindow.nobPresent = function() {
             }
         } else {
             var presents = $();
-            for (var i = presents.length -1 >= 0; i--) {
+            for (var i = presents.length -1; i >= 0; i--) {
 
             }
             intState = 2;
