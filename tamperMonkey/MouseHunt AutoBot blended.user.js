@@ -3722,18 +3722,20 @@ unsafeWindow.nobPresent = function() {
             $("a.messengerUINotificationClose")[0].click();
             console.log("No gifts found.");
             window.clearInterval(nobPresInt);
-        } else if ($('a.active.tab')[0].dataset.tab == 'gifts') {
+        } else if (intState != 2 && $('a.active.tab')[0].dataset.tab == 'gifts') {
             var presents = $('input.acceptAndSend');
-            for (var i = presents.length -1; i >= 0; i--) {
+            for (var i = presents.length - 1; i >= 0; i--) {
                 presents[i].click();
             }
             intState = 2;
             return;
+        } else if ($('a.active.tab')[0].dataset.tab == 'gifts') {
+            intState = 3;
         } else {
             intState = -1;
         }
 
-        if (intState == 2) {
+        if (intState == 3) {
             $("a.messengerUINotificationClose")[0].click();
             window.clearInterval(nobPresInt);
         } else if (intState == -1) {
