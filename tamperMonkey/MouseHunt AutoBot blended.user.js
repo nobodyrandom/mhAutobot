@@ -29,7 +29,7 @@
 // // Extra delay time before sounding the horn. (in seconds)
 // // Default: 10 - 180
 var hornTimeDelayMin = 10;
-var hornTimeDelayMax = 180;
+var hornTimeDelayMax = 360;
 
 // // Bot aggressively by ignore all safety measure such as check horn image visible before sounding it. (true/false)
 // // Note: Highly recommended to turn off because it increase the chances of getting caught in botting.
@@ -63,10 +63,10 @@ var kingPauseTimeMax = 18000;
 
 // // The script will pause if player at different location that hunt location set before. (true/false)
 // // Note: Make sure you set showTimerInPage to true in order to know what is happening.
-var pauseAtInvalidLocation = true;
+var pauseAtInvalidLocation = false;
 
 // // Popup on KR or not, the script will throw out an alert box if true.
-var autoPopupKR = true;
+var autoPopupKR = false;
 
 // == Basic User Preference Setting (End) ==
 
@@ -1044,7 +1044,8 @@ function checkThenArm(sort, category, name) {  //category = weapon/base/charm/tr
     }
 
     // Try to queue trap arming
-    console.log("Last run: " + tryingToArm + ", this run: " + name);
+    //console.log("Last run: " + tryingToArm + ", this run: " + name);
+    console.log("Trying to arm: " + name + ", is armed? " + trapArmed);
     if (!trapArmed && tryingToArm != name) {
         tryingToArm = name;
         var intervalCTA = setInterval(
