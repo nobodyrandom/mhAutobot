@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.0.11b
+// @version    	2.0.12b
 // @description Currently the most advanced script for automizing MouseHunt. Supports ALL new areas. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN - Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot, https://devcnn.wordpress.com/
@@ -209,7 +209,7 @@ var LOCATION_TIMERS = [
 ];
 
 // start executing script
-var debug = true;
+var debug = false;
 if (debug) console.log('STARTING SCRIPT - ver: ' + GM_info.script.version);
 if (window.top != window.self) {
     if (debug) console.log('In IFRAME');
@@ -881,19 +881,26 @@ function loadTrain(location, load) {
     }
 }
 
-function buildTrapList(category) {
-    var returning = false;
-    clickTrapSelector(category);
+function buildTrapList(category, afterBuilding, failedBuilding) {
+    //console.log("running buildTrapList(" + category + ")")
+    var returning;
+    //clickTrapSelector(category);
     try {
-        NOBajaxPost('/managers/ajax/users/gettrapcomponents.php', {uh: user.unique_hash}, function (data) {
+        nobAjaxPost('/managers/ajax/users/gettrapcomponents.php', {uh: user.unique_hash}, function (data) {
             NOBtraps = data.components;
+            nobStore(NOBtraps, 'traps');
+            //console.log(NOBtraps);
             returning = true;
+            afterBuilding();
         }, function (error) {
-            console.log(error);
+            console.log("btl ajax error: " + error);
             returning = false;
+            failedBuilding();
         });
+    } catch(e) {
+        console.log("btl try error: " + e);
     } finally {
-        clickTrapSelector(category);
+        //clickTrapSelector(category);
         return returning;
     }
 }
@@ -906,6 +913,7 @@ function checkThenArm(sort, category, name) {  //category = weapon/base/charm/tr
     var trapArmed;
     var tempName;
     var userVariable = getPageVariableForChrome("user." + category + "_name");
+    var trapArmedOverride = false;
 
     // TODO: If current setup is in one of the 'best', this stupid thing assumes its OK =,= // might be fixed now
     if (sort == 'best') {
@@ -917,20 +925,30 @@ function checkThenArm(sort, category, name) {  //category = weapon/base/charm/tr
             }
         }
 
-        if (NOBtraps.length = 0) {
-            if (buildTrapList(category)) {
+        if (NOBtraps.length == 0) {
+            if (debug) console.log("NOBtraps not built yet, trying to build now.");
+            buildTrapList(category, function() {
                 return checkThenArm(sort, category, name);
-            } else {
-                console.log('checkThenArm() ERROR: cant fetch trap list');
+            }, function() {
+                if (debug) console.log("Failed to build trap list, giving up arming: " + name);
                 return;
-            }
+            });
         } else {
+            if (debug) console.log("Running double check if better one is in inv.");
             // Chunk of code try finds if a better trap is in inventory, if so sets trapArmed to false
             var i, j;
             for (j = 0; j < name.length; j++) {
                 for (i = 0; i < NOBtraps.length; i++) {
-                    if (NOBtraps[i].classification == category && NOBtraps[i].name == name[i] && userVariable.indexOf(name[i]) != 0) {
+                    if (NOBtraps[i].name == name[j] && userVariable.indexOf(NOBtraps[i].name) == 0) {
+                        if (debug) console.log("No better traps were found.");
+                        trapArmed = true;
+
+                        i = NOBtraps.length + 1;
+                        j = name.length + 1;
+                    } else if (NOBtraps[i].classification == category && NOBtraps[i].name == name[j] /*&& userVariable.indexOf(name[i]) != 0*/) {
+                        if (debug) console.log("Found a better trap: " + NOBtraps[i].name + " as compared to " + name[j]);
                         trapArmed = false;
+                        trapArmedOverride = true;
 
                         // breaking out of loops
                         i = NOBtraps.length + 1;
@@ -943,11 +961,11 @@ function checkThenArm(sort, category, name) {  //category = weapon/base/charm/tr
         trapArmed = (userVariable.indexOf(name) == 0);
     }
 
-    console.log("trapArmed(1): " + trapArmed);
+    if (debug) console.log(name + " armed?: " + trapArmed);
 
     // OVERRIDE FOR AJAX (NEED REDO ASAP, but works for now) - charms TODO: check if redo needed, looks ok for now
     var retryPageVariable = document.getElementById('hud_trapLabel').innerText;
-    if (retryPageVariable == "Charm:" && category == "trinket") {
+    if (!trapArmedOverride && retryPageVariable == "Charm:" && category == "trinket") {
         var theCharmArmed = document.getElementById('hud_trapPower').innerText;
         if (sort == 'best') {
             var i;
@@ -981,7 +999,7 @@ function checkThenArm(sort, category, name) {  //category = weapon/base/charm/tr
             }
         }
         //trapArmed = true;
-    } else if (category == 'weapon' || category == 'base' || category == 'bait') {
+    } else if (!trapArmedOverride && category == 'weapon' || category == 'base' || category == 'bait') {
         var currBase = document.getElementById('hud_base').innerText;
         var currTrap = document.getElementById('hud_weapon').innerText;
         var currBait = document.getElementById('hud_baitName').innerText;
@@ -1046,10 +1064,10 @@ function checkThenArm(sort, category, name) {  //category = weapon/base/charm/tr
     }
 
     // Try to queue trap arming
-    //console.log("Last run: " + tryingToArm + ", this run: " + name);
-    console.log("Trying to arm: " + name + ", is armed? " + trapArmed);
+    if (debug) console.log("Last run: " + tryingToArm + ", this run: " + name + ", is armed? " + trapArmed + " with override? " + trapArmedOverride);
     if (!trapArmed && tryingToArm != name) {
         tryingToArm = name;
+        trapArmedOverride = false;
         var intervalCTA = setInterval(
             function() {
                 if (!arming) {
@@ -1469,7 +1487,7 @@ function checkJournalDate() {
 }
 
 function action() {
-    console.log("Run action()");
+    if(debug) console.log("Run action()");
     if (isKingReward) {
         kingRewardAction();
         notify(getPageVariableForChrome('user.username'));
