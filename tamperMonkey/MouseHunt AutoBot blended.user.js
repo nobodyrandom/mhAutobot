@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.0.13b
+// @version    	2.0.14b
 // @description Currently the most advanced script for automizing MouseHunt. Supports ALL new areas. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN - Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot, https://devcnn.wordpress.com/
@@ -402,6 +402,7 @@ function exeScript() {
 }
 
 function checkIntroContainer() {
+    if (debug) console.log('RUN checkIntroContainer()');
     var gotIntroContainerDiv = false;
 
     var introContainerDiv = document.getElementById('introContainer');
@@ -1356,6 +1357,7 @@ function retrieveData() {
         isKingReward = unsafeWindow.user.has_puzzle;
         baitQuantity = unsafeWindow.user.bait_quantity;
         currentLocation = unsafeWindow.user.location;
+        NOBhasPuzzle = unsafeWindow.user.has_puzzle;
     } else if (browser == "opera") {
         nextActiveTime = user.next_activeturn_seconds;
         isKingReward = user.has_puzzle;
@@ -1366,6 +1368,7 @@ function retrieveData() {
         isKingReward = (getPageVariableForChrome("user.has_puzzle").toString() != "false");
         baitQuantity = parseInt(getPageVariableForChrome("user.bait_quantity"));
         currentLocation = getPageVariableForChrome("user.location");
+        NOBhasPuzzle = user.has_puzzle;
     } else {
         window.setTimeout(function() {
             reloadWithMessage("Browser not supported. Reloading...", false);
@@ -2675,7 +2678,7 @@ function soundHorn() {
 }
 
 function afterSoundingHorn() {
-    console.log("Run afterSoundingHorn()");
+    if (debug) console.log("Run afterSoundingHorn()");
     var scriptNode = document.getElementById("scriptNode");
     if (scriptNode) {
         scriptNode.setAttribute("soundedHornAtt", "false");
@@ -2702,7 +2705,7 @@ function afterSoundingHorn() {
             headerElement = null;
             headerStatus = null;
 
-            // increase the horn retry counter and check if the script is caugh in loop
+            // increase the horn retry counter and check if the script is caught in loop
             ++hornRetry;
             if (hornRetry > hornRetryMax) {
                 // reload the page see if thing get fixed
@@ -2799,7 +2802,7 @@ function embedScript() {
         // new UI
         isNewUI = true;
         alert('You are on the new UI please install the BETA version of the bot instead.\nFound here: http://goo.gl/phsHNg');
-        var hornButtonLink = document.getElementsByClassName('hornbutton')[0].firstChild;
+        throw new Error("Wrong script version.");
     }
 
     var hornButtonLink = document.getElementsByClassName(strHornButton)[0].firstChild;
@@ -3546,29 +3549,6 @@ function fetchGDocStuff() {
 
         document.getElementById('NOBmessage').innerHTML = "Loading";
         nobLoading('NOBmessage');
-        /*nobAjaxGet(url, function(text) {
-         nobStopLoading();
-         text = JSON.parse(text);
-         // MESSAGE PLACING
-         message = text.message;
-         var NOBmessage = document.getElementById('NOBmessage');
-         NOBmessage.innerHTML = message;
-
-         // UPDATE CHECK
-         checkVer = text.version;
-         console.log('Current MH AutoBot version: ' + currVer + ' / Server MH AutoBot version: ' + checkVer);
-         //console.log('Current MH AutoBot additional thing version: ' + addonScriptVer + ' / Server MH AutoBot additional thing version: ' + text.versionAddon);
-         if (checkVer > currVer) {
-         var updateElement = document.getElementById('updateElement');
-         updateElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target='_blank'><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
-         }
-         }, function(a, b, c) {
-         setTimeout(function() {fetchGDocStuff();}, 300000);
-         nobStopLoading();
-         console.log(b + ' error - Google Docs is now not working qq');
-         if (b == "timeout")
-         document.getElementById('NOBmessage').innerHTML = "Google Docs is being slow again ._. retrying in 5 mins.";
-         });*/
 
         Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
         Parse.Cloud.run('nobMessage', {}, {
@@ -3732,16 +3712,29 @@ unsafeWindow.nobPresent = function() {
                     return;
                 }
             }
-        } else {
+
+            // If there are no gifts
+            intState = 0;
+            $("a.messengerUINotificationClose")[0].click();
+            console.log("No gifts found.");
+            window.clearInterval(nobPresInt);
+        } else if ($('a.active.tab')[0].dataset.tab == 'gifts') {
             var presents = $('input.acceptAndSend');
             for (var i = presents.length -1; i >= 0; i--) {
                 presents[i].click();
             }
             intState = 2;
             return;
+        } else {
+            intState = -1;
         }
+
         if (intState == 2) {
             $("a.messengerUINotificationClose")[0].click();
+            window.clearInterval(nobPresInt);
+        } else if (intState == -1) {
+            console.log("Present error, user pls resolve yourself");
+            window.clearInterval(nobPresInt);
         }
     }, 1000);
 };

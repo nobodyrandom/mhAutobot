@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom
-// @version    	2.0.11a
+// @version    	2.0.14a
 // @description Currently the most advanced script for automizing MouseHunt. Supports ALL new areas and FIREFOX. Revamped version of original by Ooi - Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @namespace   https://greasyfork.org/users/6398
@@ -29,7 +29,7 @@
 // // Extra delay time before sounding the horn. (in seconds)
 // // Default: 10 - 180
 var hornTimeDelayMin = 10;
-var hornTimeDelayMax = 180;
+var hornTimeDelayMax = 360;
 
 // // Bot aggressively by ignore all safety measure such as check horn image visible before sounding it. (true/false)
 // // Note: Highly recommended to turn off because it increase the chances of getting caught in botting.
@@ -63,16 +63,16 @@ var kingPauseTimeMax = 18000;
 
 // // The script will pause if player at different location that hunt location set before. (true/false)
 // // Note: Make sure you set showTimerInPage to true in order to know what is happening.
-var pauseAtInvalidLocation = true;
+var pauseAtInvalidLocation = false;
 
 // // Popup on KR or not, the script will throw out an alert box if true.
-var autoPopupKR = true;
+var autoPopupKR = false;
 
 // == Basic User Preference Setting (End) ==
 
 // == Advance User Preference Setting (Begin) ==
 // // The variable in this section contain some advance option that will change the script behavior.
-// // Edit this variable only if you know what you are doing 
+// // Edit this variable only if you know what you are doing
 // // Reload MouseHunt page manually if edit this script while running it for immediate effect.
 
 // // Display timer and message in page title. (true/false)
@@ -173,7 +173,7 @@ var LOCATION_TIMERS = [
 ];
 
 // start executing script
-var debug = true;
+var debug = false;
 if (debug) console.log('STARTING SCRIPT - ver: ' + GM_info.script.version);
 if (window.top != window.self) {
     if (debug) console.log('In IFRAME');
@@ -697,25 +697,25 @@ function action() {
             // update timer
             displayTimer("Out of pre-defined hunting location...", "Out of pre-defined hunting location...", "Out of pre-defined hunting location...");
 
-            if (fbPlatform) {
-                if (secureConnection) {
-                    displayLocation("<font color='red'>" + currentLocation + "</font> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='https://www.mousehuntgame.com/canvas/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
-                } else {
-                    displayLocation("<font color='red'>" + currentLocation + "</font> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='http://www.mousehuntgame.com/canvas/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
-                }
-            } else if (hiFivePlatform) {
-                if (secureConnection) {
-                    displayLocation("<font color='red'>" + currentLocation + "</font> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='https://mousehunt.hi5.hitgrab.com/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
-                } else {
-                    displayLocation("<font color='red'>" + currentLocation + "</font> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='http://mousehunt.hi5.hitgrab.com/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
-                }
-            } else if (mhPlatform) {
-                if (secureConnection) {
-                    displayLocation("<font color='red'>" + currentLocation + "</font> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='https://www.mousehuntgame.com/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
-                } else {
-                    displayLocation("<font color='red'>" + currentLocation + "</font> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='http://www.mousehuntgame.com/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
-                }
+        if (fbPlatform) {
+            if (secureConnection) {
+                displayLocation("<span style='color: red; '>" + currentLocation + "</span> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='https://www.mousehuntgame.com/canvas/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
+            } else {
+                displayLocation("<span style='color: red; '>" + currentLocation + "</span> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='http://www.mousehuntgame.com/canvas/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
             }
+        } else if (hiFivePlatform) {
+            if (secureConnection) {
+                displayLocation("<span style='color: red; '>" + currentLocation + "</span> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='https://mousehunt.hi5.hitgrab.com/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
+            } else {
+                displayLocation("<span style='color: red; '>" + currentLocation + "</span> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='http://mousehunt.hi5.hitgrab.com/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
+            }
+        } else if (mhPlatform) {
+            if (secureConnection) {
+                displayLocation("<span style='color: red; '>" + currentLocation + "</span> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='https://www.mousehuntgame.com/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
+            } else {
+                displayLocation("<span style='color: red; '>" + currentLocation + "</span> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='http://www.mousehuntgame.com/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
+            }
+        }
 
             displayKingRewardSumTime(null);
 
@@ -1088,9 +1088,7 @@ function embedTimer(targetPage) {
                     holder.appendChild(timersElementToggle);
                     holder.appendChild(temp);
                     timerDivElement.appendChild(holder);
-                    timersElementToggle.addEventListener("click", function() {
-                        showHideTimers();
-                    }, false);
+                    timersElementToggle.addEventListener("click", showHideTimers, false);
                     holder = null;
                     text = null;
                     temp = null;
@@ -1801,6 +1799,7 @@ function soundHorn() {
 }
 
 function afterSoundingHorn() {
+    if (debug) console.log("Run afterSoundingHorn()");
     var scriptNode = document.getElementById("scriptNode");
     if (scriptNode) {
         scriptNode.setAttribute("soundedHornAtt", "false");
@@ -2025,7 +2024,7 @@ function playKingRewardSound() {
     }
 
     if (autoPopupKR)
-        window.setTimeout(function() {
+        window.setTimeout(function () {
             alert("Kings Reward NOW");
         }, 2000);
 }
@@ -2421,13 +2420,15 @@ function nobAjaxGet(url, callback, throwError) {
     }
 }
 
-function nobAjaxPost(url, data, callback, throwError) {
+function nobAjaxPost(url, data, callback, throwError, dataType) {
     var NOBhasPuzzle = user.has_puzzle;
     if (!NOBhasPuzzle) {
+        if (dataType == null || dataType == undefined) dataType = 'json';
         jQuery.ajax({
             url: url,
             data: data,
             type: "POST",
+            dataType: dataType,
             timeout: 5000,
             statusCode: {
                 200: function () {
@@ -2564,7 +2565,7 @@ function nobScript(qqEvent) {
         var mapThere = document.getElementById('hudmapitem').style.cssText;
         if (mapThere == 'display: none;') {
             mapThere = false;
-            console.log("No map, using HTML data now");
+            if (debug) console.log("No map, using HTML data now");
         } else {
             mapThere = true;
         }
@@ -2596,9 +2597,9 @@ function nobScript(qqEvent) {
     }
 }
 
-unsafeWindow.showHideTimers = function () {
+function showHideTimers() {
     $("#loadTimersElement").toggle();
-};
+}
 
 function nobTravel(location) {
     if (NOBpage) {
@@ -2626,29 +2627,6 @@ function fetchGDocStuff() {
 
         document.getElementById('NOBmessage').innerHTML = "Loading";
         nobLoading('NOBmessage');
-        /*nobAjaxGet(url, function(text) {
-            nobStopLoading();
-            text = JSON.parse(text);
-            // MESSAGE PLACING
-            message = text.message;
-            var NOBmessage = document.getElementById('NOBmessage');
-            NOBmessage.innerHTML = message;
-
-            // UPDATE CHECK
-            checkVer = text.version;
-            console.log('Current MH AutoBot version: ' + currVer + ' / Server MH AutoBot version: ' + checkVer);
-            //console.log('Current MH AutoBot additional thing version: ' + addonScriptVer + ' / Server MH AutoBot additional thing version: ' + text.versionAddon);
-            if (checkVer > currVer) {
-                var updateElement = document.getElementById('updateElement');
-                updateElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target='_blank'><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
-            }
-        }, function(a, b, c) {
-            setTimeout(function() {fetchGDocStuff();}, 300000);
-            nobStopLoading();
-            console.log(b + ' error - Google Docs is now not working qq');
-            if (b == "timeout")
-                document.getElementById('NOBmessage').innerHTML = "Google Docs is being slow again ._. retrying in 5 mins.";
-        });*/
 
         Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
         Parse.Cloud.run('nobMessage', {}, {
@@ -2777,7 +2755,7 @@ function showNOBMessage() {
 unsafeWindow.nobRaffle = function() {
     if (!($('.tabs a:eq(1)').length > 0))
         $('#hgbar_messages').click();
-    //messenger.UI['notification'].togglePopup();
+
     window.setTimeout(function () {
         var tabs = $('a.tab');
         var theTab = "";
@@ -2794,6 +2772,48 @@ unsafeWindow.nobRaffle = function() {
             $("a.messengerUINotificationClose")[0].click();
         }, 7500);
     }, 4000);
+};
+
+unsafeWindow.nobPresent = function() {
+    var intState = 0;
+    var nobPresInt = window.setInterval(function() {
+        if (intState == 0 && !($('.tabs a:eq(1)').length > 0)) {
+            $('#hgbar_messages').click();
+            intState = 1;
+            return;
+        } else if ($('a.active.tab')[0].dataset.tab != 'gifts') {
+            var tabs = $('a.tab');
+            for (var i = 0; i < tabs.length; i++) {
+                if (tabs[i].dataset.tab == 'gifts') {
+                    tabs[i].click();
+                    return;
+                }
+            }
+
+            // If there are no gifts
+            intState = 0;
+            $("a.messengerUINotificationClose")[0].click();
+            console.log("No gifts found.");
+            window.clearInterval(nobPresInt);
+        } else if ($('a.active.tab')[0].dataset.tab == 'gifts') {
+            var presents = $('input.acceptAndSend');
+            for (var i = presents.length -1; i >= 0; i--) {
+                presents[i].click();
+            }
+            intState = 2;
+            return;
+        } else {
+            intState = -1;
+        }
+
+        if (intState == 2) {
+            $("a.messengerUINotificationClose")[0].click();
+            window.clearInterval(nobPresInt);
+        } else if (intState == -1) {
+            console.log("Present error, user pls resolve yourself");
+            window.clearInterval(nobPresInt);
+        }
+    }, 1000);
 };
 
 // CALCULATE TIMER *******************************
@@ -2862,30 +2882,6 @@ function nobCalculateTime(runOnly) {
     Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
     //var CurrentTime = currentTimeStamp();
     if ((runOnly == 'relic' || runOnly == 'all') && (typeof LOCATION_TIMERS[3][1].url != 'undefined' || LOCATION_TIMERS[3][1].url != 'undefined')) {
-        //var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=relic";
-        /*nobAjaxGet(url, function(text) {
-            text = JSON.parse(text);
-            if (text.result == "error") {
-                var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
-                child.innerHTML = "<font color='red'>" + text.error + "</font>";
-            } else {
-                var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
-                child.innerHTML = "Relic hunter now in: <font color='green'>" + text.location + "</font> \~ Next move time: <span id='NOBrelic'>" + updateTimer(text.next_move, true);
-                if (text.next_move > 0) {
-                    clockTicking = true;
-                    nobStore(text.next_move, 'relic');
-                    updateTime();
-                    clockNeedOn = true;
-                } else {
-                    clockTicking = false;
-                    clockNeedOn = false;
-                }
-            }
-        }, function(a, b, c) {
-            var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
-            child.innerHTML = "<font color='red'>" + b + " error, probably hornTracker, google, or my scripts broke. Please wait awhile, if not just contact me.</font>";
-        });*/
-
         Parse.Cloud.run('nobRelic', {}, {
             success: function (data) {
                 data = JSON.parse(data);
@@ -2916,38 +2912,6 @@ function nobCalculateTime(runOnly) {
     }
 
     if ((runOnly == 'toxic' || runOnly == 'all') && (typeof LOCATION_TIMERS[4][1].url != 'undefined' || LOCATION_TIMERS[4][1].url != 'undefined')) {
-        /*var url = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec?location=toxic";
-        nobAjaxGet(url, function(text) {
-            text = JSON.parse(text);
-            if (text.result == "error") {
-                var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
-                child.innerHTML = "<font color='red'>" + text.error + "</font>";
-            } else {
-                var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
-                if (text.level == 'Closed') {
-                    text.level = {
-                        color: 'red',
-                        state: text.level
-                    };
-                } else {
-                    text.level = {
-                        color: 'green',
-                        state: text.level
-                    };
-                }
-                if (text.percent < 0) {
-                    text.percent = '';
-                } else {
-                    text.percent = ' &#126; ' + (100 - text.percent) + '% left';
-                }
-                child.innerHTML = 'Toxic spill is now - <font color="' + text.level.color + '">' + text.level.state + '</font>' + text.percent;
-            }
-        }, function(a, b, c) {
-            // console.log(b);
-            var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
-            child.innerHTML = "<font color='red'>" + b + " error, probably hornTracker, google, or my scripts broke. Please wait awhile, if not just contact me.</font>";
-        });*/
-
         Parse.Cloud.run('nobToxic', {}, {
             success: function (data) {
                 data = JSON.parse(data);
