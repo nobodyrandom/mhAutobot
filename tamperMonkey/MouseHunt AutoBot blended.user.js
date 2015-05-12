@@ -166,7 +166,7 @@ var strHornButton = 'hornbutton';
 var strCampButton = 'campbutton';
 
 // NOB vars
-var addonScriptVer = '1.2.024';
+//var addonScriptVer = '1.2.024';
 //var NOBhasPuzzle = unsafeWindow.user.has_puzzle;
 var NOBhasPuzzle;
 var NOBtraps = []; // Stores ALL traps, bases, cheese etc available to user
@@ -1809,9 +1809,9 @@ function embedTimer(targetPage) {
             var titleElement = document.createElement('div');
             titleElement.setAttribute('id', 'titleElement');
             if (targetPage && aggressiveMode) {
-                titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/6514-mousehunt-autobot-enhanced-revamp\" target=\"_blank\">MouseHunt AutoBot ENHANCED + REVAMP (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing (version " + addonScriptVer + ")</b> - <font color='red'>Aggressive Mode</font>";
+                titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/6514-mousehunt-autobot-enhanced-revamp\" target=\"_blank\">MouseHunt AutoBot ENHANCED + REVAMP (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing</b> - <font color='red'>Aggressive Mode</font>";
             } else {
-                titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/6514-mousehunt-autobot-enhanced-revamp\" target=\"_blank\">MouseHunt AutoBot ENHANCED + REVAMP (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing (version " + addonScriptVer + ")</b>";
+                titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/6514-mousehunt-autobot-enhanced-revamp\" target=\"_blank\">MouseHunt AutoBot ENHANCED + REVAMP (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing</b>";
             }
             timerDivElement.appendChild(titleElement);
             titleElement = null;
@@ -3558,8 +3558,14 @@ function fetchGDocStuff() {
         document.getElementById('NOBmessage').innerHTML = "Loading";
         nobLoading('NOBmessage');
 
+        var theData = JSON.parse(nobGet('data'));
+        if (theData.user) {
+            theData = theData.user;
+        }
+        var userID = theData.sn_user_id;
+
         Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
-        Parse.Cloud.run('nobMessage', {}, {
+        Parse.Cloud.run('nobMessage', {'user': userID}, {
             success: function (data) {
                 nobStopLoading();
                 data = JSON.parse(data);
@@ -3570,8 +3576,7 @@ function fetchGDocStuff() {
 
                 // UPDATE CHECK
                 checkVer = data.version;
-                console.log('Current MH AutoBot version: ' + currVer + ' / Server MH AutoBot version: ' + checkVer);
-                //console.log('Current MH AutoBot additional thing version: ' + addonScriptVer + ' / Server MH AutoBot additional thing version: ' + text.versionAddon);
+                if (debug) console.log('Current MH AutoBot version: ' + currVer + ' / Server MH AutoBot version: ' + checkVer);
                 if (checkVer > currVer) {
                     var updateElement = document.getElementById('updateElement');
                     updateElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target='_blank'><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
