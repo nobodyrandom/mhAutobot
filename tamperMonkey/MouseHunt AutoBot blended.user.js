@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.0.12b
+// @version    	2.0.13b
 // @description Currently the most advanced script for automizing MouseHunt. Supports ALL new areas. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN - Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot, https://devcnn.wordpress.com/
@@ -2443,10 +2443,22 @@ function loadPreferenceSettingFromStorage() {
     addonCodeTemp = undefined;
 
     var nobTrapsTemp = nobGet('traps');
-    if (!(nobTrapsTemp == undefined || nobTrapsTemp === null)) {
-        NOBtraps = JSON.parse(nobTrapsTemp);
+    var nobTrapsTempCounter = getStorage('nobTrapsCounter');
+    if (nobTrapsTempCounter == undefined || nobTrapsTempCounter === null ) {
+        nobTrapsTempCounter = 1000;
+    }
+    if (nobTrapsTempCounter > 0) {
+        if (!(nobTrapsTemp == undefined || nobTrapsTemp === null)) {
+            NOBtraps = JSON.parse(nobTrapsTemp);
+        }
+
+        setStorage('nobTrapsCounter', nobTrapsTempCounter - 1);
+    } else {
+        NOBtraps = [];
+        setStorage('nobTrapsCounter', 1000);
     }
     nobTrapsTemp = undefined;
+    nobTrapsTempCounter = undefined;
 
     var dischargeTemp = getStorage("discharge");
     if (dischargeTemp == undefined || dischargeTemp == null) {
