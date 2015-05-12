@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.0.15b
+// @version    	2.0.16b
 // @description Currently the most advanced script for automizing MouseHunt. Supports ALL new areas. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN - Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot, https://devcnn.wordpress.com/
@@ -1911,7 +1911,7 @@ function embedTimer(targetPage) {
                 loadLinkToUpdateDiv.setAttribute('style', 'float: left;');
                 var tempSpan2 = document.createElement('span');
                 var loadLinkToUpdate = document.createElement('a');
-                text = document.createTextNode('Submit info to GDoc');
+                text = document.createTextNode('Submit to GDoc');
                 loadLinkToUpdate.href = '#';
                 loadLinkToUpdate.setAttribute('id', 'gDocLink');
                 loadLinkToUpdate.appendChild(text);
@@ -1927,16 +1927,20 @@ function embedTimer(targetPage) {
                 text = ' &#126; <a id="nobRaffle" href="javascript: nobRaffle();">Return raffle tickets</a>';
                 tempSpan2 = document.createElement('span');
                 tempSpan2.innerHTML = text;
+                var tempSpan3 = document.createElement('span');
+                tempSpan3.innerHTML = ' &#126; <a id="nobPresents" href="javascript: nobPresent();">Return presents</a>';
                 var tempSpan = document.createElement('span');
                 tempSpan.innerHTML = ' &#126; <a href="javascript:window.open(\'http://goo.gl/forms/ayRsnizwL1\');" target=_blank>Submit a bug report/feedback</a>';
                 loadLinkToUpdateDiv.appendChild(tempDiv);
                 loadLinkToUpdateDiv.appendChild(tempSpan2);
+                loadLinkToUpdateDiv.appendChild(tempSpan3);
                 loadLinkToUpdateDiv.appendChild(tempSpan);
 
                 text = null;
                 tempDiv = null;
                 tempSpan = null;
                 tempSpan2 = null;
+                tempSpan3 = null;
                 loadLinkToUpdateDiv = null;
                 timersElementToggle = null;
                 loadTimersElement = null;
@@ -3704,43 +3708,47 @@ unsafeWindow.nobRaffle = function() {
 unsafeWindow.nobPresent = function() {
     var intState = 0;
     var nobPresInt = window.setInterval(function() {
-        if (intState == 0 && !($('.tabs a:eq(1)').length > 0)) {
-            $('#hgbar_messages').click();
-            intState = 1;
-            return;
-        } else if ($('a.active.tab')[0].dataset.tab != 'gifts') {
-            var tabs = $('a.tab');
-            for (var i = 0; i < tabs.length; i++) {
-                if (tabs[i].dataset.tab == 'gifts') {
-                    tabs[i].click();
-                    return;
+        try {
+            if (intState == 0 && !($('.tabs a:eq(1)').length > 0)) {
+                $('#hgbar_messages').click();
+                intState = 1;
+                return;
+            } else if ($('a.active.tab')[0].dataset.tab != 'gifts') {
+                var tabs = $('a.tab');
+                for (var i = 0; i < tabs.length; i++) {
+                    if (tabs[i].dataset.tab == 'gifts') {
+                        tabs[i].click();
+                        return;
+                    }
                 }
-            }
 
-            // If there are no gifts
-            intState = 0;
-            $("a.messengerUINotificationClose")[0].click();
-            console.log("No gifts found.");
-            window.clearInterval(nobPresInt);
-        } else if (intState != 2 && $('a.active.tab')[0].dataset.tab == 'gifts') {
-            var presents = $('input.acceptAndSend');
-            for (var i = presents.length - 1; i >= 0; i--) {
-                presents[i].click();
+                // If there are no gifts
+                intState = 0;
+                $("a.messengerUINotificationClose")[0].click();
+                console.log("No gifts found.");
+                window.clearInterval(nobPresInt);
+            } else if (intState != 2 && $('a.active.tab')[0].dataset.tab == 'gifts') {
+                var presents = $('input.acceptAndSend');
+                for (var i = presents.length - 1; i >= 0; i--) {
+                    presents[i].click();
+                }
+                intState = 2;
+                return;
+            } else if ($('a.active.tab')[0].dataset.tab == 'gifts') {
+                intState = 3;
+            } else {
+                intState = -1;
             }
-            intState = 2;
-            return;
-        } else if ($('a.active.tab')[0].dataset.tab == 'gifts') {
-            intState = 3;
-        } else {
-            intState = -1;
-        }
-
-        if (intState == 3) {
-            $("a.messengerUINotificationClose")[0].click();
-            window.clearInterval(nobPresInt);
-        } else if (intState == -1) {
-            console.log("Present error, user pls resolve yourself");
-            window.clearInterval(nobPresInt);
+        } catch (e) {
+            console.log(e + " error, retrying to continue in 1 sec.");
+        } finally {
+            if (intState == 3) {
+                $("a.messengerUINotificationClose")[0].click();
+                window.clearInterval(nobPresInt);
+            } else if (intState == -1) {
+                console.log("Present error, user pls resolve yourself");
+                window.clearInterval(nobPresInt);
+            }
         }
     }, 1000);
 };
