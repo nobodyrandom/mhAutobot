@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.0.14b
+// @version    	2.0.15b
 // @description Currently the most advanced script for automizing MouseHunt. Supports ALL new areas. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN - Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot, https://devcnn.wordpress.com/
@@ -735,64 +735,68 @@ function sandCrypts() {
 }
 
 function gnawnianExpress(load) {
-    var onTrain = getPageVariableForChrome('user.quests.QuestTrainStation.on_train');
-    var charmArmed = getPageVariableForChrome('user.trinket_name');
-    var trapArmed = getPageVariableForChrome('user.weapon_name');
-    if (onTrain == 'false') {
-        if (charmArmed.indexOf('Supply Schedule') > -1 || charmArmed.indexOf('Roof Rack') > -1 || charmArmed.indexOf('Greasy Glob') > -1 || charmArmed.indexOf('Door Guard') > -1 || charmArmed.indexOf('Dusty Coal') > -1  || charmArmed.indexOf('Black Powder') > -1 || charmArmed.indexOf('Magmatic Crystal') > -1)
-            disarmTrap('trinket');
+    var currentLocation = getPageVariableForChrome("user.location");
+    console.debug(currentLocation);
+    if (currentLocation.indexOf("Gnawnian Express") > -1) {
+        var onTrain = getPageVariableForChrome('user.quests.QuestTrainStation.on_train');
+        var charmArmed = getPageVariableForChrome('user.trinket_name');
+        var trapArmed = getPageVariableForChrome('user.weapon_name');
+        if (onTrain == 'false') {
+            if (charmArmed.indexOf('Supply Schedule') > -1 || charmArmed.indexOf('Roof Rack') > -1 || charmArmed.indexOf('Greasy Glob') > -1 || charmArmed.indexOf('Door Guard') > -1 || charmArmed.indexOf('Dusty Coal') > -1  || charmArmed.indexOf('Black Powder') > -1 || charmArmed.indexOf('Magmatic Crystal') > -1)
+                disarmTrap('trinket');
 
-        if (trapArmed.indexOf('Supply Grabber') > -1 || trapArmed.indexOf('Bandit Deflector') > -1 || trapArmed.indexOf('Engine Doubler') > -1)
-            checkThenArm('best', 'weapon', ['S.L.A.C. II', 'The Law Draw', 'S.L.A.C.']);
-    } else {
-        var phase = document.getElementsByClassName('phaseName')[0].innerText;
-        phase = phase.substr(7, phase.length);
-        console.debug('Current Active Train Phase: ' + phase);
-        switch (phase) {
-            case 'Supply Depot':
-                checkThenArm('best', 'weapon', supplyDepotTrap);
-                var supplyHoarder = parseInt(document.getElementsByClassName('supplyHoarderTab')[0].innerText.substr(0,1));
-                if (supplyHoarder == 0) {
-                    console.debug("Looking for supply hoarder");
-                    checkThenArm(null, 'trinket', 'Supply Schedule');
-                } else {
-                    console.debug("Supply hoarder is present. Disarming charm now...");
-                    disarmTrap('trinket');
-                }
-                loadTrain('depot', load);
-                break;
-            case 'Raider River':
-                checkThenArm('best', 'weapon', raiderRiverTrap);
-                var attacking = document.getElementsByClassName('attacked');
-                for (var i = 0; i < attacking.length; i++) {
-                    if (attacking[i].tagName == 'DIV')
-                        attacking = attacking[i].className.substr(0, attacking[i].className.indexOf(' '));
-                }
-                console.debug("Raiders are attacking " + attacking);
-                switch (attacking) {
-                    case 'roof':
-                        checkThenArm(null, 'trinket', 'Roof Rack');
-                        break;
-                    case 'door':
-                        checkThenArm(null, 'trinket', 'Door Guard');
-                        break;
-                    case 'rails':
-                        checkThenArm(null, 'trinket', 'Greasy Glob');
-                        break;
-                    default:
-                        console.debug('Bot is confused, raiders are not attacking?');
+            if (trapArmed.indexOf('Supply Grabber') > -1 || trapArmed.indexOf('Bandit Deflector') > -1 || trapArmed.indexOf('Engine Doubler') > -1)
+                checkThenArm('best', 'weapon', ['S.L.A.C. II', 'The Law Draw', 'S.L.A.C.']);
+        } else {
+            var phase = document.getElementsByClassName('phaseName')[0].innerText;
+            phase = phase.substr(7, phase.length);
+            console.debug('Current Active Train Phase: ' + phase);
+            switch (phase) {
+                case 'Supply Depot':
+                    checkThenArm('best', 'weapon', supplyDepotTrap);
+                    var supplyHoarder = parseInt(document.getElementsByClassName('supplyHoarderTab')[0].innerText.substr(0, 1));
+                    if (supplyHoarder == 0) {
+                        console.debug("Looking for supply hoarder");
+                        checkThenArm(null, 'trinket', 'Supply Schedule');
+                    } else {
+                        console.debug("Supply hoarder is present. Disarming charm now...");
                         disarmTrap('trinket');
-                        break;
-                }
-                loadTrain('raider', load);
-                break;
-            case 'Daredevil Canyon':
-                checkThenArm('best', 'weapon', daredevilCanyonTrap);
-                checkThenArm('best', 'trinket', coalCharm);
-                loadTrain('canyon', load);
-                break;
-            default:
-                break;
+                    }
+                    loadTrain('depot', load);
+                    break;
+                case 'Raider River':
+                    checkThenArm('best', 'weapon', raiderRiverTrap);
+                    var attacking = document.getElementsByClassName('attacked');
+                    for (var i = 0; i < attacking.length; i++) {
+                        if (attacking[i].tagName == 'DIV')
+                            attacking = attacking[i].className.substr(0, attacking[i].className.indexOf(' '));
+                    }
+                    console.debug("Raiders are attacking " + attacking);
+                    switch (attacking) {
+                        case 'roof':
+                            checkThenArm(null, 'trinket', 'Roof Rack');
+                            break;
+                        case 'door':
+                            checkThenArm(null, 'trinket', 'Door Guard');
+                            break;
+                        case 'rails':
+                            checkThenArm(null, 'trinket', 'Greasy Glob');
+                            break;
+                        default:
+                            console.debug('Bot is confused, raiders are not attacking?');
+                            disarmTrap('trinket');
+                            break;
+                    }
+                    loadTrain('raider', load);
+                    break;
+                case 'Daredevil Canyon':
+                    checkThenArm('best', 'weapon', daredevilCanyonTrap);
+                    checkThenArm('best', 'trinket', coalCharm);
+                    loadTrain('canyon', load);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }
@@ -2287,7 +2291,7 @@ if (document.getElementById(\'KingRewardResumeInputTrue\').checked == true) { wi
 window.localStorage.setItem(\'KingRewardResumeTime\', document.getElementById(\'KingRewardResumeTimeInput\').value);	\
 if (document.getElementById(\'PauseLocationInputTrue\').checked == true) { window.localStorage.setItem(\'PauseLocation\', \'true\'); } else { window.localStorage.setItem(\'PauseLocation\', \'false\'); }	\
 if (document.getElementById(\'autopopkrTrue\').checked == true) { window.localStorage.setItem(\'autoPopupKR\', \'true\'); } else { window.localStorage.setItem(\'autoPopupKR\', \'false\'); }	\
-window.localStorage.setItem(\'addonCode\', document.getElementById(\'addonCode\').val());\
+window.localStorage.setItem(\'addonCode\', document.getElementById(\'addonCode\').value);\
 ';
             if (fbPlatform) {
                 if (secureConnection)
