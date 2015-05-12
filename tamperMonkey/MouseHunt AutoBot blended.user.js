@@ -943,6 +943,8 @@ function checkThenArm(sort, category, name) {  //category = weapon/base/charm/tr
         trapArmed = (userVariable.indexOf(name) == 0);
     }
 
+    console.log("trapArmed(1): " + trapArmed);
+
     // OVERRIDE FOR AJAX (NEED REDO ASAP, but works for now) - charms TODO: check if redo needed, looks ok for now
     var retryPageVariable = document.getElementById('hud_trapLabel').innerText;
     if (retryPageVariable == "Charm:" && category == "trinket") {
