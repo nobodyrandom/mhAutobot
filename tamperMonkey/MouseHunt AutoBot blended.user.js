@@ -72,7 +72,7 @@ var autoPopupKR = false;
 
 // == Advance User Preference Setting (Begin) ==
 // // The variable in this section contain some advance option that will change the script behavior.
-// // Edit this variable only if you know what you are doing 
+// // Edit this variable only if you know what you are doing
 // // Reload MouseHunt page manually if edit this script while running it for immediate effect.
 
 // // Display timer and message in page title. (true/false)
@@ -630,7 +630,7 @@ function lostCity() {
     var isCursed = (document.getElementsByClassName('stateBlessed hidden').length > 0);
     console.debug('Cursed = ' + isCursed);
 
-    //disarm searcher charm when cursed is lifted    
+    //disarm searcher charm when cursed is lifted
     if (!isCursed) {
         if (getPageVariableForChrome('user.trinket_name').indexOf('Searcher') > -1) {
             disarmTrap('trinket');
@@ -2441,6 +2441,12 @@ function loadPreferenceSettingFromStorage() {
         addonCode = addonCodeTemp;
     }
     addonCodeTemp = undefined;
+
+    var nobTrapsTemp = nobGet('traps');
+    if (!(nobTrapsTemp == undefined || nobTrapsTemp === null)) {
+        NOBtraps = JSON.parse(nobTrapsTemp);
+    }
+    nobTrapsTemp = undefined;
 
     var dischargeTemp = getStorage("discharge");
     if (dischargeTemp == undefined || dischargeTemp == null) {
