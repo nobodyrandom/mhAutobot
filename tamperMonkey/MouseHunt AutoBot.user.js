@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
-// @author      NobodyRandom
-// @version    	2.0.14a
+// @author      NobodyRandom, Ooi Keng Siang
+// @version    	2.0.20a
 // @description Currently the most advanced script for automizing MouseHunt. Supports ALL new areas and FIREFOX. Revamped version of original by Ooi - Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @namespace   https://greasyfork.org/users/6398
@@ -121,20 +121,22 @@ var nextActiveTime = 900;
 var timerInterval = 2;
 
 // element in page
-var titleElement;
+//var titleElement;
 var nextHornTimeElement;
 var checkTimeElement;
 var kingTimeElement;
 var lastKingRewardSumTimeElement;
-var optionElement;
+//var optionElement;
 var travelElement;
 var isNewUI = false;
+var strHornButton = 'hornbutton';
+var strCampButton = 'campbutton';
 
 // NOB vars
-var addonScriptVer = '1.2.024';
+//var addonScriptVer = '1.2.024';
 //var NOBhasPuzzle = unsafeWindow.user.has_puzzle;
 var NOBhasPuzzle;
-var NOBclockLoaded = false;
+//var NOBclockLoaded = false;
 var NOBpage = false;
 var mapRequestFailed = false;
 var clockTicking = false;
@@ -176,8 +178,10 @@ var LOCATION_TIMERS = [
 var debug = false;
 if (debug) console.log('STARTING SCRIPT - ver: ' + GM_info.script.version);
 if (window.top != window.self) {
-    if (debug) console.log('In IFRAME');
-    return;
+    if (debug) console.log('In IFRAME - may cause firefox to error');
+    //return;
+} else {
+    if (debug) console.log('NOT IN IFRAME - will not work in fb MH');
 }
 exeScript();
 
@@ -236,8 +240,8 @@ function exeScript() {
             hiFivePlatform = true;
         }
 
-    // check if user running in https secure connection, true/false
-    secureConnection = (window.location.href.indexOf("https://") != -1);
+        // check if user running in https secure connection, true/false
+        secureConnection = (window.location.href.indexOf("https://") != -1);
 
         if (fbPlatform) {
             if (window.location.href == "http://www.mousehuntgame.com/canvas/" ||
@@ -265,7 +269,7 @@ function exeScript() {
                 } else {
                     // fail to retrieve data, display error msg and reload the page
                     document.title = "Fail to retrieve data from page. Reloading in " + timeformat(errorReloadTime);
-                    window.setTimeout(function() {
+                    window.setTimeout(function () {
                         reloadPage(false);
                     }, errorReloadTime * 1000);
                 }
@@ -300,7 +304,7 @@ function exeScript() {
                 } else {
                     // fail to retrieve data, display error msg and reload the page
                     document.title = "Fail to retrieve data from page. Reloading in " + timeformat(errorReloadTime);
-                    window.setTimeout(function() {
+                    window.setTimeout(function () {
                         reloadPage(false);
                     }, errorReloadTime * 1000);
                 }
@@ -343,7 +347,7 @@ function exeScript() {
                 } else {
                     // fail to retrieve data, display error msg and reload the page
                     document.title = "Fail to retrieve data from page. Reloading in " + timeformat(errorReloadTime);
-                    window.setTimeout(function() {
+                    window.setTimeout(function () {
                         reloadPage(false);
                     }, errorReloadTime * 1000);
                 }
@@ -546,6 +550,7 @@ function retrieveDataFirst() {
 }
 
 function retrieveData() {
+    if (debug) console.log("Run retrieveData()");
     try {
         var browser = browserDetection();
 
@@ -563,12 +568,12 @@ function retrieveData() {
             currentLocation = user.location;
         } else if (browser == "chrome") {
             nextActiveTime = parseInt(getPageVariableForChrome("user.next_activeturn_seconds"));
-            isKingReward = (getPageVariableForChrome("user.has_puzzle").toString() == "false") ? false : true;
+            isKingReward = (getPageVariableForChrome("user.has_puzzle").toString() != "false");
             baitQuantity = parseInt(getPageVariableForChrome("user.bait_quantity"));
             currentLocation = getPageVariableForChrome("user.location");
             NOBhasPuzzle = user.has_puzzle;
         } else {
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 reloadWithMessage("Browser not supported. Reloading...", false);
             }, 60000);
         }
@@ -579,7 +584,7 @@ function retrieveData() {
             // fail to retrieve data, might be due to slow network
 
             // reload the page to see it fix the problem
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 reloadWithMessage("Fail to retrieve data. Reloading...", false);
             }, 5000);
         } else {
@@ -690,6 +695,7 @@ function checkJournalDate() {
 }
 
 function action() {
+    if(debug) console.log("Run action()");
     try {
         if (isKingReward) {
             kingRewardAction();
@@ -2360,8 +2366,10 @@ function timeFormatLong(time) {
 // ################################################################################################
 // INIT AJAX CALLS AND INIT CALLS - Function calls after page LOAD
 
-if (debug) console.log("RUN nobInit()");
-$(window).load(nobInit);
+window.onload = function() {
+    if (debug) console.log("RUN nobInit()");
+    nobInit();
+};
 
 function nobInit() {
     try {
@@ -2628,8 +2636,14 @@ function fetchGDocStuff() {
         document.getElementById('NOBmessage').innerHTML = "Loading";
         nobLoading('NOBmessage');
 
+        var theData = JSON.parse(nobGet('data'));
+        if (theData.user) {
+            theData = theData.user;
+        }
+        var userID = theData.sn_user_id;
+
         Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
-        Parse.Cloud.run('nobMessage', {}, {
+        Parse.Cloud.run('nobMessage', {'user': userID}, {
             success: function (data) {
                 nobStopLoading();
                 data = JSON.parse(data);
@@ -2640,8 +2654,7 @@ function fetchGDocStuff() {
 
                 // UPDATE CHECK
                 checkVer = data.version;
-                console.log('Current MH AutoBot version: ' + currVer + ' / Server MH AutoBot version: ' + checkVer);
-                //console.log('Current MH AutoBot additional thing version: ' + addonScriptVer + ' / Server MH AutoBot additional thing version: ' + text.versionAddon);
+                if (debug) console.log('Current MH AutoBot version: ' + currVer + ' / Server MH AutoBot version: ' + checkVer);
                 if (checkVer > currVer) {
                     var updateElement = document.getElementById('updateElement');
                     updateElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target='_blank'><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
@@ -2753,7 +2766,7 @@ function showNOBMessage() {
 }
 
 unsafeWindow.nobRaffle = function() {
-    if (!($('.tabs a:eq(1)').length > 0))
+    /*if (!($('.tabs a:eq(1)').length > 0))
         $('#hgbar_messages').click();
 
     window.setTimeout(function () {
@@ -2771,47 +2784,104 @@ unsafeWindow.nobRaffle = function() {
         window.setTimeout(function() {
             $("a.messengerUINotificationClose")[0].click();
         }, 7500);
-    }, 4000);
+    }, 4000);*/
+
+    var intState = 0;
+    var nobRafInt = window.setInterval(function() {
+        try {
+            if (intState == 0 && !($('.tabs a:eq(1)').length > 0)) {
+                $('#hgbar_messages').click();
+                intState = 1;
+                return;
+            } else if ($('a.active.tab')[0].dataset.tab != 'daily_draw') {
+                var tabs = $('a.tab');
+                var theTab = "";
+                for (var i = 0; i < tabs.length; i++) {
+                    if (tabs[i].dataset.tab == 'daily_draw') {
+                        tabs[i].click();
+                        return;
+                    }
+                }
+
+                // If there are no raffles
+                intState = 0;
+                $("a.messengerUINotificationClose")[0].click();
+                console.log("No raffles found.");
+                window.clearInterval(nobPresInt);
+                return;
+            } else if (intState != 2 && $('a.active.tab')[0].dataset.tab == 'daily_draw') {
+                var ballot = $(".notificationMessageList input.sendBallot");
+                for (var i = ballot.length - 1; i >= 0; i--) {
+                    ballot[i].click();
+                }
+                intState = 2;
+                return;
+            } else if ($('a.active.tab')[0].dataset.tab == 'daily_draw') {
+                intState = 3;
+            } else {
+                intState = -1;
+            }
+        } catch(e) {
+            console.log("Raffle interval error: " + e + ", retrying in 1 second.");
+        } finally {
+            if (intState == 3) {
+                $("a.messengerUINotificationClose")[0].click();
+                window.clearInterval(nobPresInt);
+                return;
+            } else if (intState == -1) {
+                console.log("Present error, user pls resolve yourself");
+                window.clearInterval(nobPresInt);
+                return;
+            }
+        }
+    }, 1000);
 };
 
 unsafeWindow.nobPresent = function() {
     var intState = 0;
     var nobPresInt = window.setInterval(function() {
-        if (intState == 0 && !($('.tabs a:eq(1)').length > 0)) {
-            $('#hgbar_messages').click();
-            intState = 1;
-            return;
-        } else if ($('a.active.tab')[0].dataset.tab != 'gifts') {
-            var tabs = $('a.tab');
-            for (var i = 0; i < tabs.length; i++) {
-                if (tabs[i].dataset.tab == 'gifts') {
-                    tabs[i].click();
-                    return;
+        try {
+            if (intState == 0 && !($('.tabs a:eq(1)').length > 0)) {
+                $('#hgbar_messages').click();
+                intState = 1;
+                return;
+            } else if ($('a.active.tab')[0].dataset.tab != 'gifts') {
+                var tabs = $('a.tab');
+                for (var i = 0; i < tabs.length; i++) {
+                    if (tabs[i].dataset.tab == 'gifts') {
+                        tabs[i].click();
+                        return;
+                    }
                 }
-            }
 
-            // If there are no gifts
-            intState = 0;
-            $("a.messengerUINotificationClose")[0].click();
-            console.log("No gifts found.");
-            window.clearInterval(nobPresInt);
-        } else if ($('a.active.tab')[0].dataset.tab == 'gifts') {
-            var presents = $('input.acceptAndSend');
-            for (var i = presents.length -1; i >= 0; i--) {
-                presents[i].click();
+                // If there are no gifts
+                intState = 0;
+                $("a.messengerUINotificationClose")[0].click();
+                console.log("No gifts found.");
+                window.clearInterval(nobPresInt);
+                return;
+            } else if (intState != 2 && $('a.active.tab')[0].dataset.tab == 'gifts') {
+                var presents = $('input.acceptAndSend');
+                for (var i = presents.length - 1; i >= 0; i--) {
+                    presents[i].click();
+                }
+                intState = 2;
+                return;
+            } else if ($('a.active.tab')[0].dataset.tab == 'gifts') {
+                intState = 3;
+            } else {
+                intState = -1;
             }
-            intState = 2;
-            return;
-        } else {
-            intState = -1;
-        }
-
-        if (intState == 2) {
-            $("a.messengerUINotificationClose")[0].click();
-            window.clearInterval(nobPresInt);
-        } else if (intState == -1) {
-            console.log("Present error, user pls resolve yourself");
-            window.clearInterval(nobPresInt);
+        } catch (e) {
+            console.log(e + " error, retrying to continue in 1 sec.");
+        } finally {
+            if (intState == 3) {
+                $("a.messengerUINotificationClose")[0].click();
+                window.clearInterval(nobPresInt);
+            } else if (intState == -1) {
+                console.log("Present error, user pls resolve yourself");
+                window.clearInterval(nobPresInt);
+            }
         }
     }, 1000);
 };

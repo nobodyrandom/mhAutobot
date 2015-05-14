@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.0.16b
+// @version    	2.0.20b
 // @description Currently the most advanced script for automizing MouseHunt. Supports ALL new areas. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN - Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot, https://devcnn.wordpress.com/
@@ -212,13 +212,15 @@ var LOCATION_TIMERS = [
 var debug = false;
 if (debug) console.log('STARTING SCRIPT - ver: ' + GM_info.script.version);
 if (window.top != window.self) {
-    if (debug) console.log('In IFRAME');
-    return;
+    if (debug) console.log('In IFRAME - may cause firefox to error');
+    //return;
+} else {
+    if (debug) console.log('NOT IN IFRAME - will not work in fb MH');
 }
 exeScript();
 
 function exeScript() {
-    // check the trap check setting first
+    if (debug) console.log('RUN exeScript()');
     try {
         var time = document.getElementsByClassName('passive')[0].getElementsByClassName('journaldate')[0].innerHTML;
         time = time.substr(time.indexOf(':') + 1, 2);
@@ -1185,10 +1187,12 @@ function clickTrapSelector(strSelect) //strSelect = weapon/base/charm/trinket/ba
 //// END EMBED
 
 function retrieveDataFirst() {
-    var gotHornTime = false;
-    var gotPuzzle = false;
-    var gotBaitQuantity = false;
-    var retrieveSuccess = false;
+    if (debug) console.log('RUN retrieveDataFirst()');
+    try {
+        var gotHornTime = false;
+        var gotPuzzle = false;
+        var gotBaitQuantity = false;
+        var retrieveSuccess = false;
 
     var scriptElementList = document.getElementsByTagName('script');
     if (scriptElementList) {
@@ -1309,7 +1313,7 @@ function retrieveDataFirst() {
             checkTime = (today.getMinutes() >= trapCheckTimeDiff) ? 3600 + (trapCheckTimeDiff * 60) - (today.getMinutes() * 60 + today.getSeconds()) : (trapCheckTimeDiff * 60) - (today.getMinutes() * 60 + today.getSeconds());
             checkTime += checkTimeDelay;
             today = undefined;
-            time = undefined;
+            //time = undefined;
         }
 
         // get last location
@@ -1339,92 +1343,95 @@ function retrieveDataFirst() {
         retrieveSuccess = false;
     }
 
-    // clean up
-    gotHornTime = undefined;
-    gotPuzzle = undefined;
-    gotBaitQuantity = undefined;
-
-    try {
+        // clean up
+        gotHornTime = undefined;
+        gotPuzzle = undefined;
+        gotBaitQuantity = undefined;
         return retrieveSuccess;
+    } catch (e) {
+        console.log('retrieveDataFirst ERROR - ' + e);
     } finally {
         retrieveSuccess = undefined;
     }
 }
 
 function retrieveData() {
-    console.log("Run retrieveData()");
-    var browser = browserDetection();
+    if (debug) console.log("Run retrieveData()");
+    try {
+        var browser = browserDetection();
 
-    // get next horn time
-    if (browser == "firefox") {
-        nextActiveTime = unsafeWindow.user.next_activeturn_seconds;
-        isKingReward = unsafeWindow.user.has_puzzle;
-        baitQuantity = unsafeWindow.user.bait_quantity;
-        currentLocation = unsafeWindow.user.location;
-        NOBhasPuzzle = unsafeWindow.user.has_puzzle;
-    } else if (browser == "opera") {
-        nextActiveTime = user.next_activeturn_seconds;
-        isKingReward = user.has_puzzle;
-        baitQuantity = user.bait_quantity;
-        currentLocation = user.location;
-    } else if (browser == "chrome") {
-        nextActiveTime = parseInt(getPageVariableForChrome("user.next_activeturn_seconds"));
-        isKingReward = (getPageVariableForChrome("user.has_puzzle").toString() != "false");
-        baitQuantity = parseInt(getPageVariableForChrome("user.bait_quantity"));
-        currentLocation = getPageVariableForChrome("user.location");
-        NOBhasPuzzle = user.has_puzzle;
-    } else {
-        window.setTimeout(function() {
-            reloadWithMessage("Browser not supported. Reloading...", false);
-        }, 60000);
-    }
-
-    browser = undefined;
-
-    if (nextActiveTime == "" || isNaN(nextActiveTime)) {
-        // fail to retrieve data, might be due to slow network
-
-        // reload the page to see it fix the problem
-        window.setTimeout(function() {
-            reloadWithMessage("Fail to retrieve data. Reloading...", false);
-        }, 5000);
-    } else {
-        // got the timer right!
-
-        // calculate the delay
-        hornTimeDelay = hornTimeDelayMin + Math.round(Math.random() * (hornTimeDelayMax - hornTimeDelayMin));
-
-        if (!aggressiveMode) {
-            // calculation base on the js in Mousehunt
-            var additionalDelayTime = Math.ceil(nextActiveTime * 0.1);
-            if (timerInterval != "" && !isNaN(timerInterval) && timerInterval == 1) {
-                additionalDelayTime = 2;
-            }
-
-            // safety mode, include extra delay like time in horn image appear
-            //hornTime = nextActiveTime + additionalDelayTime + hornTimeDelay;
-            hornTime = nextActiveTime + hornTimeDelay;
-            lastDateRecorded = undefined;
-            lastDateRecorded = new Date();
-
-            additionalDelayTime = undefined;
+        // get next horn time
+        if (browser == "firefox") {
+            nextActiveTime = unsafeWindow.user.next_activeturn_seconds;
+            isKingReward = unsafeWindow.user.has_puzzle;
+            baitQuantity = unsafeWindow.user.bait_quantity;
+            currentLocation = unsafeWindow.user.location;
+            NOBhasPuzzle = unsafeWindow.user.has_puzzle;
+        } else if (browser == "opera") {
+            nextActiveTime = user.next_activeturn_seconds;
+            isKingReward = user.has_puzzle;
+            baitQuantity = user.bait_quantity;
+            currentLocation = user.location;
+        } else if (browser == "chrome") {
+            nextActiveTime = parseInt(getPageVariableForChrome("user.next_activeturn_seconds"));
+            isKingReward = (getPageVariableForChrome("user.has_puzzle").toString() != "false");
+            baitQuantity = parseInt(getPageVariableForChrome("user.bait_quantity"));
+            currentLocation = getPageVariableForChrome("user.location");
+            NOBhasPuzzle = user.has_puzzle;
         } else {
-            // aggressive mode, no extra delay like time in horn image appear
-            hornTime = nextActiveTime;
-            lastDateRecorded = undefined;
-            lastDateRecorded = new Date();
+            window.setTimeout(function () {
+                reloadWithMessage("Browser not supported. Reloading...", false);
+            }, 60000);
         }
-    }
 
-    // get trap check time
-    if (enableTrapCheck) {
-        var today = new Date();
-        checkTimeDelay = checkTimeDelayMin + Math.round(Math.random() * (checkTimeDelayMax - checkTimeDelayMin));
-        checkTime = (today.getMinutes() >= trapCheckTimeDiff) ? 3600 + (trapCheckTimeDiff * 60) - (today.getMinutes() * 60 + today.getSeconds()) : (trapCheckTimeDiff * 60) - (today.getMinutes() * 60 + today.getSeconds());
-        checkTime += checkTimeDelay;
-        today = undefined;
+        browser = undefined;
+
+        if (nextActiveTime == "" || isNaN(nextActiveTime)) {
+            // fail to retrieve data, might be due to slow network
+
+            // reload the page to see it fix the problem
+            window.setTimeout(function () {
+                reloadWithMessage("Fail to retrieve data. Reloading...", false);
+            }, 5000);
+        } else {
+            // got the timer right!
+
+            // calculate the delay
+            hornTimeDelay = hornTimeDelayMin + Math.round(Math.random() * (hornTimeDelayMax - hornTimeDelayMin));
+
+            if (!aggressiveMode) {
+                // calculation base on the js in Mousehunt
+                var additionalDelayTime = Math.ceil(nextActiveTime * 0.1);
+                if (timerInterval != "" && !isNaN(timerInterval) && timerInterval == 1) {
+                    additionalDelayTime = 2;
+                }
+
+                // safety mode, include extra delay like time in horn image appear
+                //hornTime = nextActiveTime + additionalDelayTime + hornTimeDelay;
+                hornTime = nextActiveTime + hornTimeDelay;
+                lastDateRecorded = undefined;
+                lastDateRecorded = new Date();
+
+                additionalDelayTime = undefined;
+            } else {
+                // aggressive mode, no extra delay like time in horn image appear
+                hornTime = nextActiveTime;
+                lastDateRecorded = undefined;
+                lastDateRecorded = new Date();
+            }
+        }
+
+        // get trap check time
+        if (enableTrapCheck) {
+            var today = new Date();
+            checkTimeDelay = checkTimeDelayMin + Math.round(Math.random() * (checkTimeDelayMax - checkTimeDelayMin));
+            checkTime = (today.getMinutes() >= trapCheckTimeDiff) ? 3600 + (trapCheckTimeDiff * 60) - (today.getMinutes() * 60 + today.getSeconds()) : (trapCheckTimeDiff * 60) - (today.getMinutes() * 60 + today.getSeconds());
+            checkTime += checkTimeDelay;
+            today = undefined;
+        }
+    } catch (e) {
+        console.log("retrieveData() ERROR - " + e);
     }
-    eventLocationCheck();
 }
 
 function getPageVariable(name, value) {
@@ -1495,77 +1502,81 @@ function checkJournalDate() {
 
 function action() {
     if(debug) console.log("Run action()");
-    if (isKingReward) {
-        kingRewardAction();
-        notify(getPageVariableForChrome('user.username'));
-    } else if (pauseAtInvalidLocation && (huntLocation != currentLocation)) {
-        // update timer
-        displayTimer("Out of pre-defined hunting location...", "Out of pre-defined hunting location...", "Out of pre-defined hunting location...");
+    try {
+        if (isKingReward) {
+            kingRewardAction();
+            notify(getPageVariableForChrome('user.username'));
+        } else if (pauseAtInvalidLocation && (huntLocation != currentLocation)) {
+            // update timer
+            displayTimer("Out of pre-defined hunting location...", "Out of pre-defined hunting location...", "Out of pre-defined hunting location...");
 
-        if (fbPlatform) {
-            if (secureConnection) {
-                displayLocation("<span style='color: red; '>" + currentLocation + "</span> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='https://www.mousehuntgame.com/canvas/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
-            } else {
-                displayLocation("<span style='color: red; '>" + currentLocation + "</span> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='http://www.mousehuntgame.com/canvas/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
+            if (fbPlatform) {
+                if (secureConnection) {
+                    displayLocation("<span style='color: red; '>" + currentLocation + "</span> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='https://www.mousehuntgame.com/canvas/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
+                } else {
+                    displayLocation("<span style='color: red; '>" + currentLocation + "</span> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='http://www.mousehuntgame.com/canvas/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
+                }
+            } else if (hiFivePlatform) {
+                if (secureConnection) {
+                    displayLocation("<span style='color: red; '>" + currentLocation + "</span> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='https://mousehunt.hi5.hitgrab.com/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
+                } else {
+                    displayLocation("<span style='color: red; '>" + currentLocation + "</span> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='http://mousehunt.hi5.hitgrab.com/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
+                }
+            } else if (mhPlatform) {
+                if (secureConnection) {
+                    displayLocation("<span style='color: red; '>" + currentLocation + "</span> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='https://www.mousehuntgame.com/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
+                } else {
+                    displayLocation("<span style='color: red; '>" + currentLocation + "</span> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='http://www.mousehuntgame.com/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
+                }
             }
-        } else if (hiFivePlatform) {
-            if (secureConnection) {
-                displayLocation("<span style='color: red; '>" + currentLocation + "</span> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='https://mousehunt.hi5.hitgrab.com/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
-            } else {
-                displayLocation("<span style='color: red; '>" + currentLocation + "</span> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='http://mousehunt.hi5.hitgrab.com/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
+
+            displayKingRewardSumTime(null);
+
+            // pause script
+        } else if (baitQuantity == 0) {
+            // update timer
+            displayTimer("No more cheese!", "Cannot hunt without the cheese...", "Cannot hunt without the cheese...");
+            displayLocation(huntLocation);
+            displayKingRewardSumTime(null);
+
+            // pause the script
+        } else {
+            // update location
+            displayLocation(huntLocation);
+
+            var isHornSounding = false;
+
+            // check if the horn image is visible
+            //var headerElement = document.getElementById('header');
+            var headerElement;
+            headerElement = (strHornButton == 'hornbutton') ? document.getElementById('header') : document.getElementById('mousehuntHud').firstChild;
+            if (headerElement) {
+                var headerStatus = headerElement.getAttribute('class');
+                if (headerStatus.indexOf("hornready") != -1) {
+                    // if the horn image is visible, why do we need to wait any more, sound the horn!
+                    soundHorn();
+
+                    // make sure the timer don't run twice!
+                    isHornSounding = true;
+                }
+                headerStatus = undefined;
             }
-        } else if (mhPlatform) {
-            if (secureConnection) {
-                displayLocation("<span style='color: red; '>" + currentLocation + "</span> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='https://www.mousehuntgame.com/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
-            } else {
-                displayLocation("<span style='color: red; '>" + currentLocation + "</span> [<a onclick='window.localStorage.removeItem(\"huntLocation\");' href='http://www.mousehuntgame.com/\'>Hunt Here</a>] - <i>Script pause because you had move to a different location recently, click hunt here to continue hunt at this location.</i>");
+            headerElement = undefined;
+
+            if (isHornSounding == false) {
+                // start timer
+                window.setTimeout(function () {
+                    countdownTimer()
+                }, timerRefreshInterval * 1000);
             }
+
+            isHornSounding = undefined;
         }
-
-        displayKingRewardSumTime(null);
-
-        // pause script
-    } else if (baitQuantity == 0) {
-        // update timer
-        displayTimer("No more cheese!", "Cannot hunt without the cheese...", "Cannot hunt without the cheese...");
-        displayLocation(huntLocation);
-        displayKingRewardSumTime(null);
-
-        // pause the script
-    } else {
-        // update location
-        displayLocation(huntLocation);
-
-        var isHornSounding = false;
-
-        // check if the horn image is visible
-        //var headerElement = document.getElementById('header');
-        var headerElement;
-        headerElement = (strHornButton == 'hornbutton') ? document.getElementById('header') : document.getElementById('mousehuntHud').firstChild;
-        if (headerElement) {
-            var headerStatus = headerElement.getAttribute('class');
-            if (headerStatus.indexOf("hornready") != -1) {
-                // if the horn image is visible, why do we need to wait any more, sound the horn!
-                soundHorn();
-
-                // make sure the timer don't run twice!
-                isHornSounding = true;
-            }
-            headerStatus = undefined;
-        }
-        headerElement = undefined;
-
-        if (isHornSounding == false) {
-            // start timer
-            window.setTimeout(function() {
-                countdownTimer()
-            }, timerRefreshInterval * 1000);
-        }
-
-        isHornSounding = undefined;
+        eventLocationCheck();
+        runAddonCode();
+    } catch (e) {
+        console.log("action() ERROR - " + e)
     }
-    eventLocationCheck();
-    runAddonCode();
 }
 
 function countdownTimer() {
@@ -1585,7 +1596,7 @@ function countdownTimer() {
         fireEvent(document.getElementsByClassName(strCampButton)[0].firstChild, 'click');
 
         // reload the page if click on camp button fail
-        window.setTimeout(function() {
+        window.setTimeout(function () {
             reloadWithMessage("Fail to click on camp button. Reloading...", false);
         }, 5000);
     } else if (pauseAtInvalidLocation && (huntLocation != currentLocation)) {
@@ -1710,7 +1721,7 @@ function countdownTimer() {
             // set king reward sum time
             displayKingRewardSumTime(timeFormatLong(lastKingRewardSumTime));
 
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 (countdownTimer)()
             }, timerRefreshInterval * 1000);
         }
@@ -1790,501 +1801,502 @@ function reloadWithMessage(msg, soundHorn) {
 // ################################################################################################
 
 function embedTimer(targetPage) {
-    if (showTimerInPage) {
-        var headerElement;
-        if (fbPlatform || hiFivePlatform || mhPlatform) {
-            headerElement = document.getElementById('noscript');
-        } else if (mhMobilePlatform) {
-            headerElement = document.getElementById('mobileHorn');
-        }
-
-        if (headerElement) {
-            var timerDivElement = document.createElement('div');
-
-            //var hr1Element = document.createElement('hr');
-            //timerDivElement.appendChild(hr1Element);
-            //hr1Element = null;
-
-            // show bot title and version
-            var titleElement = document.createElement('div');
-            titleElement.setAttribute('id', 'titleElement');
-            if (targetPage && aggressiveMode) {
-                titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/6514-mousehunt-autobot-enhanced-revamp\" target=\"_blank\">MouseHunt AutoBot ENHANCED + REVAMP (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing</b> - <font color='red'>Aggressive Mode</font>";
-            } else {
-                titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/6514-mousehunt-autobot-enhanced-revamp\" target=\"_blank\">MouseHunt AutoBot ENHANCED + REVAMP (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing</b>";
+    try {
+        if (showTimerInPage) {
+            var headerElement;
+            if (fbPlatform || hiFivePlatform || mhPlatform) {
+                headerElement = document.getElementById('noscript');
+            } else if (mhMobilePlatform) {
+                headerElement = document.getElementById('mobileHorn');
             }
-            timerDivElement.appendChild(titleElement);
-            titleElement = null;
 
-            if (targetPage) {
-                var updateElement = document.createElement('div');
-                updateElement.setAttribute('id', 'updateElement');
-                timerDivElement.appendChild(updateElement);
-                updateElement = null;
+            if (headerElement) {
+                var timerDivElement = document.createElement('div');
 
-                var NOBmessage = document.createElement('div');
-                NOBmessage.setAttribute('id', 'NOBmessage');
-                timerDivElement.appendChild(NOBmessage);
-                NOBmessage = null;
+                //var hr1Element = document.createElement('hr');
+                //timerDivElement.appendChild(hr1Element);
+                //hr1Element = null;
 
-                nextHornTimeElement = document.createElement('div');
-                nextHornTimeElement.setAttribute('id', 'nextHornTimeElement');
-                nextHornTimeElement.innerHTML = "<b>Next Hunter Horn Time:</b> Loading...";
-                timerDivElement.appendChild(nextHornTimeElement);
-
-                checkTimeElement = document.createElement('div');
-                checkTimeElement.setAttribute('id', 'checkTimeElement');
-                checkTimeElement.innerHTML = "<b>Next Trap Check Time:</b> Loading...";
-                timerDivElement.appendChild(checkTimeElement);
-
-                if (pauseAtInvalidLocation) {
-                    // location information only display when enable this feature
-                    travelElement = document.createElement('div');
-                    travelElement.setAttribute('id', 'travelElement');
-                    travelElement.innerHTML = "<b>Target Hunt Location:</b> Loading...";
-                    timerDivElement.appendChild(travelElement);
-                }
-
-                var lastKingRewardDate = getStorage("lastKingRewardDate");
-                var lastDateStr;
-                if (lastKingRewardDate == undefined || lastKingRewardDate == null) {
-                    lastDateStr = "-";
+                // show bot title and version
+                var titleElement = document.createElement('div');
+                titleElement.setAttribute('id', 'titleElement');
+                if (targetPage && aggressiveMode) {
+                    titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/6514-mousehunt-autobot-enhanced-revamp\" target=\"_blank\">MouseHunt AutoBot ENHANCED + REVAMP (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing</b> - <font color='red'>Aggressive Mode</font>";
                 } else {
-                    var lastDate = new Date(lastKingRewardDate);
-                    lastDateStr = lastDate.toDateString() + " " + lastDate.toTimeString().substring(0, 8);
-                    lastDate = null;
+                    titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/6514-mousehunt-autobot-enhanced-revamp\" target=\"_blank\">MouseHunt AutoBot ENHANCED + REVAMP (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing</b>";
+                }
+                timerDivElement.appendChild(titleElement);
+                titleElement = null;
+
+                if (targetPage) {
+                    var updateElement = document.createElement('div');
+                    updateElement.setAttribute('id', 'updateElement');
+                    timerDivElement.appendChild(updateElement);
+                    updateElement = null;
+
+                    var NOBmessage = document.createElement('div');
+                    NOBmessage.setAttribute('id', 'NOBmessage');
+                    timerDivElement.appendChild(NOBmessage);
+                    NOBmessage = null;
+
+                    nextHornTimeElement = document.createElement('div');
+                    nextHornTimeElement.setAttribute('id', 'nextHornTimeElement');
+                    nextHornTimeElement.innerHTML = "<b>Next Hunter Horn Time:</b> Loading...";
+                    timerDivElement.appendChild(nextHornTimeElement);
+
+                    checkTimeElement = document.createElement('div');
+                    checkTimeElement.setAttribute('id', 'checkTimeElement');
+                    checkTimeElement.innerHTML = "<b>Next Trap Check Time:</b> Loading...";
+                    timerDivElement.appendChild(checkTimeElement);
+
+                    if (pauseAtInvalidLocation) {
+                        // location information only display when enable this feature
+                        travelElement = document.createElement('div');
+                        travelElement.setAttribute('id', 'travelElement');
+                        travelElement.innerHTML = "<b>Target Hunt Location:</b> Loading...";
+                        timerDivElement.appendChild(travelElement);
+                    }
+
+                    var lastKingRewardDate = getStorage("lastKingRewardDate");
+                    var lastDateStr;
+                    if (lastKingRewardDate == undefined || lastKingRewardDate == null) {
+                        lastDateStr = "-";
+                    } else {
+                        var lastDate = new Date(lastKingRewardDate);
+                        lastDateStr = lastDate.toDateString() + " " + lastDate.toTimeString().substring(0, 8);
+                        lastDate = null;
+                    }
+
+                    kingTimeElement = document.createElement('div');
+                    kingTimeElement.setAttribute('id', 'kingTimeElement');
+                    kingTimeElement.innerHTML = "<b>Last King's Reward:</b> " + lastDateStr + " ";
+                    timerDivElement.appendChild(kingTimeElement);
+
+                    lastKingRewardSumTimeElement = document.createElement('font');
+                    lastKingRewardSumTimeElement.setAttribute('id', 'lastKingRewardSumTimeElement');
+                    lastKingRewardSumTimeElement.innerHTML = "(Loading...)";
+                    kingTimeElement.appendChild(lastKingRewardSumTimeElement);
+
+                    lastKingRewardDate = null;
+                    lastDateStr = null;
+
+                    if (showLastPageLoadTime) {
+                        var nowDate = new Date();
+
+                        // last page load time
+                        var loadTimeElement = document.createElement('div');
+                        loadTimeElement.setAttribute('id', 'loadTimeElement');
+                        loadTimeElement.innerHTML = "<b>Last Page Load: </b>" + nowDate.toDateString() + " " + nowDate.toTimeString().substring(0, 8);
+                        //timerDivElement.appendChild(loadTimeElement);
+
+                        loadTimeElement = null;
+                        nowDate = null;
+                    }
+
+                    var timersElementToggle = document.createElement('a');
+                    var text = document.createTextNode('Toggle timers');
+                    timersElementToggle.href = '#';
+                    timersElementToggle.setAttribute('id', 'timersElementToggle');
+                    timersElementToggle.appendChild(text);
+                    var holder = document.createElement('div');
+                    holder.setAttribute('style', 'float: left;');
+                    var temp = document.createElement('span');
+                    temp.innerHTML = '&#160;&#126;&#160;';
+                    holder.appendChild(timersElementToggle);
+                    holder.appendChild(temp);
+                    timerDivElement.appendChild(holder);
+                    timersElementToggle.addEventListener("click", showHideTimers, false);
+                    holder = null;
+                    text = null;
+                    temp = null;
+                    //$('#overlayContainer')[0].style.cssText = "";
+
+                    var loadTimersElement = document.createElement('div');
+                    loadTimersElement.setAttribute('id', 'loadTimersElement');
+                    loadTimersElement.setAttribute('style', 'display: none;');
+                    timerDivElement.appendChild(loadTimersElement);
+
+                    //timerDivElement.appendChild(/*document.createElement('br')*/document.createTextNode(' &#126; '));
+
+                    var loadLinkToUpdateDiv = document.createElement('div');
+                    loadLinkToUpdateDiv.setAttribute('id', 'gDocArea');
+                    loadLinkToUpdateDiv.setAttribute('style', 'float: left;');
+                    var tempSpan2 = document.createElement('span');
+                    var loadLinkToUpdate = document.createElement('a');
+                    text = document.createTextNode('Submit to GDoc');
+                    loadLinkToUpdate.href = '#';
+                    loadLinkToUpdate.setAttribute('id', 'gDocLink');
+                    loadLinkToUpdate.appendChild(text);
+                    text = null;
+                    tempSpan2.appendChild(loadLinkToUpdate);
+                    loadLinkToUpdateDiv.appendChild(tempSpan2);
+                    timerDivElement.appendChild(loadLinkToUpdateDiv);
+                    loadLinkToUpdate.addEventListener('click', nobScript, false);
+
+                    text = ' &#126; <a href="javascript:window.open(\'https://docs.google.com/spreadsheet/ccc?key=0Ag_KH_nuVUjbdGtldjJkWUJ4V1ZpUDVwd1FVM0RTM1E#gid=5\');" target=_blank>Go to GDoc</a>';
+                    var tempDiv = document.createElement('span');
+                    tempDiv.innerHTML = text;
+                    text = ' &#126; <a id="nobRaffle" href="javascript: nobRaffle();">Return raffle tickets</a>';
+                    tempSpan2 = document.createElement('span');
+                    tempSpan2.innerHTML = text;
+                    var tempSpan3 = document.createElement('span');
+                    tempSpan3.innerHTML = ' &#126; <a id="nobPresents" href="javascript: nobPresent();">Return presents</a>';
+                    var tempSpan = document.createElement('span');
+                    tempSpan.innerHTML = ' &#126; <a href="javascript:window.open(\'http://goo.gl/forms/ayRsnizwL1\');" target=_blank>Submit a bug report/feedback</a>';
+                    loadLinkToUpdateDiv.appendChild(tempDiv);
+                    loadLinkToUpdateDiv.appendChild(tempSpan2);
+                    loadLinkToUpdateDiv.appendChild(tempSpan3);
+                    loadLinkToUpdateDiv.appendChild(tempSpan);
+
+                    text = null;
+                    tempDiv = null;
+                    tempSpan = null;
+                    tempSpan2 = null;
+                    tempSpan3 = null;
+                    loadLinkToUpdateDiv = null;
+                    timersElementToggle = null;
+                    loadTimersElement = null;
+                    loadLinkToUpdate = null;
+                } else {
+                    // player currently navigating other page instead of hunter camp
+                    var helpTextElement = document.createElement('div');
+                    helpTextElement.setAttribute('id', 'helpTextElement');
+                    if (fbPlatform) {
+                        if (secureConnection) {
+                            helpTextElement.innerHTML = "<b>Note:</b> MouseHunt AutoBot will only run at <a href='https://www.mousehuntgame.com/canvas/'>Hunter Camp</a>. This is to prevent the bot from interfering user's activity.";
+                        } else {
+                            helpTextElement.innerHTML = "<b>Note:</b> MouseHunt AutoBot will only run at <a href='http://www.mousehuntgame.com/canvas/'>Hunter Camp</a>. This is to prevent the bot from interfering user's activity.";
+                        }
+                    } else if (hiFivePlatform) {
+                        if (secureConnection) {
+                            helpTextElement.innerHTML = "<b>Note:</b> MouseHunt AutoBot will only run at <a href='https://mousehunt.hi5.hitgrab.com/'>Hunter Camp</a>. This is to prevent the bot from interfering user's activity.";
+                        } else {
+                            helpTextElement.innerHTML = "<b>Note:</b> MouseHunt AutoBot will only run at <a href='http://mousehunt.hi5.hitgrab.com/'>Hunter Camp</a>. This is to prevent the bot from interfering user's activity.";
+                        }
+                    } else if (mhPlatform) {
+                        if (secureConnection) {
+                            helpTextElement.innerHTML = "<b>Note:</b> MouseHunt AutoBot will only run at <a href='https://www.mousehuntgame.com/'>Hunter Camp</a>. This is to prevent the bot from interfering user's activity.";
+                        } else {
+                            helpTextElement.innerHTML = "<b>Note:</b> MouseHunt AutoBot will only run at <a href='http://www.mousehuntgame.com/'>Hunter Camp</a>. This is to prevent the bot from interfering user's activity.";
+                        }
+                    } else if (mhMobilePlatform) {
+                        if (secureConnection) {
+                            helpTextElement.innerHTML = "<b>Note:</b> Mobile version of Mousehunt is not supported currently. Please use the <a href='https://www.mousehuntgame.com/?switch_to=standard'>standard version of MouseHunt</a>.";
+                        } else {
+                            helpTextElement.innerHTML = "<b>Note:</b> Mobile version of Mousehunt is not supported currently. Please use the <a href='http://www.mousehuntgame.com/?switch_to=standard'>standard version of MouseHunt</a>.";
+                        }
+                    }
+                    timerDivElement.appendChild(helpTextElement);
+
+                    helpTextElement = null;
                 }
 
-                kingTimeElement = document.createElement('div');
-                kingTimeElement.setAttribute('id', 'kingTimeElement');
-                kingTimeElement.innerHTML = "<b>Last King's Reward:</b> " + lastDateStr + " ";
-                timerDivElement.appendChild(kingTimeElement);
-
-                lastKingRewardSumTimeElement = document.createElement('font');
-                lastKingRewardSumTimeElement.setAttribute('id', 'lastKingRewardSumTimeElement');
-                lastKingRewardSumTimeElement.innerHTML = "(Loading...)";
-                kingTimeElement.appendChild(lastKingRewardSumTimeElement);
-
-                lastKingRewardDate = null;
-                lastDateStr = null;
-
-                if (showLastPageLoadTime) {
-                    var nowDate = new Date();
-
-                    // last page load time
-                    var loadTimeElement = document.createElement('div');
-                    loadTimeElement.setAttribute('id', 'loadTimeElement');
-                    loadTimeElement.innerHTML = "<b>Last Page Load: </b>" + nowDate.toDateString() + " " + nowDate.toTimeString().substring(0, 8);
-                    //timerDivElement.appendChild(loadTimeElement);
-
-                    loadTimeElement = null;
-                    nowDate = null;
+                var showPreference = getStorage('showPreference');
+                if (showPreference == undefined || showPreference == null) {
+                    showPreference = false;
+                    setStorage("showPreference", showPreference);
                 }
 
-                var timersElementToggle = document.createElement('a');
-                var text = document.createTextNode('Toggle timers');
-                timersElementToggle.href = '#';
-                timersElementToggle.setAttribute('id', 'timersElementToggle');
-                timersElementToggle.appendChild(text);
-                var holder = document.createElement('div');
-                holder.setAttribute('style', 'float: left;');
-                var temp = document.createElement('span');
-                temp.innerHTML = '&#160;&#126;&#160;';
-                holder.appendChild(timersElementToggle);
-                holder.appendChild(temp);
-                timerDivElement.appendChild(holder);
-                timersElementToggle.addEventListener("click", showHideTimers, false);
-                holder = null;
-                text = null;
-                temp = null;
-                //$('#overlayContainer')[0].style.cssText = "";
+                var showPreferenceLinkDiv = document.createElement('div');
+                showPreferenceLinkDiv.setAttribute('id', 'showPreferenceLinkDiv');
+                showPreferenceLinkDiv.setAttribute('style', 'text-align:right');
+                timerDivElement.appendChild(showPreferenceLinkDiv);
 
-                var loadTimersElement = document.createElement('div');
-                loadTimersElement.setAttribute('id', 'loadTimersElement');
-                loadTimersElement.setAttribute('style', 'display: none;');
-                timerDivElement.appendChild(loadTimersElement);
+                var showPreferenceSpan = document.createElement('span');
+                var showPreferenceLinkStr = '<a id="showPreferenceLink" name="showPreferenceLink" onclick="if (document.getElementById(\'showPreferenceLink\').innerHTML == \'<b>[Hide Preference]</b>\') { document.getElementById(\'preferenceDiv\').style.display=\'none\';  document.getElementById(\'showPreferenceLink\').innerHTML=\'<b>[Show Preference]</b>\'; } else { document.getElementById(\'preferenceDiv\').style.display=\'block\'; document.getElementById(\'showPreferenceLink\').innerHTML=\'<b>[Hide Preference]</b>\'; }">';
+                if (showPreference == true)
+                    showPreferenceLinkStr += '<b>[Hide Preference]</b>';
+                else
+                    showPreferenceLinkStr += '<b>[Show Preference]</b>';
+                showPreferenceLinkStr += '</a>';
+                showPreferenceLinkStr += '&nbsp;&nbsp;&nbsp;';
+                showPreferenceSpan.innerHTML = showPreferenceLinkStr;
+                showPreferenceLinkDiv.appendChild(showPreferenceSpan);
+                showPreferenceLinkStr = null;
+                showPreferenceSpan = null;
+                showPreferenceLinkDiv = null;
 
-                //timerDivElement.appendChild(/*document.createElement('br')*/document.createTextNode(' &#126; '));
+                var hr2Element = document.createElement('hr');
+                timerDivElement.appendChild(hr2Element);
+                hr2Element = null;
 
-                var loadLinkToUpdateDiv = document.createElement('div');
-                loadLinkToUpdateDiv.setAttribute('id', 'gDocArea');
-                loadLinkToUpdateDiv.setAttribute('style', 'float: left;');
-                var tempSpan2 = document.createElement('span');
-                var loadLinkToUpdate = document.createElement('a');
-                text = document.createTextNode('Submit to GDoc');
-                loadLinkToUpdate.href = '#';
-                loadLinkToUpdate.setAttribute('id', 'gDocLink');
-                loadLinkToUpdate.appendChild(text);
-                text = null;
-                tempSpan2.appendChild(loadLinkToUpdate);
-                loadLinkToUpdateDiv.appendChild(tempSpan2);
-                timerDivElement.appendChild(loadLinkToUpdateDiv);
-                loadLinkToUpdate.addEventListener('click', nobScript, false);
-
-                text = ' &#126; <a href="javascript:window.open(\'https://docs.google.com/spreadsheet/ccc?key=0Ag_KH_nuVUjbdGtldjJkWUJ4V1ZpUDVwd1FVM0RTM1E#gid=5\');" target=_blank>Go to GDoc</a>';
-                var tempDiv = document.createElement('span');
-                tempDiv.innerHTML = text;
-                text = ' &#126; <a id="nobRaffle" href="javascript: nobRaffle();">Return raffle tickets</a>';
-                tempSpan2 = document.createElement('span');
-                tempSpan2.innerHTML = text;
-                var tempSpan3 = document.createElement('span');
-                tempSpan3.innerHTML = ' &#126; <a id="nobPresents" href="javascript: nobPresent();">Return presents</a>';
-                var tempSpan = document.createElement('span');
-                tempSpan.innerHTML = ' &#126; <a href="javascript:window.open(\'http://goo.gl/forms/ayRsnizwL1\');" target=_blank>Submit a bug report/feedback</a>';
-                loadLinkToUpdateDiv.appendChild(tempDiv);
-                loadLinkToUpdateDiv.appendChild(tempSpan2);
-                loadLinkToUpdateDiv.appendChild(tempSpan3);
-                loadLinkToUpdateDiv.appendChild(tempSpan);
-
-                text = null;
-                tempDiv = null;
-                tempSpan = null;
-                tempSpan2 = null;
-                tempSpan3 = null;
-                loadLinkToUpdateDiv = null;
-                timersElementToggle = null;
-                loadTimersElement = null;
-                loadLinkToUpdate = null;
-            } else {
-                // player currently navigating other page instead of hunter camp
-                var helpTextElement = document.createElement('div');
-                helpTextElement.setAttribute('id', 'helpTextElement');
-                if (fbPlatform) {
-                    if (secureConnection) {
-                        helpTextElement.innerHTML = "<b>Note:</b> MouseHunt AutoBot will only run at <a href='https://www.mousehuntgame.com/canvas/'>Hunter Camp</a>. This is to prevent the bot from interfering user's activity.";
-                    } else {
-                        helpTextElement.innerHTML = "<b>Note:</b> MouseHunt AutoBot will only run at <a href='http://www.mousehuntgame.com/canvas/'>Hunter Camp</a>. This is to prevent the bot from interfering user's activity.";
-                    }
-                } else if (hiFivePlatform) {
-                    if (secureConnection) {
-                        helpTextElement.innerHTML = "<b>Note:</b> MouseHunt AutoBot will only run at <a href='https://mousehunt.hi5.hitgrab.com/'>Hunter Camp</a>. This is to prevent the bot from interfering user's activity.";
-                    } else {
-                        helpTextElement.innerHTML = "<b>Note:</b> MouseHunt AutoBot will only run at <a href='http://mousehunt.hi5.hitgrab.com/'>Hunter Camp</a>. This is to prevent the bot from interfering user's activity.";
-                    }
-                } else if (mhPlatform) {
-                    if (secureConnection) {
-                        helpTextElement.innerHTML = "<b>Note:</b> MouseHunt AutoBot will only run at <a href='https://www.mousehuntgame.com/'>Hunter Camp</a>. This is to prevent the bot from interfering user's activity.";
-                    } else {
-                        helpTextElement.innerHTML = "<b>Note:</b> MouseHunt AutoBot will only run at <a href='http://www.mousehuntgame.com/'>Hunter Camp</a>. This is to prevent the bot from interfering user's activity.";
-                    }
-                } else if (mhMobilePlatform) {
-                    if (secureConnection) {
-                        helpTextElement.innerHTML = "<b>Note:</b> Mobile version of Mousehunt is not supported currently. Please use the <a href='https://www.mousehuntgame.com/?switch_to=standard'>standard version of MouseHunt</a>.";
-                    } else {
-                        helpTextElement.innerHTML = "<b>Note:</b> Mobile version of Mousehunt is not supported currently. Please use the <a href='http://www.mousehuntgame.com/?switch_to=standard'>standard version of MouseHunt</a>.";
-                    }
+                var preferenceHTMLStr = '<table border="0" width="100%">';
+                if (aggressiveMode) {
+                    preferenceHTMLStr += '<tr>';
+                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                    preferenceHTMLStr += '<a title="Bot aggressively by ignore all safety measure such as check horn image visible before sounding it">';
+                    preferenceHTMLStr += '<b>Aggressive Mode</b>';
+                    preferenceHTMLStr += '</a>';
+                    preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '<td style="height:24px">';
+                    preferenceHTMLStr += '<input type="radio" id="AggressiveModeInputTrue" name="AggressiveModeInput" value="true" onchange="if (document.getElementById(\'AggressiveModeInputTrue\').checked == true) { document.getElementById(\'HornTimeDelayMinInput\').disabled=\'disabled\'; document.getElementById(\'HornTimeDelayMaxInput\').disabled=\'disabled\';}" checked="checked"/> True';
+                    preferenceHTMLStr += '   ';
+                    preferenceHTMLStr += '<input type="radio" id="AggressiveModeInputFalse" name="AggressiveModeInput" value="false" onchange="if (document.getElementById(\'AggressiveModeInputFalse\').checked == true) { document.getElementById(\'HornTimeDelayMinInput\').disabled=\'\'; document.getElementById(\'HornTimeDelayMaxInput\').disabled=\'\';}"/> False';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '</tr>';
+                    preferenceHTMLStr += '<tr>';
+                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                    preferenceHTMLStr += '<a title="Extra delay time before sounding the horn (in seconds)">';
+                    preferenceHTMLStr += '<b>Horn Time Delay</b>';
+                    preferenceHTMLStr += '</a>';
+                    preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '<td style="height:24px">';
+                    preferenceHTMLStr += '<input type="text" id="HornTimeDelayMinInput" name="HornTimeDelayMinInput" disabled="disabled" value="' + hornTimeDelayMin.toString() + '"/> seconds';
+                    preferenceHTMLStr += ' ~ ';
+                    preferenceHTMLStr += '<input type="text" id="HornTimeDelayMaxInput" name="HornTimeDelayMaxInput" disabled="disabled" value="' + hornTimeDelayMax.toString() + '"/> seconds';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '</tr>';
+                } else {
+                    preferenceHTMLStr += '<tr>';
+                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                    preferenceHTMLStr += '<a title="Bot aggressively by ignore all safety measure such as check horn image visible before sounding it">';
+                    preferenceHTMLStr += '<b>Aggressive Mode</b>';
+                    preferenceHTMLStr += '</a>';
+                    preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '<td style="height:24px">';
+                    preferenceHTMLStr += '<input type="radio" id="AggressiveModeInputTrue" name="AggressiveModeInput" value="true" onchange="if (document.getElementById(\'AggressiveModeInputTrue\').checked == true) { document.getElementById(\'HornTimeDelayMinInput\').disabled=\'disabled\'; document.getElementById(\'HornTimeDelayMaxInput\').disabled=\'disabled\';}"/> True';
+                    preferenceHTMLStr += '   ';
+                    preferenceHTMLStr += '<input type="radio" id="AggressiveModeInputFalse" name="AggressiveModeInput" value="false" onchange="if (document.getElementById(\'AggressiveModeInputFalse\').checked == true) { document.getElementById(\'HornTimeDelayMinInput\').disabled=\'\'; document.getElementById(\'HornTimeDelayMaxInput\').disabled=\'\';}" checked="checked"/> False';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '</tr>';
+                    preferenceHTMLStr += '<tr>';
+                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                    preferenceHTMLStr += '<a title="Extra delay time before sounding the horn (in seconds)">';
+                    preferenceHTMLStr += '<b>Horn Time Delay</b>';
+                    preferenceHTMLStr += '</a>&nbsp;&nbsp;:&nbsp;&nbsp;';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '<td style="height:24px">';
+                    preferenceHTMLStr += '<input type="text" id="HornTimeDelayMinInput" name="HornTimeDelayMinInput" value="' + hornTimeDelayMin.toString() + '"/> seconds';
+                    preferenceHTMLStr += ' ~ ';
+                    preferenceHTMLStr += '<input type="text" id="HornTimeDelayMaxInput" name="HornTimeDelayMaxInput" value="' + hornTimeDelayMax.toString() + '"/> seconds';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '</tr>';
                 }
-                timerDivElement.appendChild(helpTextElement);
+                if (enableTrapCheck) {
+                    preferenceHTMLStr += '<tr>';
+                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                    preferenceHTMLStr += '<a title="Enable trap check once an hour"><b>Trap Check</b></a>';
+                    preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '<td style="height:24px">';
+                    preferenceHTMLStr += '<input type="radio" id="TrapCheckInputTrue" name="TrapCheckInput" value="true" onchange="if (document.getElementById(\'TrapCheckInputTrue\').checked == true) { document.getElementById(\'TrapCheckTimeOffsetInput\').disabled=\'\'; document.getElementById(\'TrapCheckTimeDelayMinInput\').disabled=\'\'; document.getElementById(\'TrapCheckTimeDelayMaxInput\').disabled=\'\';}" checked="checked"/> True';
+                    preferenceHTMLStr += '   ';
+                    preferenceHTMLStr += '<input type="radio" id="TrapCheckInputFalse" name="TrapCheckInput" value="false" onchange="if (document.getElementById(\'TrapCheckInputFalse\').checked == true) { document.getElementById(\'TrapCheckTimeOffsetInput\').disabled=\'disabled\'; document.getElementById(\'TrapCheckTimeDelayMinInput\').disabled=\'disabled\'; document.getElementById(\'TrapCheckTimeDelayMaxInput\').disabled=\'disabled\';}"/> False';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '</tr>';
+                    preferenceHTMLStr += '<tr>';
+                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                    preferenceHTMLStr += '<a title="Trap check time different value (00 minutes - 45 minutes)"><b>Trap Check Time Offset</b></a>';
+                    preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '<td style="height:24px">';
+                    preferenceHTMLStr += '<input type="text" id="TrapCheckTimeOffsetInput" name="TrapCheckTimeOffsetInput" value="' + trapCheckTimeDiff.toString() + '"/> seconds';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '</tr>';
+                    preferenceHTMLStr += '<tr>';
+                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                    preferenceHTMLStr += '<a title="Extra delay time to trap check (in seconds)"><b>Trap Check Time Delay</b></a>';
+                    preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '<td style="height:24px">';
+                    preferenceHTMLStr += '<input type="text" id="TrapCheckTimeDelayMinInput" name="TrapCheckTimeDelayMinInput" value="' + checkTimeDelayMin.toString() + '"/> seconds';
+                    preferenceHTMLStr += ' ~ ';
+                    preferenceHTMLStr += '<input type="text" id="TrapCheckTimeDelayMaxInput" name="TrapCheckTimeDelayMaxInput" value="' + checkTimeDelayMax.toString() + '"/> seconds';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '</tr>';
+                } else {
+                    preferenceHTMLStr += '<tr>';
+                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                    preferenceHTMLStr += '<a title="Enable trap check once an hour"><b>Trap Check</b></a>';
+                    preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '<td style="height:24px">';
+                    preferenceHTMLStr += '<input type="radio" id="TrapCheckInputTrue" name="TrapCheckInput" value="true" onchange="if (document.getElementById(\'TrapCheckInputTrue\').checked == true) { document.getElementById(\'TrapCheckTimeOffsetInput\').disabled=\'\'; document.getElementById(\'TrapCheckTimeDelayMinInput\').disabled=\'\'; document.getElementById(\'TrapCheckTimeDelayMaxInput\').disabled=\'\';}"/> True';
+                    preferenceHTMLStr += '   ';
+                    preferenceHTMLStr += '<input type="radio" id="TrapCheckInputFalse" name="TrapCheckInput" value="false" onchange="if (document.getElementById(\'TrapCheckInputFalse\').checked == true) { document.getElementById(\'TrapCheckTimeOffsetInput\').disabled=\'disabled\'; document.getElementById(\'TrapCheckTimeDelayMinInput\').disabled=\'disabled\'; document.getElementById(\'TrapCheckTimeDelayMaxInput\').disabled=\'disabled\';}" checked="checked"/> False';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '</tr>';
+                    preferenceHTMLStr += '<tr>';
+                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                    preferenceHTMLStr += '<a title="Trap check time different value (00 minutes - 45 minutes)"><b>Trap Check Time Offset</b></a>';
+                    preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '<td style="height:24px">';
+                    preferenceHTMLStr += '<input type="text" id="TrapCheckTimeOffsetInput" name="TrapCheckTimeOffsetInput" disabled="disabled" value="' + trapCheckTimeDiff.toString() + '"/> seconds';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '</tr>';
+                    preferenceHTMLStr += '<tr>';
+                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                    preferenceHTMLStr += '<a title="Extra delay time to trap check (in seconds)"><b>Trap Check Time Delay</b></a>';
+                    preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '<td style="height:24px">';
+                    preferenceHTMLStr += '<input type="text" id="TrapCheckTimeDelayMinInput" name="TrapCheckTimeDelayMinInput" disabled="disabled" value="' + checkTimeDelayMin.toString() + '"/> seconds';
+                    preferenceHTMLStr += ' ~ ';
+                    preferenceHTMLStr += '<input type="text" id="TrapCheckTimeDelayMaxInput" name="TrapCheckTimeDelayMaxInput" disabled="disabled" value="' + checkTimeDelayMax.toString() + '"/> seconds';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '</tr>';
+                }
+                if (isKingWarningSound) {
+                    preferenceHTMLStr += '<tr>';
+                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                    preferenceHTMLStr += '<a title="Play sound when encounter king\'s reward"><b>Play King Reward Sound</b></a>';
+                    preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '<td style="height:24px">';
+                    preferenceHTMLStr += '<input type="radio" id="PlayKingRewardSoundInputTrue" name="PlayKingRewardSoundInput" value="true" checked="checked"/> True';
+                    preferenceHTMLStr += '   ';
+                    preferenceHTMLStr += '<input type="radio" id="PlayKingRewardSoundInputFalse" name="PlayKingRewardSoundInput" value="false" /> False';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '</tr>';
+                } else {
+                    preferenceHTMLStr += '<tr>';
+                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                    preferenceHTMLStr += '<a title="Play sound when encounter king\'s reward"><b>Play King Reward Sound</b></a>';
+                    preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '<td style="height:24px">';
+                    preferenceHTMLStr += '<input type="radio" id="PlayKingRewardSoundInputTrue" name="PlayKingRewardSoundInput" value="true" /> True';
+                    preferenceHTMLStr += '   ';
+                    preferenceHTMLStr += '<input type="radio" id="PlayKingRewardSoundInputFalse" name="PlayKingRewardSoundInput" value="false" checked="checked"/> False';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '</tr>';
+                }
+                if (reloadKingReward) {
+                    preferenceHTMLStr += '<tr>';
+                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                    preferenceHTMLStr += '<a title="Reload the the page according to King Reward Resume Time when encount King Reward"><b>King Reward Resume</b></a>';
+                    preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '<td style="height:24px">';
+                    preferenceHTMLStr += '<input type="radio" id="KingRewardResumeInputTrue" name="KingRewardResumeInput" value="true" onchange="if (document.getElementById(\'KingRewardResumeInputTrue\').checked == true) { document.getElementById(\'KingRewardResumeTimeInput\').disabled=\'\'; }" checked="checked"/> True';
+                    preferenceHTMLStr += '   ';
+                    preferenceHTMLStr += '<input type="radio" id="KingRewardResumeInputFalse" name="KingRewardResumeInput" value="false" onchange="if (document.getElementById(\'KingRewardResumeInputFalse\').checked == true) { document.getElementById(\'KingRewardResumeTimeInput\').disabled=\'disabled\'; }"/> False';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '</tr>';
+                    preferenceHTMLStr += '<tr>';
+                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                    preferenceHTMLStr += '<a title="Duration of pausing the script before reload the King\'s Reward page (in seconds)"><b>King Reward Resume Time</b></a>';
+                    preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '<td style="height:24px">';
+                    preferenceHTMLStr += '<input type="text" id="KingRewardResumeTimeInput" name="KingRewardResumeTimeInput" value="' + kingPauseTimeMax.toString() + '"/> seconds';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '</tr>';
+                } else {
+                    preferenceHTMLStr += '<tr>';
+                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                    preferenceHTMLStr += '<a title="Reload the the page according to King Reward Resume Time when encounter King Reward"><b>King Reward Resume</b></a>';
+                    preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '<td style="height:24px">';
+                    preferenceHTMLStr += '<input type="radio" id="KingRewardResumeInputTrue" name="KingRewardResumeInput" value="true" onchange="if (document.getElementById(\'KingRewardResumeInputTrue\').checked == true) { document.getElementById(\'KingRewardResumeTimeInput\').disabled=\'\'; }"/> True';
+                    preferenceHTMLStr += '   ';
+                    preferenceHTMLStr += '<input type="radio" id="KingRewardResumeInputFalse" name="KingRewardResumeInput" value="false" onchange="if (document.getElementById(\'KingRewardResumeInputFalse\').checked == true) { document.getElementById(\'KingRewardResumeTimeInput\').disabled=\'disabled\'; }" checked="checked"/> False';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '</tr>';
+                    preferenceHTMLStr += '<tr>';
+                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                    preferenceHTMLStr += '<a title="Duration of pausing the script before reload the King\'s Reward page (in seconds)"><b>King Reward Resume Time</b></a>';
+                    preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '<td style="height:24px">';
+                    preferenceHTMLStr += '<input type="text" id="KingRewardResumeTimeInput" name="KingRewardResumeTimeInput" disabled="disabled" value="' + kingPauseTimeMax.toString() + '"/> seconds';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '</tr>';
+                }
+                if (pauseAtInvalidLocation) {
+                    preferenceHTMLStr += '<tr>';
+                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                    preferenceHTMLStr += '<a title="The script will pause if player at different location that hunt location set before"><b>Remember Location</b></a>';
+                    preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '<td style="height:24px">';
+                    preferenceHTMLStr += '<input type="radio" id="PauseLocationInputTrue" name="PauseLocationInput" value="true" checked="checked"/> True';
+                    preferenceHTMLStr += '   ';
+                    preferenceHTMLStr += '<input type="radio" id="PauseLocationInputFalse" name="PauseLocationInput" value="false" /> False';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '</tr>';
+                } else {
+                    preferenceHTMLStr += '<tr>';
+                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                    preferenceHTMLStr += '<a title="The script will pause if player at different location that hunt location set before"><b>Remember Location</b></a>';
+                    preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '<td style="height:24px">';
+                    preferenceHTMLStr += '<input type="radio" id="PauseLocationInputTrue" name="PauseLocationInput" value="true"/> True';
+                    preferenceHTMLStr += '   ';
+                    preferenceHTMLStr += '<input type="radio" id="PauseLocationInputFalse" name="PauseLocationInput" value="false" checked="checked"/> False';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '</tr>';
+                }
+                if (autoPopupKR) {
+                    preferenceHTMLStr += '<tr>';
+                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                    preferenceHTMLStr += '<a title="Auto Popup on KR"><b>Auto KR Popup</b></a>';
+                    preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '<td style="height:24px">';
+                    preferenceHTMLStr += '<input type="radio" id="autopopkrTrue" name="autopopkrInput" value="true" checked="checked"/> True';
+                    preferenceHTMLStr += '   ';
+                    preferenceHTMLStr += '<input type="radio" id="autopopkrFalse" name="autopopkrInput" value="false" /> False';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '</tr>';
+                } else {
+                    preferenceHTMLStr += '<tr>';
+                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                    preferenceHTMLStr += '<a title="Auto Popup on KR"><b>Auto KR Popup</b></a>';
+                    preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '<td style="height:24px">';
+                    preferenceHTMLStr += '<input type="radio" id="autopopkrTrue" name="autopopkrInput" value="true"/> True';
+                    preferenceHTMLStr += '   ';
+                    preferenceHTMLStr += '<input type="radio" id="autopopkrFalse" name="autopopkrInput" value="false" checked="checked"/> False';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '</tr>';
+                }
 
-                helpTextElement = null;
-            }
+                preferenceHTMLStr += '<tr>';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="Select the script algorithm based on certain event / location"><b>Event or Location</b></a>';
+                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select name="algo" onChange="window.localStorage.setItem(\'eventLocation\', value); document.getElementById(\'event\').value=window.localStorage.getItem(\'eventLocation\');">';
+                preferenceHTMLStr += '<option value=""> </option>';
+                preferenceHTMLStr += '<option value="None" selected>None</option>';
+                preferenceHTMLStr += '<option value="Charge Egg 2014">Charge Egg 2014</option>';
+                preferenceHTMLStr += '<option value="Charge Egg 2014(17)">Charge Egg 2014(17)</option>';
+                preferenceHTMLStr += '<option value="Burroughs Rift(Red)">Burroughs Rift(Red)</option>';
+                preferenceHTMLStr += '<option value="Burroughs Rift(Green)">Burroughs Rift(Green)</option>';
+                preferenceHTMLStr += '<option value="Halloween 2014">Halloween 2014</option>';
+                preferenceHTMLStr += '<option value="Sunken City">Sunken City</option>';
+                preferenceHTMLStr += '<option value="All LG Area">All LG Area</option>';
+                preferenceHTMLStr += '<option value="Gnawnian Express(Empty)">Gnawnian Express(Empty)</option>';
+                preferenceHTMLStr += '<option value="Gnawnian Express(Full)">Gnawnian Express(Full)</option>';
+                preferenceHTMLStr += '</select> Current Selection : ';
+                preferenceHTMLStr += '<input type="text" id="event" name="event" value="' + eventLocation + '"/>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
 
-            var showPreference = getStorage('showPreference');
-            if (showPreference == undefined || showPreference == null) {
-                showPreference = false;
-                setStorage("showPreference", showPreference);
-            }
+                preferenceHTMLStr += '<tr>';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="FOR DEVS ONLY" onclick="if(confirm(\'Are you sure you want to inject code?\'))$(\'#addonCode\').toggle();"><b>Click here if you would like to inject code.</b></a>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td>';
+                preferenceHTMLStr += '<textarea id="addonCode" name="addonCode" style="display:none;">';
+                preferenceHTMLStr += addonCode;
+                preferenceHTMLStr += '</textarea>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
 
-            var showPreferenceLinkDiv = document.createElement('div');
-            showPreferenceLinkDiv.setAttribute('id', 'showPreferenceLinkDiv');
-            showPreferenceLinkDiv.setAttribute('style', 'text-align:right');
-            timerDivElement.appendChild(showPreferenceLinkDiv);
-
-            var showPreferenceSpan = document.createElement('span');
-            var showPreferenceLinkStr = '<a id="showPreferenceLink" name="showPreferenceLink" onclick="if (document.getElementById(\'showPreferenceLink\').innerHTML == \'<b>[Hide Preference]</b>\') { document.getElementById(\'preferenceDiv\').style.display=\'none\';  document.getElementById(\'showPreferenceLink\').innerHTML=\'<b>[Show Preference]</b>\'; } else { document.getElementById(\'preferenceDiv\').style.display=\'block\'; document.getElementById(\'showPreferenceLink\').innerHTML=\'<b>[Hide Preference]</b>\'; }">';
-            if (showPreference == true)
-                showPreferenceLinkStr += '<b>[Hide Preference]</b>';
-            else
-                showPreferenceLinkStr += '<b>[Show Preference]</b>';
-            showPreferenceLinkStr += '</a>';
-            showPreferenceLinkStr += '&nbsp;&nbsp;&nbsp;';
-            showPreferenceSpan.innerHTML = showPreferenceLinkStr;
-            showPreferenceLinkDiv.appendChild(showPreferenceSpan);
-            showPreferenceLinkStr = null;
-            showPreferenceSpan = null;
-            showPreferenceLinkDiv = null;
-
-            var hr2Element = document.createElement('hr');
-            timerDivElement.appendChild(hr2Element);
-            hr2Element = null;
-
-            var preferenceHTMLStr = '<table border="0" width="100%">';
-            if (aggressiveMode) {
                 preferenceHTMLStr += '<tr>';
-                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                preferenceHTMLStr += '<a title="Bot aggressively by ignore all safety measure such as check horn image visible before sounding it">';
-                preferenceHTMLStr += '<b>Aggressive Mode</b>';
-                preferenceHTMLStr += '</a>';
-                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '<td style="height:24px">';
-                preferenceHTMLStr += '<input type="radio" id="AggressiveModeInputTrue" name="AggressiveModeInput" value="true" onchange="if (document.getElementById(\'AggressiveModeInputTrue\').checked == true) { document.getElementById(\'HornTimeDelayMinInput\').disabled=\'disabled\'; document.getElementById(\'HornTimeDelayMaxInput\').disabled=\'disabled\';}" checked="checked"/> True';
-                preferenceHTMLStr += '   ';
-                preferenceHTMLStr += '<input type="radio" id="AggressiveModeInputFalse" name="AggressiveModeInput" value="false" onchange="if (document.getElementById(\'AggressiveModeInputFalse\').checked == true) { document.getElementById(\'HornTimeDelayMinInput\').disabled=\'\'; document.getElementById(\'HornTimeDelayMaxInput\').disabled=\'\';}"/> False';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '</tr>';
-                preferenceHTMLStr += '<tr>';
-                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                preferenceHTMLStr += '<a title="Extra delay time before sounding the horn (in seconds)">';
-                preferenceHTMLStr += '<b>Horn Time Delay</b>';
-                preferenceHTMLStr += '</a>';
-                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '<td style="height:24px">';
-                preferenceHTMLStr += '<input type="text" id="HornTimeDelayMinInput" name="HornTimeDelayMinInput" disabled="disabled" value="' + hornTimeDelayMin.toString() + '"/> seconds';
-                preferenceHTMLStr += ' ~ ';
-                preferenceHTMLStr += '<input type="text" id="HornTimeDelayMaxInput" name="HornTimeDelayMaxInput" disabled="disabled" value="' + hornTimeDelayMax.toString() + '"/> seconds';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '</tr>';
-            } else {
-                preferenceHTMLStr += '<tr>';
-                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                preferenceHTMLStr += '<a title="Bot aggressively by ignore all safety measure such as check horn image visible before sounding it">';
-                preferenceHTMLStr += '<b>Aggressive Mode</b>';
-                preferenceHTMLStr += '</a>';
-                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '<td style="height:24px">';
-                preferenceHTMLStr += '<input type="radio" id="AggressiveModeInputTrue" name="AggressiveModeInput" value="true" onchange="if (document.getElementById(\'AggressiveModeInputTrue\').checked == true) { document.getElementById(\'HornTimeDelayMinInput\').disabled=\'disabled\'; document.getElementById(\'HornTimeDelayMaxInput\').disabled=\'disabled\';}"/> True';
-                preferenceHTMLStr += '   ';
-                preferenceHTMLStr += '<input type="radio" id="AggressiveModeInputFalse" name="AggressiveModeInput" value="false" onchange="if (document.getElementById(\'AggressiveModeInputFalse\').checked == true) { document.getElementById(\'HornTimeDelayMinInput\').disabled=\'\'; document.getElementById(\'HornTimeDelayMaxInput\').disabled=\'\';}" checked="checked"/> False';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '</tr>';
-                preferenceHTMLStr += '<tr>';
-                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                preferenceHTMLStr += '<a title="Extra delay time before sounding the horn (in seconds)">';
-                preferenceHTMLStr += '<b>Horn Time Delay</b>';
-                preferenceHTMLStr += '</a>&nbsp;&nbsp;:&nbsp;&nbsp;';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '<td style="height:24px">';
-                preferenceHTMLStr += '<input type="text" id="HornTimeDelayMinInput" name="HornTimeDelayMinInput" value="' + hornTimeDelayMin.toString() + '"/> seconds';
-                preferenceHTMLStr += ' ~ ';
-                preferenceHTMLStr += '<input type="text" id="HornTimeDelayMaxInput" name="HornTimeDelayMaxInput" value="' + hornTimeDelayMax.toString() + '"/> seconds';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '</tr>';
-            }
-            if (enableTrapCheck) {
-                preferenceHTMLStr += '<tr>';
-                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                preferenceHTMLStr += '<a title="Enable trap check once an hour"><b>Trap Check</b></a>';
-                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '<td style="height:24px">';
-                preferenceHTMLStr += '<input type="radio" id="TrapCheckInputTrue" name="TrapCheckInput" value="true" onchange="if (document.getElementById(\'TrapCheckInputTrue\').checked == true) { document.getElementById(\'TrapCheckTimeOffsetInput\').disabled=\'\'; document.getElementById(\'TrapCheckTimeDelayMinInput\').disabled=\'\'; document.getElementById(\'TrapCheckTimeDelayMaxInput\').disabled=\'\';}" checked="checked"/> True';
-                preferenceHTMLStr += '   ';
-                preferenceHTMLStr += '<input type="radio" id="TrapCheckInputFalse" name="TrapCheckInput" value="false" onchange="if (document.getElementById(\'TrapCheckInputFalse\').checked == true) { document.getElementById(\'TrapCheckTimeOffsetInput\').disabled=\'disabled\'; document.getElementById(\'TrapCheckTimeDelayMinInput\').disabled=\'disabled\'; document.getElementById(\'TrapCheckTimeDelayMaxInput\').disabled=\'disabled\';}"/> False';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '</tr>';
-                preferenceHTMLStr += '<tr>';
-                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                preferenceHTMLStr += '<a title="Trap check time different value (00 minutes - 45 minutes)"><b>Trap Check Time Offset</b></a>';
-                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '<td style="height:24px">';
-                preferenceHTMLStr += '<input type="text" id="TrapCheckTimeOffsetInput" name="TrapCheckTimeOffsetInput" value="' + trapCheckTimeDiff.toString() + '"/> seconds';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '</tr>';
-                preferenceHTMLStr += '<tr>';
-                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                preferenceHTMLStr += '<a title="Extra delay time to trap check (in seconds)"><b>Trap Check Time Delay</b></a>';
-                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '<td style="height:24px">';
-                preferenceHTMLStr += '<input type="text" id="TrapCheckTimeDelayMinInput" name="TrapCheckTimeDelayMinInput" value="' + checkTimeDelayMin.toString() + '"/> seconds';
-                preferenceHTMLStr += ' ~ ';
-                preferenceHTMLStr += '<input type="text" id="TrapCheckTimeDelayMaxInput" name="TrapCheckTimeDelayMaxInput" value="' + checkTimeDelayMax.toString() + '"/> seconds';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '</tr>';
-            } else {
-                preferenceHTMLStr += '<tr>';
-                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                preferenceHTMLStr += '<a title="Enable trap check once an hour"><b>Trap Check</b></a>';
-                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '<td style="height:24px">';
-                preferenceHTMLStr += '<input type="radio" id="TrapCheckInputTrue" name="TrapCheckInput" value="true" onchange="if (document.getElementById(\'TrapCheckInputTrue\').checked == true) { document.getElementById(\'TrapCheckTimeOffsetInput\').disabled=\'\'; document.getElementById(\'TrapCheckTimeDelayMinInput\').disabled=\'\'; document.getElementById(\'TrapCheckTimeDelayMaxInput\').disabled=\'\';}"/> True';
-                preferenceHTMLStr += '   ';
-                preferenceHTMLStr += '<input type="radio" id="TrapCheckInputFalse" name="TrapCheckInput" value="false" onchange="if (document.getElementById(\'TrapCheckInputFalse\').checked == true) { document.getElementById(\'TrapCheckTimeOffsetInput\').disabled=\'disabled\'; document.getElementById(\'TrapCheckTimeDelayMinInput\').disabled=\'disabled\'; document.getElementById(\'TrapCheckTimeDelayMaxInput\').disabled=\'disabled\';}" checked="checked"/> False';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '</tr>';
-                preferenceHTMLStr += '<tr>';
-                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                preferenceHTMLStr += '<a title="Trap check time different value (00 minutes - 45 minutes)"><b>Trap Check Time Offset</b></a>';
-                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '<td style="height:24px">';
-                preferenceHTMLStr += '<input type="text" id="TrapCheckTimeOffsetInput" name="TrapCheckTimeOffsetInput" disabled="disabled" value="' + trapCheckTimeDiff.toString() + '"/> seconds';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '</tr>';
-                preferenceHTMLStr += '<tr>';
-                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                preferenceHTMLStr += '<a title="Extra delay time to trap check (in seconds)"><b>Trap Check Time Delay</b></a>';
-                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '<td style="height:24px">';
-                preferenceHTMLStr += '<input type="text" id="TrapCheckTimeDelayMinInput" name="TrapCheckTimeDelayMinInput" disabled="disabled" value="' + checkTimeDelayMin.toString() + '"/> seconds';
-                preferenceHTMLStr += ' ~ ';
-                preferenceHTMLStr += '<input type="text" id="TrapCheckTimeDelayMaxInput" name="TrapCheckTimeDelayMaxInput" disabled="disabled" value="' + checkTimeDelayMax.toString() + '"/> seconds';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '</tr>';
-            }
-            if (isKingWarningSound) {
-                preferenceHTMLStr += '<tr>';
-                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                preferenceHTMLStr += '<a title="Play sound when encounter king\'s reward"><b>Play King Reward Sound</b></a>';
-                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '<td style="height:24px">';
-                preferenceHTMLStr += '<input type="radio" id="PlayKingRewardSoundInputTrue" name="PlayKingRewardSoundInput" value="true" checked="checked"/> True';
-                preferenceHTMLStr += '   ';
-                preferenceHTMLStr += '<input type="radio" id="PlayKingRewardSoundInputFalse" name="PlayKingRewardSoundInput" value="false" /> False';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '</tr>';
-            } else {
-                preferenceHTMLStr += '<tr>';
-                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                preferenceHTMLStr += '<a title="Play sound when encounter king\'s reward"><b>Play King Reward Sound</b></a>';
-                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '<td style="height:24px">';
-                preferenceHTMLStr += '<input type="radio" id="PlayKingRewardSoundInputTrue" name="PlayKingRewardSoundInput" value="true" /> True';
-                preferenceHTMLStr += '   ';
-                preferenceHTMLStr += '<input type="radio" id="PlayKingRewardSoundInputFalse" name="PlayKingRewardSoundInput" value="false" checked="checked"/> False';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '</tr>';
-            }
-            if (reloadKingReward) {
-                preferenceHTMLStr += '<tr>';
-                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                preferenceHTMLStr += '<a title="Reload the the page according to King Reward Resume Time when encount King Reward"><b>King Reward Resume</b></a>';
-                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '<td style="height:24px">';
-                preferenceHTMLStr += '<input type="radio" id="KingRewardResumeInputTrue" name="KingRewardResumeInput" value="true" onchange="if (document.getElementById(\'KingRewardResumeInputTrue\').checked == true) { document.getElementById(\'KingRewardResumeTimeInput\').disabled=\'\'; }" checked="checked"/> True';
-                preferenceHTMLStr += '   ';
-                preferenceHTMLStr += '<input type="radio" id="KingRewardResumeInputFalse" name="KingRewardResumeInput" value="false" onchange="if (document.getElementById(\'KingRewardResumeInputFalse\').checked == true) { document.getElementById(\'KingRewardResumeTimeInput\').disabled=\'disabled\'; }"/> False';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '</tr>';
-                preferenceHTMLStr += '<tr>';
-                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                preferenceHTMLStr += '<a title="Duration of pausing the script before reload the King\'s Reward page (in seconds)"><b>King Reward Resume Time</b></a>';
-                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '<td style="height:24px">';
-                preferenceHTMLStr += '<input type="text" id="KingRewardResumeTimeInput" name="KingRewardResumeTimeInput" value="' + kingPauseTimeMax.toString() + '"/> seconds';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '</tr>';
-            } else {
-                preferenceHTMLStr += '<tr>';
-                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                preferenceHTMLStr += '<a title="Reload the the page according to King Reward Resume Time when encounter King Reward"><b>King Reward Resume</b></a>';
-                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '<td style="height:24px">';
-                preferenceHTMLStr += '<input type="radio" id="KingRewardResumeInputTrue" name="KingRewardResumeInput" value="true" onchange="if (document.getElementById(\'KingRewardResumeInputTrue\').checked == true) { document.getElementById(\'KingRewardResumeTimeInput\').disabled=\'\'; }"/> True';
-                preferenceHTMLStr += '   ';
-                preferenceHTMLStr += '<input type="radio" id="KingRewardResumeInputFalse" name="KingRewardResumeInput" value="false" onchange="if (document.getElementById(\'KingRewardResumeInputFalse\').checked == true) { document.getElementById(\'KingRewardResumeTimeInput\').disabled=\'disabled\'; }" checked="checked"/> False';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '</tr>';
-                preferenceHTMLStr += '<tr>';
-                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                preferenceHTMLStr += '<a title="Duration of pausing the script before reload the King\'s Reward page (in seconds)"><b>King Reward Resume Time</b></a>';
-                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '<td style="height:24px">';
-                preferenceHTMLStr += '<input type="text" id="KingRewardResumeTimeInput" name="KingRewardResumeTimeInput" disabled="disabled" value="' + kingPauseTimeMax.toString() + '"/> seconds';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '</tr>';
-            }
-            if (pauseAtInvalidLocation) {
-                preferenceHTMLStr += '<tr>';
-                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                preferenceHTMLStr += '<a title="The script will pause if player at different location that hunt location set before"><b>Remember Location</b></a>';
-                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '<td style="height:24px">';
-                preferenceHTMLStr += '<input type="radio" id="PauseLocationInputTrue" name="PauseLocationInput" value="true" checked="checked"/> True';
-                preferenceHTMLStr += '   ';
-                preferenceHTMLStr += '<input type="radio" id="PauseLocationInputFalse" name="PauseLocationInput" value="false" /> False';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '</tr>';
-            } else {
-                preferenceHTMLStr += '<tr>';
-                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                preferenceHTMLStr += '<a title="The script will pause if player at different location that hunt location set before"><b>Remember Location</b></a>';
-                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '<td style="height:24px">';
-                preferenceHTMLStr += '<input type="radio" id="PauseLocationInputTrue" name="PauseLocationInput" value="true"/> True';
-                preferenceHTMLStr += '   ';
-                preferenceHTMLStr += '<input type="radio" id="PauseLocationInputFalse" name="PauseLocationInput" value="false" checked="checked"/> False';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '</tr>';
-            }
-            if (autoPopupKR) {
-                preferenceHTMLStr += '<tr>';
-                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                preferenceHTMLStr += '<a title="Auto Popup on KR"><b>Auto KR Popup</b></a>';
-                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '<td style="height:24px">';
-                preferenceHTMLStr += '<input type="radio" id="autopopkrTrue" name="autopopkrInput" value="true" checked="checked"/> True';
-                preferenceHTMLStr += '   ';
-                preferenceHTMLStr += '<input type="radio" id="autopopkrFalse" name="autopopkrInput" value="false" /> False';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '</tr>';
-            } else {
-                preferenceHTMLStr += '<tr>';
-                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                preferenceHTMLStr += '<a title="Auto Popup on KR"><b>Auto KR Popup</b></a>';
-                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '<td style="height:24px">';
-                preferenceHTMLStr += '<input type="radio" id="autopopkrTrue" name="autopopkrInput" value="true"/> True';
-                preferenceHTMLStr += '   ';
-                preferenceHTMLStr += '<input type="radio" id="autopopkrFalse" name="autopopkrInput" value="false" checked="checked"/> False';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '</tr>';
-            }
-
-            preferenceHTMLStr += '<tr>';
-            preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-            preferenceHTMLStr += '<a title="Select the script algorithm based on certain event / location"><b>Event or Location</b></a>';
-            preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-            preferenceHTMLStr += '</td>';
-            preferenceHTMLStr += '<td style="height:24px">';
-            preferenceHTMLStr += '<select name="algo" onChange="window.localStorage.setItem(\'eventLocation\', value); document.getElementById(\'event\').value=window.localStorage.getItem(\'eventLocation\');">';
-            preferenceHTMLStr += '<option value=""> </option>';
-            preferenceHTMLStr += '<option value="None" selected>None</option>';
-            preferenceHTMLStr += '<option value="Charge Egg 2014">Charge Egg 2014</option>';
-            preferenceHTMLStr += '<option value="Charge Egg 2014(17)">Charge Egg 2014(17)</option>';
-            preferenceHTMLStr += '<option value="Burroughs Rift(Red)">Burroughs Rift(Red)</option>';
-            preferenceHTMLStr += '<option value="Burroughs Rift(Green)">Burroughs Rift(Green)</option>';
-            preferenceHTMLStr += '<option value="Halloween 2014">Halloween 2014</option>';
-            preferenceHTMLStr += '<option value="Sunken City">Sunken City</option>';
-            preferenceHTMLStr += '<option value="All LG Area">All LG Area</option>';
-            preferenceHTMLStr += '<option value="Gnawnian Express(Empty)">Gnawnian Express(Empty)</option>';
-            preferenceHTMLStr += '<option value="Gnawnian Express(Full)">Gnawnian Express(Full)</option>';
-            preferenceHTMLStr += '</select> Current Selection : ';
-            preferenceHTMLStr += '<input type="text" id="event" name="event" value="' + eventLocation + '"/>';
-            preferenceHTMLStr += '</td>';
-            preferenceHTMLStr += '</tr>';
-
-            preferenceHTMLStr += '<tr>';
-            preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-            preferenceHTMLStr += '<a title="FOR DEVS ONLY" onclick="if(confirm(\'Are you sure you want to inject code?\'))$(\'#addonCode\').toggle();"><b>Click here if you would like to inject code.</b></a>';
-            preferenceHTMLStr += '</td>';
-            preferenceHTMLStr += '<td>';
-            preferenceHTMLStr += '<textarea id="addonCode" name="addonCode" style="display:none;">';
-            preferenceHTMLStr += addonCode;
-            preferenceHTMLStr += '</textarea>';
-            preferenceHTMLStr += '</td>';
-            preferenceHTMLStr += '</tr>';
-
-            preferenceHTMLStr += '<tr>';
-            preferenceHTMLStr += '<td style="height:24px; text-align:right;" colspan="2">';
-            preferenceHTMLStr += '(Changes only take place after user save the preference) ';
-            preferenceHTMLStr += '<input type="button" id="PreferenceSaveInput" value="Save" onclick="	\
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;" colspan="2">';
+                preferenceHTMLStr += '(Changes only take place after user save the preference) ';
+                preferenceHTMLStr += '<input type="button" id="PreferenceSaveInput" value="Save" onclick="	\
 if (document.getElementById(\'AggressiveModeInputTrue\').checked == true) { window.localStorage.setItem(\'AggressiveMode\', \'true\'); } else { window.localStorage.setItem(\'AggressiveMode\', \'false\'); }	\
 window.localStorage.setItem(\'HornTimeDelayMin\', document.getElementById(\'HornTimeDelayMinInput\').value); window.localStorage.setItem(\'HornTimeDelayMax\', document.getElementById(\'HornTimeDelayMaxInput\').value);	\
 if (document.getElementById(\'TrapCheckInputTrue\').checked == true) { window.localStorage.setItem(\'TrapCheck\', \'true\'); } else { window.localStorage.setItem(\'TrapCheck\', \'false\'); }	\
@@ -2297,51 +2309,54 @@ if (document.getElementById(\'PauseLocationInputTrue\').checked == true) { windo
 if (document.getElementById(\'autopopkrTrue\').checked == true) { window.localStorage.setItem(\'autoPopupKR\', \'true\'); } else { window.localStorage.setItem(\'autoPopupKR\', \'false\'); }	\
 window.localStorage.setItem(\'addonCode\', document.getElementById(\'addonCode\').value);\
 ';
-            if (fbPlatform) {
-                if (secureConnection)
-                    preferenceHTMLStr += 'window.location.href=\'https://www.mousehuntgame.com/canvas/\';"/>';
+                if (fbPlatform) {
+                    if (secureConnection)
+                        preferenceHTMLStr += 'window.location.href=\'https://www.mousehuntgame.com/canvas/\';"/>';
+                    else
+                        preferenceHTMLStr += 'window.location.href=\'http://www.mousehuntgame.com/canvas/\';"/>';
+                } else if (hiFivePlatform) {
+                    if (secureConnection)
+                        preferenceHTMLStr += 'window.location.href=\'https://mousehunt.hi5.hitgrab.com/\';"/>';
+                    else
+                        preferenceHTMLStr += 'window.location.href=\'http://mousehunt.hi5.hitgrab.com/\';"/>';
+                } else if (mhPlatform) {
+                    if (secureConnection)
+                        preferenceHTMLStr += 'window.location.href=\'https://www.mousehuntgame.com/\';"/>';
+                    else
+                        preferenceHTMLStr += 'window.location.href=\'http://www.mousehuntgame.com/\';"/>';
+                }
+                preferenceHTMLStr += '&nbsp;&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '</tr>';
+                preferenceHTMLStr += '</table>';
+
+                var preferenceDiv = document.createElement('div');
+                preferenceDiv.setAttribute('id', 'preferenceDiv');
+                if (showPreference == true)
+                    preferenceDiv.setAttribute('style', 'display: block');
                 else
-                    preferenceHTMLStr += 'window.location.href=\'http://www.mousehuntgame.com/canvas/\';"/>';
-            } else if (hiFivePlatform) {
-                if (secureConnection)
-                    preferenceHTMLStr += 'window.location.href=\'https://mousehunt.hi5.hitgrab.com/\';"/>';
-                else
-                    preferenceHTMLStr += 'window.location.href=\'http://mousehunt.hi5.hitgrab.com/\';"/>';
-            } else if (mhPlatform) {
-                if (secureConnection)
-                    preferenceHTMLStr += 'window.location.href=\'https://www.mousehuntgame.com/\';"/>';
-                else
-                    preferenceHTMLStr += 'window.location.href=\'http://www.mousehuntgame.com/\';"/>';
+                    preferenceDiv.setAttribute('style', 'display: none');
+                preferenceDiv.innerHTML = preferenceHTMLStr;
+                timerDivElement.appendChild(preferenceDiv);
+                preferenceHTMLStr = null;
+                showPreference = null;
+
+                var hr3Element = document.createElement('hr');
+                preferenceDiv.appendChild(hr3Element);
+                hr3Element = null;
+                preferenceDiv = null;
+
+                // embed all msg to the page
+                headerElement.parentNode.insertBefore(timerDivElement, headerElement);
+
+                timerDivElement = null;
             }
-            preferenceHTMLStr += '&nbsp;&nbsp;&nbsp;</td>';
-            preferenceHTMLStr += '</tr>';
-            preferenceHTMLStr += '</table>';
-
-            var preferenceDiv = document.createElement('div');
-            preferenceDiv.setAttribute('id', 'preferenceDiv');
-            if (showPreference == true)
-                preferenceDiv.setAttribute('style', 'display: block');
-            else
-                preferenceDiv.setAttribute('style', 'display: none');
-            preferenceDiv.innerHTML = preferenceHTMLStr;
-            timerDivElement.appendChild(preferenceDiv);
-            preferenceHTMLStr = null;
-            showPreference = null;
-
-            var hr3Element = document.createElement('hr');
-            preferenceDiv.appendChild(hr3Element);
-            hr3Element = null;
-            preferenceDiv = null;
-
-            // embed all msg to the page
-            headerElement.parentNode.insertBefore(timerDivElement, headerElement);
-
-            timerDivElement = null;
+            headerElement = null;
         }
-        headerElement = null;
-    }
 
-    targetPage = null;
+        targetPage = null;
+    } catch (e) {
+        if (debug) console.log('embedTimer error - ' + e)
+    }
 }
 
 function loadPreferenceSettingFromStorage() {
@@ -3291,7 +3306,9 @@ function timeFormatLong(time) {
 // INIT AJAX CALLS AND INIT CALLS - Function calls after page LOAD
 
 if (debug) console.log("RUN nobInit()");
-$(window).load(nobInit);
+window.onload = function() {
+    nobInit();
+};
 
 function nobInit() {
     try {
@@ -3495,7 +3512,7 @@ function nobScript(qqEvent) {
         var mapThere = document.getElementById('hudmapitem').style.cssText;
         if (mapThere == 'display: none;') {
             mapThere = false;
-            console.log("No map, using HTML data now");
+            if (debug) console.log("No map, using HTML data now");
         } else {
             mapThere = true;
         }
@@ -3689,7 +3706,7 @@ function showNOBMessage() {
 }
 
 unsafeWindow.nobRaffle = function() {
-    if (!($('.tabs a:eq(1)').length > 0))
+    /*if (!($('.tabs a:eq(1)').length > 0))
         $('#hgbar_messages').click();
 
     window.setTimeout(function () {
@@ -3707,7 +3724,57 @@ unsafeWindow.nobRaffle = function() {
         window.setTimeout(function() {
             $("a.messengerUINotificationClose")[0].click();
         }, 7500);
-    }, 4000);
+    }, 4000);*/
+
+    var intState = 0;
+    var nobRafInt = window.setInterval(function() {
+        try {
+            if (intState == 0 && !($('.tabs a:eq(1)').length > 0)) {
+                $('#hgbar_messages').click();
+                intState = 1;
+                return;
+            } else if ($('a.active.tab')[0].dataset.tab != 'daily_draw') {
+                var tabs = $('a.tab');
+                var theTab = "";
+                for (var i = 0; i < tabs.length; i++) {
+                    if (tabs[i].dataset.tab == 'daily_draw') {
+                        tabs[i].click();
+                        return;
+                    }
+                }
+
+                // If there are no raffles
+                intState = 0;
+                $("a.messengerUINotificationClose")[0].click();
+                console.log("No raffles found.");
+                window.clearInterval(nobPresInt);
+                return;
+            } else if (intState != 2 && $('a.active.tab')[0].dataset.tab == 'daily_draw') {
+                var ballot = $(".notificationMessageList input.sendBallot");
+                for (var i = ballot.length - 1; i >= 0; i--) {
+                    ballot[i].click();
+                }
+                intState = 2;
+                return;
+            } else if ($('a.active.tab')[0].dataset.tab == 'daily_draw') {
+                intState = 3;
+            } else {
+                intState = -1;
+            }
+        } catch(e) {
+            console.log("Raffle interval error: " + e + ", retrying in 1 second.");
+        } finally {
+            if (intState == 3) {
+                $("a.messengerUINotificationClose")[0].click();
+                window.clearInterval(nobPresInt);
+                return;
+            } else if (intState == -1) {
+                console.log("Present error, user pls resolve yourself");
+                window.clearInterval(nobPresInt);
+                return;
+            }
+        }
+    }, 1000);
 };
 
 unsafeWindow.nobPresent = function() {
@@ -3732,6 +3799,7 @@ unsafeWindow.nobPresent = function() {
                 $("a.messengerUINotificationClose")[0].click();
                 console.log("No gifts found.");
                 window.clearInterval(nobPresInt);
+                return;
             } else if (intState != 2 && $('a.active.tab')[0].dataset.tab == 'gifts') {
                 var presents = $('input.acceptAndSend');
                 for (var i = presents.length - 1; i >= 0; i--) {
