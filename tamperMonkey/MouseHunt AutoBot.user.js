@@ -2621,7 +2621,7 @@ function nobScript(qqEvent) {
 }
 
 function showHideTimers() {
-    $("#loadTimersElement").toggle();
+    $('#loadTimersElement').toggle();
 }
 
 function nobTravel(location) {
@@ -2971,7 +2971,6 @@ function nobCalculateTime(runOnly) {
         runOnly = 'all';
 
     Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
-    //var CurrentTime = currentTimeStamp();
     if ((runOnly == 'relic' || runOnly == 'all') && (typeof LOCATION_TIMERS[3][1].url != 'undefined' || LOCATION_TIMERS[3][1].url != 'undefined')) {
         Parse.Cloud.run('nobRelic', {}, {
             success: function (data) {

@@ -7,6 +7,6 @@ function inject(script) {
     };
     (document.head || document.documentElement).appendChild(s);
 }
-//inject('MouseHunt AutoBot Additional thing.user.js');
+
 inject('parse-1.4.2.min.js');
 inject('MouseHunt AutoBot.user.js');

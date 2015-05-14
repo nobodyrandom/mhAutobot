@@ -2,8 +2,8 @@
   "manifest_version": 2,
 
   "name": "MouseHunt AutoBot REVAMP chrome ext ver",
-  "description": "An advance user script to automate sounding the hunter horn in MouseHunt application with the newest version supported and many other features and fixes. REVAMPED VERSION of ORIGINAL by Ooi",
-  "version": "2.0.2",
+  "description": "Currently the most advanced script for automizing MouseHunt. Supports ALL new areas and FIREFOX. Revamped version of original by Ooi",
+  "version": "2.0.21",
   "author": "NobodyRandom",
   "update_url": "https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/chromeExtensionUpdate.xml",
 
@@ -36,10 +36,8 @@
 
   "web_accessible_resources": [
 	"MouseHunt%20AutoBot.user.js",
-	"MouseHunt%20AutoBot%20Additional%20thing.user.js",
 	"parse-1.4.2.min.js",
-	"https://github.com/nobodyrandom/mhAutobot/raw/master/tamperMonkey/MouseHunt%20AutoBot.user.js",
-	"https://github.com/nobodyrandom/mhAutobot/raw/master/tamperMonkey/MouseHunt%20AutoBot%20Additional%20thing.user.js"
+	"https://github.com/nobodyrandom/mhAutobot/raw/master/tamperMonkey/MouseHunt%20AutoBot.user.js"
   ],
 
   "permissions": [
