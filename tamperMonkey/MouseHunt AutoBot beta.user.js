@@ -1012,9 +1012,9 @@ function embedTimer(targetPage) {
                 var titleElement = document.createElement('div');
                 titleElement.setAttribute('id', 'titleElement');
                 if (targetPage && aggressiveMode) {
-                    titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui\" target=\"_blank\">MouseHunt AutoBot BETA (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing (version " + addonScriptVer + ")</b> - <font color='red'>Aggressive Mode</font>";
+                    titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui\" target=\"_blank\">MouseHunt AutoBot BETA (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing</b> - <font color='red'>Aggressive Mode</font>";
                 } else {
-                    titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui\" target=\"_blank\">MouseHunt AutoBot BETA (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing (version " + addonScriptVer + ")</b>";
+                    titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui\" target=\"_blank\">MouseHunt AutoBot BETA (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing</b>";
                 }
                 timerDivElement.appendChild(titleElement);
                 titleElement = null;
