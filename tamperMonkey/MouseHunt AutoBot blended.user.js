@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.0.20b
-// @description Currently the most advanced script for automizing MouseHunt. Supports ALL new areas. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN - Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
+// @version    	2.0.21b
+// @description Currently the most advanced script for automizing MouseHunt. Supports ALL new areas and FIREFOX. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN - Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot, https://devcnn.wordpress.com/
 // @updateURL	https://greasyfork.org/scripts/6514-mousehunt-autobot-enhanced-revamp/code/MouseHunt%20AutoBot%20ENHANCED%20+%20REVAMP.user.js
@@ -154,12 +154,12 @@ var best = 0;
 var maxSaltCharged = 26;
 
 // element in page
-var titleElement;
+//var titleElement;
 var nextHornTimeElement;
 var checkTimeElement;
 var kingTimeElement;
 var lastKingRewardSumTimeElement;
-var optionElement;
+//var optionElement;
 var travelElement;
 var isNewUI = false;
 var strHornButton = 'hornbutton';
@@ -170,7 +170,7 @@ var strCampButton = 'campbutton';
 //var NOBhasPuzzle = unsafeWindow.user.has_puzzle;
 var NOBhasPuzzle;
 var NOBtraps = []; // Stores ALL traps, bases, cheese etc available to user
-var NOBclockLoaded = false;
+//var NOBclockLoaded = false;
 var NOBpage = false;
 var mapRequestFailed = false;
 var clockTicking = false;
@@ -314,7 +314,7 @@ function exeScript() {
             } else {
                 // fail to retrieve data, display error msg and reload the page
                 document.title = "Fail to retrieve data from page. Reloading in " + timeformat(errorReloadTime);
-                window.setTimeout(function() {
+                window.setTimeout(function () {
                     reloadPage(false);
                 }, errorReloadTime * 1000);
             }
@@ -349,7 +349,7 @@ function exeScript() {
             } else {
                 // fail to retrieve data, display error msg and reload the page
                 document.title = "Fail to retrieve data from page. Reloading in " + timeformat(errorReloadTime);
-                window.setTimeout(function() {
+                window.setTimeout(function () {
                     reloadPage(false);
                 }, errorReloadTime * 1000);
             }
@@ -392,7 +392,7 @@ function exeScript() {
             } else {
                 // fail to retrieve data, display error msg and reload the page
                 document.title = "Fail to retrieve data from page. Reloading in " + timeformat(errorReloadTime);
-                window.setTimeout(function() {
+                window.setTimeout(function () {
                     reloadPage(false);
                 }, errorReloadTime * 1000);
             }
@@ -744,7 +744,7 @@ function gnawnianExpress(load) {
         var charmArmed = getPageVariableForChrome('user.trinket_name');
         var trapArmed = getPageVariableForChrome('user.weapon_name');
         if (onTrain == 'false') {
-            if (charmArmed.indexOf('Supply Schedule') > -1 || charmArmed.indexOf('Roof Rack') > -1 || charmArmed.indexOf('Greasy Glob') > -1 || charmArmed.indexOf('Door Guard') > -1 || charmArmed.indexOf('Dusty Coal') > -1  || charmArmed.indexOf('Black Powder') > -1 || charmArmed.indexOf('Magmatic Crystal') > -1)
+            if (charmArmed.indexOf('Supply Schedule') > -1 || charmArmed.indexOf('Roof Rack') > -1 || charmArmed.indexOf('Greasy Glob') > -1 || charmArmed.indexOf('Door Guard') > -1 || charmArmed.indexOf('Dusty Coal') > -1 || charmArmed.indexOf('Black Powder') > -1 || charmArmed.indexOf('Magmatic Crystal') > -1)
                 disarmTrap('trinket');
 
             if (trapArmed.indexOf('Supply Grabber') > -1 || trapArmed.indexOf('Bandit Deflector') > -1 || trapArmed.indexOf('Engine Doubler') > -1)
@@ -807,7 +807,7 @@ function retrieveMouseList() {
     fireEvent(document.getElementById('effectiveness'), 'click');
     var sec = 5;
     var intervalRML = setInterval(
-        function() {
+        function () {
             if (document.getElementsByClassName('thumb').length > 0) {
                 mouseList = [];
                 var y = document.getElementsByClassName('thumb');
@@ -864,7 +864,7 @@ function checkCharge(stopDischargeAt) {
 function loadTrain(location, load) {
     try {
         if (load) {
-            switch(location) {
+            switch (location) {
                 case 'raider':
                     var repellents = parseInt(document.getElementsByClassName('mouseRepellent')[0].getElementsByClassName('quantity')[0].innerText);
                     if (repellents >= 10)
@@ -873,7 +873,7 @@ function loadTrain(location, load) {
                 case 'canyon':
                     var timeLeft = document.getElementsByClassName('phaseTimer')[0].innerText.substr(10);
                     // Fire only when time left is less than 16 mins :P (needs checking if works)
-                    if(parseInt(timeLeft.substr(0, timeLeft.indexOf(':'))) == 0 && parseInt(timeLeft.substr(timeLeft.indexOf(':') + 1)) <= 16)
+                    if (parseInt(timeLeft.substr(0, timeLeft.indexOf(':'))) == 0 && parseInt(timeLeft.substr(timeLeft.indexOf(':') + 1)) <= 16)
                         fireEvent(document.getElementsByClassName('phaseButton')[0], 'click');
                     break;
                 default:
@@ -904,7 +904,7 @@ function buildTrapList(category, afterBuilding, failedBuilding) {
             returning = false;
             failedBuilding();
         });
-    } catch(e) {
+    } catch (e) {
         console.log("btl try error: " + e);
     } finally {
         //clickTrapSelector(category);
@@ -934,9 +934,9 @@ function checkThenArm(sort, category, name) {  //category = weapon/base/charm/tr
 
         if (NOBtraps.length == 0) {
             if (debug) console.log("NOBtraps not built yet, trying to build now.");
-            buildTrapList(category, function() {
+            buildTrapList(category, function () {
                 return checkThenArm(sort, category, name);
-            }, function() {
+            }, function () {
                 if (debug) console.log("Failed to build trap list, giving up arming: " + name);
                 return;
             });
@@ -1023,7 +1023,7 @@ function checkThenArm(sort, category, name) {  //category = weapon/base/charm/tr
                     tempName = name[i];
                 }
 
-                switch(category) {
+                switch (category) {
                     case 'weapon':
                         if (currTrap == tempName)
                             trapArmed = true;
@@ -1050,7 +1050,7 @@ function checkThenArm(sort, category, name) {  //category = weapon/base/charm/tr
             }
 
 
-            switch(category) {
+            switch (category) {
                 case 'weapon':
                     if (currTrap == tempName)
                         trapArmed = true;
@@ -1076,7 +1076,7 @@ function checkThenArm(sort, category, name) {  //category = weapon/base/charm/tr
         tryingToArm = name;
         trapArmedOverride = false;
         var intervalCTA = setInterval(
-            function() {
+            function () {
                 if (!arming) {
                     console.debug("Queueing arming - " + name);
                     clickThenArmTrapInterval(sort, category, name);
@@ -1096,7 +1096,7 @@ function clickThenArmTrapInterval(sort, trap, name) //sort = power/luck/attracti
     //var index;
     var sec = 10;
     var intervalCTATI = setInterval(
-        function() {
+        function () {
             console.debug("Processing queue item: " + name);
             var tryArming = armTrap(sort, name);
             if (tryArming == 'found') {
@@ -1194,154 +1194,154 @@ function retrieveDataFirst() {
         var gotBaitQuantity = false;
         var retrieveSuccess = false;
 
-    var scriptElementList = document.getElementsByTagName('script');
-    if (scriptElementList) {
-        var i;
-        for (i = 0; i < scriptElementList.length; ++i) {
-            var scriptString = scriptElementList[i].innerHTML;
+        var scriptElementList = document.getElementsByTagName('script');
+        if (scriptElementList) {
+            var i;
+            for (i = 0; i < scriptElementList.length; ++i) {
+                var scriptString = scriptElementList[i].innerHTML;
 
-            // get next horn time
-            var hornTimeStartIndex = scriptString.indexOf("next_activeturn_seconds");
-            if (hornTimeStartIndex >= 0) {
-                var nextActiveTime = 900;
-                hornTimeStartIndex += 25;
-                var hornTimeEndIndex = scriptString.indexOf(",", hornTimeStartIndex);
-                var hornTimerString = scriptString.substring(hornTimeStartIndex, hornTimeEndIndex);
-                nextActiveTime = parseInt(hornTimerString);
+                // get next horn time
+                var hornTimeStartIndex = scriptString.indexOf("next_activeturn_seconds");
+                if (hornTimeStartIndex >= 0) {
+                    var nextActiveTime = 900;
+                    hornTimeStartIndex += 25;
+                    var hornTimeEndIndex = scriptString.indexOf(",", hornTimeStartIndex);
+                    var hornTimerString = scriptString.substring(hornTimeStartIndex, hornTimeEndIndex);
+                    nextActiveTime = parseInt(hornTimerString);
 
-                hornTimeDelay = hornTimeDelayMin + Math.round(Math.random() * (hornTimeDelayMax - hornTimeDelayMin));
+                    hornTimeDelay = hornTimeDelayMin + Math.round(Math.random() * (hornTimeDelayMax - hornTimeDelayMin));
 
-                if (!aggressiveMode) {
-                    // calculation base on the js in Mousehunt
-                    var additionalDelayTime = Math.ceil(nextActiveTime * 0.1);
-
-                    // need to found out the mousehunt provided timer interval to determine the additional delay
-                    var timerIntervalStartIndex = scriptString.indexOf("hud.timer_interval");
-                    if (timerIntervalStartIndex >= 0) {
-                        timerIntervalStartIndex += 21;
-                        var timerIntervalEndIndex = scriptString.indexOf(";", timerIntervalStartIndex);
-                        var timerIntervalString = scriptString.substring(timerIntervalStartIndex, timerIntervalEndIndex);
-                        var timerInterval = parseInt(timerIntervalString);
-
+                    if (!aggressiveMode) {
                         // calculation base on the js in Mousehunt
-                        if (timerInterval == 1) {
-                            additionalDelayTime = 2;
+                        var additionalDelayTime = Math.ceil(nextActiveTime * 0.1);
+
+                        // need to found out the mousehunt provided timer interval to determine the additional delay
+                        var timerIntervalStartIndex = scriptString.indexOf("hud.timer_interval");
+                        if (timerIntervalStartIndex >= 0) {
+                            timerIntervalStartIndex += 21;
+                            var timerIntervalEndIndex = scriptString.indexOf(";", timerIntervalStartIndex);
+                            var timerIntervalString = scriptString.substring(timerIntervalStartIndex, timerIntervalEndIndex);
+                            var timerInterval = parseInt(timerIntervalString);
+
+                            // calculation base on the js in Mousehunt
+                            if (timerInterval == 1) {
+                                additionalDelayTime = 2;
+                            }
+
+                            timerIntervalStartIndex = undefined;
+                            timerIntervalEndIndex = undefined;
+                            timerIntervalString = undefined;
+                            timerInterval = undefined;
                         }
 
-                        timerIntervalStartIndex = undefined;
-                        timerIntervalEndIndex = undefined;
-                        timerIntervalString = undefined;
-                        timerInterval = undefined;
+                        // safety mode, include extra delay like time in horn image appear
+                        //hornTime = nextActiveTime + additionalDelayTime + hornTimeDelay;
+                        hornTime = nextActiveTime + hornTimeDelay;
+                        lastDateRecorded = undefined;
+                        lastDateRecorded = new Date();
+
+                        additionalDelayTime = undefined;
+                    } else {
+                        // aggressive mode, no extra delay like time in horn image appear
+                        hornTime = nextActiveTime;
+                        lastDateRecorded = undefined;
+                        lastDateRecorded = new Date();
                     }
 
-                    // safety mode, include extra delay like time in horn image appear
-                    //hornTime = nextActiveTime + additionalDelayTime + hornTimeDelay;
-                    hornTime = nextActiveTime + hornTimeDelay;
-                    lastDateRecorded = undefined;
-                    lastDateRecorded = new Date();
+                    gotHornTime = true;
 
-                    additionalDelayTime = undefined;
-                } else {
-                    // aggressive mode, no extra delay like time in horn image appear
-                    hornTime = nextActiveTime;
-                    lastDateRecorded = undefined;
-                    lastDateRecorded = new Date();
+                    hornTimeStartIndex = undefined;
+                    hornTimeEndIndex = undefined;
+                    hornTimerString = undefined;
+                    nextActiveTime = undefined;
                 }
 
-                gotHornTime = true;
+                // get is king's reward or not
+                var hasPuzzleStartIndex = scriptString.indexOf("has_puzzle");
+                if (hasPuzzleStartIndex >= 0) {
+                    hasPuzzleStartIndex += 12;
+                    var hasPuzzleEndIndex = scriptString.indexOf(",", hasPuzzleStartIndex);
+                    var hasPuzzleString = scriptString.substring(hasPuzzleStartIndex, hasPuzzleEndIndex);
+                    isKingReward = (hasPuzzleString != 'false');
 
-                hornTimeStartIndex = undefined;
-                hornTimeEndIndex = undefined;
-                hornTimerString = undefined;
-                nextActiveTime = undefined;
+                    gotPuzzle = true;
+
+                    hasPuzzleStartIndex = undefined;
+                    hasPuzzleEndIndex = undefined;
+                    hasPuzzleString = undefined;
+                }
+
+                // get cheese quantity
+                var baitQuantityStartIndex = scriptString.indexOf("bait_quantity");
+                if (baitQuantityStartIndex >= 0) {
+                    baitQuantityStartIndex += 15;
+                    var baitQuantityEndIndex = scriptString.indexOf(",", baitQuantityStartIndex);
+                    var baitQuantityString = scriptString.substring(baitQuantityStartIndex, baitQuantityEndIndex);
+                    baitQuantity = parseInt(baitQuantityString);
+
+                    gotBaitQuantity = true;
+
+                    baitQuantityStartIndex = undefined;
+                    baitQuantityEndIndex = undefined;
+                    baitQuantityString = undefined;
+                }
+
+                var locationStartIndex;
+                var locationEndIndex;
+                locationStartIndex = scriptString.indexOf("location\":\"");
+                if (locationStartIndex >= 0) {
+                    locationStartIndex += 11;
+                    locationEndIndex = scriptString.indexOf("\"", locationStartIndex);
+                    var locationString = scriptString.substring(locationStartIndex, locationEndIndex);
+                    currentLocation = locationString;
+
+                    locationStartIndex = undefined;
+                    locationEndIndex = undefined;
+                    locationString = undefined;
+                }
+
+                scriptString = undefined;
             }
-
-            // get is king's reward or not
-            var hasPuzzleStartIndex = scriptString.indexOf("has_puzzle");
-            if (hasPuzzleStartIndex >= 0) {
-                hasPuzzleStartIndex += 12;
-                var hasPuzzleEndIndex = scriptString.indexOf(",", hasPuzzleStartIndex);
-                var hasPuzzleString = scriptString.substring(hasPuzzleStartIndex, hasPuzzleEndIndex);
-                isKingReward = (hasPuzzleString != 'false');
-
-                gotPuzzle = true;
-
-                hasPuzzleStartIndex = undefined;
-                hasPuzzleEndIndex = undefined;
-                hasPuzzleString = undefined;
-            }
-
-            // get cheese quantity
-            var baitQuantityStartIndex = scriptString.indexOf("bait_quantity");
-            if (baitQuantityStartIndex >= 0) {
-                baitQuantityStartIndex += 15;
-                var baitQuantityEndIndex = scriptString.indexOf(",", baitQuantityStartIndex);
-                var baitQuantityString = scriptString.substring(baitQuantityStartIndex, baitQuantityEndIndex);
-                baitQuantity = parseInt(baitQuantityString);
-
-                gotBaitQuantity = true;
-
-                baitQuantityStartIndex = undefined;
-                baitQuantityEndIndex = undefined;
-                baitQuantityString = undefined;
-            }
-
-            var locationStartIndex;
-            var locationEndIndex;
-            locationStartIndex = scriptString.indexOf("location\":\"");
-            if (locationStartIndex >= 0) {
-                locationStartIndex += 11;
-                locationEndIndex = scriptString.indexOf("\"", locationStartIndex);
-                var locationString = scriptString.substring(locationStartIndex, locationEndIndex);
-                currentLocation = locationString;
-
-                locationStartIndex = undefined;
-                locationEndIndex = undefined;
-                locationString = undefined;
-            }
-
-            scriptString = undefined;
+            i = undefined;
         }
-    }
-    scriptElementList = undefined;
+        scriptElementList = undefined;
 
-    if (gotHornTime && gotPuzzle && gotBaitQuantity) {
-        // get trap check time
-        if (enableTrapCheck) {
-            var today = new Date();
-            checkTimeDelay = checkTimeDelayMin + Math.round(Math.random() * (checkTimeDelayMax - checkTimeDelayMin));
-            checkTime = (today.getMinutes() >= trapCheckTimeDiff) ? 3600 + (trapCheckTimeDiff * 60) - (today.getMinutes() * 60 + today.getSeconds()) : (trapCheckTimeDiff * 60) - (today.getMinutes() * 60 + today.getSeconds());
-            checkTime += checkTimeDelay;
-            today = undefined;
-            //time = undefined;
-        }
+        if (gotHornTime && gotPuzzle && gotBaitQuantity) {
+            // get trap check time
+            if (enableTrapCheck) {
+                var today = new Date();
+                checkTimeDelay = checkTimeDelayMin + Math.round(Math.random() * (checkTimeDelayMax - checkTimeDelayMin));
+                checkTime = (today.getMinutes() >= trapCheckTimeDiff) ? 3600 + (trapCheckTimeDiff * 60) - (today.getMinutes() * 60 + today.getSeconds()) : (trapCheckTimeDiff * 60) - (today.getMinutes() * 60 + today.getSeconds());
+                checkTime += checkTimeDelay;
+                today = undefined;
+            }
 
-        // get last location
-        var huntLocationCookie = getStorage("huntLocation");
-        if (huntLocationCookie == undefined || huntLocationCookie == null) {
-            huntLocation = currentLocation;
-            setStorage("huntLocation", currentLocation);
+            // get last location
+            var huntLocationCookie = getStorage("huntLocation");
+            if (huntLocationCookie == undefined || huntLocationCookie == null) {
+                huntLocation = currentLocation;
+                setStorage("huntLocation", currentLocation);
+            } else {
+                huntLocation = huntLocationCookie;
+                setStorage("huntLocation", huntLocation);
+            }
+            huntLocationCookie = undefined;
+
+            // get last king reward time
+            var lastKingRewardDate = getStorage("lastKingRewardDate");
+            if (lastKingRewardDate == undefined || lastKingRewardDate == null) {
+                lastKingRewardSumTime = -1;
+            } else {
+                var lastDate = new Date(lastKingRewardDate);
+                lastKingRewardSumTime = parseInt((new Date() - lastDate) / 1000);
+                lastDate = undefined;
+            }
+            lastKingRewardDate = undefined;
+
+            retrieveSuccess = true;
         } else {
-            huntLocation = huntLocationCookie;
-            setStorage("huntLocation", huntLocation);
+            retrieveSuccess = false;
         }
-        huntLocationCookie = undefined;
-
-        // get last king reward time
-        var lastKingRewardDate = getStorage("lastKingRewardDate");
-        if (lastKingRewardDate == undefined || lastKingRewardDate == null) {
-            lastKingRewardSumTime = -1;
-        } else {
-            var lastDate = new Date(lastKingRewardDate);
-            lastKingRewardSumTime = parseInt((new Date() - lastDate) / 1000);
-            lastDate = undefined;
-        }
-        lastKingRewardDate = undefined;
-
-        retrieveSuccess = true;
-    } else {
-        retrieveSuccess = false;
-    }
 
         // clean up
         gotHornTime = undefined;
@@ -1501,7 +1501,7 @@ function checkJournalDate() {
 }
 
 function action() {
-    if(debug) console.log("Run action()");
+    if (debug) console.log("Run action()");
     try {
         if (isKingReward) {
             kingRewardAction();
@@ -1547,7 +1547,6 @@ function action() {
             var isHornSounding = false;
 
             // check if the horn image is visible
-            //var headerElement = document.getElementById('header');
             var headerElement;
             headerElement = (strHornButton == 'hornbutton') ? document.getElementById('header') : document.getElementById('mousehuntHud').firstChild;
             if (headerElement) {
@@ -1909,7 +1908,6 @@ function embedTimer(targetPage) {
                     holder = null;
                     text = null;
                     temp = null;
-                    //$('#overlayContainer')[0].style.cssText = "";
 
                     var loadTimersElement = document.createElement('div');
                     loadTimersElement.setAttribute('id', 'loadTimersElement');
@@ -2347,8 +2345,15 @@ window.localStorage.setItem(\'addonCode\', document.getElementById(\'addonCode\'
 
                 // embed all msg to the page
                 headerElement.parentNode.insertBefore(timerDivElement, headerElement);
-
                 timerDivElement = null;
+
+                var NOBspecialMessageDiv = document.createElement('div');
+                NOBspecialMessageDiv.setAttribute('id', 'nobSpecialMessage');
+                NOBspecialMessageDiv.setAttribute('style', 'display: block; position: fixed; bottom: 0; z-index: 999; text-align: center; width: 760px;')
+
+                headerElement.parentNode.insertBefore(NOBspecialMessageDiv, headerElement);
+
+                NOBspecialMessageDiv = null;
             }
             headerElement = null;
         }
@@ -2470,7 +2475,7 @@ function loadPreferenceSettingFromStorage() {
 
     var nobTrapsTemp = nobGet('traps');
     var nobTrapsTempCounter = getStorage('nobTrapsCounter');
-    if (nobTrapsTempCounter == undefined || nobTrapsTempCounter === null ) {
+    if (nobTrapsTempCounter == undefined || nobTrapsTempCounter === null) {
         nobTrapsTempCounter = 1000;
     }
     if (nobTrapsTempCounter > 0) {
@@ -2621,7 +2626,7 @@ function soundHorn() {
                 headerStatus = null;
 
                 // double check if the horn was already sounded
-                window.setTimeout(function() {
+                window.setTimeout(function () {
                     afterSoundingHorn()
                 }, 5000);
             } else if (headerStatus.indexOf("hornsounding") != -1 || headerStatus.indexOf("hornsounded") != -1) {
@@ -2635,7 +2640,7 @@ function soundHorn() {
                 headerStatus = null;
 
                 // load the new data
-                window.setTimeout(function() {
+                window.setTimeout(function () {
                     afterSoundingHorn()
                 }, 5000);
             } else if (headerStatus.indexOf("hornwaiting") != -1) {
@@ -2654,7 +2659,7 @@ function soundHorn() {
                 headerStatus = null;
 
                 // loop again
-                window.setTimeout(function() {
+                window.setTimeout(function () {
                     countdownTimer()
                 }, timerRefreshInterval * 1000);
             } else {
@@ -2673,7 +2678,7 @@ function soundHorn() {
                 headerStatus = null;
 
                 // double check if the horn was already sounded
-                window.setTimeout(function() {
+                window.setTimeout(function () {
                     afterSoundingHorn()
                 }, 5000);
             }
@@ -2694,7 +2699,7 @@ function soundHorn() {
         fireEvent(document.getElementsByClassName(strHornButton)[0].firstChild, 'click');
 
         // double check if the horn was already sounded
-        window.setTimeout(function() {
+        window.setTimeout(function () {
             afterSoundingHorn()
         }, 3000);
     }
@@ -2738,7 +2743,7 @@ function afterSoundingHorn() {
                 hornRetry = 0;
             } else {
                 // check again later
-                window.setTimeout(function() {
+                window.setTimeout(function () {
                     afterSoundingHorn()
                 }, 1000);
             }
@@ -2762,7 +2767,7 @@ function afterSoundingHorn() {
                 hornRetry = 0;
             } else {
                 // check again later
-                window.setTimeout(function() {
+                window.setTimeout(function () {
                     afterSoundingHorn()
                 }, 3000);
             }
@@ -2780,7 +2785,7 @@ function afterSoundingHorn() {
             headerStatus = null;
 
             // script continue as normal
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 countdownTimer()
             }, timerRefreshInterval * 1000);
 
@@ -2893,20 +2898,20 @@ function notifyMe(notice, icon, body) {
     if (!("Notification" in window)) {
         alert("This browser does not support desktop notification");
     } else if (Notification.permission === "granted") {
-        var notification = new Notification(notice, {'icon': icon, 'body':body});
+        var notification = new Notification(notice, {'icon': icon, 'body': body});
 
-        notification.onclick = function() {
+        notification.onclick = function () {
             window.open("https://www.mousehuntgame.com/");
             notification.close();
         }
 
-        notification.onshow = function() {
-            setTimeout(function() {
+        notification.onshow = function () {
+            setTimeout(function () {
                 notification.close();
             }, 5000);
         }
     } else if (Notification.permission !== 'denied') {
-        Notification.requestPermission(function(permission) {
+        Notification.requestPermission(function (permission) {
             // Whatever the user answers, we make sure we store the information
             if (!('permission' in Notification)) {
                 Notification.permission = permission;
@@ -2914,15 +2919,15 @@ function notifyMe(notice, icon, body) {
 
             // If the user is okay, let's create a notification
             if (permission === "granted") {
-                var notification = new Notification(notice, {'icon': icon, 'body':body});
+                var notification = new Notification(notice, {'icon': icon, 'body': body});
 
-                notification.onclick = function() {
+                notification.onclick = function () {
                     window.open("https://www.mousehuntgame.com/");
                     notification.close();
                 }
 
-                notification.onshow = function() {
-                    setTimeout(function() {
+                notification.onshow = function () {
+                    setTimeout(function () {
                         notification.close();
                     }, 5000);
                 }
@@ -2980,7 +2985,7 @@ function kingRewardCountdownTimer() {
         campElement = null;
 
         // reload the page if click on the camp button fail
-        window.setTimeout(function() {
+        window.setTimeout(function () {
             reloadWithMessage("Fail to click on camp button. Reloading...", false);
         }, 5000);
     } else {
@@ -2995,7 +3000,7 @@ function kingRewardCountdownTimer() {
         displayKingRewardSumTime(timeFormatLong(lastKingRewardSumTime));
 
         if (!checkResumeButton()) {
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 (kingRewardCountdownTimer)()
             }, timerRefreshInterval * 1000);
         }
@@ -3019,12 +3024,12 @@ function checkResumeButton() {
                 resumeElement = null;
 
                 // reload url if click fail
-                window.setTimeout(function() {
+                window.setTimeout(function () {
                     reloadWithMessage("Fail to click on resume button. Reloading...", false);
                 }, 6000);
 
                 // recheck if the resume button is click because some time even the url reload also fail
-                window.setTimeout(function() {
+                window.setTimeout(function () {
                     checkResumeButton();
                 }, 10000);
 
@@ -3155,7 +3160,7 @@ function disarmTrap(trapSelector) {
     clickTrapSelector(trapSelector);
     var x;
     var intervalDT = setInterval(
-        function() {
+        function () {
             x = document.getElementsByClassName(trapSelector + ' canDisarm');
             if (x.length > 0) {
                 for (var i = 0; i < x.length; ++i) {
@@ -3305,8 +3310,8 @@ function timeFormatLong(time) {
 // ################################################################################################
 // INIT AJAX CALLS AND INIT CALLS - Function calls after page LOAD
 
-if (debug) console.log("RUN nobInit()");
-window.onload = function() {
+window.onload = function () {
+    if (debug) console.log("RUN nobInit()");
     nobInit();
 };
 
@@ -3336,7 +3341,7 @@ function nobInit() {
                 createClockArea();
                 clockTick();
                 fetchGDocStuff();
-                setTimeout(function() {
+                setTimeout(function () {
                     pingServer();
                 }, 30000);
                 // Hide message after 1H :)
@@ -3423,9 +3428,9 @@ function nobGDoc(items, type) {
     var dataSendString = JSON.stringify(dataSend);
     var sheet = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec";
 
-    nobAjaxPost(sheet, dataSendString, function(data) {
+    nobAjaxPost(sheet, dataSendString, function (data) {
         //console.log(data);
-    }, function(a, b, c) {
+    }, function (a, b, c) {
         console.log(b)
     });
 }
@@ -3519,7 +3524,7 @@ function nobScript(qqEvent) {
 
         if (NOBdata != null || NOBdata != undefined) {
             if (!mapRequestFailed && mapThere) {
-                nobMapRequest(function(output) {
+                nobMapRequest(function (output) {
                     if (output.status == 200 || output.status == undefined) {
                         nobStore(output, "data");
                         nobGDoc(JSON.stringify(output), "map");
@@ -3598,10 +3603,17 @@ function fetchGDocStuff() {
                     var updateElement = document.getElementById('updateElement');
                     updateElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target='_blank'><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
                 }
+
+                // SPECIAL MESSAGE
+                if (data.specialMessage != "" || data.specialMessage != undefined)
+                    var NOBspecialMessage = document.getElementById('nobSpecialMessage');
+                NOBspecialMessage.innerHTML = '<span style="background: chartreuse; font-size: 2em;">' + data.specialMessage + '</span>';
             }, error: function (error) {
-                setTimeout(function() {fetchGDocStuff();}, 300000);
+                setTimeout(function () {
+                    fetchGDocStuff();
+                }, 300000);
                 //nobStopLoading();
-                console.log(JSON.parse(error) + ' error - Google Docs is now not working qq... Retrying in 5 minutes');
+                console.log(JSON.parse(error) + ' error - Parse is now not working qq... Retrying in 5 minutes');
             }
         });
     }
@@ -3654,7 +3666,7 @@ function pingServer() {
             var findOld = new Parse.Query(UserData);
             findOld.containedIn("user_id", [theData.sn_user_id, JSON.stringify(theData.sn_user_id)]);
             return findOld.find();
-        }).then(function(returnObj) {
+        }).then(function (returnObj) {
             var results = returnObj;
             var promises = [];
             for (var i = 0; i < results.length; i++) {
@@ -3662,7 +3674,7 @@ function pingServer() {
             }
             //console.log("Done parse delete");
             return Parse.Promise.when(promises);
-        }).then(function(UserData) {
+        }).then(function (UserData) {
             var UserData = Parse.Object.extend("UserData");
             var userData = new UserData();
 
@@ -3695,7 +3707,7 @@ function pingServer() {
 }
 
 function hideNOBMessage(time) {
-    window.setTimeout(function() {
+    window.setTimeout(function () {
         var element = document.getElementById('NOBmessage');
         element.style.display = 'none';
     }, time);
@@ -3705,29 +3717,29 @@ function showNOBMessage() {
     document.getElementById('NOBmessage').style.display = 'block'
 }
 
-unsafeWindow.nobRaffle = function() {
+unsafeWindow.nobRaffle = function () {
     /*if (!($('.tabs a:eq(1)').length > 0))
-        $('#hgbar_messages').click();
+     $('#hgbar_messages').click();
 
-    window.setTimeout(function () {
-        var tabs = $('a.tab');
-        var theTab = "";
-        for (var i = 0; i < tabs.length; i++)
-            if (tabs[i].dataset.tab == 'daily_draw') theTab = tabs[i];
-        theTab.click();
-    }, 1000);
-    window.setTimeout(function () {
-        var ballot = $(".notificationMessageList input.sendBallot");
-        for (var i = ballot.length - 1; i >= 0; i--) {
-            ballot[i].click();
-        }
-        window.setTimeout(function() {
-            $("a.messengerUINotificationClose")[0].click();
-        }, 7500);
-    }, 4000);*/
+     window.setTimeout(function () {
+     var tabs = $('a.tab');
+     var theTab = "";
+     for (var i = 0; i < tabs.length; i++)
+     if (tabs[i].dataset.tab == 'daily_draw') theTab = tabs[i];
+     theTab.click();
+     }, 1000);
+     window.setTimeout(function () {
+     var ballot = $(".notificationMessageList input.sendBallot");
+     for (var i = ballot.length - 1; i >= 0; i--) {
+     ballot[i].click();
+     }
+     window.setTimeout(function() {
+     $("a.messengerUINotificationClose")[0].click();
+     }, 7500);
+     }, 4000);*/
 
     var intState = 0;
-    var nobRafInt = window.setInterval(function() {
+    var nobRafInt = window.setInterval(function () {
         try {
             if (intState == 0 && !($('.tabs a:eq(1)').length > 0)) {
                 $('#hgbar_messages').click();
@@ -3761,7 +3773,7 @@ unsafeWindow.nobRaffle = function() {
             } else {
                 intState = -1;
             }
-        } catch(e) {
+        } catch (e) {
             console.log("Raffle interval error: " + e + ", retrying in 1 second.");
         } finally {
             if (intState == 3) {
@@ -3777,9 +3789,9 @@ unsafeWindow.nobRaffle = function() {
     }, 1000);
 };
 
-unsafeWindow.nobPresent = function() {
+unsafeWindow.nobPresent = function () {
     var intState = 0;
-    var nobPresInt = window.setInterval(function() {
+    var nobPresInt = window.setInterval(function () {
         try {
             if (intState == 0 && !($('.tabs a:eq(1)').length > 0)) {
                 $('#hgbar_messages').click();
@@ -3861,7 +3873,7 @@ function clockTick() {
         // Clock does not need to be on
         nobCalculateTime();
     }
-    window.setTimeout(function() {
+    window.setTimeout(function () {
         clockTick();
     }, 15 * 60 * 1000);
 }
@@ -3876,7 +3888,7 @@ function updateTime() {
         nobCalculateOfflineTimers();
         clockTicking = true;
 
-        setTimeout(function() {
+        setTimeout(function () {
             updateTime();
         }, 1000);
     } else {
@@ -4009,7 +4021,7 @@ function nobCalculateOfflineTimers() {
 }
 
 // Attempt to inject addonCode made by user
-function runAddonCode(){
+function runAddonCode() {
     if (!NOBhasPuzzle && addonCode != "") {
         console.log("%cRUNNING ADDON CODE, SCRIPT IS NOW NOT SAFE DEPENDING ON WHAT YOU DID.", "color: yellow; background: red; font-size: 50pt;");
         eval(addonCode);
