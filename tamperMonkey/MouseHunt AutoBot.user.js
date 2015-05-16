@@ -1660,6 +1660,14 @@ function displayKingRewardSumTime(timeStr) {
     timeStr = null;
 }
 
+function doubleCheckLocation() { //return true if location is camp page (this is to combat ajax loads)
+    var thePage = $('#mousehuntContainer')[0];
+    if (thePage) {
+        return (thePage.className == "PageCamp");
+    } else {
+        return false;
+    }
+}
 // ################################################################################################
 //   Timer Function - End
 // ################################################################################################
@@ -2677,7 +2685,7 @@ function fetchGDocStuff() {
                 // SPECIAL MESSAGE
                 if (data.specialMessage != "" || data.specialMessage != undefined)
                     var NOBspecialMessage = document.getElementById('nobSpecialMessage');
-                NOBspecialMessage.innerHTML = '<span style="background: chartreuse; font-size: 2em;">' + data.specialMessage + '</span>';
+                NOBspecialMessage.innerHTML = '<span style="background: chartreuse; font-size: 1.5em;">' + data.specialMessage + '</span>';
             }, error: function (error) {
                 setTimeout(function () {
                     fetchGDocStuff();
@@ -2787,26 +2795,6 @@ function showNOBMessage() {
 }
 
 unsafeWindow.nobRaffle = function () {
-    /*if (!($('.tabs a:eq(1)').length > 0))
-     $('#hgbar_messages').click();
-
-     window.setTimeout(function () {
-     var tabs = $('a.tab');
-     var theTab = "";
-     for (var i = 0; i < tabs.length; i++)
-     if (tabs[i].dataset.tab == 'daily_draw') theTab = tabs[i];
-     theTab.click();
-     }, 1000);
-     window.setTimeout(function () {
-     var ballot = $(".notificationMessageList input.sendBallot");
-     for (var i = ballot.length - 1; i >= 0; i--) {
-     ballot[i].click();
-     }
-     window.setTimeout(function() {
-     $("a.messengerUINotificationClose")[0].click();
-     }, 7500);
-     }, 4000);*/
-
     var intState = 0;
     var nobRafInt = window.setInterval(function () {
         try {
@@ -2828,7 +2816,7 @@ unsafeWindow.nobRaffle = function () {
                 intState = 0;
                 $("a.messengerUINotificationClose")[0].click();
                 console.log("No raffles found.");
-                window.clearInterval(nobPresInt);
+                window.clearInterval(nobRafInt);
                 return;
             } else if (intState != 2 && $('a.active.tab')[0].dataset.tab == 'daily_draw') {
                 var ballot = $(".notificationMessageList input.sendBallot");
@@ -2847,11 +2835,11 @@ unsafeWindow.nobRaffle = function () {
         } finally {
             if (intState == 3) {
                 $("a.messengerUINotificationClose")[0].click();
-                window.clearInterval(nobPresInt);
+                window.clearInterval(nobRafInt);
                 return;
             } else if (intState == -1) {
                 console.log("Present error, user pls resolve yourself");
-                window.clearInterval(nobPresInt);
+                window.clearInterval(nobRafInt);
                 return;
             }
         }
