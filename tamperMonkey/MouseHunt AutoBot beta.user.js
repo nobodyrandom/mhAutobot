@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP for BETA UI
 // @author      NobodyRandom, Ooi Keng Siang
-// @version    	2.0.22y
-// @description BETA MOUSEHUNT AUTOBOT for the BETA MH UI - Currently the most advanced script for automizing MouseHunt. Supports ALL new areas and FIREFOX.
+// @version    	2.1.1y
+// @description Script now merged onto standard scripts. Please use MouseHunt AutoBot REVAMP or MouseHunt AutoBot ENHANCED + REVAMP. This version is the last supported ver, please use the other script to keep up to date.
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @namespace   https://greasyfork.org/users/6398
-// @updateURL	https://greasyfork.org/scripts/7865-mousehunt-autobot-revamp-for-beta-ui/code/MouseHunt%20AutoBot%20REVAMP%20for%20BETA%20UI.user.js
-// @downloadURL	https://greasyfork.org/scripts/7865-mousehunt-autobot-revamp-for-beta-ui/code/MouseHunt%20AutoBot%20REVAMP%20for%20BETA%20UI.user.js
+// @updateURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.user.js
+// @downloadURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.user.js
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -132,7 +132,7 @@ var hornButton = 'mousehuntHud-huntersHorn-container';
 var campButton = 'camp';
 var header = 'mousehuntHud-top';
 var hornReady = 'hornReady';
-var isNewUI = false;
+var isNewUI = true;
 
 // NOB vars
 //var addonScriptVer = '1.2.024';
@@ -180,7 +180,7 @@ var LOCATION_TIMERS = [
 var debug = false;
 if (debug) console.log('STARTING SCRIPT - ver: ' + GM_info.script.version);
 if (window.top != window.self) {
-    if (debug) console.log('In IFRAME - may cause firefox to error');
+    if (debug) console.log('In IFRAME - may cause firefox to error, location: ' + window.location.href);
     //return;
 } else {
     if (debug) console.log('NOT IN IFRAME - will not work in fb MH');
@@ -189,6 +189,20 @@ exeScript();
 
 function exeScript() {
     if (debug) console.log('RUN exeScript()');
+    try {
+        var time = document.getElementsByClassName('passive')[0].getElementsByClassName('journaldate')[0].innerHTML;
+        time = time.substr(time.indexOf(':') + 1, 2);
+        trapCheckTimeDiff = parseInt(time);
+        setStorage("TrapCheckTimeOffset", trapCheckTimeDiff);
+    } catch (e) {
+        console.debug('Class element "passive" not found');
+        trapCheckTimeDiff = getStorage('TrapCheckTimeOffset');
+        if (trapCheckTimeDiff == null) {
+            trapCheckTimeDiff = 0;
+            setStorage("TrapCheckTimeOffset", trapCheckTimeDiff);
+        }
+    }
+
     try {
         // check the trap check setting first
         if (trapCheckTimeDiff == 60) {
@@ -276,7 +290,7 @@ function exeScript() {
                     }, errorReloadTime * 1000);
                 }
             } else {
-                // not in huntcamp, just show the title of autobot version
+                // not in hunters camp, just show the title of autobot version
                 embedTimer(false);
             }
         } else if (mhPlatform) {
@@ -311,7 +325,7 @@ function exeScript() {
                     }, errorReloadTime * 1000);
                 }
             } else {
-                // not in huntcamp, just show the title of autobot version
+                // not in hunters camp, just show the title of autobot version
                 embedTimer(false);
             }
         } else if (mhMobilePlatform) {
@@ -354,7 +368,7 @@ function exeScript() {
                     }, errorReloadTime * 1000);
                 }
             } else {
-                // not in huntcamp, just show the title of autobot version
+                // not in hunters camp, just show the title of autobot version
                 embedTimer(false);
             }
         }
@@ -1089,6 +1103,9 @@ function embedTimer(targetPage) {
                     timersElementToggle.href = '#';
                     timersElementToggle.setAttribute('id', 'timersElementToggle');
                     timersElementToggle.appendChild(text);
+                    timersElementToggle.onclick = function() {
+                        $('#loadTimersElement').toggle();
+                    };
                     var holder = document.createElement('div');
                     holder.setAttribute('style', 'float: left;');
                     var temp = document.createElement('span');
@@ -1096,7 +1113,7 @@ function embedTimer(targetPage) {
                     holder.appendChild(timersElementToggle);
                     holder.appendChild(temp);
                     timerDivElement.appendChild(holder);
-                    timersElementToggle.addEventListener("click", showHideTimers, false);
+                    //timersElementToggle.addEventListener("click", showHideTimers, false);
                     holder = null;
                     text = null;
                     temp = null;
@@ -1148,18 +1165,20 @@ function embedTimer(targetPage) {
                     loadTimersElement = null;
                     loadLinkToUpdate = null;
                 } else {
-                    // try check if ajax was called
-                    if (doubleCheckLocation()) {
-                        exeScript();
-                        NOBinit();
-                    } else {
-                        $('.camp a')[0].addEventListener('click', function () {
-                            setTimeout(function () {
-                                $('.hgAppContainer div')[0].remove();
-                                exeScript();
-                                NOBinit();
-                            }, 1000);
-                        });
+                    if (isNewUI) {
+                        // try check if ajax was called
+                        if (doubleCheckLocation()) {
+                            exeScript();
+                            nobInit();
+                        } else {
+                            $('.camp a')[0].addEventListener('click', function () {
+                                setTimeout(function () {
+                                    $('.hgAppContainer div')[0].remove();
+                                    exeScript();
+                                    nobInit();
+                                }, 1000);
+                            });
+                        }
                     }
 
                     // player currently navigating other page instead of hunter camp
@@ -1707,13 +1726,7 @@ function addGoogleAd() {
     if (headerElement) {
         var autoBotAdDivElement = document.createElement('div');
         autoBotAdDivElement.setAttribute('id', 'autoBotAdDiv');
-        autoBotAdDivElement.innerHTML = '<script type="text/javascript"><!-- \
-google_ad_client = "ca-pub-0646444153861496"; \
-google_ad_slot = "5069542056"; \
-google_ad_width = 728;google_ad_height = 90; \
-//--> \
-</script> \
-<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>';
+        autoBotAdDivElement.innerHTML = '';
 
         headerElement.parentNode.insertBefore(autoBotAdDivElement, headerElement);
         timerDivElement = null;
@@ -1954,7 +1967,7 @@ function embedScript() {
     headerElement = null;
 
     // change the function call of horn
-    var testNewUI = document.getElementById('header');
+    var testNewUI = document.getElementById(header);
     if (testNewUI != null) {
         // old UI
         isNewUI = false;
@@ -2021,29 +2034,50 @@ function kingRewardAction() {
     kingRewardCountdownTimer();
 }
 
-function notify() {
-    if (!Notification) {
-        alert('Please us a modern version of Chrome, Firefox, Opera or Firefox.');
-        return;
-    }
+// notify function deprecated
+function notify(username) {
+    notifyMe('KR NOW - ' + username, 'http://3.bp.blogspot.com/_O2yZIhpq9E8/TBoAMw0fMNI/AAAAAAAAAxo/1ytaIxQQz4o/s1600/Subliminal+Message.JPG', "Kings Reward NOW");
+}
 
-    if (Notification.permission !== "granted")
-        Notification.requestPermission();
+function notifyMe(notice, icon, body) {
+    if (!("Notification" in window)) {
+        alert("This browser does not support desktop notification");
+    } else if (Notification.permission === "granted") {
+        var notification = new Notification(notice, {'icon': icon, 'body': body});
 
-    var notification = new Notification('KR NOW', {
-        icon: 'http://3.bp.blogspot.com/_O2yZIhpq9E8/TBoAMw0fMNI/AAAAAAAAAxo/1ytaIxQQz4o/s1600/Subliminal+Message.JPG',
-        body: "Kings Reward NOW"
-    });
-
-    notification.onclick = function () {
-        window.open("https://www.mousehuntgame.com/");
-        notification.close();
-    }
-
-    notification.onshow = function () {
-        window.setTimeout(function () {
+        notification.onclick = function () {
+            window.open("https://www.mousehuntgame.com/");
             notification.close();
-        }, 5000);
+        }
+
+        notification.onshow = function () {
+            setTimeout(function () {
+                notification.close();
+            }, 5000);
+        }
+    } else if (Notification.permission !== 'denied') {
+        Notification.requestPermission(function (permission) {
+            // Whatever the user answers, we make sure we store the information
+            if (!('permission' in Notification)) {
+                Notification.permission = permission;
+            }
+
+            // If the user is okay, let's create a notification
+            if (permission === "granted") {
+                var notification = new Notification(notice, {'icon': icon, 'body': body});
+
+                notification.onclick = function () {
+                    window.open("https://www.mousehuntgame.com/");
+                    notification.close();
+                }
+
+                notification.onshow = function () {
+                    setTimeout(function () {
+                        notification.close();
+                    }, 5000);
+                }
+            }
+        });
     }
 }
 
@@ -2393,13 +2427,13 @@ function timeFormatLong(time) {
 // INIT AJAX CALLS AND INIT CALLS - Function calls after page LOAD
 
 window.onload = function () {
-    if (debug) console.log("RUN nobInit()");
     nobInit();
 };
 
 function nobInit() {
     try {
         if (!NOBhasPuzzle) {
+            if (debug) console.log("RUN nobInit()");
             if (window.location.href == 'http://www.mousehuntgame.com/' ||
                 window.location.href == 'http://www.mousehuntgame.com/#' ||
                 window.location.href == 'http://www.mousehuntgame.com/?switch_to=standard' ||
@@ -2418,12 +2452,24 @@ function nobInit() {
                 NOBpage = true;
             }
 
+            window.setTimeout(function () {
+                    try {
+                        if (debug) console.log('Trying to get rid of ad iFrame');
+                        var adFrame = document.getElementsByClassName('googleAd')[0];
+                        if (adFrame) {
+                            adFrame.parentNode.removeChild(adFrame);
+                        }
+                    } catch (e) {
+                        console.log('Remove ad error: ' + e);
+                    }
+            }, 2000);
+
             if (NOBpage) {
                 nobHTMLFetch();
                 createClockArea();
                 clockTick();
                 fetchGDocStuff();
-                setTimeout(function () {
+                window.setTimeout(function () {
                     pingServer();
                 }, 30000);
                 // Hide message after 1H :)
@@ -2633,12 +2679,14 @@ function nobScript(qqEvent) {
             console.log("Data is not found, doing HTML fetch now.");
             nobHTMLFetch();
         }
+
+        mapThere = null;
     }
 }
 
-function showHideTimers() {
+/*function showHideTimers() {
     $('#loadTimersElement').toggle();
-}
+}*/
 
 function nobTravel(location) {
     if (NOBpage) {
@@ -2909,22 +2957,26 @@ function currentTimeStamp() {
 }
 
 function createClockArea() {
-    var parent = document.getElementById('loadTimersElement');
-    var otherChild = document.getElementById('gDocLink');
-    var child = [];
-    var text;
+    try {
+        var parent = document.getElementById('loadTimersElement');
+        var otherChild = document.getElementById('gDocLink');
+        var child = [];
+        var text;
 
-    for (i = 0; i < LOCATION_TIMERS.length; i++) {
-        child[i] = document.createElement('div');
-        child[i].setAttribute("id", "NOB" + LOCATION_TIMERS[i][0]);
-        text = '<span id="text_' + LOCATION_TIMERS[i][0] + '">';
-        child[i].innerHTML = text;
+        for (i = 0; i < LOCATION_TIMERS.length; i++) {
+            child[i] = document.createElement('div');
+            child[i].setAttribute("id", "NOB" + LOCATION_TIMERS[i][0]);
+            text = '<span id="text_' + LOCATION_TIMERS[i][0] + '">';
+            child[i].innerHTML = text;
+        }
+
+        for (i = 0; i < LOCATION_TIMERS.length; i++)
+            parent.insertBefore(child[i], parent.firstChild);
+
+        parent.insertBefore(document.createElement('br'), parent.firstChild);
+    } catch (e) {
+        console.log("createClockArea() ERROR: " + e);
     }
-
-    for (i = 0; i < LOCATION_TIMERS.length; i++)
-        parent.insertBefore(child[i], parent.firstChild);
-
-    parent.insertBefore(document.createElement('br'), parent.firstChild);
 }
 
 function clockTick() {
@@ -2963,6 +3015,7 @@ function updateTime() {
 }
 
 function nobCalculateTime(runOnly) {
+    if (debug) console.log("Running nobCalculateTime(" + runOnly + ")");
     if (runOnly != 'relic' & runOnly != 'toxic' & runOnly != 'none')
         runOnly = 'all';
 
@@ -3081,5 +3134,13 @@ function nobCalculateOfflineTimers() {
 
         content += ' &#126; For ' + updateTimer(SeasonRemaining, true);
         seasonalDiv.innerHTML = content;
+    }
+}
+
+// Attempt to inject addonCode made by user
+function runAddonCode() {
+    if (!NOBhasPuzzle && addonCode != "") {
+        console.log("%cRUNNING ADDON CODE, SCRIPT IS NOW NOT SAFE DEPENDING ON WHAT YOU DID.", "color: yellow; background: red; font-size: 50pt;");
+        eval(addonCode);
     }
 }

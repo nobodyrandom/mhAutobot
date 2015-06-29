@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.0.22b
+// @version    	2.1.1b
 // @description Currently the most advanced script for automizing MouseHunt. Supports ALL new areas and FIREFOX. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN - Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot, https://devcnn.wordpress.com/
@@ -146,7 +146,6 @@ var hornRetryMax = 10;
 var hornRetry = 0;
 var nextActiveTime = 900;
 var timerInterval = 2;
-//var checkMouseResult = null;
 var mouseList = [];
 var eventLocation;
 var arming = false;
@@ -161,20 +160,15 @@ var kingTimeElement;
 var lastKingRewardSumTimeElement;
 //var optionElement;
 var travelElement;
-var hornButton = 'mousehuntHud-huntersHorn-container';
-var campButton = 'camp';
-var header = 'mousehuntHud-top';
-var hornReady = 'hornReady';
+var hornButton = 'hornbutton';
+var campButton = 'campbutton';
+var header = 'header';
+var hornReady = 'hornready';
 var isNewUI = false;
-var strHornButton = 'hornbutton';
-var strCampButton = 'campbutton';
 
 // NOB vars
-//var addonScriptVer = '1.2.024';
-//var NOBhasPuzzle = unsafeWindow.user.has_puzzle;
 var NOBhasPuzzle;
 var NOBtraps = []; // Stores ALL traps, bases, cheese etc available to user
-//var NOBclockLoaded = false;
 var NOBpage = false;
 var mapRequestFailed = false;
 var clockTicking = false;
@@ -216,7 +210,7 @@ var LOCATION_TIMERS = [
 var debug = false;
 if (debug) console.log('STARTING SCRIPT - ver: ' + GM_info.script.version);
 if (window.top != window.self) {
-    if (debug) console.log('In IFRAME - may cause firefox to error');
+    if (debug) console.log('In IFRAME - may cause firefox to error, location: ' + window.location.href);
     //return;
 } else {
     if (debug) console.log('NOT IN IFRAME - will not work in fb MH');
@@ -238,172 +232,178 @@ function exeScript() {
             setStorage("TrapCheckTimeOffset", trapCheckTimeDiff);
         }
     }
-    if (trapCheckTimeDiff == 60) {
-        trapCheckTimeDiff = 0;
-    } else if (trapCheckTimeDiff < 0 || trapCheckTimeDiff > 60) {
-        // invalid value, just disable the trap check
-        enableTrapCheck = false;
-    }
 
-    if (showTimerInTitle) {
-        // check if they are running in iFrame
-        var contentElement, breakFrameDivElement;
-        if (window.location.href.indexOf("apps.facebook.com/mousehunt/") != -1) {
-            contentElement = document.getElementById('pagelet_canvas_content');
-            if (contentElement) {
-                breakFrameDivElement = document.createElement('div');
-                breakFrameDivElement.setAttribute('id', 'breakFrameDivElement');
-                breakFrameDivElement.innerHTML = "Timer cannot show on title page. You can <a href='http://www.mousehuntgame.com/canvas/'>run MouseHunt without iFrame (Facebook)</a> to enable timer on title page";
-                contentElement.parentNode.insertBefore(breakFrameDivElement, contentElement);
-            }
-            contentElement = undefined;
-        } else if (window.location.href.indexOf("hi5.com/friend/games/MouseHunt") != -1) {
-            contentElement = document.getElementById('apps-canvas-body');
-            if (contentElement) {
-                breakFrameDivElement = document.createElement('div');
-                breakFrameDivElement.setAttribute('id', 'breakFrameDivElement');
-                breakFrameDivElement.innerHTML = "Timer cannot show on title page. You can <a href='http://mousehunt.hi5.hitgrab.com/'>run MouseHunt without iFrame (Hi5)</a> to enable timer on title page";
-                contentElement.parentNode.insertBefore(breakFrameDivElement, contentElement);
-            }
-            contentElement = breakFrameDivElement = undefined;
+    try {
+        // check the trap check setting first
+        if (trapCheckTimeDiff == 60) {
+            trapCheckTimeDiff = 0;
+        } else if (trapCheckTimeDiff < 0 || trapCheckTimeDiff > 60) {
+            // invalid value, just disable the trap check
+            enableTrapCheck = false;
         }
-    }
 
-    // check user running this script from where
-    if (window.location.href.indexOf("mousehuntgame.com/canvas/") != -1) {
-        // from facebook
-        fbPlatform = true;
-    } else if (window.location.href.indexOf("mousehuntgame.com") != -1) {
-        // need to check if it is running in mobile version
-        var version = getCookie("switch_to");
-        if (version != null && version == "mobile") {
-            // from mousehunt game mobile version
-            mhMobilePlatform = true;
-        } else {
-            // from mousehunt game standard version
-            mhPlatform = true;
+        if (showTimerInTitle) {
+            // check if they are running in iFrame
+            var contentElement, breakFrameDivElement;
+            if (window.location.href.indexOf("apps.facebook.com/mousehunt/") != -1) {
+                contentElement = document.getElementById('pagelet_canvas_content');
+                if (contentElement) {
+                    breakFrameDivElement = document.createElement('div');
+                    breakFrameDivElement.setAttribute('id', 'breakFrameDivElement');
+                    breakFrameDivElement.innerHTML = "Timer cannot show on title page. You can <a href='http://www.mousehuntgame.com/canvas/'>run MouseHunt without iFrame (Facebook)</a> to enable timer on title page";
+                    contentElement.parentNode.insertBefore(breakFrameDivElement, contentElement);
+                }
+                contentElement = undefined;
+            } else if (window.location.href.indexOf("hi5.com/friend/games/MouseHunt") != -1) {
+                contentElement = document.getElementById('apps-canvas-body');
+                if (contentElement) {
+                    breakFrameDivElement = document.createElement('div');
+                    breakFrameDivElement.setAttribute('id', 'breakFrameDivElement');
+                    breakFrameDivElement.innerHTML = "Timer cannot show on title page. You can <a href='http://mousehunt.hi5.hitgrab.com/'>run MouseHunt without iFrame (Hi5)</a> to enable timer on title page";
+                    contentElement.parentNode.insertBefore(breakFrameDivElement, contentElement);
+                }
+                contentElement = breakFrameDivElement = undefined;
+            }
         }
-        version = undefined;
-    } else if (window.location.href.indexOf("mousehunt.hi5.hitgrab.com") != -1) {
-        // from hi5
-        hiFivePlatform = true;
-    }
 
-    // check if user running in https secure connection, true/false
-    secureConnection = (window.location.href.indexOf("https://") != -1);
+        // check user running this script from where
+        if (window.location.href.indexOf("mousehuntgame.com/canvas/") != -1) {
+            // from facebook
+            fbPlatform = true;
+        } else if (window.location.href.indexOf("mousehuntgame.com") != -1) {
+            // need to check if it is running in mobile version
+            var version = getCookie("switch_to");
+            if (version != null && version == "mobile") {
+                // from mousehunt game mobile version
+                mhMobilePlatform = true;
+            } else {
+                // from mousehunt game standard version
+                mhPlatform = true;
+            }
+            version = undefined;
+        } else if (window.location.href.indexOf("mousehunt.hi5.hitgrab.com") != -1) {
+            // from hi5
+            hiFivePlatform = true;
+        }
 
-    if (fbPlatform) {
-        if (window.location.href == "http://www.mousehuntgame.com/canvas/" ||
-            window.location.href == "http://www.mousehuntgame.com/canvas/#" ||
-            window.location.href == "https://www.mousehuntgame.com/canvas/" ||
-            window.location.href == "https://www.mousehuntgame.com/canvas/#" ||
-            window.location.href.indexOf("mousehuntgame.com/canvas/index.php") != -1 ||
-            window.location.href.indexOf("mousehuntgame.com/canvas/turn.php") != -1 ||
-            window.location.href.indexOf("mousehuntgame.com/canvas/?") != -1) {
+        // check if user running in https secure connection, true/false
+        secureConnection = (window.location.href.indexOf("https://") != -1);
+
+        if (fbPlatform) {
+            if (window.location.href == "http://www.mousehuntgame.com/canvas/" ||
+                window.location.href == "http://www.mousehuntgame.com/canvas/#" ||
+                window.location.href == "https://www.mousehuntgame.com/canvas/" ||
+                window.location.href == "https://www.mousehuntgame.com/canvas/#" ||
+                window.location.href.indexOf("mousehuntgame.com/canvas/index.php") != -1 ||
+                window.location.href.indexOf("mousehuntgame.com/canvas/turn.php") != -1 ||
+                window.location.href.indexOf("mousehuntgame.com/canvas/?") != -1) {
+                // page to execute the script!
+
+                // make sure all the preference already loaded
+                loadPreferenceSettingFromStorage();
+
+                // this is the page to execute the script
+                if (!checkIntroContainer() && retrieveDataFirst()) {
+                    // embed a place where timer show
+                    embedTimer(true);
+
+                    // embed script to horn button
+                    embedScript();
+
+                    // start script action
+                    action();
+                } else {
+                    // fail to retrieve data, display error msg and reload the page
+                    document.title = "Fail to retrieve data from page. Reloading in " + timeformat(errorReloadTime);
+                    window.setTimeout(function () {
+                        reloadPage(false);
+                    }, errorReloadTime * 1000);
+                }
+            } else {
+                // not in hunters camp, just show the title of autobot version
+                embedTimer(false);
+            }
+        } else if (mhPlatform) {
+            if (window.location.href == "http://www.mousehuntgame.com/" ||
+                window.location.href == "http://www.mousehuntgame.com/#" ||
+                window.location.href == "http://www.mousehuntgame.com/?switch_to=standard" ||
+                window.location.href == "https://www.mousehuntgame.com/" ||
+                window.location.href == "https://www.mousehuntgame.com/#" ||
+                window.location.href == "https://www.mousehuntgame.com/?switch_to=standard" ||
+                window.location.href.indexOf("mousehuntgame.com/turn.php") != -1 ||
+                window.location.href.indexOf("mousehuntgame.com/index.php") != -1) {
+                // page to execute the script!
+
+                // make sure all the preference already loaded
+                loadPreferenceSettingFromStorage();
+
+                // this is the page to execute the script
+                if (!checkIntroContainer() && retrieveDataFirst()) {
+                    // embed a place where timer show
+                    embedTimer(true);
+
+                    // embed script to horn button
+                    embedScript();
+
+                    // start script action
+                    action();
+                } else {
+                    // fail to retrieve data, display error msg and reload the page
+                    document.title = "Fail to retrieve data from page. Reloading in " + timeformat(errorReloadTime);
+                    window.setTimeout(function () {
+                        reloadPage(false);
+                    }, errorReloadTime * 1000);
+                }
+            } else {
+                // not in hunters camp, just show the title of autobot version
+                embedTimer(false);
+            }
+        } else if (mhMobilePlatform) {
+            // execute at all page of mobile version
+            //if (true) {
             // page to execute the script!
 
             // make sure all the preference already loaded
             loadPreferenceSettingFromStorage();
 
-            // this is the page to execute the script
-            if (!checkIntroContainer() && retrieveDataFirst()) {
-                // embed a place where timer show
-                embedTimer(true);
-
-                // embed script to horn button
-                embedScript();
-
-                // start script action
-                action();
-            } else {
-                // fail to retrieve data, display error msg and reload the page
-                document.title = "Fail to retrieve data from page. Reloading in " + timeformat(errorReloadTime);
-                window.setTimeout(function () {
-                    reloadPage(false);
-                }, errorReloadTime * 1000);
-            }
-        } else {
-            // not in hunters camp, just show the title of autobot version
+            // embed a place where timer show
             embedTimer(false);
-        }
-    } else if (mhPlatform) {
-        if (window.location.href == "http://www.mousehuntgame.com/" ||
-            window.location.href == "http://www.mousehuntgame.com/#" ||
-            window.location.href == "http://www.mousehuntgame.com/?switch_to=standard" ||
-            window.location.href == "https://www.mousehuntgame.com/" ||
-            window.location.href == "https://www.mousehuntgame.com/#" ||
-            window.location.href == "https://www.mousehuntgame.com/?switch_to=standard" ||
-            window.location.href.indexOf("mousehuntgame.com/turn.php") != -1 ||
-            window.location.href.indexOf("mousehuntgame.com/index.php") != -1) {
-            // page to execute the script!
+            //}
+        } else if (hiFivePlatform) {
+            if (window.location.href == "http://mousehunt.hi5.hitgrab.com/#" ||
+                window.location.href.indexOf("http://mousehunt.hi5.hitgrab.com/?") != -1 ||
+                window.location.href == "http://mousehunt.hi5.hitgrab.com/" ||
+                window.location.href.indexOf("http://mousehunt.hi5.hitgrab.com/turn.php") != -1 ||
+                window.location.href.indexOf("http://mousehunt.hi5.hitgrab.com/index.php") != -1) {
+                // page to execute the script!
 
-            // make sure all the preference already loaded
-            loadPreferenceSettingFromStorage();
+                // make sure all the preference already loaded
+                loadPreferenceSettingFromStorage();
 
-            // this is the page to execute the script
-            if (!checkIntroContainer() && retrieveDataFirst()) {
-                // embed a place where timer show
-                embedTimer(true);
+                // this is the page to execute the script
+                if (!checkIntroContainer() && retrieveDataFirst()) {
+                    // embed a place where timer show
+                    embedTimer(true);
 
-                // embed script to horn button
-                embedScript();
+                    // embed script to horn button
+                    embedScript();
 
-                // start script action
-                action();
+                    // start script action
+                    action();
+                } else {
+                    // fail to retrieve data, display error msg and reload the page
+                    document.title = "Fail to retrieve data from page. Reloading in " + timeformat(errorReloadTime);
+                    window.setTimeout(function () {
+                        reloadPage(false);
+                    }, errorReloadTime * 1000);
+                }
             } else {
-                // fail to retrieve data, display error msg and reload the page
-                document.title = "Fail to retrieve data from page. Reloading in " + timeformat(errorReloadTime);
-                window.setTimeout(function () {
-                    reloadPage(false);
-                }, errorReloadTime * 1000);
+                // not in hunters camp, just show the title of autobot version
+                embedTimer(false);
             }
-        } else {
-            // not in hunters camp, just show the title of autobot version
-            embedTimer(false);
         }
-    } else if (mhMobilePlatform) {
-        // execute at all page of mobile version
-        //if (true) {
-        // page to execute the script!
-
-        // make sure all the preference already loaded
-        loadPreferenceSettingFromStorage();
-
-        // embed a place where timer show
-        embedTimer(false);
-        //}
-    } else if (hiFivePlatform) {
-        if (window.location.href == "http://mousehunt.hi5.hitgrab.com/#" ||
-            window.location.href.indexOf("http://mousehunt.hi5.hitgrab.com/?") != -1 ||
-            window.location.href == "http://mousehunt.hi5.hitgrab.com/" ||
-            window.location.href.indexOf("http://mousehunt.hi5.hitgrab.com/turn.php") != -1 ||
-            window.location.href.indexOf("http://mousehunt.hi5.hitgrab.com/index.php") != -1) {
-            // page to execute the script!
-
-            // make sure all the preference already loaded
-            loadPreferenceSettingFromStorage();
-
-            // this is the page to execute the script
-            if (!checkIntroContainer() && retrieveDataFirst()) {
-                // embed a place where timer show
-                embedTimer(true);
-
-                // embed script to horn button
-                embedScript();
-
-                // start script action
-                action();
-            } else {
-                // fail to retrieve data, display error msg and reload the page
-                document.title = "Fail to retrieve data from page. Reloading in " + timeformat(errorReloadTime);
-                window.setTimeout(function () {
-                    reloadPage(false);
-                }, errorReloadTime * 1000);
-            }
-        } else {
-            // not in hunters camp, just show the title of autobot version
-            embedTimer(false);
-        }
+    } catch (e) {
+        if (debug) console.log('exeScript error - ' + e)
     }
 }
 
@@ -468,7 +468,7 @@ function ZTalgo() {
 }
 
 function eventLocationCheck() {
-    console.debug(eventLocation);
+    console.debug("Running " + eventLocation + " bot.");
     switch (eventLocation) {
         case 'Charge Egg 2014':
             checkCharge(12);
@@ -581,25 +581,29 @@ function general() {
 }
 
 function SunkenCity() {
-    var zone = document.getElementsByClassName('zoneName')[0].innerText;
-    console.debug('Current Zone: ' + zone);
-    switch (zone) {
-        case 'Sand Dollar Sea Bar':
-        case 'Pearl Patch':
-        case 'Sunken Treasure':
-        case 'Monster Trench':
-        case 'Lair of the Ancients':
-        case 'Deep Oxygen Stream':
-        case 'Oxygen Stream':
-        case 'Magma Flow':
-            checkThenArm(null, 'trinket', 'Empowered Anchor');
-            checkThenArm(null, 'bait', 'SUPER');
-            break;
-        case 'Sunken City':
-            checkThenArm(null, 'bait', 'Fishy Fromage');
-            break;
-        default:
-            break;
+    var currentLocation = getPageVariableForChrome("user.location");
+    console.debug(currentLocation);
+    if (currentLocation.indexOf("Sunken City") > -1) {
+        var zone = document.getElementsByClassName('zoneName')[0].innerText;
+        console.debug('Current Zone: ' + zone);
+        switch (zone) {
+            case 'Sand Dollar Sea Bar':
+            case 'Pearl Patch':
+            case 'Sunken Treasure':
+            case 'Monster Trench':
+            case 'Lair of the Ancients':
+            case 'Deep Oxygen Stream':
+            case 'Oxygen Stream':
+            case 'Magma Flow':
+                checkThenArm(null, 'trinket', 'Empowered Anchor');
+                checkThenArm(null, 'bait', 'SUPER');
+                break;
+            case 'Sunken City':
+                checkThenArm(null, 'bait', 'Fishy Fromage');
+                break;
+            default:
+                break;
+        }
     }
 }
 
@@ -1551,11 +1555,12 @@ function action() {
             var isHornSounding = false;
 
             // check if the horn image is visible
-            var headerElement;
-            headerElement = (strHornButton == 'hornbutton') ? document.getElementById('header') : document.getElementById('mousehuntHud').firstChild;
+            var headerElement = document.getElementById(header);
             if (headerElement) {
+                if (isNewUI)
+                    headerElement = headerElement.firstChild;
                 var headerStatus = headerElement.getAttribute('class');
-                if (headerStatus.indexOf("hornready") != -1) {
+                if (headerStatus.indexOf(hornReady) != -1) {
                     // if the horn image is visible, why do we need to wait any more, sound the horn!
                     soundHorn();
 
@@ -1596,7 +1601,7 @@ function countdownTimer() {
 
         // reload the page so that the sound can be play
         // simulate mouse click on the camp button
-        fireEvent(document.getElementsByClassName(strCampButton)[0].firstChild, 'click');
+        fireEvent(document.getElementsByClassName(campButton)[0].firstChild, 'click');
 
         // reload the page if click on camp button fail
         window.setTimeout(function () {
@@ -1703,11 +1708,12 @@ function countdownTimer() {
                         "-");
 
                     // agressive mode should sound the horn whenever it is possible to do so.
-                    var headerElement = document.getElementById('header');
-                    headerElement = (strHornButton == 'hornbutton') ? document.getElementById('header') : headerElement = document.getElementById('mousehuntHud').firstChild;
+                    var headerElement = document.getElementById(header);
                     if (headerElement) {
+                        if (isNewUI)
+                            headerElement = headerElement.firstChild;
                         // the horn image appear before the timer end
-                        if (headerElement.getAttribute('class').indexOf("hornready") != -1) {
+                        if (headerElement.getAttribute('class').indexOf(hornReady) != -1) {
                             // who care, blow the horn first!
                             soundHorn();
 
@@ -1901,6 +1907,9 @@ function embedTimer(targetPage) {
                     timersElementToggle.href = '#';
                     timersElementToggle.setAttribute('id', 'timersElementToggle');
                     timersElementToggle.appendChild(text);
+                    timersElementToggle.onclick = function() {
+                        $('#loadTimersElement').toggle();
+                    };
                     var holder = document.createElement('div');
                     holder.setAttribute('style', 'float: left;');
                     var temp = document.createElement('span');
@@ -1908,7 +1917,7 @@ function embedTimer(targetPage) {
                     holder.appendChild(timersElementToggle);
                     holder.appendChild(temp);
                     timerDivElement.appendChild(holder);
-                    timersElementToggle.addEventListener("click", showHideTimers, false);
+                    //timersElementToggle.addEventListener("click", showHideTimers, false);
                     holder = null;
                     text = null;
                     temp = null;
@@ -1960,6 +1969,22 @@ function embedTimer(targetPage) {
                     loadTimersElement = null;
                     loadLinkToUpdate = null;
                 } else {
+                    if (isNewUI) {
+                        // try check if ajax was called
+                        if (doubleCheckLocation()) {
+                            exeScript();
+                            nobInit();
+                        } else {
+                            $('.camp a')[0].addEventListener('click', function () {
+                                setTimeout(function () {
+                                    $('.hgAppContainer div')[0].remove();
+                                    exeScript();
+                                    nobInit();
+                                }, 1000);
+                            });
+                        }
+                    }
+
                     // player currently navigating other page instead of hunter camp
                     var helpTextElement = document.createElement('div');
                     helpTextElement.setAttribute('id', 'helpTextElement');
@@ -2299,18 +2324,18 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<td style="height:24px; text-align:right;" colspan="2">';
                 preferenceHTMLStr += '(Changes only take place after user save the preference) ';
                 preferenceHTMLStr += '<input type="button" id="PreferenceSaveInput" value="Save" onclick="	\
-if (document.getElementById(\'AggressiveModeInputTrue\').checked == true) { window.localStorage.setItem(\'AggressiveMode\', \'true\'); } else { window.localStorage.setItem(\'AggressiveMode\', \'false\'); }	\
-window.localStorage.setItem(\'HornTimeDelayMin\', document.getElementById(\'HornTimeDelayMinInput\').value); window.localStorage.setItem(\'HornTimeDelayMax\', document.getElementById(\'HornTimeDelayMaxInput\').value);	\
-if (document.getElementById(\'TrapCheckInputTrue\').checked == true) { window.localStorage.setItem(\'TrapCheck\', \'true\'); } else { window.localStorage.setItem(\'TrapCheck\', \'false\'); }	\
-window.localStorage.setItem(\'TrapCheckTimeOffset\', document.getElementById(\'TrapCheckTimeOffsetInput\').value);	\
-window.localStorage.setItem(\'TrapCheckTimeDelayMin\', document.getElementById(\'TrapCheckTimeDelayMinInput\').value); window.localStorage.setItem(\'TrapCheckTimeDelayMax\', document.getElementById(\'TrapCheckTimeDelayMaxInput\').value);	\
-if (document.getElementById(\'PlayKingRewardSoundInputTrue\').checked == true) { window.localStorage.setItem(\'PlayKingRewardSound\', \'true\'); } else { window.localStorage.setItem(\'PlayKingRewardSound\', \'false\'); }	\
-if (document.getElementById(\'KingRewardResumeInputTrue\').checked == true) { window.localStorage.setItem(\'KingRewardResume\', \'true\'); } else { window.localStorage.setItem(\'KingRewardResume\', \'false\'); }	\
-window.localStorage.setItem(\'KingRewardResumeTime\', document.getElementById(\'KingRewardResumeTimeInput\').value);	\
-if (document.getElementById(\'PauseLocationInputTrue\').checked == true) { window.localStorage.setItem(\'PauseLocation\', \'true\'); } else { window.localStorage.setItem(\'PauseLocation\', \'false\'); }	\
-if (document.getElementById(\'autopopkrTrue\').checked == true) { window.localStorage.setItem(\'autoPopupKR\', \'true\'); } else { window.localStorage.setItem(\'autoPopupKR\', \'false\'); }	\
-window.localStorage.setItem(\'addonCode\', document.getElementById(\'addonCode\').value);\
-';
+    if (document.getElementById(\'AggressiveModeInputTrue\').checked == true) { window.localStorage.setItem(\'AggressiveMode\', \'true\'); } else { window.localStorage.setItem(\'AggressiveMode\', \'false\'); }	\
+    window.localStorage.setItem(\'HornTimeDelayMin\', document.getElementById(\'HornTimeDelayMinInput\').value); window.localStorage.setItem(\'HornTimeDelayMax\', document.getElementById(\'HornTimeDelayMaxInput\').value);	\
+    if (document.getElementById(\'TrapCheckInputTrue\').checked == true) { window.localStorage.setItem(\'TrapCheck\', \'true\'); } else { window.localStorage.setItem(\'TrapCheck\', \'false\'); }	\
+    window.localStorage.setItem(\'TrapCheckTimeOffset\', document.getElementById(\'TrapCheckTimeOffsetInput\').value);	\
+    window.localStorage.setItem(\'TrapCheckTimeDelayMin\', document.getElementById(\'TrapCheckTimeDelayMinInput\').value); window.localStorage.setItem(\'TrapCheckTimeDelayMax\', document.getElementById(\'TrapCheckTimeDelayMaxInput\').value);	\
+    if (document.getElementById(\'PlayKingRewardSoundInputTrue\').checked == true) { window.localStorage.setItem(\'PlayKingRewardSound\', \'true\'); } else { window.localStorage.setItem(\'PlayKingRewardSound\', \'false\'); }	\
+    if (document.getElementById(\'KingRewardResumeInputTrue\').checked == true) { window.localStorage.setItem(\'KingRewardResume\', \'true\'); } else { window.localStorage.setItem(\'KingRewardResume\', \'false\'); }	\
+    window.localStorage.setItem(\'KingRewardResumeTime\', document.getElementById(\'KingRewardResumeTimeInput\').value);	\
+    if (document.getElementById(\'PauseLocationInputTrue\').checked == true) { window.localStorage.setItem(\'PauseLocation\', \'true\'); } else { window.localStorage.setItem(\'PauseLocation\', \'false\'); }	\
+    if (document.getElementById(\'autopopkrTrue\').checked == true) { window.localStorage.setItem(\'autoPopupKR\', \'true\'); } else { window.localStorage.setItem(\'autoPopupKR\', \'false\'); }	\
+    window.localStorage.setItem(\'addonCode\', document.getElementById(\'addonCode\').value);\
+    ';
                 if (fbPlatform) {
                     if (secureConnection)
                         preferenceHTMLStr += 'window.location.href=\'https://www.mousehuntgame.com/canvas/\';"/>';
@@ -2549,6 +2574,14 @@ function displayKingRewardSumTime(timeStr) {
     timeStr = null;
 }
 
+function doubleCheckLocation() { //return true if location is camp page (this is to combat ajax loads)
+    var thePage = $('#mousehuntContainer')[0];
+    if (thePage) {
+        return (thePage.className == "PageCamp");
+    } else {
+        return false;
+    }
+}
 // ################################################################################################
 //   Timer Function - End
 // ################################################################################################
@@ -2565,28 +2598,6 @@ function addGoogleAd() {
         existingAutoBotAdElement = null;
     }
 
-    // add a new ad element
-    var headerElement;
-    if (fbPlatform || hiFivePlatform || mhPlatform) {
-        headerElement = document.getElementById('noscript');
-    } else if (mhMobilePlatform) {
-        headerElement = document.getElementById('mobileHorn');
-    }
-
-    if (headerElement) {
-        var autoBotAdDivElement = document.createElement('div');
-        autoBotAdDivElement.setAttribute('id', 'autoBotAdDiv');
-        autoBotAdDivElement.innerHTML = '<script type="text/javascript"><!-- \
-google_ad_client = "ca-pub-0646444153861496"; \
-google_ad_slot = "5069542056"; \
-google_ad_width = 728;google_ad_height = 90; \
-//--> \
-</script> \
-<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>';
-
-        headerElement.parentNode.insertBefore(autoBotAdDivElement, headerElement);
-        timerDivElement = null;
-    }
 }
 
 // ################################################################################################
@@ -2609,19 +2620,21 @@ function soundHorn() {
 
     if (!aggressiveMode) {
         // safety mode, check the horn image is there or not before sound the horn
-        var headerElement = document.getElementById('header');
-        headerElement = (strHornButton == 'hornbutton') ? document.getElementById('header') : headerElement = document.getElementById('mousehuntHud').firstChild;
+        var headerElement = document.getElementById(header);
+
         if (headerElement) {
+            if (isNewUI)
+                headerElement = headerElement.firstChild;
             // need to make sure that the horn image is ready before we can click on it
             var headerStatus = headerElement.getAttribute('class');
-            if (headerStatus.indexOf("hornready") != -1) {
+            if (headerStatus.indexOf(hornReady) != -1) {
                 // found the horn image, let's sound the horn!
 
                 // update timer
                 displayTimer("Blowing The Horn...", "Blowing The Horn...", "Blowing The Horn...");
 
                 // simulate mouse click on the horn
-                var hornElement = document.getElementsByClassName(strHornButton)[0].firstChild;
+                var hornElement = document.getElementsByClassName(hornButton)[0].firstChild;
                 fireEvent(hornElement, 'click');
                 hornElement = null;
 
@@ -2673,7 +2686,7 @@ function soundHorn() {
                 displayTimer("Synchronizing Data...", "Hunter horn is missing. Synchronizing data...", "Hunter horn is missing. Synchronizing data...");
 
                 // try to click on the horn
-                var hornElement = document.getElementsByClassName(strHornButton)[0].firstChild;
+                var hornElement = document.getElementsByClassName(hornButton)[0].firstChild;
                 fireEvent(hornElement, 'click');
                 hornElement = null;
 
@@ -2700,7 +2713,7 @@ function soundHorn() {
         // aggressive mode, ignore whatever horn image is there or not, just sound the horn!
 
         // simulate mouse click on the horn
-        fireEvent(document.getElementsByClassName(strHornButton)[0].firstChild, 'click');
+        fireEvent(document.getElementsByClassName(hornButton)[0].firstChild, 'click');
 
         // double check if the horn was already sounded
         window.setTimeout(function () {
@@ -2717,19 +2730,20 @@ function afterSoundingHorn() {
     }
     scriptNode = null;
 
-    var headerElement = document.getElementById('header');
-    headerElement = (strHornButton == 'hornbutton') ? document.getElementById('header') : headerElement = document.getElementById('mousehuntHud').firstChild;
+    var headerElement = document.getElementById(header);
     if (headerElement) {
+        if (isNewUI)
+            headerElement = headerElement.firstChild;
         // double check if the horn image is still visible after the script already sound it
         var headerStatus = headerElement.getAttribute('class');
-        if (headerStatus.indexOf("hornready") != -1) {
+        if (headerStatus.indexOf(hornReady) != -1) {
             // seen like the horn is not functioning well
 
             // update timer
             displayTimer("Blowing The Horn Again...", "Blowing The Horn Again...", "Blowing The Horn Again...");
 
             // simulate mouse click on the horn
-            var hornElement = document.getElementsByClassName(strHornButton)[0].firstChild;
+            var hornElement = document.getElementsByClassName(hornButton)[0].firstChild;
             fireEvent(hornElement, 'click');
             hornElement = null;
 
@@ -2807,12 +2821,12 @@ function embedScript() {
     scriptNode.setAttribute('type', 'text/javascript');
     scriptNode.setAttribute('soundedHornAtt', 'false');
     scriptNode.innerHTML = 'function soundedHorn() {\
-    var scriptNode = document.getElementById("scriptNode");\
-    if (scriptNode) {\
-    	scriptNode.setAttribute("soundedHornAtt", "true");\
-    }\
-    scriptNode = null;\
-    }';
+        var scriptNode = document.getElementById("scriptNode");\
+        if (scriptNode) {\
+            scriptNode.setAttribute("soundedHornAtt", "true");\
+        }\
+        scriptNode = null;\
+        }';
 
     // find the head node and insert the script into it
     var headerElement;
@@ -2826,18 +2840,22 @@ function embedScript() {
     headerElement = null;
 
     // change the function call of horn
-    var testNewUI = document.getElementById('header');
+    var testNewUI = document.getElementById(header);
     if (testNewUI != null) {
         // old UI
         isNewUI = false;
     } else {
         // new UI
+        hornButton = 'mousehuntHud-huntersHorn-container';
+        campButton = 'camp';
+        header = 'mousehuntHud';
+        hornReady = 'hornReady';
         isNewUI = true;
-        alert('You are on the new UI please install the BETA version of the bot instead.\nFound here: http://goo.gl/phsHNg');
-        throw new Error("Wrong script version.");
+        //alert('You are on the new UI please install the BETA version of the bot instead.\nFound here: http://goo.gl/phsHNg');
+        //throw new Error("Wrong script version.");
     }
 
-    var hornButtonLink = document.getElementsByClassName(strHornButton)[0].firstChild;
+    var hornButtonLink = document.getElementsByClassName(hornButton)[0].firstChild;
     var oriStr = hornButtonLink.getAttribute('onclick').toString();
     var index = oriStr.indexOf('return false;');
     var modStr = oriStr.substring(0, index) + 'soundedHorn();' + oriStr.substring(index);
@@ -2943,6 +2961,7 @@ function notifyMe(notice, icon, body) {
 function playKingRewardSound() {
     if (isKingWarningSound) {
         unsafeWindow.hornAudio = new Audio('https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3');
+        hornAudio.loop = true;
         hornAudio.play();
         var targetArea = document.getElementsByTagName('body');
         var child = document.createElement('button');
@@ -2984,7 +3003,7 @@ function kingRewardCountdownTimer() {
         displayTimer("King's Reward - Reloading...", "Reloading...", "Reloading...");
 
         // simulate mouse click on the camp button
-        var campElement = document.getElementsByClassName(strCampButton)[0].firstChild;
+        var campElement = document.getElementsByClassName(campButton)[0].firstChild;
         fireEvent(campElement, 'click');
         campElement = null;
 
@@ -3014,34 +3033,59 @@ function kingRewardCountdownTimer() {
 function checkResumeButton() {
     var found = false;
 
-    var linkElementList = document.getElementsByTagName('img');
-    if (linkElementList) {
-        var i;
-        for (i = 0; i < linkElementList.length; ++i) {
-            // check if it is a resume button
-            if (linkElementList[i].getAttribute('src').indexOf("resume_hunting_blue.gif") != -1) {
-                // found resume button
+    if (isNewUI) {
+        var krFormClass = $('form')[0].className;
+        if (krFormClass.indexOf("noPuzzle") > -1) {
+            // found resume button
 
-                // simulate mouse click on the horn
-                var resumeElement = linkElementList[i].parentNode;
-                fireEvent(resumeElement, 'click');
-                resumeElement = null;
+            // simulate mouse click on the resume button
+            var resumeElement = $('.mousehuntPage-puzzle-form-complete-button')[0];
+            fireEvent(resumeElement, 'click');
+            resumeElement = null;
 
-                // reload url if click fail
-                window.setTimeout(function () {
-                    reloadWithMessage("Fail to click on resume button. Reloading...", false);
-                }, 6000);
+            // reload url if click fail
+            window.setTimeout(function () {
+                reloadWithMessage("Fail to click on resume button. Reloading...", false);
+            }, 6000);
 
-                // recheck if the resume button is click because some time even the url reload also fail
-                window.setTimeout(function () {
-                    checkResumeButton();
-                }, 10000);
+            // recheck if the resume button is click because some time even the url reload also fail
+            window.setTimeout(function () {
+                checkResumeButton();
+            }, 10000);
 
-                found = true;
-                break;
-            }
+            found = true;
         }
-        i = null;
+        krFormClass = null;
+    } else {
+        var linkElementList = document.getElementsByTagName('img');
+        if (linkElementList) {
+            var i;
+            for (i = 0; i < linkElementList.length; ++i) {
+                // check if it is a resume button
+                if (linkElementList[i].getAttribute('src').indexOf("resume_hunting_blue.gif") != -1) {
+                    // found resume button
+
+                    // simulate mouse click on the horn
+                    var resumeElement = linkElementList[i].parentNode;
+                    fireEvent(resumeElement, 'click');
+                    resumeElement = null;
+
+                    // reload url if click fail
+                    window.setTimeout(function () {
+                        reloadWithMessage("Fail to click on resume button. Reloading...", false);
+                    }, 6000);
+
+                    // recheck if the resume button is click because some time even the url reload also fail
+                    window.setTimeout(function () {
+                        checkResumeButton();
+                    }, 10000);
+
+                    found = true;
+                    break;
+                }
+            }
+            i = null;
+        }
     }
 
     linkElementList = null;
@@ -3315,13 +3359,13 @@ function timeFormatLong(time) {
 // INIT AJAX CALLS AND INIT CALLS - Function calls after page LOAD
 
 window.onload = function () {
-    if (debug) console.log("RUN nobInit()");
     nobInit();
 };
 
 function nobInit() {
     try {
         if (!NOBhasPuzzle) {
+            if (debug) console.log("RUN nobInit()");
             if (window.location.href == 'http://www.mousehuntgame.com/' ||
                 window.location.href == 'http://www.mousehuntgame.com/#' ||
                 window.location.href == 'http://www.mousehuntgame.com/?switch_to=standard' ||
@@ -3340,12 +3384,24 @@ function nobInit() {
                 NOBpage = true;
             }
 
+            window.setTimeout(function () {
+                try {
+                    if (debug) console.log('Trying to get rid of ad iFrame');
+                    var adFrame = document.getElementsByClassName('googleAd')[0];
+                    if (adFrame) {
+                        adFrame.parentNode.removeChild(adFrame);
+                    }
+                } catch (e) {
+                    console.log('Remove ad error: ' + e);
+                }
+            }, 2000);
+
             if (NOBpage) {
                 nobHTMLFetch();
                 createClockArea();
                 clockTick();
                 fetchGDocStuff();
-                setTimeout(function () {
+                window.setTimeout(function () {
                     pingServer();
                 }, 30000);
                 // Hide message after 1H :)
@@ -3518,12 +3574,27 @@ function nobStopLoading(name) {
 function nobScript(qqEvent) {
     if (NOBpage) {
         var NOBdata = nobGet('data');
-        var mapThere = document.getElementById('hudmapitem').style.cssText;
-        if (mapThere == 'display: none;') {
-            mapThere = false;
-            if (debug) console.log("No map, using HTML data now");
+        if (isNewUI) {
+            var mapThere = document.getElementById('hudmapitem');
+            if (mapThere !== null) {
+                mapThere = mapThere.style.cssText;
+                if (mapThere == 'display: none;') {
+                    mapThere = false;
+                    if (debug) console.log("No map, using HTML data now");
+                } else {
+                    mapThere = true;
+                }
+            } else {
+                mapThere = false;
+            }
         } else {
-            mapThere = true;
+            var mapThere = document.getElementsByClassName('treasureMap')[0];
+            if (mapThere.innerText.indexOf("remaining") == -1) {
+                mapThere = false;
+                if (debug) console.log("No map, using HTML data now");
+            } else {
+                mapThere = true;
+            }
         }
 
         if (NOBdata != null || NOBdata != undefined) {
@@ -3550,12 +3621,14 @@ function nobScript(qqEvent) {
             console.log("Data is not found, doing HTML fetch now.");
             nobHTMLFetch();
         }
+
+        mapThere = null;
     }
 }
 
-function showHideTimers() {
-    $('#loadTimersElement').toggle();
-}
+/*function showHideTimers() {
+ $('#loadTimersElement').toggle();
+ }*/
 
 function nobTravel(location) {
     if (NOBpage) {
@@ -3827,22 +3900,26 @@ function currentTimeStamp() {
 }
 
 function createClockArea() {
-    var parent = document.getElementById('loadTimersElement');
-    var otherChild = document.getElementById('gDocLink');
-    var child = [];
-    var text;
+    try {
+        var parent = document.getElementById('loadTimersElement');
+        var otherChild = document.getElementById('gDocLink');
+        var child = [];
+        var text;
 
-    for (i = 0; i < LOCATION_TIMERS.length; i++) {
-        child[i] = document.createElement('div');
-        child[i].setAttribute("id", "NOB" + LOCATION_TIMERS[i][0]);
-        text = '<span id="text_' + LOCATION_TIMERS[i][0] + '">';
-        child[i].innerHTML = text;
+        for (i = 0; i < LOCATION_TIMERS.length; i++) {
+            child[i] = document.createElement('div');
+            child[i].setAttribute("id", "NOB" + LOCATION_TIMERS[i][0]);
+            text = '<span id="text_' + LOCATION_TIMERS[i][0] + '">';
+            child[i].innerHTML = text;
+        }
+
+        for (i = 0; i < LOCATION_TIMERS.length; i++)
+            parent.insertBefore(child[i], parent.firstChild);
+
+        parent.insertBefore(document.createElement('br'), parent.firstChild);
+    } catch (e) {
+        console.log("createClockArea() ERROR: " + e);
     }
-
-    for (i = 0; i < LOCATION_TIMERS.length; i++)
-        parent.insertBefore(child[i], parent.firstChild);
-
-    parent.insertBefore(document.createElement('br'), parent.firstChild);
 }
 
 function clockTick() {
@@ -3881,6 +3958,7 @@ function updateTime() {
 }
 
 function nobCalculateTime(runOnly) {
+    if (debug) console.log("Running nobCalculateTime(" + runOnly + ")");
     if (runOnly != 'relic' & runOnly != 'toxic' & runOnly != 'none')
         runOnly = 'all';
 
