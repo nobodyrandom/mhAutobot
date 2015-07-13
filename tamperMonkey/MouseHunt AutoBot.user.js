@@ -1739,7 +1739,6 @@ function addGoogleAd() {
         existingAutoBotAdElement.parentNode.removeChild(existingAutoBotAdElement);
         existingAutoBotAdElement = null;
     }
-
 }
 
 // ################################################################################################

@@ -2,8 +2,8 @@
   "manifest_version": 2,
 
   "name": "MouseHunt AutoBot REVAMP chrome ext ver",
-  "description": "Currently the most advanced script for automizing MouseHunt. Supports ALL new areas and FIREFOX. Revamped version of original by Ooi",
-  "version": "2.0.21",
+  "description": "Currently the most advanced script for automating MouseHunt. Supports ALL new areas and FIREFOX. Revamped version of original by Ooi",
+  "version": "2.1.1",
   "author": "NobodyRandom",
   "update_url": "https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/chromeExtensionUpdate.xml",
 
