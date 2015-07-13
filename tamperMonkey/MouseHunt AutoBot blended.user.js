@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.1b
+// @version    	2.1.2b
 // @description Currently the most advanced script for automizing MouseHunt. Supports ALL new areas and FIREFOX. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN - Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot, https://devcnn.wordpress.com/
@@ -52,6 +52,9 @@ var checkTimeDelayMax = 120;
 
 // // Play sound when encounter king's reward (true/false)
 var isKingWarningSound = false;
+
+// // Which sound to play when encountering king's reward (need to be .mp3)
+var kingWarningSound = 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3';
 
 // // Reload the the page according to kingPauseTimeMax when encountering King Reward. (true/false)
 // // Note: No matter how many time you refresh, the King's Reward won't go away unless you resolve it manually.
@@ -1547,6 +1550,9 @@ function action() {
             displayLocation(huntLocation);
             displayKingRewardSumTime(null);
 
+            // Notify no more cheese
+            notifyMe("No more cheese!!!", 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/cheese.png', getPageVariableForChrome('user.username') + ' has no more cheese.')
+
             // pause the script
         } else {
             // update location
@@ -2192,6 +2198,17 @@ function embedTimer(targetPage) {
                     preferenceHTMLStr += '</td>';
                     preferenceHTMLStr += '</tr>';
                 }
+
+                preferenceHTMLStr += '<tr>';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="Play which sound when encountering king\'s reward"><b>King Reward Sound</b></a>';
+                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px;">';
+                preferenceHTMLStr += '<input type="text" id="KingRewardSoundInput" name="KingRewardSoundInput" value="' + kingWarningSound + '" />';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
                 if (reloadKingReward) {
                     preferenceHTMLStr += '<tr>';
                     preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
@@ -2324,18 +2341,19 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<td style="height:24px; text-align:right;" colspan="2">';
                 preferenceHTMLStr += '(Changes only take place after user save the preference) ';
                 preferenceHTMLStr += '<input type="button" id="PreferenceSaveInput" value="Save" onclick="	\
-    if (document.getElementById(\'AggressiveModeInputTrue\').checked == true) { window.localStorage.setItem(\'AggressiveMode\', \'true\'); } else { window.localStorage.setItem(\'AggressiveMode\', \'false\'); }	\
-    window.localStorage.setItem(\'HornTimeDelayMin\', document.getElementById(\'HornTimeDelayMinInput\').value); window.localStorage.setItem(\'HornTimeDelayMax\', document.getElementById(\'HornTimeDelayMaxInput\').value);	\
-    if (document.getElementById(\'TrapCheckInputTrue\').checked == true) { window.localStorage.setItem(\'TrapCheck\', \'true\'); } else { window.localStorage.setItem(\'TrapCheck\', \'false\'); }	\
-    window.localStorage.setItem(\'TrapCheckTimeOffset\', document.getElementById(\'TrapCheckTimeOffsetInput\').value);	\
-    window.localStorage.setItem(\'TrapCheckTimeDelayMin\', document.getElementById(\'TrapCheckTimeDelayMinInput\').value); window.localStorage.setItem(\'TrapCheckTimeDelayMax\', document.getElementById(\'TrapCheckTimeDelayMaxInput\').value);	\
-    if (document.getElementById(\'PlayKingRewardSoundInputTrue\').checked == true) { window.localStorage.setItem(\'PlayKingRewardSound\', \'true\'); } else { window.localStorage.setItem(\'PlayKingRewardSound\', \'false\'); }	\
-    if (document.getElementById(\'KingRewardResumeInputTrue\').checked == true) { window.localStorage.setItem(\'KingRewardResume\', \'true\'); } else { window.localStorage.setItem(\'KingRewardResume\', \'false\'); }	\
-    window.localStorage.setItem(\'KingRewardResumeTime\', document.getElementById(\'KingRewardResumeTimeInput\').value);	\
-    if (document.getElementById(\'PauseLocationInputTrue\').checked == true) { window.localStorage.setItem(\'PauseLocation\', \'true\'); } else { window.localStorage.setItem(\'PauseLocation\', \'false\'); }	\
-    if (document.getElementById(\'autopopkrTrue\').checked == true) { window.localStorage.setItem(\'autoPopupKR\', \'true\'); } else { window.localStorage.setItem(\'autoPopupKR\', \'false\'); }	\
-    window.localStorage.setItem(\'addonCode\', document.getElementById(\'addonCode\').value);\
-    ';
+if (document.getElementById(\'AggressiveModeInputTrue\').checked == true) { window.localStorage.setItem(\'AggressiveMode\', \'true\'); } else { window.localStorage.setItem(\'AggressiveMode\', \'false\'); }	\
+window.localStorage.setItem(\'HornTimeDelayMin\', document.getElementById(\'HornTimeDelayMinInput\').value); window.localStorage.setItem(\'HornTimeDelayMax\', document.getElementById(\'HornTimeDelayMaxInput\').value);	\
+if (document.getElementById(\'TrapCheckInputTrue\').checked == true) { window.localStorage.setItem(\'TrapCheck\', \'true\'); } else { window.localStorage.setItem(\'TrapCheck\', \'false\'); }	\
+window.localStorage.setItem(\'TrapCheckTimeOffset\', document.getElementById(\'TrapCheckTimeOffsetInput\').value);	\
+window.localStorage.setItem(\'TrapCheckTimeDelayMin\', document.getElementById(\'TrapCheckTimeDelayMinInput\').value); window.localStorage.setItem(\'TrapCheckTimeDelayMax\', document.getElementById(\'TrapCheckTimeDelayMaxInput\').value);	\
+if (document.getElementById(\'PlayKingRewardSoundInputTrue\').checked == true) { window.localStorage.setItem(\'PlayKingRewardSound\', \'true\'); } else { window.localStorage.setItem(\'PlayKingRewardSound\', \'false\'); }	\
+window.localStorage.setItem(\'KingRewardSoundInput\', document.getElementById(\'KingRewardSoundInput\').value);   \
+if (document.getElementById(\'KingRewardResumeInputTrue\').checked == true) { window.localStorage.setItem(\'KingRewardResume\', \'true\'); } else { window.localStorage.setItem(\'KingRewardResume\', \'false\'); }	\
+window.localStorage.setItem(\'KingRewardResumeTime\', document.getElementById(\'KingRewardResumeTimeInput\').value);	\
+if (document.getElementById(\'PauseLocationInputTrue\').checked == true) { window.localStorage.setItem(\'PauseLocation\', \'true\'); } else { window.localStorage.setItem(\'PauseLocation\', \'false\'); }	\
+if (document.getElementById(\'autopopkrTrue\').checked == true) { window.localStorage.setItem(\'autoPopupKR\', \'true\'); } else { window.localStorage.setItem(\'autoPopupKR\', \'false\'); }	\
+window.localStorage.setItem(\'addonCode\', document.getElementById(\'addonCode\').value);\
+';
                 if (fbPlatform) {
                     if (secureConnection)
                         preferenceHTMLStr += 'window.location.href=\'https://www.mousehuntgame.com/canvas/\';"/>';
@@ -2455,6 +2473,14 @@ function loadPreferenceSettingFromStorage() {
         isKingWarningSound = false;
     }
     playKingRewardSoundTemp = undefined;
+
+    var kingRewardSoundTemp = getStorage('KingRewardSoundInput');
+    if (kingRewardSoundTemp == undefined || kingRewardSoundTemp == null) {
+        kingRewardSoundTemp = 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3';
+        setStorage('KingRewardSOundInput', 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3');
+    }
+    kingWarningSound = kingRewardSoundTemp;
+    kingRewardSoundTemp = undefined;
 
     var kingRewardResumeTemp = getStorage("KingRewardResume");
     if (kingRewardResumeTemp == undefined || kingRewardResumeTemp == null) {
@@ -2821,12 +2847,12 @@ function embedScript() {
     scriptNode.setAttribute('type', 'text/javascript');
     scriptNode.setAttribute('soundedHornAtt', 'false');
     scriptNode.innerHTML = 'function soundedHorn() {\
-        var scriptNode = document.getElementById("scriptNode");\
-        if (scriptNode) {\
-            scriptNode.setAttribute("soundedHornAtt", "true");\
-        }\
-        scriptNode = null;\
-        }';
+    var scriptNode = document.getElementById("scriptNode");\
+    if (scriptNode) {\
+    	scriptNode.setAttribute("soundedHornAtt", "true");\
+    }\
+    scriptNode = null;\
+    }';
 
     // find the head node and insert the script into it
     var headerElement;
@@ -2960,7 +2986,7 @@ function notifyMe(notice, icon, body) {
 
 function playKingRewardSound() {
     if (isKingWarningSound) {
-        unsafeWindow.hornAudio = new Audio('https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3');
+        unsafeWindow.hornAudio = new Audio(kingWarningSound);
         hornAudio.loop = true;
         hornAudio.play();
         var targetArea = document.getElementsByTagName('body');

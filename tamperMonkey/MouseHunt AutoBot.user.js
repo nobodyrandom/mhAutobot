@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom, Ooi Keng Siang
-// @version    	2.1.1a
+// @version    	2.1.2a
 // @description Currently the most advanced script for automizing MouseHunt. Supports ALL new areas and FIREFOX. Revamped version of original by Ooi - Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @namespace   https://greasyfork.org/users/6398
@@ -52,6 +52,9 @@ var checkTimeDelayMax = 120;
 
 // // Play sound when encounter king's reward (true/false)
 var isKingWarningSound = false;
+
+// // Which sound to play when encountering king's reward (need to be .mp3)
+var kingWarningSound = 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3';
 
 // // Reload the the page according to kingPauseTimeMax when encountering King Reward. (true/false)
 // // Note: No matter how many time you refresh, the King's Reward won't go away unless you resolve it manually.
@@ -749,6 +752,9 @@ function action() {
             displayLocation(huntLocation);
             displayKingRewardSumTime(null);
 
+            // Notify no more cheese
+            notifyMe("No more cheese!!!", 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/cheese.png', getPageVariableForChrome('user.username') + ' has no more cheese.')
+
             // pause the script
         } else {
             // update location
@@ -1393,6 +1399,17 @@ function embedTimer(targetPage) {
                     preferenceHTMLStr += '</td>';
                     preferenceHTMLStr += '</tr>';
                 }
+
+                preferenceHTMLStr += '<tr>';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="Play which sound when encountering king\'s reward"><b>King Reward Sound</b></a>';
+                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px;">';
+                preferenceHTMLStr += '<input type="text" id="KingRewardSoundInput" name="KingRewardSoundInput" value="' + kingWarningSound + '" />';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
                 if (reloadKingReward) {
                     preferenceHTMLStr += '<tr>';
                     preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
@@ -1508,6 +1525,7 @@ if (document.getElementById(\'TrapCheckInputTrue\').checked == true) { window.lo
 window.localStorage.setItem(\'TrapCheckTimeOffset\', document.getElementById(\'TrapCheckTimeOffsetInput\').value);	\
 window.localStorage.setItem(\'TrapCheckTimeDelayMin\', document.getElementById(\'TrapCheckTimeDelayMinInput\').value); window.localStorage.setItem(\'TrapCheckTimeDelayMax\', document.getElementById(\'TrapCheckTimeDelayMaxInput\').value);	\
 if (document.getElementById(\'PlayKingRewardSoundInputTrue\').checked == true) { window.localStorage.setItem(\'PlayKingRewardSound\', \'true\'); } else { window.localStorage.setItem(\'PlayKingRewardSound\', \'false\'); }	\
+window.localStorage.setItem(\'KingRewardSoundInput\', document.getElementById(\'KingRewardSoundInput\').value);   \
 if (document.getElementById(\'KingRewardResumeInputTrue\').checked == true) { window.localStorage.setItem(\'KingRewardResume\', \'true\'); } else { window.localStorage.setItem(\'KingRewardResume\', \'false\'); }	\
 window.localStorage.setItem(\'KingRewardResumeTime\', document.getElementById(\'KingRewardResumeTimeInput\').value);	\
 if (document.getElementById(\'PauseLocationInputTrue\').checked == true) { window.localStorage.setItem(\'PauseLocation\', \'true\'); } else { window.localStorage.setItem(\'PauseLocation\', \'false\'); }	\
@@ -1633,6 +1651,14 @@ function loadPreferenceSettingFromStorage() {
         isKingWarningSound = false;
     }
     playKingRewardSoundTemp = undefined;
+
+    var kingRewardSoundTemp = getStorage('KingRewardSoundInput');
+    if (kingRewardSoundTemp == undefined || kingRewardSoundTemp == null) {
+        kingRewardSoundTemp = 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3';
+        setStorage('KingRewardSOundInput', 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3');
+    }
+    kingWarningSound = kingRewardSoundTemp;
+    kingRewardSoundTemp = undefined;
 
     var kingRewardResumeTemp = getStorage("KingRewardResume");
     if (kingRewardResumeTemp == undefined || kingRewardResumeTemp == null) {
@@ -2100,7 +2126,7 @@ function notifyMe(notice, icon, body) {
 
 function playKingRewardSound() {
     if (isKingWarningSound) {
-        unsafeWindow.hornAudio = new Audio('https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3');
+        unsafeWindow.hornAudio = new Audio(kingWarningSound);
         hornAudio.loop = true;
         hornAudio.play();
         var targetArea = document.getElementsByTagName('body');
