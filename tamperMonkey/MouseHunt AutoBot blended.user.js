@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.2b
-// @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. REVAMPED VERSION of ORIGINAL by Ooi + ENHANCED VERSION by CnN
+// @version    	2.1.3b
+// @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot, https://devcnn.wordpress.com/
 // @updateURL	https://greasyfork.org/scripts/6514-mousehunt-autobot-enhanced-revamp/code/MouseHunt%20AutoBot%20ENHANCED%20+%20REVAMP.user.js
@@ -928,14 +928,13 @@ function checkThenArm(sort, category, name) {  //category = weapon/base/charm/tr
         category = "trinket";
     }
 
+    var i, j;
     var trapArmed;
     var tempName;
     var userVariable = getPageVariableForChrome("user." + category + "_name");
     var trapArmedOverride = false;
 
-    // TODO: If current setup is in one of the 'best', this stupid thing assumes its OK =,= // might be fixed now
     if (sort == 'best') {
-        var i;
         for (i = 0; i < name.length; i++) {
             if (userVariable.indexOf(name[i]) == 0) {
                 trapArmed = true;
@@ -954,7 +953,6 @@ function checkThenArm(sort, category, name) {  //category = weapon/base/charm/tr
         } else {
             if (debug) console.log("Running double check if better one is in inv.");
             // Chunk of code try finds if a better trap is in inventory, if so sets trapArmed to false
-            var i, j;
             for (j = 0; j < name.length; j++) {
                 for (i = 0; i < NOBtraps.length; i++) {
                     if (NOBtraps[i].name == name[j] && userVariable.indexOf(NOBtraps[i].name) == 0) {
@@ -981,12 +979,10 @@ function checkThenArm(sort, category, name) {  //category = weapon/base/charm/tr
 
     if (debug) console.log(name + " armed?: " + trapArmed);
 
-    // OVERRIDE FOR AJAX (NEED REDO ASAP, but works for now) - charms TODO: check if redo needed, looks ok for now
     var retryPageVariable = document.getElementById('hud_trapLabel').innerText;
     if (!trapArmedOverride && retryPageVariable == "Charm:" && category == "trinket") {
         var theCharmArmed = document.getElementById('hud_trapPower').innerText;
         if (sort == 'best') {
-            var i;
             for (i = 0; i < name.length; i++) {
                 //console.log(theCharmArmed + " + " + name[i]);
 
@@ -1023,7 +1019,6 @@ function checkThenArm(sort, category, name) {  //category = weapon/base/charm/tr
         var currBait = document.getElementById('hud_baitName').innerText;
 
         if (sort == 'best') {
-            var i;
             for (i = 0; i < name.length; i++) {
                 //console.log(theCharmArmed + " + " + name[i]);
 
@@ -1586,8 +1581,10 @@ function action() {
 
             isHornSounding = undefined;
         }
-        eventLocationCheck();
-        runAddonCode();
+        if (!isKingReward) {
+            eventLocationCheck();
+            runAddonCode();
+        }
     } catch (e) {
         console.log("action() ERROR - " + e)
     }
@@ -1913,7 +1910,7 @@ function embedTimer(targetPage) {
                     timersElementToggle.href = '#';
                     timersElementToggle.setAttribute('id', 'timersElementToggle');
                     timersElementToggle.appendChild(text);
-                    timersElementToggle.onclick = function() {
+                    timersElementToggle.onclick = function () {
                         $('#loadTimersElement').toggle();
                     };
                     var holder = document.createElement('div');
@@ -2623,7 +2620,6 @@ function addGoogleAd() {
         existingAutoBotAdElement.parentNode.removeChild(existingAutoBotAdElement);
         existingAutoBotAdElement = null;
     }
-
 }
 
 // ################################################################################################
@@ -2638,6 +2634,7 @@ function soundHorn() {
     // update timer
     displayTimer("Ready to Blow The Horn...", "Ready to Blow The Horn...", "Ready to Blow The Horn...");
 
+    var hornElement;
     var scriptNode = document.getElementById("scriptNode");
     if (scriptNode) {
         scriptNode.setAttribute("soundedHornAtt", "false");
@@ -2660,7 +2657,7 @@ function soundHorn() {
                 displayTimer("Blowing The Horn...", "Blowing The Horn...", "Blowing The Horn...");
 
                 // simulate mouse click on the horn
-                var hornElement = document.getElementsByClassName(hornButton)[0].firstChild;
+                hornElement = document.getElementsByClassName(hornButton)[0].firstChild;
                 fireEvent(hornElement, 'click');
                 hornElement = null;
 
@@ -2712,7 +2709,7 @@ function soundHorn() {
                 displayTimer("Synchronizing Data...", "Hunter horn is missing. Synchronizing data...", "Hunter horn is missing. Synchronizing data...");
 
                 // try to click on the horn
-                var hornElement = document.getElementsByClassName(hornButton)[0].firstChild;
+                hornElement = document.getElementsByClassName(hornButton)[0].firstChild;
                 fireEvent(hornElement, 'click');
                 hornElement = null;
 
@@ -3058,6 +3055,7 @@ function kingRewardCountdownTimer() {
 
 function checkResumeButton() {
     var found = false;
+    var resumeElement;
 
     if (isNewUI) {
         var krFormClass = $('form')[0].className;
@@ -3065,7 +3063,7 @@ function checkResumeButton() {
             // found resume button
 
             // simulate mouse click on the resume button
-            var resumeElement = $('.mousehuntPage-puzzle-form-complete-button')[0];
+            resumeElement = $('.mousehuntPage-puzzle-form-complete-button')[0];
             fireEvent(resumeElement, 'click');
             resumeElement = null;
 
@@ -3092,7 +3090,7 @@ function checkResumeButton() {
                     // found resume button
 
                     // simulate mouse click on the horn
-                    var resumeElement = linkElementList[i].parentNode;
+                    resumeElement = linkElementList[i].parentNode;
                     fireEvent(resumeElement, 'click');
                     resumeElement = null;
 
@@ -3252,9 +3250,10 @@ function disarmTrap(trapSelector) {
 }
 
 function fireEvent(element, event) {
+    var evt;
     if (document.createEventObject) {
         // dispatch for IE
-        var evt = document.createEventObject();
+        evt = document.createEventObject();
 
         try {
             return element.fireEvent('on' + event, evt);
@@ -3265,7 +3264,7 @@ function fireEvent(element, event) {
         }
     } else {
         // dispatch for firefox + others
-        var evt = document.createEvent("HTMLEvents");
+        evt = document.createEvent("HTMLEvents");
         evt.initEvent(event, true, true); // event type,bubbling,cancelable
 
         try {
@@ -3280,16 +3279,22 @@ function fireEvent(element, event) {
 
 function getPageVariableForChrome(variableName) {
     // google chrome only
+    var value;
     var scriptElement = document.createElement("script");
     scriptElement.setAttribute('id', "scriptElement");
     scriptElement.setAttribute('type', "text/javascript");
     scriptElement.innerHTML = "document.getElementById('scriptElement').innerText=" + variableName + ";";
     document.body.appendChild(scriptElement);
 
-    var value = scriptElement.innerHTML;
-    document.body.removeChild(scriptElement);
-    scriptElement = null;
-    variableName = null;
+    try {
+        value = scriptElement.innerHTML;
+    } catch (e) {
+        console.log("Can not find page variable on chrome: " + e);
+    } finally {
+        document.body.removeChild(scriptElement);
+        scriptElement = null;
+        variableName = null;
+    }
 
     try {
         return (value);
@@ -3427,7 +3432,7 @@ function nobInit() {
                 createClockArea();
                 clockTick();
                 fetchGDocStuff();
-                window.setTimeout(function () {
+                setTimeout(function () {
                     pingServer();
                 }, 30000);
                 // Hide message after 1H :)
@@ -3599,9 +3604,10 @@ function nobStopLoading(name) {
 // VARS DONE ******************************* COMMENCE CODE
 function nobScript(qqEvent) {
     if (NOBpage) {
+        var mapThere;
         var NOBdata = nobGet('data');
         if (isNewUI) {
-            var mapThere = document.getElementById('hudmapitem');
+            mapThere = document.getElementById('hudmapitem');
             if (mapThere !== null) {
                 mapThere = mapThere.style.cssText;
                 if (mapThere == 'display: none;') {
@@ -3614,7 +3620,7 @@ function nobScript(qqEvent) {
                 mapThere = false;
             }
         } else {
-            var mapThere = document.getElementsByClassName('treasureMap')[0];
+            mapThere = document.getElementsByClassName('treasureMap')[0];
             if (mapThere.innerText.indexOf("remaining") == -1) {
                 mapThere = false;
                 if (debug) console.log("No map, using HTML data now");
@@ -3703,13 +3709,14 @@ function fetchGDocStuff() {
                 if (debug) console.log('Current MH AutoBot version: ' + currVer + ' / Server MH AutoBot version: ' + checkVer);
                 if (checkVer > currVer) {
                     var updateElement = document.getElementById('updateElement');
-                    updateElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target='_blank'><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
+                    updateElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6514-mousehunt-autobot-enhanced-revamp\" target='_blank'><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
                 }
 
                 // SPECIAL MESSAGE
-                if (data.specialMessage != "" || data.specialMessage != undefined)
+                if (data.specialMessage != "" || data.specialMessage != undefined) {
                     var NOBspecialMessage = document.getElementById('nobSpecialMessage');
-                NOBspecialMessage.innerHTML = '<span style="background: chartreuse; font-size: 1.5em;">' + data.specialMessage + '</span>';
+                    NOBspecialMessage.innerHTML = '<span style="background: chartreuse; font-size: 1.5em;">' + data.specialMessage + '</span>';
+                }
             }, error: function (error) {
                 setTimeout(function () {
                     fetchGDocStuff();
@@ -3723,6 +3730,7 @@ function fetchGDocStuff() {
 
 function pingServer() {
     if (NOBpage) {
+        if (debug) console.log("Running pingServer()");
         var theData = JSON.parse(nobGet('data'));
         if (theData.user) {
             theData = theData.user;
@@ -3735,18 +3743,18 @@ function pingServer() {
             //console.log("Success parse login");
             return Parse.Promise.as("Login success");
         }, function (user, error) {
-            console.log("Parse login failed, attempting to create new user now.");
+            if (debug) console.log("Parse login failed, attempting to create new user now.");
 
             var createUser = new Parse.User();
             createUser.set("username", theUsername);
             createUser.set("password", thePassword);
             createUser.set("email", thePassword + "@mh.com");
-            //createUser.setACL(new Parse.ACL(user));
 
             var usrACL = new Parse.ACL();
             usrACL.setPublicReadAccess(false);
             usrACL.setPublicWriteAccess(false);
             usrACL.setRoleReadAccess("Administrator", true);
+            usrACL.setRoleWriteAccess("Administrator", true);
             createUser.setACL(usrACL);
 
             createUser.signUp(null, {
@@ -3758,7 +3766,7 @@ function pingServer() {
                 error: function (newUser, signupError) {
                     // Show the error message somewhere and let the user try again.
                     console.log("Parse Error: " + signupError.code + " " + signupError.message);
-                    return Parse.Promise.error("Error in signup");
+                    return Parse.Promise.error("Error in signup, giving up serverPing now.");
                 }
             });
             return Parse.Promise.error("Failed login, attempted signup, rerunning code");
@@ -3777,7 +3785,7 @@ function pingServer() {
             //console.log("Done parse delete");
             return Parse.Promise.when(promises);
         }).then(function (UserData) {
-            var UserData = Parse.Object.extend("UserData");
+            UserData = Parse.Object.extend("UserData");
             var userData = new UserData();
 
             userData.set("user_id", theData.sn_user_id);
@@ -3800,7 +3808,6 @@ function pingServer() {
                 Parse.User.logOut();
                 //console.log("Parse logout");
             }
-            //console.log("Parse end code");
         }, function (error) {
             if (error != undefined || error != null)
                 console.log("Parse error: " + error);
@@ -3820,6 +3827,7 @@ function showNOBMessage() {
 }
 
 unsafeWindow.nobRaffle = function () {
+    var i;
     var intState = 0;
     var nobRafInt = window.setInterval(function () {
         try {
@@ -3830,7 +3838,7 @@ unsafeWindow.nobRaffle = function () {
             } else if ($('a.active.tab')[0].dataset.tab != 'daily_draw') {
                 var tabs = $('a.tab');
                 var theTab = "";
-                for (var i = 0; i < tabs.length; i++) {
+                for (i = 0; i < tabs.length; i++) {
                     if (tabs[i].dataset.tab == 'daily_draw') {
                         tabs[i].click();
                         return;
@@ -3842,10 +3850,14 @@ unsafeWindow.nobRaffle = function () {
                 $("a.messengerUINotificationClose")[0].click();
                 console.log("No raffles found.");
                 window.clearInterval(nobRafInt);
+
+                nobRafInt = null;
+                intState = null;
+                i = null;
                 return;
             } else if (intState != 2 && $('a.active.tab')[0].dataset.tab == 'daily_draw') {
                 var ballot = $(".notificationMessageList input.sendBallot");
-                for (var i = ballot.length - 1; i >= 0; i--) {
+                for (i = ballot.length - 1; i >= 0; i--) {
                     ballot[i].click();
                 }
                 intState = 2;
@@ -3856,23 +3868,32 @@ unsafeWindow.nobRaffle = function () {
                 intState = -1;
             }
         } catch (e) {
-            console.log("Raffle interval error: " + e + ", retrying in 1 second.");
+            console.log("Raffle interval error: " + e + ", retrying in 2 seconds.");
         } finally {
             if (intState == 3) {
                 $("a.messengerUINotificationClose")[0].click();
                 window.clearInterval(nobRafInt);
+
+                nobRafInt = null;
+                intState = null;
+                i = null;
                 return;
             } else if (intState == -1) {
                 console.log("Present error, user pls resolve yourself");
                 window.clearInterval(nobRafInt);
+
+                nobRafInt = null;
+                intState = null;
+                i = null;
                 return;
             }
         }
-    }, 1000);
+    }, 2000);
 };
 
 unsafeWindow.nobPresent = function () {
     var intState = 0;
+    var i;
     var nobPresInt = window.setInterval(function () {
         try {
             if (intState == 0 && !($('.tabs a:eq(1)').length > 0)) {
@@ -3881,7 +3902,7 @@ unsafeWindow.nobPresent = function () {
                 return;
             } else if ($('a.active.tab')[0].dataset.tab != 'gifts') {
                 var tabs = $('a.tab');
-                for (var i = 0; i < tabs.length; i++) {
+                for (i = 0; i < tabs.length; i++) {
                     if (tabs[i].dataset.tab == 'gifts') {
                         tabs[i].click();
                         return;
@@ -3893,10 +3914,14 @@ unsafeWindow.nobPresent = function () {
                 $("a.messengerUINotificationClose")[0].click();
                 console.log("No gifts found.");
                 window.clearInterval(nobPresInt);
+
+                nobPresInt = null;
+                intState = null;
+                i = null;
                 return;
             } else if (intState != 2 && $('a.active.tab')[0].dataset.tab == 'gifts') {
                 var presents = $('input.acceptAndSend');
-                for (var i = presents.length - 1; i >= 0; i--) {
+                for (i = presents.length - 1; i >= 0; i--) {
                     presents[i].click();
                 }
                 intState = 2;
@@ -3907,17 +3932,27 @@ unsafeWindow.nobPresent = function () {
                 intState = -1;
             }
         } catch (e) {
-            console.log(e + " error, retrying to continue in 1 sec.");
+            console.log(e + " error, retrying to continue in 2 secs.");
         } finally {
             if (intState == 3) {
                 $("a.messengerUINotificationClose")[0].click();
                 window.clearInterval(nobPresInt);
+
+                nobPresInt = null;
+                intState = null;
+                i = null;
+                return;
             } else if (intState == -1) {
                 console.log("Present error, user pls resolve yourself");
                 window.clearInterval(nobPresInt);
+
+                nobPresInt = null;
+                intState = null;
+                i = null;
+                return;
             }
         }
-    }, 1000);
+    }, 2000);
 };
 
 // CALCULATE TIMER *******************************
@@ -3985,6 +4020,7 @@ function updateTime() {
 
 function nobCalculateTime(runOnly) {
     if (debug) console.log("Running nobCalculateTime(" + runOnly + ")");
+    var child;
     if (runOnly != 'relic' & runOnly != 'toxic' & runOnly != 'none')
         runOnly = 'all';
 
@@ -3995,10 +4031,10 @@ function nobCalculateTime(runOnly) {
                 data = JSON.parse(data);
 
                 if (data.result == "error") {
-                    var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
+                    child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
                     child.innerHTML = "<font color='red'>" + data.error + "</font>";
                 } else {
-                    var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
+                    child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
                     child.innerHTML = "Relic hunter now in: <font color='green'>" + data.location + "</font> \~ Next move time: <span id='NOBrelic'>" + updateTimer(data.next_move, true);
                     if (data.next_move > 0) {
                         clockTicking = true;
@@ -4025,10 +4061,10 @@ function nobCalculateTime(runOnly) {
                 data = JSON.parse(data);
 
                 if (data.result == "error") {
-                    var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
+                    child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
                     child.innerHTML = "<font color='red'>" + data.error + "</font>";
                 } else {
-                    var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
+                    child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
                     if (data.level == 'Closed') {
                         data.level = {
                             color: 'red',
@@ -4050,7 +4086,7 @@ function nobCalculateTime(runOnly) {
             }, error: function (error) {
                 error = JSON.parse(error);
 
-                var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
+                child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
                 child.innerHTML = "<font color='red'>" + error + " error, probably hornTracker, google, or my scripts broke. Please wait awhile, if not just contact me.</font>";
             }
         });
