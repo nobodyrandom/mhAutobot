@@ -28,12 +28,30 @@ query.find({
 	}
 });*/
 
-Parse.Cloud.run('nobRelic', {}, {
+/*Parse.Cloud.run('nobRelic', {}, {
     success: function (data) {
         console.log(JSON.parse(data));
     }, error: function (error) {
         console.log(error);
     }
+ });*/
+Parse.User.logIn('NobodyRandom', 'Abcd1234').then(function (user) {
+    console.log(Parse.User.current());
+    var queryRole = new Parse.Query(Parse.Role);
+    queryRole.equalTo('name', 'TheUsers');
+    queryRole.first({
+        success: function (results) {
+            var role = results;
+            console.log(role.getRoles());
+            //role.relation('roles').add('Administrator');
+            role.getRoles().add("Administrator");
+            role.save();
+        }, error: function (error) {
+            console.log(error.message);
+        }
+    });
+}, function (error) {
+    console.log(error.message);
 });
 
 console.log("DONE");
