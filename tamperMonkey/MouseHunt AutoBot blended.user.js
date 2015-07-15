@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.3b
+// @version    	2.1.4b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -109,7 +109,7 @@ var bestPowerBase = ['Tidal Base', 'Golden Tournament Base', 'Spellbook Base'];
 var bestLuckBase = ['Rift Base', 'Tidal Base', 'Sheep Jade Base', 'Horse Jade Base'];
 var bestAttBasae = ['Birthday Drag', 'Cheesecake Base'];
 var bestSalt = ['Super Salt', 'Grub Salt'];
-var wasteCharm = ['Tarnished', 'Wealth'];
+var wasteCharm = ['Tarnished', 'Unstable', 'Wealth'];
 var redSpongeCharm = ['Red Double', 'Red Sponge'];
 var yellowSpongeCharm = ['Yellow Double', 'Yellow Sponge'];
 var spongeCharm = ['Double Sponge', 'Sponge'];
@@ -492,6 +492,9 @@ function eventLocationCheck() {
         case 'Burroughs Rift(Green)':
             BurroughRift(6, 18);
             break;
+        case 'Burroughs Rift(Yellow)':
+            BurroughRift(1, 5);
+            break;
         case 'Halloween 2014':
             Halloween2014();
             break;
@@ -606,6 +609,8 @@ function SunkenCity() {
                 checkThenArm(null, 'bait', 'Fishy Fromage');
                 break;
             default:
+                checkThenArm('best', 'trinket', wasteCharm);
+                checkThenArm(null, 'bait', 'Gouda');
                 break;
         }
     }
@@ -2314,6 +2319,7 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<option value="Charge Egg 2014(17)">Charge Egg 2014(17)</option>';
                 preferenceHTMLStr += '<option value="Burroughs Rift(Red)">Burroughs Rift(Red)</option>';
                 preferenceHTMLStr += '<option value="Burroughs Rift(Green)">Burroughs Rift(Green)</option>';
+                preferenceHTMLStr += '<option value="Burroughs Rift(Yellow)">Burroughs Rift(Yellow)</option>';
                 preferenceHTMLStr += '<option value="Halloween 2014">Halloween 2014</option>';
                 preferenceHTMLStr += '<option value="Sunken City">Sunken City</option>';
                 preferenceHTMLStr += '<option value="All LG Area">All LG Area</option>';
