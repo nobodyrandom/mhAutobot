@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP for BETA UI
 // @author      NobodyRandom, Ooi Keng Siang
-// @version    	2.1.1y
+// @version    	2.1.2y
 // @description Script now merged onto standard scripts. Please use MouseHunt AutoBot REVAMP or MouseHunt AutoBot ENHANCED + REVAMP. This version is the last supported ver, please use the other script to keep up to date.
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @namespace   https://greasyfork.org/users/6398
-// @updateURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.user.js
+// @updateURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.meta.js
 // @downloadURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.user.js
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -1539,7 +1539,7 @@ if (document.getElementById(\'autopopkrTrue\').checked == true) { window.localSt
 
                 var NOBspecialMessageDiv = document.createElement('div');
                 NOBspecialMessageDiv.setAttribute('id', 'nobSpecialMessage');
-                NOBspecialMessageDiv.setAttribute('style', 'display: block; position: fixed; bottom: 0; z-index: 999; text-align: center; width: 760px;')
+                NOBspecialMessageDiv.setAttribute('style', 'display: block; position: fixed; bottom: 0; z-index: 999; text-align: center; width: 760px;');
 
                 headerElement.parentNode.insertBefore(NOBspecialMessageDiv, headerElement);
 
@@ -2048,7 +2048,7 @@ function notifyMe(notice, icon, body) {
         notification.onclick = function () {
             window.open("https://www.mousehuntgame.com/");
             notification.close();
-        }
+        };
 
         notification.onshow = function () {
             setTimeout(function () {
@@ -2069,7 +2069,7 @@ function notifyMe(notice, icon, body) {
                 notification.onclick = function () {
                     window.open("https://www.mousehuntgame.com/");
                     notification.close();
-                }
+                };
 
                 notification.onshow = function () {
                     setTimeout(function () {
@@ -2857,7 +2857,7 @@ unsafeWindow.nobRaffle = function () {
             if (intState == 0 && !($('.tabs a:eq(1)').length > 0)) {
                 $('#hgbar_messages').click();
                 intState = 1;
-                return;
+
             } else if ($('a.active.tab')[0].dataset.tab != 'daily_draw') {
                 var tabs = $('a.tab');
                 var theTab = "";
@@ -2873,14 +2873,14 @@ unsafeWindow.nobRaffle = function () {
                 $("a.messengerUINotificationClose")[0].click();
                 console.log("No raffles found.");
                 window.clearInterval(nobRafInt);
-                return;
+
             } else if (intState != 2 && $('a.active.tab')[0].dataset.tab == 'daily_draw') {
                 var ballot = $(".notificationMessageList input.sendBallot");
                 for (var i = ballot.length - 1; i >= 0; i--) {
                     ballot[i].click();
                 }
                 intState = 2;
-                return;
+
             } else if ($('a.active.tab')[0].dataset.tab == 'daily_draw') {
                 intState = 3;
             } else {
@@ -2892,11 +2892,11 @@ unsafeWindow.nobRaffle = function () {
             if (intState == 3) {
                 $("a.messengerUINotificationClose")[0].click();
                 window.clearInterval(nobRafInt);
-                return;
+
             } else if (intState == -1) {
                 console.log("Present error, user pls resolve yourself");
                 window.clearInterval(nobRafInt);
-                return;
+
             }
         }
     }, 1000);
@@ -2909,7 +2909,7 @@ unsafeWindow.nobPresent = function () {
             if (intState == 0 && !($('.tabs a:eq(1)').length > 0)) {
                 $('#hgbar_messages').click();
                 intState = 1;
-                return;
+
             } else if ($('a.active.tab')[0].dataset.tab != 'gifts') {
                 var tabs = $('a.tab');
                 for (var i = 0; i < tabs.length; i++) {
@@ -2924,14 +2924,14 @@ unsafeWindow.nobPresent = function () {
                 $("a.messengerUINotificationClose")[0].click();
                 console.log("No gifts found.");
                 window.clearInterval(nobPresInt);
-                return;
+
             } else if (intState != 2 && $('a.active.tab')[0].dataset.tab == 'gifts') {
                 var presents = $('input.acceptAndSend');
                 for (var i = presents.length - 1; i >= 0; i--) {
                     presents[i].click();
                 }
                 intState = 2;
-                return;
+
             } else if ($('a.active.tab')[0].dataset.tab == 'gifts') {
                 intState = 3;
             } else {
