@@ -36,20 +36,24 @@ query.find({
     }
  });*/
 Parse.User.logIn('NobodyRandom', 'Abcd1234').then(function (user) {
-    console.log(Parse.User.current());
-    var queryRole = new Parse.Query(Parse.Role);
+    /*var queryRole = new Parse.Query(Parse.Role);
     queryRole.equalTo('name', 'TheUsers');
-    queryRole.first({
-        success: function (results) {
-            var role = results;
-            console.log(role.getRoles());
-            //role.relation('roles').add('Administrator');
-            role.getRoles().add("Administrator");
-            role.save();
-        }, error: function (error) {
-            console.log(error.message);
-        }
-    });
+     return queryRole.first();
+     }).then(function (role) {
+     role.getRoles().add((new Parse.Query(Parse.Role)).equalTo('name','Administrator').first());
+     return role.save();
+     }).then(function (tb) {
+     console.log(tb);*/
+    var administrator = (new Parse.Query(Parse.Role)).equalTo('name', 'Administrator').first();
+    var roleACL = new Parse.ACL();
+    roleACL.setPublicReadAccess(false);
+    roleACL.setPublicWriteAccess(false);
+    roleACL.setRoleReadAccess('Administrator', true);
+    roleACL.setRoleWriteAccess('Administrator', true);
+    var role = new Parse.Role('TheUsers', roleACL);
+    //role.getUsers().add('NobodyRandom');
+    role.getRoles().add(administrator);
+    role.save();
 }, function (error) {
     console.log(error.message);
 });
