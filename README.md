@@ -32,10 +32,10 @@ Features:
 >*  Removed not working sound player and replaced with a working HTML5 one
 >*  Browser notif and tiggers are now fixed ^.^
 >*	KR auto resume etc are now fixed
+>*  No cheese notif
+>*  BETA UI Support
 >*  (ver b ONLY) Integrated CnN's bots for automization on areas + automization on G Express
 >*	(TODO: write up a instruction manual for the GDoc, but it should be pretty self explanatory)
-
-#####Sorrry I am new to GitHub, GM and actually anything at all so if there's something wrong pls email me or submit a bug report asap so I can fix it
 
 *****
 Explanations of the files included
@@ -50,3 +50,6 @@ Explanations of the files included
 >*  MouseHunt AutoBot Additional thing.user.js => Addon file to the core (No longer needed as of v2.0 and up)
 >*  MouseHunt AutoBot beta.user.js => Main core with no enhancements for the MH BETA UI (Merged onto A/B build v2.1 and up)
 >*  MouseHunt AutoBot Additional thing beta.user.js => Addon file to the beta core (Also no longer need as of v2.0 and up)
+
+*****
+#####Sorrry I am new to GitHub, GM and actually anything at all so if there's something wrong pls email me or submit a bug report asap so I can fix it
