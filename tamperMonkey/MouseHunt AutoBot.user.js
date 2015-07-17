@@ -1759,6 +1759,9 @@ function displayKingRewardSumTime(timeStr) {
 }
 
 function doubleCheckLocation() { //return true if location is camp page (this is to combat ajax loads)
+    if (!isNewUI)
+        return false;
+
     var thePage = $('#mousehuntContainer')[0];
     if (thePage) {
         return (thePage.className == "PageCamp");
