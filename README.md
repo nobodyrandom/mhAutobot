@@ -45,7 +45,8 @@ Explanations of the files included
 >
 >   Builds within tamperMonkey folder:
 >*  MouseHunt AutoBot.user.js => Main core with no enhancements what so ever
+>*  MouseHunt AutoBot blended.user.js => Build with CNN's enhancements to automize trap arming/ cheese change etc.
+>*  parse-1.4.2.min.js => API file for server support side of the bot
 >*  MouseHunt AutoBot Additional thing.user.js => Addon file to the core (No longer needed as of v2.0 and up)
->*  MouseHunt AutoBot beta.user.js => Main core with no enhancements for the MH BETA UI
+>*  MouseHunt AutoBot beta.user.js => Main core with no enhancements for the MH BETA UI (Merged onto A/B build v2.1 and up)
 >*  MouseHunt AutoBot Additional thing beta.user.js => Addon file to the beta core (Also no longer need as of v2.0 and up)
->*  MouseHunt AutoBot blended.user.js => Build with CNN's enhancements to automize trap arming/ cheese change etc. (Still requires the non-beta addon)
