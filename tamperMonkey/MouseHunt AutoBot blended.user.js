@@ -3335,7 +3335,7 @@ function getPageVariableForChrome(variableName) {
 
     try {
         if (value.indexOf(variableName) != -1) {
-            if (debug) console.log("GPVchrome value(" + value + "): " + value);
+            if (debug) console.log("GPVchrome value(" + variableName + "): " + value);
             return (value);
         } else {
             if (debug) console.log("GPVchrome eval(" + variableName + "): " + eval(variableName));
