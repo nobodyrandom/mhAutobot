@@ -14,7 +14,7 @@
 To install this version, please use [greasyFork](https://greasyfork.org/en/scripts/6092-mousehunt-autobot) or [OpenUserJS](https://openuserjs.org/scripts/nobodyrandom/MouseHunt_AutoBot_REVAMP)
 Note: this version of the code includes two separate files which should automatically install itself. If features such as 'Send to GDoc' does not work, please install [the second file](https://greasyfork.org/en/scripts/6094-mousehunt-autobot-additional-thing) as well.
 
-#####PRECAUTION: Use this script at your own risk as this is against the rule of Mousehunt.
+#####PRECAUTION: Use this script at your own risk as this is against the rule of MouseHunt.
 *****
 Report all bugs to [GitHub](https://github.com/nobodyrandom/mhAutobot/issues) or email me @ <iamnobodyrandom@yahoo.com>   
 >	A sidenote ~ Since I am creating this version pretty actively, updates will come in from a 5 mins interval up to a weekly interval. Please make sure you update your install frequently   
