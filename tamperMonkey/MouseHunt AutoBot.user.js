@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom, Ooi Keng Siang
-// @version    	2.1.6a
+// @version    	2.1.7a
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -196,9 +196,12 @@ exeScript();
 function exeScript() {
     if (debug) console.log('RUN exeScript()');
     try {
-        var titleElm = $('#titleElement')[0];
-        if (titleElm)
-            $('#titleElement')[0].parentNode.remove();
+        var titleElm = document.getElementById('titleElement');
+        if (titleElm) {
+            titleElm.parentNode.remove();
+        }
+    } catch (e) {
+        if (debug) console.log('No past title elements found.');
     } finally {
         titleElm = null;
     }
@@ -2453,7 +2456,7 @@ function getPageVariableForChrome(variableName) {
     }
 
     try {
-        if (value.indexOf(variableName) != -1) {
+        if (value.indexOf(variableName) != -1 && value != variableName) {
             if (debug) console.log("GPVchrome value(" + variableName + "): " + value);
             return (value);
         } else {
