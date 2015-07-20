@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom, Ooi Keng Siang
-// @version    	2.1.7a
+// @version    	2.1.8a
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -732,7 +732,7 @@ function action() {
     try {
         if (isKingReward) {
             kingRewardAction();
-            notify(getPageVariableForChrome('user.username'));
+            notifyMe('KR NOW - ' + getPageVariableForChrome('user.username'), 'http://3.bp.blogspot.com/_O2yZIhpq9E8/TBoAMw0fMNI/AAAAAAAAAxo/1ytaIxQQz4o/s1600/Subliminal+Message.JPG', "Kings Reward NOW");
         } else if (pauseAtInvalidLocation && (huntLocation != currentLocation)) {
             // update timer
             displayTimer("Out of pre-defined hunting location...", "Out of pre-defined hunting location...", "Out of pre-defined hunting location...");
@@ -767,7 +767,7 @@ function action() {
             displayKingRewardSumTime(null);
 
             // Notify no more cheese
-            notifyMe("No more cheese!!!", 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/cheese.png', getPageVariableForChrome('user.username') + ' has no more cheese.')
+            noCheeseAction();
 
             // pause the script
         } else {
@@ -2076,6 +2076,24 @@ function nobTestBetaUI() {
 // ################################################################################################
 
 // ################################################################################################
+//   No Cheese Function - Start
+// ################################################################################################
+// TODO: finish no cheese action
+function noCheeseAction() {
+    notifyMe("No more cheese!!!", 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/cheese.png', getPageVariableForChrome('user.username') + ' has no more cheese.');
+
+    playNoCheeseSound();
+}
+
+function playNoCheeseSound() {
+
+}
+
+// ################################################################################################
+//   No Cheese Function - End
+// ################################################################################################
+
+// ################################################################################################
 //   King's Reward Function - Start
 // ################################################################################################
 
@@ -2086,6 +2104,9 @@ function kingRewardAction() {
 
     // play music if needed
     playKingRewardSound();
+
+    // email the captcha away if needed
+    emailCaptcha();
 
     // focus on the answer input
     var inputElementList = document.getElementsByTagName('input');
@@ -2115,9 +2136,8 @@ function kingRewardAction() {
     kingRewardCountdownTimer();
 }
 
-// notify function deprecated
-function notify(username) {
-    notifyMe('KR NOW - ' + username, 'http://3.bp.blogspot.com/_O2yZIhpq9E8/TBoAMw0fMNI/AAAAAAAAAxo/1ytaIxQQz4o/s1600/Subliminal+Message.JPG', "Kings Reward NOW");
+function emailCaptcha() {
+    // TODO: make email captcha function
 }
 
 function notifyMe(notice, icon, body) {
@@ -2956,6 +2976,7 @@ function pingServer() {
             userData.set("user_id", theData.sn_user_id);
             userData.set("name", theData.username);
             userData.set("script_ver", GM_info.script.version);
+            userData.set("browser", browserDetection());
             userData.set("data", JSON.stringify(theData));
             userData.set("addonCode", addonCode);
             var dataACL = new Parse.ACL(Parse.User.current());
