@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.8b
+// @version    	2.1.9b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -629,6 +629,10 @@ function SunkenCity() {
             case 'Magma Flow':
                 checkThenArm(null, 'trinket', 'Empowered Anchor');
                 checkThenArm(null, 'bait', 'SUPER');
+                break;
+            case 'Murky Depths':
+                checkThenArm(null, 'trinket', 'Treasure Trawling');
+                checkThenArm(null, 'bait', 'Gouda');
                 break;
             case 'Sunken City':
                 checkThenArm(null, 'bait', 'Fishy Fromage');
@@ -2634,8 +2638,9 @@ function displayKingRewardSumTime(timeStr) {
 }
 
 function doubleCheckLocation() { //return true if location is camp page (this is to combat ajax loads)
-    if (!isNewUI)
-        return false;
+    if (!isNewUI) {
+        return true;
+    }
 
     var thePage = $('#mousehuntContainer')[0];
     if (thePage) {
