@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.9b
+// @version    	2.1.10b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -109,6 +109,8 @@ var bestPowerBase = ['Tidal Base', 'Golden Tournament Base', 'Spellbook Base'];
 var bestLuckBase = ['Rift Base', 'Tidal Base', 'Sheep Jade Base', 'Horse Jade Base'];
 var bestAttBasae = ['Birthday Drag', 'Cheesecake Base'];
 var bestSalt = ['Super Salt', 'Grub Salt'];
+var bestAnchor = ['Golden Anchor', 'Spiked Anchor', 'Empowered Anchor'];
+var bestOxygen = ['Oxygen Burst', 'Empowered Anchor'];
 var wasteCharm = ['Tarnished', 'Unstable', 'Wealth'];
 var redSpongeCharm = ['Red Double', 'Red Sponge'];
 var yellowSpongeCharm = ['Yellow Double', 'Yellow Sponge'];
@@ -624,10 +626,13 @@ function SunkenCity() {
             case 'Sunken Treasure':
             case 'Monster Trench':
             case 'Lair of the Ancients':
+            case 'Magma Flow':
+                checkThenArm('best', 'trinket', bestAnchor);
+                checkThenArm(null, 'bait', 'SUPER');
+                break;
             case 'Deep Oxygen Stream':
             case 'Oxygen Stream':
-            case 'Magma Flow':
-                checkThenArm(null, 'trinket', 'Empowered Anchor');
+                checkThenArm('best', 'trinket', bestOxygen);
                 checkThenArm(null, 'bait', 'SUPER');
                 break;
             case 'Murky Depths':
@@ -635,6 +640,7 @@ function SunkenCity() {
                 checkThenArm(null, 'bait', 'Gouda');
                 break;
             case 'Sunken City':
+                checkThenArm(null, 'trinket', 'Oxygen Burst');
                 checkThenArm(null, 'bait', 'Fishy Fromage');
                 break;
             default:
