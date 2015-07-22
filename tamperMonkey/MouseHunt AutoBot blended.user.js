@@ -28,7 +28,7 @@
 // // Reload MouseHunt page manually if edit this script while running it for immediate effect.
 
 // // Extra delay time before sounding the horn. (in seconds)
-// // Default: 10 - 180
+// // Default: 10 - 360
 var hornTimeDelayMin = 10;
 var hornTimeDelayMax = 360;
 
@@ -3381,7 +3381,7 @@ function getPageVariableForChrome(variableName) {
     }
 
     try {
-        if (value.indexOf(variableName) != -1 && value != variableName) {
+        if (false && value.indexOf(variableName) != -1 && value != variableName) {
             if (debug) console.log("GPVchrome value(" + variableName + "): " + value);
             return (value);
         } else {

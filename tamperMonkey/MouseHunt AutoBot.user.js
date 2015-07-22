@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom, Ooi Keng Siang
-// @version    	2.1.8a
+// @version    	2.1.9a
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -28,7 +28,7 @@
 // // Reload MouseHunt page manually if edit this script while running it for immediate effect.
 
 // // Extra delay time before sounding the horn. (in seconds)
-// // Default: 10 - 180
+// // Default: 10 - 360
 var hornTimeDelayMin = 10;
 var hornTimeDelayMax = 360;
 
@@ -1762,8 +1762,9 @@ function displayKingRewardSumTime(timeStr) {
 }
 
 function doubleCheckLocation() { //return true if location is camp page (this is to combat ajax loads)
-    if (!isNewUI)
-        return false;
+    if (!isNewUI) {
+        return true;
+    }
 
     var thePage = $('#mousehuntContainer')[0];
     if (thePage) {
@@ -2476,7 +2477,7 @@ function getPageVariableForChrome(variableName) {
     }
 
     try {
-        if (value.indexOf(variableName) != -1 && value != variableName) {
+        if (false && value.indexOf(variableName) != -1 && value != variableName) {
             if (debug) console.log("GPVchrome value(" + variableName + "): " + value);
             return (value);
         } else {
