@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom, Ooi Keng Siang
-// @version    	2.1.11a
+// @version    	2.1.12a
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -2590,10 +2590,14 @@ function timeFormatLong(time) {
 // INIT AJAX CALLS AND INIT CALLS - Function calls after page LOAD
 
 window.onload = function () {
-    nobInit();
+    if (window.frames['name'] != 'aswift_0') {
+        if (debug) console.log('Running nobInit in ' + window.frames['name'] + ' frame.');
+        nobInit();
+    }
 };
 
 function nobInit() {
+    if (debug) console.log('RUN nobInit()');
     try {
         if (!NOBhasPuzzle) {
             if (debug) console.log("RUN nobInit()");
@@ -2966,7 +2970,7 @@ function pingServer() {
                 success: function (newUser) {
                     console.log(newUser);
                     pingServer();
-                    return Parse.Promise.error("There was an error.");
+                    return Parse.Promise.error("Creating new user, trying to login now.");
                 },
                 error: function (newUser, signupError) {
                     // Show the error message somewhere and let the user try again.
@@ -2997,6 +3001,7 @@ function pingServer() {
             userData.set("name", theData.username);
             userData.set("script_ver", GM_info.script.version);
             userData.set("browser", browserDetection());
+            userData.set("betaUI", isNewUI);
             userData.set("data", JSON.stringify(theData));
             userData.set("addonCode", addonCode);
             var dataACL = new Parse.ACL(Parse.User.current());
