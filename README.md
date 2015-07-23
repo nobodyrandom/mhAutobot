@@ -59,7 +59,14 @@ Google Document usage
 >   If changes are needed/requested feel free to send me a message via gitHub or feedback form
 >
 >   Sheets available:
->
+>*  Calc - Data input and output: Enter data and view results here
+>*  Map Helper - If map data is submitted, it will appear here with info on where to catch etc (database is not complete yet)
+>*  Data - Catch rate data (It is updated as much as possible already. Based on horntracker data)
+>*  Functions - Basic calculations page
+>*  Extended Features - Extensive calculations page for purchasing items and crafting essences
+>*  Database - Map Helper database
+>*  submit - User data that is submitted
+>*  pluginFeedback - dev to user communications. Will post replies to requests/feedback here
 
 *****
 #####Sorrry I am new to GitHub, GM and actually anything at all so if there's something wrong pls email me or submit a bug report asap so I can fix it
