@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom, Ooi Keng Siang
-// @version    	2.1.10a
+// @version    	2.1.11a
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -56,6 +56,9 @@ var isKingWarningSound = false;
 
 // // Which sound to play when encountering king's reward (need to be .mp3)
 var kingWarningSound = 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3';
+
+// // Play sound when no more cheese (true/false)
+var isNoCheeseSound = false;
 
 // // Reload the the page according to kingPauseTimeMax when encountering King Reward. (true/false)
 // // Note: No matter how many time you refresh, the King's Reward won't go away unless you resolve it manually.
@@ -780,8 +783,9 @@ function action() {
             nobTestBetaUI();
             var headerElement = document.getElementById(header);
             if (headerElement) {
-                if (isNewUI)
+                if (isNewUI) {
                     headerElement = headerElement.firstChild;
+                }
                 var headerStatus = headerElement.getAttribute('class');
                 if (headerStatus.indexOf(hornReady) != -1) {
                     // if the horn image is visible, why do we need to wait any more, sound the horn!
@@ -804,7 +808,9 @@ function action() {
             isHornSounding = undefined;
         }
         if (!isKingReward) {
-            runAddonCode();
+            window.setTimeout(function () {
+                runAddonCode();
+            }, 1000);
         }
     } catch (e) {
         console.log("action() ERROR - " + e)
@@ -1131,8 +1137,14 @@ function embedTimer(targetPage) {
                     timersElementToggle.href = '#';
                     timersElementToggle.setAttribute('id', 'timersElementToggle');
                     timersElementToggle.appendChild(text);
-                    timersElementToggle.onclick = function () {
-                        $('#loadTimersElement').toggle();
+                    timersElementToggle.onclick = function (e) {
+                        var timersElementStyle = document.getElementById('loadTimersElement');
+                        if (timersElementStyle.style.display == 'block' || timersElementStyle.style.display == '') {
+                            timersElementStyle.style.display = 'none';
+                        } else {
+                            timersElementStyle.style.display = 'block';
+                        }
+                        timersElementStyle = null;
                     };
                     var holder = document.createElement('div');
                     holder.setAttribute('style', 'float: left;');
@@ -1141,7 +1153,6 @@ function embedTimer(targetPage) {
                     holder.appendChild(timersElementToggle);
                     holder.appendChild(temp);
                     timerDivElement.appendChild(holder);
-                    //timersElementToggle.addEventListener("click", showHideTimers, false);
                     holder = null;
                     text = null;
                     temp = null;
@@ -1162,11 +1173,11 @@ function embedTimer(targetPage) {
                     loadLinkToUpdate.href = '#';
                     loadLinkToUpdate.setAttribute('id', 'gDocLink');
                     loadLinkToUpdate.appendChild(text);
+                    loadLinkToUpdate.addEventListener('click', nobScript, false);
                     text = null;
                     tempSpan2.appendChild(loadLinkToUpdate);
                     loadLinkToUpdateDiv.appendChild(tempSpan2);
                     timerDivElement.appendChild(loadLinkToUpdateDiv);
-                    loadLinkToUpdate.addEventListener('click', nobScript, false);
 
                     text = ' &#126; <a href="javascript:window.open(\'https://docs.google.com/spreadsheet/ccc?key=0Ag_KH_nuVUjbdGtldjJkWUJ4V1ZpUDVwd1FVM0RTM1E#gid=5\');" target=_blank>Go to GDoc</a>';
                     var tempDiv = document.createElement('span');
@@ -1202,7 +1213,7 @@ function embedTimer(targetPage) {
                         } else {
                             var ajaxPageSwitchEvent = function (e) {
                                 setTimeout(function () {
-                                    $('#titleElement')[0].parentNode.remove();
+                                    document.getElementById('titleElement').parentNode.remove();
                                     exeScript();
                                     nobInit();
                                 }, 3000);
@@ -1913,7 +1924,7 @@ function soundHorn() {
             }, 3000);
         }
     } else {
-        $('#titleElement')[0].parentNode.remove();
+        document.getElementById('titleElement').parentNode.remove();
         embedTimer(false);
     }
 }
@@ -2079,7 +2090,6 @@ function nobTestBetaUI() {
 // ################################################################################################
 //   No Cheese Function - Start
 // ################################################################################################
-// TODO: finish no cheese action
 function noCheeseAction() {
     notifyMe("No more cheese!!!", 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/cheese.png', getPageVariableForChrome('user.username') + ' has no more cheese.');
 
@@ -2087,7 +2097,21 @@ function noCheeseAction() {
 }
 
 function playNoCheeseSound() {
-
+    if (isNoCheeseSound) {
+        unsafeWindow.hornAudio = new Audio(kingWarningSound);
+        unsafeWindow.hornAudio.loop = true;
+        unsafeWindow.hornAudio.play();
+        var targetArea = document.getElementsByTagName('body');
+        var child = document.createElement('button');
+        child.setAttribute('id', "stopAudio");
+        child.setAttribute('style', 'position: fixed; bottom: 0;');
+        child.setAttribute('onclick', 'hornAudio.pause();');
+        child.innerHTML = "CLICK ME TO STOP THIS ANNOYING MUSIC";
+        targetArea[0].appendChild(child);
+        targetArea = null;
+        child = null;
+        snippet = null;
+    }
 }
 
 // ################################################################################################
@@ -2186,8 +2210,8 @@ function notifyMe(notice, icon, body) {
 function playKingRewardSound() {
     if (isKingWarningSound) {
         unsafeWindow.hornAudio = new Audio(kingWarningSound);
-        hornAudio.loop = true;
-        hornAudio.play();
+        unsafeWindow.hornAudio.loop = true;
+        unsafeWindow.hornAudio.play();
         var targetArea = document.getElementsByTagName('body');
         var child = document.createElement('button');
         child.setAttribute('id', "stopAudio");
@@ -2260,12 +2284,12 @@ function checkResumeButton() {
     var resumeElement;
 
     if (isNewUI) {
-        var krFormClass = $('form')[0].className;
+        var krFormClass = document.getElementsByTagName('form')[0].className;
         if (krFormClass.indexOf("noPuzzle") > -1) {
             // found resume button
 
             // simulate mouse click on the resume button
-            resumeElement = $('.mousehuntPage-puzzle-form-complete-button')[0];
+            resumeElement = document.getElementsByClassName('mousehuntPage-puzzle-form-complete-button')[0];
             fireEvent(resumeElement, 'click');
             resumeElement = null;
 
@@ -2459,31 +2483,21 @@ function fireEvent(element, event) {
 }
 
 function getPageVariableForChrome(variableName) {
+    if (debug) console.log('RUN GPVchrome(' + variableName + ')');
     // google chrome only
-    var value;
     var scriptElement = document.createElement("script");
     scriptElement.setAttribute('id', "scriptElement");
     scriptElement.setAttribute('type', "text/javascript");
     scriptElement.innerHTML = "document.getElementById('scriptElement').innerText=" + variableName + ";";
     document.body.appendChild(scriptElement);
 
-    try {
-        value = scriptElement.innerHTML;
-    } catch (e) {
-        console.log("Can not find page variable on chrome: " + e);
-    } finally {
-        document.body.removeChild(scriptElement);
-        scriptElement = null;
-    }
+    var value = scriptElement.innerHTML;
+    document.body.removeChild(scriptElement);
+    scriptElement = null;
+    variableName = null;
 
     try {
-        if (false && value.indexOf(variableName) != -1 && value != variableName) {
-            if (debug) console.log("GPVchrome value(" + variableName + "): " + value);
-            return (value);
-        } else {
-            if (debug) console.log("GPVchrome eval(" + variableName + "): " + eval(variableName));
-            return eval(variableName);
-        }
+        return (value);
     } finally {
         value = null;
     }
@@ -2654,11 +2668,15 @@ function nobAjaxPost(url, data, callback, throwError, dataType) {
     if (!NOBhasPuzzle) {
         if (dataType == null || dataType == undefined) dataType = 'json';
         jQuery.ajax({
+            type: "POST",
             url: url,
             data: data,
-            type: "POST",
+            contentType: 'text/plain',
             dataType: dataType,
-            timeout: 5000,
+            xhrFields: {
+                withCredentials: false
+            },
+            timeout: 10000,
             statusCode: {
                 200: function () {
                     console.log("Success post - " + url);
@@ -2706,7 +2724,7 @@ function nobGDoc(items, type) {
     var sheet = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec";
 
     nobAjaxPost(sheet, dataSendString, function (data) {
-        //console.log(data);
+        if (debug) console.log(data);
     }, function (a, b, c) {
         console.log(b)
     });
@@ -2790,63 +2808,64 @@ function nobStopLoading(name) {
 // VARS DONE ******************************* COMMENCE CODE
 function nobScript(qqEvent) {
     if (NOBpage) {
+        if (debug) console.log("RUN nobScript()");
         var mapThere;
-        var NOBdata = nobGet('data');
-        if (isNewUI) {
-            mapThere = document.getElementById('hudmapitem');
-            if (mapThere !== null) {
-                mapThere = mapThere.style.cssText;
-                if (mapThere == 'display: none;') {
+        try {
+            var NOBdata = nobGet('data');
+            if (isNewUI) {
+                mapThere = document.getElementById('hudmapitem');
+                if (mapThere !== null) {
+                    mapThere = mapThere.style.cssText;
+                    if (mapThere == 'display: none;') {
+                        mapThere = false;
+                        if (debug) console.log("No map, using HTML data now");
+                    } else {
+                        mapThere = true;
+                    }
+                } else {
+                    mapThere = false;
+                }
+            } else {
+                mapThere = document.getElementsByClassName('treasureMap')[0];
+                if (mapThere.innerText.indexOf("remaining") == -1) {
                     mapThere = false;
                     if (debug) console.log("No map, using HTML data now");
                 } else {
                     mapThere = true;
                 }
-            } else {
-                mapThere = false;
             }
-        } else {
-            mapThere = document.getElementsByClassName('treasureMap')[0];
-            if (mapThere.innerText.indexOf("remaining") == -1) {
-                mapThere = false;
-                if (debug) console.log("No map, using HTML data now");
-            } else {
-                mapThere = true;
-            }
-        }
 
-        if (NOBdata != null || NOBdata != undefined) {
-            if (!mapRequestFailed && mapThere) {
-                nobMapRequest(function (output) {
-                    if (output.status == 200 || output.status == undefined) {
-                        nobStore(output, "data");
-                        nobGDoc(JSON.stringify(output), "map");
-                    } else {
-                        console.log(output);
-                        mapRequestFailed = true;
-                        nobHTMLFetch();
-                        output = nobGet('data');
-                        nobGDoc(output, "user");
-                    }
-                });
+            if (NOBdata != null || NOBdata != undefined) {
+                if (!mapRequestFailed && mapThere) {
+                    nobMapRequest(function (output) {
+                        if (output.status == 200 || output.status == undefined) {
+                            nobStore(output, "data");
+                            nobGDoc(JSON.stringify(output), "map");
+                        } else {
+                            console.log(output);
+                            mapRequestFailed = true;
+                            nobHTMLFetch();
+                            output = nobGet('data');
+                            nobGDoc(output, "user");
+                        }
+                    });
+                } else {
+                    console.log("Map fetch failed using USER data from html (" + mapRequestFailed + ", " + mapThere + ")");
+                    nobHTMLFetch();
+                    var output = nobGet('data');
+                    nobGDoc(output, "user");
+                }
             } else {
-                console.log("Map fetch failed using USER data from html (" + mapRequestFailed + ", " + mapThere + ")");
+                console.log("Data is not found, doing HTML fetch now.");
                 nobHTMLFetch();
-                var output = nobGet('data');
-                nobGDoc(output, "user");
             }
-        } else {
-            console.log("Data is not found, doing HTML fetch now.");
-            nobHTMLFetch();
+        } catch (e) {
+            if (debug) console.log('nobScript error: ' + e);
+        } finally {
+            mapThere = null;
         }
-
-        mapThere = null;
     }
 }
-
-/*function showHideTimers() {
- $('#loadTimersElement').toggle();
- }*/
 
 function nobTravel(location) {
     if (NOBpage) {
@@ -3150,7 +3169,6 @@ function currentTimeStamp() {
 function createClockArea() {
     try {
         var parent = document.getElementById('loadTimersElement');
-        var otherChild = document.getElementById('gDocLink');
         var child = [];
         var text;
 
