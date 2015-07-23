@@ -28,12 +28,15 @@ Features:
 >*	Area clocks via "Toggle Timers"
 >*	Auto Kings Reward popup (check the settings)
 >*	Auto return raffle tickets
->*  Cleaned code
+>*  Auto return presents to friends
+>*  Removed Ooi's ads
 >*  Removed not working sound player and replaced with a working HTML5 one
->*  Browser notif and tiggers are now fixed ^.^
+>*  Browser notifications and triggers are now fixed ^.^
 >*	KR auto resume etc are now fixed
->*  No cheese notif
+>*  No cheese notifications/sound
+>*  Cleaned code
 >*  BETA UI Support
+>*  Firefox Support
 >*  (ver b ONLY) Integrated CnN's bots for automization on areas + automization on G Express
 
 *****
