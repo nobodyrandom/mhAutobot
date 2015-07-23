@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP chrome ext ver
 // @author      NobodyRandom, Ooi Keng Siang
-// @version    	2.1.1c
-// @description Currently the most advanced script for automizing MouseHunt. Supports ALL new areas and FIREFOX. Revamped version of original by Ooi - Beta UI version: https://greasyfork.org/en/scripts/7865-mousehunt-autobot-revamp-for-beta-ui
+// @version    	2.1.12c
+// @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi
+// @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @namespace   https://greasyfork.org/users/6398
-// @updateURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.user.js
+// @updateURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.meta.js
 // @downloadURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.user.js
 // @license 	GNU GPL v2.0
 // @include		http://mousehuntgame.com/*
@@ -27,7 +28,7 @@
 // // Reload MouseHunt page manually if edit this script while running it for immediate effect.
 
 // // Extra delay time before sounding the horn. (in seconds)
-// // Default: 10 - 180
+// // Default: 10 - 360
 var hornTimeDelayMin = 10;
 var hornTimeDelayMax = 360;
 
@@ -52,6 +53,12 @@ var checkTimeDelayMax = 120;
 
 // // Play sound when encounter king's reward (true/false)
 var isKingWarningSound = false;
+
+// // Which sound to play when encountering king's reward (need to be .mp3)
+var kingWarningSound = 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3';
+
+// // Play sound when no more cheese (true/false)
+var isNoCheeseSound = false;
 
 // // Reload the the page according to kingPauseTimeMax when encountering King Reward. (true/false)
 // // Note: No matter how many time you refresh, the King's Reward won't go away unless you resolve it manually.
@@ -99,8 +106,7 @@ var addonCode = "";
 // WARNING - Do not modify the code below unless you know how to read and write the script.
 
 // All global variable declaration and default value
-//var scriptVersion = GM_info.script.version;
-var scriptVersion = "2.1.1c";
+var scriptVersion = "2.1.12c";
 var fbPlatform = false;
 var hiFivePlatform = false;
 var mhPlatform = false;
@@ -140,6 +146,8 @@ var isNewUI = false;
 
 // NOB vars
 var NOBhasPuzzle;
+var NOBtickerTimout;
+var NOBtickerInterval;
 var NOBpage = false;
 var mapRequestFailed = false;
 var clockTicking = false;
@@ -188,6 +196,17 @@ exeScript();
 
 function exeScript() {
     if (debug) console.log('RUN exeScript()');
+    try {
+        var titleElm = document.getElementById('titleElement');
+        if (titleElm) {
+            titleElm.parentNode.remove();
+        }
+    } catch (e) {
+        if (debug) console.log('No past title elements found.');
+    } finally {
+        titleElm = null;
+    }
+
     try {
         var time = document.getElementsByClassName('passive')[0].getElementsByClassName('journaldate')[0].innerHTML;
         time = time.substr(time.indexOf(':') + 1, 2);
@@ -714,7 +733,7 @@ function action() {
     try {
         if (isKingReward) {
             kingRewardAction();
-            notify(getPageVariableForChrome('user.username'));
+            notifyMe('KR NOW - ' + getPageVariableForChrome('user.username'), 'http://3.bp.blogspot.com/_O2yZIhpq9E8/TBoAMw0fMNI/AAAAAAAAAxo/1ytaIxQQz4o/s1600/Subliminal+Message.JPG', "Kings Reward NOW");
         } else if (pauseAtInvalidLocation && (huntLocation != currentLocation)) {
             // update timer
             displayTimer("Out of pre-defined hunting location...", "Out of pre-defined hunting location...", "Out of pre-defined hunting location...");
@@ -748,6 +767,9 @@ function action() {
             displayLocation(huntLocation);
             displayKingRewardSumTime(null);
 
+            // Notify no more cheese
+            noCheeseAction();
+
             // pause the script
         } else {
             // update location
@@ -756,10 +778,12 @@ function action() {
             var isHornSounding = false;
 
             // check if the horn image is visible
+            nobTestBetaUI();
             var headerElement = document.getElementById(header);
             if (headerElement) {
-                if (isNewUI)
+                if (isNewUI) {
                     headerElement = headerElement.firstChild;
+                }
                 var headerStatus = headerElement.getAttribute('class');
                 if (headerStatus.indexOf(hornReady) != -1) {
                     // if the horn image is visible, why do we need to wait any more, sound the horn!
@@ -781,7 +805,11 @@ function action() {
 
             isHornSounding = undefined;
         }
-        runAddonCode();
+        if (!isKingReward) {
+            window.setTimeout(function () {
+                runAddonCode();
+            }, 1000);
+        }
     } catch (e) {
         console.log("action() ERROR - " + e)
     }
@@ -1030,9 +1058,9 @@ function embedTimer(targetPage) {
                 var titleElement = document.createElement('div');
                 titleElement.setAttribute('id', 'titleElement');
                 if (targetPage && aggressiveMode) {
-                    titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target=\"_blank\">MouseHunt AutoBot REVAMP (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing</b> - <font color='red'>Aggressive Mode</font>";
+                    titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target=\"_blank\">MouseHunt AutoBot REVAMP (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing" + (isNewUI ? " ~ Beta UI" : "" ) + "</b> - <font color='red'>Aggressive Mode</font>";
                 } else {
-                    titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target=\"_blank\">MouseHunt AutoBot REVAMP (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing</b>";
+                    titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target=\"_blank\">MouseHunt AutoBot REVAMP (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing" + (isNewUI ? " ~ Beta UI" : "" ) + "</b>";
                 }
                 timerDivElement.appendChild(titleElement);
                 titleElement = null;
@@ -1107,8 +1135,14 @@ function embedTimer(targetPage) {
                     timersElementToggle.href = '#';
                     timersElementToggle.setAttribute('id', 'timersElementToggle');
                     timersElementToggle.appendChild(text);
-                    timersElementToggle.onclick = function() {
-                        $('#loadTimersElement').toggle();
+                    timersElementToggle.onclick = function (e) {
+                        var timersElementStyle = document.getElementById('loadTimersElement');
+                        if (timersElementStyle.style.display == 'block' || timersElementStyle.style.display == '') {
+                            timersElementStyle.style.display = 'none';
+                        } else {
+                            timersElementStyle.style.display = 'block';
+                        }
+                        timersElementStyle = null;
                     };
                     var holder = document.createElement('div');
                     holder.setAttribute('style', 'float: left;');
@@ -1117,7 +1151,6 @@ function embedTimer(targetPage) {
                     holder.appendChild(timersElementToggle);
                     holder.appendChild(temp);
                     timerDivElement.appendChild(holder);
-                    //timersElementToggle.addEventListener("click", showHideTimers, false);
                     holder = null;
                     text = null;
                     temp = null;
@@ -1138,11 +1171,11 @@ function embedTimer(targetPage) {
                     loadLinkToUpdate.href = '#';
                     loadLinkToUpdate.setAttribute('id', 'gDocLink');
                     loadLinkToUpdate.appendChild(text);
+                    loadLinkToUpdate.addEventListener('click', nobScript, false);
                     text = null;
                     tempSpan2.appendChild(loadLinkToUpdate);
                     loadLinkToUpdateDiv.appendChild(tempSpan2);
                     timerDivElement.appendChild(loadLinkToUpdateDiv);
-                    loadLinkToUpdate.addEventListener('click', nobScript, false);
 
                     text = ' &#126; <a href="javascript:window.open(\'https://docs.google.com/spreadsheet/ccc?key=0Ag_KH_nuVUjbdGtldjJkWUJ4V1ZpUDVwd1FVM0RTM1E#gid=5\');" target=_blank>Go to GDoc</a>';
                     var tempDiv = document.createElement('span');
@@ -1169,19 +1202,23 @@ function embedTimer(targetPage) {
                     loadTimersElement = null;
                     loadLinkToUpdate = null;
                 } else {
-                    if (isNewUI) {
+                    if (isNewUI || nobTestBetaUI()) {
                         // try check if ajax was called
                         if (doubleCheckLocation()) {
                             exeScript();
                             nobInit();
+                            return;
                         } else {
-                            $('.camp a')[0].addEventListener('click', function () {
+                            var ajaxPageSwitchEvent = function (e) {
                                 setTimeout(function () {
-                                    $('.hgAppContainer div')[0].remove();
+                                    document.getElementById('titleElement').parentNode.remove();
                                     exeScript();
                                     nobInit();
-                                }, 1000);
-                            });
+                                }, 3000);
+                                $('.camp a')[0].removeEventListener('click', ajaxPageSwitchEvent);
+                                ajaxPageSwitchEvent = null;
+                            };
+                            $('.camp a')[0].addEventListener('click', ajaxPageSwitchEvent);
                         }
                     }
 
@@ -1392,6 +1429,17 @@ function embedTimer(targetPage) {
                     preferenceHTMLStr += '</td>';
                     preferenceHTMLStr += '</tr>';
                 }
+
+                preferenceHTMLStr += '<tr>';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="Play which sound when encountering king\'s reward"><b>King Reward Sound</b></a>';
+                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px;">';
+                preferenceHTMLStr += '<input type="text" id="KingRewardSoundInput" name="KingRewardSoundInput" value="' + kingWarningSound + '" />';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
                 if (reloadKingReward) {
                     preferenceHTMLStr += '<tr>';
                     preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
@@ -1507,6 +1555,7 @@ if (document.getElementById(\'TrapCheckInputTrue\').checked == true) { window.lo
 window.localStorage.setItem(\'TrapCheckTimeOffset\', document.getElementById(\'TrapCheckTimeOffsetInput\').value);	\
 window.localStorage.setItem(\'TrapCheckTimeDelayMin\', document.getElementById(\'TrapCheckTimeDelayMinInput\').value); window.localStorage.setItem(\'TrapCheckTimeDelayMax\', document.getElementById(\'TrapCheckTimeDelayMaxInput\').value);	\
 if (document.getElementById(\'PlayKingRewardSoundInputTrue\').checked == true) { window.localStorage.setItem(\'PlayKingRewardSound\', \'true\'); } else { window.localStorage.setItem(\'PlayKingRewardSound\', \'false\'); }	\
+window.localStorage.setItem(\'KingRewardSoundInput\', document.getElementById(\'KingRewardSoundInput\').value);   \
 if (document.getElementById(\'KingRewardResumeInputTrue\').checked == true) { window.localStorage.setItem(\'KingRewardResume\', \'true\'); } else { window.localStorage.setItem(\'KingRewardResume\', \'false\'); }	\
 window.localStorage.setItem(\'KingRewardResumeTime\', document.getElementById(\'KingRewardResumeTimeInput\').value);	\
 if (document.getElementById(\'PauseLocationInputTrue\').checked == true) { window.localStorage.setItem(\'PauseLocation\', \'true\'); } else { window.localStorage.setItem(\'PauseLocation\', \'false\'); }	\
@@ -1533,6 +1582,10 @@ window.localStorage.setItem(\'addonCode\', document.getElementById(\'addonCode\'
                 preferenceHTMLStr += '</tr>';
                 preferenceHTMLStr += '</table>';
 
+                var NOBspecialMessageDiv = document.createElement('div');
+                NOBspecialMessageDiv.setAttribute('id', 'nobSpecialMessage');
+                NOBspecialMessageDiv.setAttribute('style', 'display: block; position: fixed; bottom: 0; z-index: 999; text-align: center; width: 760px;');
+
                 var preferenceDiv = document.createElement('div');
                 preferenceDiv.setAttribute('id', 'preferenceDiv');
                 if (showPreference == true)
@@ -1541,6 +1594,7 @@ window.localStorage.setItem(\'addonCode\', document.getElementById(\'addonCode\'
                     preferenceDiv.setAttribute('style', 'display: none');
                 preferenceDiv.innerHTML = preferenceHTMLStr;
                 timerDivElement.appendChild(preferenceDiv);
+                timerDivElement.appendChild(NOBspecialMessageDiv);
                 preferenceHTMLStr = null;
                 showPreference = null;
 
@@ -1548,18 +1602,11 @@ window.localStorage.setItem(\'addonCode\', document.getElementById(\'addonCode\'
                 preferenceDiv.appendChild(hr3Element);
                 hr3Element = null;
                 preferenceDiv = null;
+                NOBspecialMessageDiv = null;
 
                 // embed all msg to the page
                 headerElement.parentNode.insertBefore(timerDivElement, headerElement);
                 timerDivElement = null;
-
-                var NOBspecialMessageDiv = document.createElement('div');
-                NOBspecialMessageDiv.setAttribute('id', 'nobSpecialMessage');
-                NOBspecialMessageDiv.setAttribute('style', 'display: block; position: fixed; bottom: 0; z-index: 999; text-align: center; width: 760px;')
-
-                headerElement.parentNode.insertBefore(NOBspecialMessageDiv, headerElement);
-
-                NOBspecialMessageDiv = null;
             }
             headerElement = null;
         }
@@ -1632,6 +1679,14 @@ function loadPreferenceSettingFromStorage() {
         isKingWarningSound = false;
     }
     playKingRewardSoundTemp = undefined;
+
+    var kingRewardSoundTemp = getStorage('KingRewardSoundInput');
+    if (kingRewardSoundTemp == undefined || kingRewardSoundTemp == null) {
+        kingRewardSoundTemp = 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3';
+        setStorage('KingRewardSOundInput', 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3');
+    }
+    kingWarningSound = kingRewardSoundTemp;
+    kingRewardSoundTemp = undefined;
 
     var kingRewardResumeTemp = getStorage("KingRewardResume");
     if (kingRewardResumeTemp == undefined || kingRewardResumeTemp == null) {
@@ -1716,6 +1771,10 @@ function displayKingRewardSumTime(timeStr) {
 }
 
 function doubleCheckLocation() { //return true if location is camp page (this is to combat ajax loads)
+    if (!isNewUI) {
+        return true;
+    }
+
     var thePage = $('#mousehuntContainer')[0];
     if (thePage) {
         return (thePage.className == "PageCamp");
@@ -1749,116 +1808,122 @@ function addGoogleAd() {
 // ################################################################################################
 
 function soundHorn() {
-    // update timer
-    displayTimer("Ready to Blow The Horn...", "Ready to Blow The Horn...", "Ready to Blow The Horn...");
+    if (!isNewUI || doubleCheckLocation()) {
+        // update timer
+        displayTimer("Ready to Blow The Horn...", "Ready to Blow The Horn...", "Ready to Blow The Horn...");
 
-    var scriptNode = document.getElementById("scriptNode");
-    if (scriptNode) {
-        scriptNode.setAttribute("soundedHornAtt", "false");
-    }
-    scriptNode = null;
-
-    if (!aggressiveMode) {
-        // safety mode, check the horn image is there or not before sound the horn
-        var headerElement = document.getElementById(header);
-
-        if (headerElement) {
-            if (isNewUI)
-                headerElement = headerElement.firstChild;
-            // need to make sure that the horn image is ready before we can click on it
-            var headerStatus = headerElement.getAttribute('class');
-            if (headerStatus.indexOf(hornReady) != -1) {
-                // found the horn image, let's sound the horn!
-
-                // update timer
-                displayTimer("Blowing The Horn...", "Blowing The Horn...", "Blowing The Horn...");
-
-                // simulate mouse click on the horn
-                var hornElement = document.getElementsByClassName(hornButton)[0].firstChild;
-                fireEvent(hornElement, 'click');
-                hornElement = null;
-
-                // clean up
-                headerElement = null;
-                headerStatus = null;
-
-                // double check if the horn was already sounded
-                window.setTimeout(function () {
-                    afterSoundingHorn()
-                }, 5000);
-            } else if (headerStatus.indexOf("hornsounding") != -1 || headerStatus.indexOf("hornsounded") != -1) {
-                // some one just sound the horn...
-
-                // update timer
-                displayTimer("Synchronizing Data...", "Someone had just sound the horn. Synchronizing data...", "Someone had just sound the horn. Synchronizing data...");
-
-                // clean up
-                headerElement = null;
-                headerStatus = null;
-
-                // load the new data
-                window.setTimeout(function () {
-                    afterSoundingHorn()
-                }, 5000);
-            } else if (headerStatus.indexOf("hornwaiting") != -1) {
-                // the horn is not appearing, let check the time again
-
-                // update timer
-                displayTimer("Synchronizing Data...", "Hunter horn is not ready yet. Synchronizing data...", "Hunter horn is not ready yet. Synchronizing data...");
-
-                // sync the time again, maybe user already click the horn
-                retrieveData();
-
-                checkJournalDate();
-
-                // clean up
-                headerElement = null;
-                headerStatus = null;
-
-                // loop again
-                window.setTimeout(function () {
-                    countdownTimer()
-                }, timerRefreshInterval * 1000);
-            } else {
-                // some one steal the horn!
-
-                // update timer
-                displayTimer("Synchronizing Data...", "Hunter horn is missing. Synchronizing data...", "Hunter horn is missing. Synchronizing data...");
-
-                // try to click on the horn
-                var hornElement = document.getElementsByClassName(hornButton)[0].firstChild;
-                fireEvent(hornElement, 'click');
-                hornElement = null;
-
-                // clean up
-                headerElement = null;
-                headerStatus = null;
-
-                // double check if the horn was already sounded
-                window.setTimeout(function () {
-                    afterSoundingHorn()
-                }, 5000);
-            }
-        } else {
-            // something wrong, can't even found the header...
-
-            // clean up
-            headerElement = null;
-
-            // reload the page see if thing get fixed
-            reloadWithMessage("Fail to find the horn header. Reloading...", false);
+        var hornElement;
+        var scriptNode = document.getElementById("scriptNode");
+        if (scriptNode) {
+            scriptNode.setAttribute("soundedHornAtt", "false");
         }
+        scriptNode = null;
 
+        if (!aggressiveMode) {
+            // safety mode, check the horn image is there or not before sound the horn
+            var headerElement = document.getElementById(header);
+
+            if (headerElement) {
+                if (isNewUI)
+                    headerElement = headerElement.firstChild;
+                // need to make sure that the horn image is ready before we can click on it
+                var headerStatus = headerElement.getAttribute('class');
+                if (headerStatus.indexOf(hornReady) != -1) {
+                    // found the horn image, let's sound the horn!
+
+                    // update timer
+                    displayTimer("Blowing The Horn...", "Blowing The Horn...", "Blowing The Horn...");
+
+                    // simulate mouse click on the horn
+                    hornElement = document.getElementsByClassName(hornButton)[0].firstChild;
+                    fireEvent(hornElement, 'click');
+                    hornElement = null;
+
+                    // clean up
+                    headerElement = null;
+                    headerStatus = null;
+
+                    // double check if the horn was already sounded
+                    window.setTimeout(function () {
+                        afterSoundingHorn()
+                    }, 5000);
+                } else if (headerStatus.indexOf("hornsounding") != -1 || headerStatus.indexOf("hornsounded") != -1) {
+                    // some one just sound the horn...
+
+                    // update timer
+                    displayTimer("Synchronizing Data...", "Someone had just sound the horn. Synchronizing data...", "Someone had just sound the horn. Synchronizing data...");
+
+                    // clean up
+                    headerElement = null;
+                    headerStatus = null;
+
+                    // load the new data
+                    window.setTimeout(function () {
+                        afterSoundingHorn()
+                    }, 5000);
+                } else if (headerStatus.indexOf("hornwaiting") != -1) {
+                    // the horn is not appearing, let check the time again
+
+                    // update timer
+                    displayTimer("Synchronizing Data...", "Hunter horn is not ready yet. Synchronizing data...", "Hunter horn is not ready yet. Synchronizing data...");
+
+                    // sync the time again, maybe user already click the horn
+                    retrieveData();
+
+                    checkJournalDate();
+
+                    // clean up
+                    headerElement = null;
+                    headerStatus = null;
+
+                    // loop again
+                    window.setTimeout(function () {
+                        countdownTimer()
+                    }, timerRefreshInterval * 1000);
+                } else {
+                    // some one steal the horn!
+
+                    // update timer
+                    displayTimer("Synchronizing Data...", "Hunter horn is missing. Synchronizing data...", "Hunter horn is missing. Synchronizing data...");
+
+                    // try to click on the horn
+                    hornElement = document.getElementsByClassName(hornButton)[0].firstChild;
+                    fireEvent(hornElement, 'click');
+                    hornElement = null;
+
+                    // clean up
+                    headerElement = null;
+                    headerStatus = null;
+
+                    // double check if the horn was already sounded
+                    window.setTimeout(function () {
+                        afterSoundingHorn()
+                    }, 5000);
+                }
+            } else {
+                // something wrong, can't even found the header...
+
+                // clean up
+                headerElement = null;
+
+                // reload the page see if thing get fixed
+                reloadWithMessage("Fail to find the horn header. Reloading...", false);
+            }
+
+        } else {
+            // aggressive mode, ignore whatever horn image is there or not, just sound the horn!
+
+            // simulate mouse click on the horn
+            fireEvent(document.getElementsByClassName(hornButton)[0].firstChild, 'click');
+
+            // double check if the horn was already sounded
+            window.setTimeout(function () {
+                afterSoundingHorn()
+            }, 3000);
+        }
     } else {
-        // aggressive mode, ignore whatever horn image is there or not, just sound the horn!
-
-        // simulate mouse click on the horn
-        fireEvent(document.getElementsByClassName(hornButton)[0].firstChild, 'click');
-
-        // double check if the horn was already sounded
-        window.setTimeout(function () {
-            afterSoundingHorn()
-        }, 3000);
+        document.getElementById('titleElement').parentNode.remove();
+        embedTimer(false);
     }
 }
 
@@ -1978,22 +2043,9 @@ function embedScript() {
     scriptNode = null;
     headerElement = null;
 
-    // change the function call of horn
-    var testNewUI = document.getElementById(header);
-    if (testNewUI != null) {
-        // old UI
-        isNewUI = false;
-    } else {
-        // new UI
-        hornButton = 'mousehuntHud-huntersHorn-container';
-        campButton = 'camp';
-        header = 'mousehuntHud';
-        hornReady = 'hornReady';
-        isNewUI = true;
-        //alert('You are on the new UI please install the BETA version of the bot instead.\nFound here: http://goo.gl/phsHNg');
-        //throw new Error("Wrong script version.");
-    }
+    nobTestBetaUI();
 
+    // change the function call of horn
     var hornButtonLink = document.getElementsByClassName(hornButton)[0].firstChild;
     var oriStr = hornButtonLink.getAttribute('onclick').toString();
     var index = oriStr.indexOf('return false;');
@@ -2006,8 +2058,62 @@ function embedScript() {
     modStr = null;
 }
 
+function nobTestBetaUI() {
+    header = 'header';
+    var testNewUI = document.getElementById(header);
+    if (testNewUI != null) {
+        // old UI
+        hornButton = 'hornbutton';
+        campButton = 'campbutton';
+        header = 'header';
+        hornReady = 'hornready';
+        isNewUI = false;
+        return false;
+    } else {
+        // new UI
+        hornButton = 'mousehuntHud-huntersHorn-container';
+        campButton = 'camp';
+        header = 'mousehuntHud';
+        hornReady = 'hornReady';
+        isNewUI = true;
+        return true;
+    }
+    testNewUI = null;
+}
+
 // ################################################################################################
 //   Horn Function - End
+// ################################################################################################
+
+// ################################################################################################
+//   No Cheese Function - Start
+// ################################################################################################
+function noCheeseAction() {
+    notifyMe("No more cheese!!!", 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/cheese.png', getPageVariableForChrome('user.username') + ' has no more cheese.');
+
+    playNoCheeseSound();
+}
+
+function playNoCheeseSound() {
+    if (isNoCheeseSound) {
+        var hornAudio = new Audio(kingWarningSound);
+        hornAudio.loop = true;
+        hornAudio.play();
+        var targetArea = document.getElementsByTagName('body');
+        var child = document.createElement('button');
+        child.setAttribute('id', "stopAudio");
+        child.setAttribute('style', 'position: fixed; bottom: 0;');
+        child.setAttribute('onclick', 'hornAudio.pause();');
+        child.innerHTML = "CLICK ME TO STOP THIS ANNOYING MUSIC";
+        targetArea[0].appendChild(child);
+        targetArea = null;
+        child = null;
+        snippet = null;
+    }
+}
+
+// ################################################################################################
+//   No Cheese Function - End
 // ################################################################################################
 
 // ################################################################################################
@@ -2021,6 +2127,9 @@ function kingRewardAction() {
 
     // play music if needed
     playKingRewardSound();
+
+    // email the captcha away if needed
+    emailCaptcha();
 
     // focus on the answer input
     var inputElementList = document.getElementsByTagName('input');
@@ -2050,9 +2159,8 @@ function kingRewardAction() {
     kingRewardCountdownTimer();
 }
 
-// notify function deprecated
-function notify(username) {
-    notifyMe('KR NOW - ' + username, 'http://3.bp.blogspot.com/_O2yZIhpq9E8/TBoAMw0fMNI/AAAAAAAAAxo/1ytaIxQQz4o/s1600/Subliminal+Message.JPG', "Kings Reward NOW");
+function emailCaptcha() {
+    // TODO: make email captcha function
 }
 
 function notifyMe(notice, icon, body) {
@@ -2099,7 +2207,7 @@ function notifyMe(notice, icon, body) {
 
 function playKingRewardSound() {
     if (isKingWarningSound) {
-        var hornAudio = new Audio('https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3');
+        var hornAudio = new Audio(kingWarningSound);
         hornAudio.loop = true;
         hornAudio.play();
         var targetArea = document.getElementsByTagName('body');
@@ -2171,14 +2279,15 @@ function kingRewardCountdownTimer() {
 
 function checkResumeButton() {
     var found = false;
+    var resumeElement;
 
     if (isNewUI) {
-        var krFormClass = $('form')[0].className;
+        var krFormClass = document.getElementsByTagName('form')[0].className;
         if (krFormClass.indexOf("noPuzzle") > -1) {
             // found resume button
 
             // simulate mouse click on the resume button
-            var resumeElement = $('.mousehuntPage-puzzle-form-complete-button')[0];
+            resumeElement = document.getElementsByClassName('mousehuntPage-puzzle-form-complete-button')[0];
             fireEvent(resumeElement, 'click');
             resumeElement = null;
 
@@ -2205,7 +2314,7 @@ function checkResumeButton() {
                     // found resume button
 
                     // simulate mouse click on the horn
-                    var resumeElement = linkElementList[i].parentNode;
+                    resumeElement = linkElementList[i].parentNode;
                     fireEvent(resumeElement, 'click');
                     resumeElement = null;
 
@@ -2344,9 +2453,10 @@ function getCookie(c_name) {
 }
 
 function fireEvent(element, event) {
+    var evt;
     if (document.createEventObject) {
         // dispatch for IE
-        var evt = document.createEventObject();
+        evt = document.createEventObject();
 
         try {
             return element.fireEvent('on' + event, evt);
@@ -2357,7 +2467,7 @@ function fireEvent(element, event) {
         }
     } else {
         // dispatch for firefox + others
-        var evt = document.createEvent("HTMLEvents");
+        evt = document.createEvent("HTMLEvents");
         evt.initEvent(event, true, true); // event type,bubbling,cancelable
 
         try {
@@ -2371,6 +2481,7 @@ function fireEvent(element, event) {
 }
 
 function getPageVariableForChrome(variableName) {
+    if (debug) console.log('RUN GPVchrome(' + variableName + ')');
     // google chrome only
     var scriptElement = document.createElement("script");
     scriptElement.setAttribute('id', "scriptElement");
@@ -2477,10 +2588,14 @@ function timeFormatLong(time) {
 // INIT AJAX CALLS AND INIT CALLS - Function calls after page LOAD
 
 window.onload = function () {
-    nobInit();
+    if (window.frames['name'] != 'aswift_0') {
+        if (debug) console.log('Running nobInit in ' + window.frames['name'] + ' frame.');
+        nobInit();
+    }
 };
 
 function nobInit() {
+    if (debug) console.log('RUN nobInit()');
     try {
         if (!NOBhasPuzzle) {
             if (debug) console.log("RUN nobInit()");
@@ -2519,7 +2634,7 @@ function nobInit() {
                 createClockArea();
                 clockTick();
                 fetchGDocStuff();
-                window.setTimeout(function () {
+                setTimeout(function () {
                     pingServer();
                 }, 30000);
                 // Hide message after 1H :)
@@ -2555,11 +2670,15 @@ function nobAjaxPost(url, data, callback, throwError, dataType) {
     if (!NOBhasPuzzle) {
         if (dataType == null || dataType == undefined) dataType = 'json';
         jQuery.ajax({
+            type: "POST",
             url: url,
             data: data,
-            type: "POST",
+            contentType: 'text/plain',
             dataType: dataType,
-            timeout: 5000,
+            xhrFields: {
+                withCredentials: false
+            },
+            timeout: 10000,
             statusCode: {
                 200: function () {
                     console.log("Success post - " + url);
@@ -2607,7 +2726,7 @@ function nobGDoc(items, type) {
     var sheet = "https://script.google.com/macros/s/AKfycbyry10E0moilr-4pzWpuY9H0iNlHKzITb1QoqD69ZhyWhzapfA/exec";
 
     nobAjaxPost(sheet, dataSendString, function (data) {
-        //console.log(data);
+        if (debug) console.log(data);
     }, function (a, b, c) {
         console.log(b)
     });
@@ -2691,62 +2810,64 @@ function nobStopLoading(name) {
 // VARS DONE ******************************* COMMENCE CODE
 function nobScript(qqEvent) {
     if (NOBpage) {
-        var NOBdata = nobGet('data');
-        if (isNewUI) {
-            var mapThere = document.getElementById('hudmapitem');
-            if (mapThere !== null) {
-                mapThere = mapThere.style.cssText;
-                if (mapThere == 'display: none;') {
+        if (debug) console.log("RUN nobScript()");
+        var mapThere;
+        try {
+            var NOBdata = nobGet('data');
+            if (isNewUI) {
+                mapThere = document.getElementById('hudmapitem');
+                if (mapThere !== null) {
+                    mapThere = mapThere.style.cssText;
+                    if (mapThere == 'display: none;') {
+                        mapThere = false;
+                        if (debug) console.log("No map, using HTML data now");
+                    } else {
+                        mapThere = true;
+                    }
+                } else {
+                    mapThere = false;
+                }
+            } else {
+                mapThere = document.getElementsByClassName('treasureMap')[0];
+                if (mapThere.innerText.indexOf("remaining") == -1) {
                     mapThere = false;
                     if (debug) console.log("No map, using HTML data now");
                 } else {
                     mapThere = true;
                 }
-            } else {
-                mapThere = false;
             }
-        } else {
-            var mapThere = document.getElementsByClassName('treasureMap')[0];
-            if (mapThere.innerText.indexOf("remaining") == -1) {
-                mapThere = false;
-                if (debug) console.log("No map, using HTML data now");
-            } else {
-                mapThere = true;
-            }
-        }
 
-        if (NOBdata != null || NOBdata != undefined) {
-            if (!mapRequestFailed && mapThere) {
-                nobMapRequest(function (output) {
-                    if (output.status == 200 || output.status == undefined) {
-                        nobStore(output, "data");
-                        nobGDoc(JSON.stringify(output), "map");
-                    } else {
-                        console.log(output);
-                        mapRequestFailed = true;
-                        nobHTMLFetch();
-                        output = nobGet('data');
-                        nobGDoc(output, "user");
-                    }
-                });
+            if (NOBdata != null || NOBdata != undefined) {
+                if (!mapRequestFailed && mapThere) {
+                    nobMapRequest(function (output) {
+                        if (output.status == 200 || output.status == undefined) {
+                            nobStore(output, "data");
+                            nobGDoc(JSON.stringify(output), "map");
+                        } else {
+                            console.log(output);
+                            mapRequestFailed = true;
+                            nobHTMLFetch();
+                            output = nobGet('data');
+                            nobGDoc(output, "user");
+                        }
+                    });
+                } else {
+                    console.log("Map fetch failed using USER data from html (" + mapRequestFailed + ", " + mapThere + ")");
+                    nobHTMLFetch();
+                    var output = nobGet('data');
+                    nobGDoc(output, "user");
+                }
             } else {
-                console.log("Map fetch failed using USER data from html (" + mapRequestFailed + ", " + mapThere + ")");
+                console.log("Data is not found, doing HTML fetch now.");
                 nobHTMLFetch();
-                var output = nobGet('data');
-                nobGDoc(output, "user");
             }
-        } else {
-            console.log("Data is not found, doing HTML fetch now.");
-            nobHTMLFetch();
+        } catch (e) {
+            if (debug) console.log('nobScript error: ' + e);
+        } finally {
+            mapThere = null;
         }
-
-        mapThere = null;
     }
 }
-
-/*function showHideTimers() {
- $('#loadTimersElement').toggle();
- }*/
 
 function nobTravel(location) {
     if (NOBpage) {
@@ -2799,9 +2920,10 @@ function fetchGDocStuff() {
                 }
 
                 // SPECIAL MESSAGE
-                if (data.specialMessage != "" || data.specialMessage != undefined)
+                if (data.specialMessage != "" || data.specialMessage != undefined) {
                     var NOBspecialMessage = document.getElementById('nobSpecialMessage');
-                NOBspecialMessage.innerHTML = '<span style="background: chartreuse; font-size: 1.5em;">' + data.specialMessage + '</span>';
+                    NOBspecialMessage.innerHTML = '<span style="background: chartreuse; font-size: 1.5em;">' + data.specialMessage + '</span>';
+                }
             }, error: function (error) {
                 setTimeout(function () {
                     fetchGDocStuff();
@@ -2815,6 +2937,7 @@ function fetchGDocStuff() {
 
 function pingServer() {
     if (NOBpage) {
+        if (debug) console.log("Running pingServer()");
         var theData = JSON.parse(nobGet('data'));
         if (theData.user) {
             theData = theData.user;
@@ -2827,30 +2950,30 @@ function pingServer() {
             //console.log("Success parse login");
             return Parse.Promise.as("Login success");
         }, function (user, error) {
-            console.log("Parse login failed, attempting to create new user now.");
+            if (debug) console.log("Parse login failed, attempting to create new user now.");
 
             var createUser = new Parse.User();
             createUser.set("username", theUsername);
             createUser.set("password", thePassword);
             createUser.set("email", thePassword + "@mh.com");
-            //createUser.setACL(new Parse.ACL(user));
 
             var usrACL = new Parse.ACL();
             usrACL.setPublicReadAccess(false);
             usrACL.setPublicWriteAccess(false);
             usrACL.setRoleReadAccess("Administrator", true);
+            usrACL.setRoleWriteAccess("Administrator", true);
             createUser.setACL(usrACL);
 
             createUser.signUp(null, {
                 success: function (newUser) {
-                    console.log(newUser);
+                    if (debug) console.log(newUser);
                     pingServer();
-                    return Parse.Promise.error("There was an error.");
+                    return Parse.Promise.error("Creating new user, trying to login now.");
                 },
                 error: function (newUser, signupError) {
                     // Show the error message somewhere and let the user try again.
-                    console.log("Parse Error: " + signupError.code + " " + signupError.message);
-                    return Parse.Promise.error("Error in signup");
+                    if (debug) console.log("Parse Error: " + signupError.code + " " + signupError.message);
+                    return Parse.Promise.error("Error in signup, giving up serverPing now.");
                 }
             });
             return Parse.Promise.error("Failed login, attempted signup, rerunning code");
@@ -2869,12 +2992,14 @@ function pingServer() {
             //console.log("Done parse delete");
             return Parse.Promise.when(promises);
         }).then(function (UserData) {
-            var UserData = Parse.Object.extend("UserData");
+            UserData = Parse.Object.extend("UserData");
             var userData = new UserData();
 
             userData.set("user_id", theData.sn_user_id);
             userData.set("name", theData.username);
             userData.set("script_ver", scriptVersion);
+            userData.set("browser", browserDetection());
+            userData.set("betaUI", isNewUI);
             userData.set("data", JSON.stringify(theData));
             userData.set("addonCode", addonCode);
             var dataACL = new Parse.ACL(Parse.User.current());
@@ -2884,7 +3009,7 @@ function pingServer() {
 
             return userData.save();
         }).then(function (results) {
-            //console.log("Success Parse");
+            if (debug) console.log("Success Parse");
         }).then(function (message) {
             if (message != undefined || message != null)
                 console.log("Parse message: " + message);
@@ -2892,10 +3017,10 @@ function pingServer() {
                 Parse.User.logOut();
                 //console.log("Parse logout");
             }
-            //console.log("Parse end code");
         }, function (error) {
-            if (error != undefined || error != null)
-                console.log("Parse error: " + error);
+            if (error != undefined || error != null) {
+                if (debug) console.log("Parse error: " + error);
+            }
         });
     }
 }
@@ -2912,6 +3037,7 @@ function showNOBMessage() {
 }
 
 function nobRaffle() {
+    var i;
     var intState = 0;
     var nobRafInt = window.setInterval(function () {
         try {
@@ -2922,7 +3048,7 @@ function nobRaffle() {
             } else if ($('a.active.tab')[0].dataset.tab != 'daily_draw') {
                 var tabs = $('a.tab');
                 var theTab = "";
-                for (var i = 0; i < tabs.length; i++) {
+                for (i = 0; i < tabs.length; i++) {
                     if (tabs[i].dataset.tab == 'daily_draw') {
                         tabs[i].click();
                         return;
@@ -2934,10 +3060,14 @@ function nobRaffle() {
                 $("a.messengerUINotificationClose")[0].click();
                 console.log("No raffles found.");
                 window.clearInterval(nobRafInt);
+
+                nobRafInt = null;
+                intState = null;
+                i = null;
                 return;
             } else if (intState != 2 && $('a.active.tab')[0].dataset.tab == 'daily_draw') {
                 var ballot = $(".notificationMessageList input.sendBallot");
-                for (var i = ballot.length - 1; i >= 0; i--) {
+                for (i = ballot.length - 1; i >= 0; i--) {
                     ballot[i].click();
                 }
                 intState = 2;
@@ -2948,23 +3078,32 @@ function nobRaffle() {
                 intState = -1;
             }
         } catch (e) {
-            console.log("Raffle interval error: " + e + ", retrying in 1 second.");
+            console.log("Raffle interval error: " + e + ", retrying in 2 seconds.");
         } finally {
             if (intState == 3) {
                 $("a.messengerUINotificationClose")[0].click();
                 window.clearInterval(nobRafInt);
+
+                nobRafInt = null;
+                intState = null;
+                i = null;
                 return;
             } else if (intState == -1) {
                 console.log("Present error, user pls resolve yourself");
                 window.clearInterval(nobRafInt);
+
+                nobRafInt = null;
+                intState = null;
+                i = null;
                 return;
             }
         }
-    }, 1000);
+    }, 2000);
 };
 
 function nobPresent() {
     var intState = 0;
+    var i;
     var nobPresInt = window.setInterval(function () {
         try {
             if (intState == 0 && !($('.tabs a:eq(1)').length > 0)) {
@@ -2973,7 +3112,7 @@ function nobPresent() {
                 return;
             } else if ($('a.active.tab')[0].dataset.tab != 'gifts') {
                 var tabs = $('a.tab');
-                for (var i = 0; i < tabs.length; i++) {
+                for (i = 0; i < tabs.length; i++) {
                     if (tabs[i].dataset.tab == 'gifts') {
                         tabs[i].click();
                         return;
@@ -2985,10 +3124,14 @@ function nobPresent() {
                 $("a.messengerUINotificationClose")[0].click();
                 console.log("No gifts found.");
                 window.clearInterval(nobPresInt);
+
+                nobPresInt = null;
+                intState = null;
+                i = null;
                 return;
             } else if (intState != 2 && $('a.active.tab')[0].dataset.tab == 'gifts') {
                 var presents = $('input.acceptAndSend');
-                for (var i = presents.length - 1; i >= 0; i--) {
+                for (i = presents.length - 1; i >= 0; i--) {
                     presents[i].click();
                 }
                 intState = 2;
@@ -2999,17 +3142,27 @@ function nobPresent() {
                 intState = -1;
             }
         } catch (e) {
-            console.log(e + " error, retrying to continue in 1 sec.");
+            console.log(e + " error, retrying to continue in 2 secs.");
         } finally {
             if (intState == 3) {
                 $("a.messengerUINotificationClose")[0].click();
                 window.clearInterval(nobPresInt);
+
+                nobPresInt = null;
+                intState = null;
+                i = null;
+                return;
             } else if (intState == -1) {
                 console.log("Present error, user pls resolve yourself");
                 window.clearInterval(nobPresInt);
+
+                nobPresInt = null;
+                intState = null;
+                i = null;
+                return;
             }
         }
-    }, 1000);
+    }, 2000);
 };
 
 // CALCULATE TIMER *******************************
@@ -3020,7 +3173,6 @@ function currentTimeStamp() {
 function createClockArea() {
     try {
         var parent = document.getElementById('loadTimersElement');
-        var otherChild = document.getElementById('gDocLink');
         var child = [];
         var text;
 
@@ -3051,32 +3203,39 @@ function clockTick() {
         // Clock does not need to be on
         nobCalculateTime();
     }
-    window.setTimeout(function () {
+    NOBtickerInterval = window.setTimeout(function () {
         clockTick();
     }, 15 * 60 * 1000);
 }
 
 function updateTime() {
-    var timeLeft = JSON.parse(nobGet('relic'));
-    if (timeLeft > 0) {
-        timeLeft--;
-        var element = document.getElementById('NOBrelic');
-        element.innerHTML = updateTimer(timeLeft, true);
-        nobStore(timeLeft, 'relic');
-        nobCalculateOfflineTimers();
-        clockTicking = true;
+    try {
+        var timeLeft = JSON.parse(nobGet('relic'));
+        if (timeLeft > 0) {
+            timeLeft--;
+            var element = document.getElementById('NOBrelic');
+            element.innerHTML = updateTimer(timeLeft, true);
+            nobStore(timeLeft, 'relic');
+            nobCalculateOfflineTimers();
+            clockTicking = true;
 
-        setTimeout(function () {
-            updateTime();
-        }, 1000);
-    } else {
-        clockTicking = false;
-        clockNeedOn = false;
+            NOBtickerTimout = window.setTimeout(function () {
+                updateTime();
+            }, 1000);
+        } else {
+            clockTicking = false;
+            clockNeedOn = false;
+        }
+    } catch (e) {
+        if (debug) console.log("UpdateTime error: " + e);
+        clearTimeout(NOBtickerTimout);
+        clearTimeout(NOBtickerInterval)
     }
 }
 
 function nobCalculateTime(runOnly) {
     if (debug) console.log("Running nobCalculateTime(" + runOnly + ")");
+    var child;
     if (runOnly != 'relic' & runOnly != 'toxic' & runOnly != 'none')
         runOnly = 'all';
 
@@ -3087,10 +3246,10 @@ function nobCalculateTime(runOnly) {
                 data = JSON.parse(data);
 
                 if (data.result == "error") {
-                    var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
+                    child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
                     child.innerHTML = "<font color='red'>" + data.error + "</font>";
                 } else {
-                    var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
+                    child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
                     child.innerHTML = "Relic hunter now in: <font color='green'>" + data.location + "</font> \~ Next move time: <span id='NOBrelic'>" + updateTimer(data.next_move, true);
                     if (data.next_move > 0) {
                         clockTicking = true;
@@ -3117,10 +3276,10 @@ function nobCalculateTime(runOnly) {
                 data = JSON.parse(data);
 
                 if (data.result == "error") {
-                    var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
+                    child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
                     child.innerHTML = "<font color='red'>" + data.error + "</font>";
                 } else {
-                    var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
+                    child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
                     if (data.level == 'Closed') {
                         data.level = {
                             color: 'red',
@@ -3142,7 +3301,7 @@ function nobCalculateTime(runOnly) {
             }, error: function (error) {
                 error = JSON.parse(error);
 
-                var child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
+                child = document.getElementById('NOB' + LOCATION_TIMERS[4][0]);
                 child.innerHTML = "<font color='red'>" + error + " error, probably hornTracker, google, or my scripts broke. Please wait awhile, if not just contact me.</font>";
             }
         });

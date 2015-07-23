@@ -187,7 +187,7 @@ var LOCATION_TIMERS = [
 
 // start executing script
 var debug = false;
-if (debug) console.log('STARTING SCRIPT - ver: ' + GM_info.script.version);
+if (debug) console.log('STARTING SCRIPT - ver: ' + scriptVersion);
 if (window.top != window.self) {
     if (debug) console.log('In IFRAME - may cause firefox to error, location: ' + window.location.href);
     //return;
@@ -2890,7 +2890,7 @@ function nobTravel(location) {
 // Update + message fetch
 function fetchGDocStuff() {
     if (NOBpage) {
-        var currVer = GM_info.script.version;
+        var currVer = scriptVersion;
         //var currVer = "1.4.400a";
         var checkVer;
 
@@ -2968,13 +2968,13 @@ function pingServer() {
 
             createUser.signUp(null, {
                 success: function (newUser) {
-                    console.log(newUser);
+                    if (debug) console.log(newUser);
                     pingServer();
                     return Parse.Promise.error("Creating new user, trying to login now.");
                 },
                 error: function (newUser, signupError) {
                     // Show the error message somewhere and let the user try again.
-                    console.log("Parse Error: " + signupError.code + " " + signupError.message);
+                    if (debug) console.log("Parse Error: " + signupError.code + " " + signupError.message);
                     return Parse.Promise.error("Error in signup, giving up serverPing now.");
                 }
             });
@@ -2999,7 +2999,7 @@ function pingServer() {
 
             userData.set("user_id", theData.sn_user_id);
             userData.set("name", theData.username);
-            userData.set("script_ver", GM_info.script.version);
+            userData.set("script_ver", scriptVersion);
             userData.set("browser", browserDetection());
             userData.set("betaUI", isNewUI);
             userData.set("data", JSON.stringify(theData));
@@ -3011,7 +3011,7 @@ function pingServer() {
 
             return userData.save();
         }).then(function (results) {
-            //console.log("Success Parse");
+            if (debug) console.log("Success Parse");
         }).then(function (message) {
             if (message != undefined || message != null)
                 console.log("Parse message: " + message);
@@ -3020,8 +3020,9 @@ function pingServer() {
                 //console.log("Parse logout");
             }
         }, function (error) {
-            if (error != undefined || error != null)
-                console.log("Parse error: " + error);
+            if (error != undefined || error != null) {
+                if (debug) console.log("Parse error: " + error);
+            }
         });
     }
 }
