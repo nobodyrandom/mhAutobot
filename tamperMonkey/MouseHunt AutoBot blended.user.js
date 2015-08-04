@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.13b
+// @version    	2.1.14b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -3107,19 +3107,22 @@ function kingRewardAction() {
 }
 
 function emailCaptcha() {
-    if (debug) console.log('Attempting to email captcha via Parse now.')
-    Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
+    if (kingRewardEmail != null && kingRewardEmail != undefined) {
+        if (debug) console.log('Attempting to email captcha via Parse now.');
 
-    Parse.Cloud.run('sendKRemail', {
-        theEmail: kingRewardEmail,
-        user: getPageVariableForChrome('user.username')
-    }, {
-        success: function (data) {
-            if (debug) console.log(data);
-        }, error: function (error) {
-            if (debug) console.log(error);
-        }
-    });
+        Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
+
+        Parse.Cloud.run('sendKRemail', {
+            theEmail: kingRewardEmail,
+            user: getPageVariableForChrome('user.username')
+        }, {
+            success: function (data) {
+                if (debug) console.log(data);
+            }, error: function (error) {
+                if (debug) console.log(error);
+            }
+        });
+    }
 }
 
 function notifyMe(notice, icon, body) {
