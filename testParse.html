@@ -28,14 +28,18 @@ query.find({
 	}
 });*/
 
-/*Parse.Cloud.run('nobRelic', {}, {
+Parse.User.logIn('NobodyRandom', 'Abcd1234').then(function (user) {
+    Parse.Cloud.run('sendKRemail', {
+        theEmail: 'iamnobodyrandom@yahoo.com',
+        user: 'Test'
+    }, {
     success: function (data) {
-        console.log(JSON.parse(data));
+        console.log(data);
     }, error: function (error) {
         console.log(error);
     }
- });*/
-Parse.User.logIn('NobodyRandom', 'Abcd1234').then(function (user) {
+    });
+
     /*var queryRole = new Parse.Query(Parse.Role);
     queryRole.equalTo('name', 'TheUsers');
      return queryRole.first();
@@ -44,7 +48,8 @@ Parse.User.logIn('NobodyRandom', 'Abcd1234').then(function (user) {
      return role.save();
      }).then(function (tb) {
      console.log(tb);*/
-    var administrator = (new Parse.Query(Parse.Role)).equalTo('name', 'Administrator').first();
+
+    /*var administrator = (new Parse.Query(Parse.Role)).equalTo('name', 'Administrator').first();
     var roleACL = new Parse.ACL();
     roleACL.setPublicReadAccess(false);
     roleACL.setPublicWriteAccess(false);
@@ -53,7 +58,8 @@ Parse.User.logIn('NobodyRandom', 'Abcd1234').then(function (user) {
     var role = new Parse.Role('TheUsers', roleACL);
     //role.getUsers().add('NobodyRandom');
     role.getRoles().add(administrator);
-    role.save();
+     role.save();*/
+    
 }, function (error) {
     console.log(error.message);
 });
