@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.14b
+// @version    	2.1.15b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -1269,6 +1269,27 @@ function clickTrapSelector(strSelect) //strSelect = weapon/base/charm/trinket/ba
     }
     arming = true;
     return (console.debug("Trap selector: " + strSelect + " clicked"));
+}
+
+function disarmTrap(trapSelector) {
+    clickTrapSelector(trapSelector);
+    var x;
+    var intervalDT = setInterval(
+        function () {
+            x = document.getElementsByClassName(trapSelector + ' canDisarm');
+            if (x.length > 0) {
+                for (var i = 0; i < x.length; ++i) {
+                    if (x[i].getAttribute('title').indexOf('Click to disarm') > -1) {
+                        fireEvent(x[i], 'click');
+                        clearInterval(intervalDT);
+                        intervalDT = null;
+                        return (console.debug('Disarmed ' + trapSeletor));
+                    }
+                }
+
+            }
+        }, 1000);
+    return;
 }
 
 //// END EMBED
@@ -2576,15 +2597,15 @@ function loadPreferenceSettingFromStorage() {
     playKingRewardSoundTemp = undefined;
 
     var kingRewardSoundTemp = getStorage('KingRewardSoundInput');
-    if (kingRewardSoundTemp == undefined || kingRewardSoundTemp == null) {
+    if (kingRewardSoundTemp == undefined || kingRewardSoundTemp == null || kingRewardSoundTemp == "") {
         kingRewardSoundTemp = 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3';
-        setStorage('KingRewardSoundInput', 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3');
+        setStorage('KingRewardSoundInput', kingRewardSoundTemp);
     }
     kingWarningSound = kingRewardSoundTemp;
     kingRewardSoundTemp = undefined;
 
     var kingRewardEmailTemp = getStorage('KingRewardEmail');
-    if (kingRewardEmailTemp == undefined || kingRewardEmailTemp == null) {
+    if (kingRewardEmailTemp == undefined || kingRewardEmailTemp == null || kingRewardEmailTemp == "") {
         kingRewardEmailTemp = '';
         setStorage('KingRewardSoundInput', kingRewardEmailTemp);
     }
@@ -2630,11 +2651,11 @@ function loadPreferenceSettingFromStorage() {
     autopopkrTemp = undefined;
 
     var addonCodeTemp = getStorage("addonCode");
-    if (addonCodeTemp == undefined || addonCodeTemp === null) {
+    if (addonCodeTemp == undefined || addonCodeTemp === null || addonCodeTemp == "") {
         setStorage('addonCode', "");
-    } else {
-        addonCode = addonCodeTemp;
     }
+    addonCode = addonCodeTemp;
+
     addonCodeTemp = undefined;
 
     var nobTrapsTemp = nobGet('traps');
@@ -3407,27 +3428,6 @@ function getCookie(c_name) {
     }
     c_name = null;
     return null;
-}
-
-function disarmTrap(trapSelector) {
-    clickTrapSelector(trapSelector);
-    var x;
-    var intervalDT = setInterval(
-        function () {
-            x = document.getElementsByClassName(trapSelector + ' canDisarm');
-            if (x.length > 0) {
-                for (var i = 0; i < x.length; ++i) {
-                    if (x[i].getAttribute('title').indexOf('Click to disarm') > -1) {
-                        fireEvent(x[i], 'click');
-                        clearInterval(intervalDT);
-                        intervalDT = null;
-                        return (console.debug('Disarmed ' + trapSeletor));
-                    }
-                }
-
-            }
-        }, 1000);
-    return;
 }
 
 function fireEvent(element, event) {
