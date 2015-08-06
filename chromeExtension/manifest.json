@@ -3,7 +3,7 @@
 
   "name": "MouseHunt AutoBot REVAMP chrome ext ver",
   "description": "Currently the most advanced script for automating MouseHunt. Supports ALL new areas and FIREFOX. Revamped version of original by Ooi",
-  "version": "2.1.14",
+  "version": "2.1.15",
   "author": "NobodyRandom",
   "update_url": "https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/chromeExtensionUpdate.xml",
   "icons": {

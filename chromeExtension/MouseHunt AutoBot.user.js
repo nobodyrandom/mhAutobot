@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP chrome ext ver
 // @author      NobodyRandom, Ooi Keng Siang
-// @version    	2.1.12c
+// @version    	2.1.15c
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
-// @namespace   https://greasyfork.org/users/6398
+// @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot
 // @updateURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.meta.js
 // @downloadURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.user.js
 // @license 	GNU GPL v2.0
@@ -57,6 +57,9 @@ var isKingWarningSound = false;
 // // Which sound to play when encountering king's reward (need to be .mp3)
 var kingWarningSound = 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3';
 
+// // Which email to send KR notiff to (leave blank to disable feature)
+var kingRewardEmail = '';
+
 // // Play sound when no more cheese (true/false)
 var isNoCheeseSound = false;
 
@@ -106,7 +109,7 @@ var addonCode = "";
 // WARNING - Do not modify the code below unless you know how to read and write the script.
 
 // All global variable declaration and default value
-var scriptVersion = "2.1.12c";
+var scriptVersion = "2.1.15c";
 var fbPlatform = false;
 var hiFivePlatform = false;
 var mhPlatform = false;
@@ -189,8 +192,10 @@ var LOCATION_TIMERS = [
 var debug = false;
 if (debug) console.log('STARTING SCRIPT - ver: ' + scriptVersion);
 /*if (window.top != window.self) {
-    if (debug) console.log('In IFRAME');
+ if (debug) console.log('In IFRAME - may cause firefox to error, location: ' + window.location.href);
     //return;
+ } else {
+ if (debug) console.log('NOT IN IFRAME - will not work in fb MH');
 }*/
 exeScript();
 
@@ -1440,6 +1445,16 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '</td>';
                 preferenceHTMLStr += '</tr>';
 
+                preferenceHTMLStr += '<tr>';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="Which email to send king\'s reward to"><b>Email to send King Reward</b></a>';
+                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px;">';
+                preferenceHTMLStr += '<input type="text" id="KingRewardEmail" name="KingRewardEmail" value="' + kingRewardEmail + '" />';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
                 if (reloadKingReward) {
                     preferenceHTMLStr += '<tr>';
                     preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
@@ -1555,7 +1570,8 @@ if (document.getElementById(\'TrapCheckInputTrue\').checked == true) { window.lo
 window.localStorage.setItem(\'TrapCheckTimeOffset\', document.getElementById(\'TrapCheckTimeOffsetInput\').value);	\
 window.localStorage.setItem(\'TrapCheckTimeDelayMin\', document.getElementById(\'TrapCheckTimeDelayMinInput\').value); window.localStorage.setItem(\'TrapCheckTimeDelayMax\', document.getElementById(\'TrapCheckTimeDelayMaxInput\').value);	\
 if (document.getElementById(\'PlayKingRewardSoundInputTrue\').checked == true) { window.localStorage.setItem(\'PlayKingRewardSound\', \'true\'); } else { window.localStorage.setItem(\'PlayKingRewardSound\', \'false\'); }	\
-window.localStorage.setItem(\'KingRewardSoundInput\', document.getElementById(\'KingRewardSoundInput\').value);   \
+window.localStorage.setItem(\'KingRewardSoundInput\', document.getElementById(\'KingRewardSoundInput\').value);	\
+window.localStorage.setItem(\'KingRewardEmail\', document.getElementById(\'KingRewardEmail\').value);	\
 if (document.getElementById(\'KingRewardResumeInputTrue\').checked == true) { window.localStorage.setItem(\'KingRewardResume\', \'true\'); } else { window.localStorage.setItem(\'KingRewardResume\', \'false\'); }	\
 window.localStorage.setItem(\'KingRewardResumeTime\', document.getElementById(\'KingRewardResumeTimeInput\').value);	\
 if (document.getElementById(\'PauseLocationInputTrue\').checked == true) { window.localStorage.setItem(\'PauseLocation\', \'true\'); } else { window.localStorage.setItem(\'PauseLocation\', \'false\'); }	\
@@ -1681,12 +1697,20 @@ function loadPreferenceSettingFromStorage() {
     playKingRewardSoundTemp = undefined;
 
     var kingRewardSoundTemp = getStorage('KingRewardSoundInput');
-    if (kingRewardSoundTemp == undefined || kingRewardSoundTemp == null) {
+    if (kingRewardSoundTemp == undefined || kingRewardSoundTemp == null || kingRewardSoundTemp == "") {
         kingRewardSoundTemp = 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3';
-        setStorage('KingRewardSOundInput', 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3');
+        setStorage('KingRewardSoundInput', kingRewardSoundTemp);
     }
     kingWarningSound = kingRewardSoundTemp;
     kingRewardSoundTemp = undefined;
+
+    var kingRewardEmailTemp = getStorage('KingRewardEmail');
+    if (kingRewardEmailTemp == undefined || kingRewardEmailTemp == null || kingRewardEmailTemp == "") {
+        kingRewardEmailTemp = '';
+        setStorage('KingRewardSoundInput', kingRewardEmailTemp);
+    }
+    kingRewardEmail = kingRewardEmailTemp;
+    kingRewardEmailTemp = undefined;
 
     var kingRewardResumeTemp = getStorage("KingRewardResume");
     if (kingRewardResumeTemp == undefined || kingRewardResumeTemp == null) {
@@ -1727,11 +1751,11 @@ function loadPreferenceSettingFromStorage() {
     autopopkrTemp = undefined;
 
     var addonCodeTemp = getStorage("addonCode");
-    if (addonCodeTemp == undefined || addonCodeTemp === null) {
+    if (addonCodeTemp == undefined || addonCodeTemp === null || addonCodeTemp == "") {
         setStorage('addonCode', "");
-    } else {
-        addonCode = addonCodeTemp;
     }
+    addonCode = addonCodeTemp;
+
     addonCodeTemp = undefined;
 }
 
@@ -2128,8 +2152,15 @@ function kingRewardAction() {
     // play music if needed
     playKingRewardSound();
 
-    // email the captcha away if needed
-    emailCaptcha();
+    window.setTimeout(function () {
+        // Autopop KR if needed
+        if (autoPopupKR) {
+            alert("King's Reward NOW");
+        }
+
+        // email the captcha away if needed
+        emailCaptcha();
+    }, 2000);
 
     // focus on the answer input
     var inputElementList = document.getElementsByTagName('input');
@@ -2160,7 +2191,22 @@ function kingRewardAction() {
 }
 
 function emailCaptcha() {
-    // TODO: make email captcha function
+    if (kingRewardEmail !== null && kingRewardEmail != undefined) {
+        if (debug) console.log('Attempting to email captcha via Parse now.');
+
+        Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
+
+        Parse.Cloud.run('sendKRemail', {
+            theEmail: kingRewardEmail,
+            user: getPageVariableForChrome('user.username')
+        }, {
+            success: function (data) {
+                if (debug) console.log(data);
+            }, error: function (error) {
+                if (debug) console.log(error);
+            }
+        });
+    }
 }
 
 function notifyMe(notice, icon, body) {
@@ -2221,11 +2267,6 @@ function playKingRewardSound() {
         child = null;
         snippet = null;
     }
-
-    if (autoPopupKR)
-        window.setTimeout(function () {
-            alert("Kings Reward NOW");
-        }, 2000);
 }
 
 function kingRewardCountdownTimer() {
@@ -2787,24 +2828,156 @@ function nobMapRequest(handleData) {
 
 function nobLoading(location, name) {
     var element = document.getElementById(location);
-    if (counter < 10) {
-        for (var i = 0; i < counter; i++) {
-            dots = dots + ".";
-        }
-    } else {
-        dots = "";
-        counter = 0;
-    }
-    element.innerHTML = "Loading" + dots;
-    counter++;
+    element.innerHTML = "<style type=\"text/css\">" +
+            /* Universal styling */
+        "    [class^=\"shaft-load\"] {" +
+        "    margin: 5px auto;" +
+        "    width: 60px;" +
+        "    height: 15px;" +
+        "}" +
+        "[class^=\"shaft-load\"] > div {" +
+        "    float: left;" +
+        "    background: #B96CFF;" +
+        "    height: 100%;" +
+        "    width: 5px;" +
+        "    margin-right: 1px;" +
+        "    display: inline-block;" +
+        "}" +
+        "[class^=\"shaft-load\"] .shaft1 {" +
+        "    -webkit-animation-delay: 0.05s;" +
+        "    -moz-animation-delay: 0.05s;" +
+        "    -o-animation-delay: 0.05s;" +
+        "    animation-delay: 0.05s;" +
+        "}" +
+        "[class^=\"shaft-load\"] .shaft2 {" +
+        "    -webkit-animation-delay: 0.1s;" +
+        "    -moz-animation-delay: 0.1s;" +
+        "    -o-animation-delay: 0.1s;" +
+        "    animation-delay: 0.1s;" +
+        "}" +
+        "[class^=\"shaft-load\"] .shaft3 {" +
+        "    -webkit-animation-delay: 0.15s;" +
+        "    -moz-animation-delay: 0.15s;" +
+        "    -o-animation-delay: 0.15s;" +
+        "    animation-delay: 0.15s;" +
+        "}" +
+        "[class^=\"shaft-load\"] .shaft4 {" +
+        "    -webkit-animation-delay: 0.2s;" +
+        "    -moz-animation-delay: 0.2s;" +
+        "    -o-animation-delay: 0.2s;" +
+        "    animation-delay: 0.2s;" +
+        "}" +
+        "[class^=\"shaft-load\"] .shaft5 {" +
+        "    -webkit-animation-delay: 0.25s;" +
+        "    -moz-animation-delay: 0.25s;" +
+        "    -o-animation-delay: 0.25s;" +
+        "    animation-delay: 0.25s;" +
+        "}" +
+        "[class^=\"shaft-load\"] .shaft6 {" +
+        "    -webkit-animation-delay: 0.3s;" +
+        "    -moz-animation-delay: 0.3s;" +
+        "    -o-animation-delay: 0.3s;" +
+        "    animation-delay: 0.3s;" +
+        "}" +
+        "[class^=\"shaft-load\"] .shaft7 {" +
+        "    -webkit-animation-delay: 0.35s;" +
+        "    -moz-animation-delay: 0.35s;" +
+        "    -o-animation-delay: 0.35s;" +
+        "    animation-delay: 0.35s;" +
+        "}" +
+        "[class^=\"shaft-load\"] .shaft8 {" +
+        "    -webkit-animation-delay: 0.4s;" +
+        "    -moz-animation-delay: 0.4s;" +
+        "    -o-animation-delay: 0.4s;" +
+        "    animation-delay: 0.4s;" +
+        "}" +
+        "[class^=\"shaft-load\"] .shaft9 {" +
+        "    -webkit-animation-delay: 0.45s;" +
+        "    -moz-animation-delay: 0.45s;" +
+        "    -o-animation-delay: 0.45s;" +
+        "    animation-delay: 0.45s;" +
+        "}" +
+        "[class^=\"shaft-load\"] .shaft10 {" +
+        "    -webkit-animation-delay: 0.5s;" +
+        "    -moz-animation-delay: 0.5s;" +
+        "    -o-animation-delay: 0.5s;" +
+        "    animation-delay: 0.5s;" +
+        "}" +
 
-    timeoutVar1 = setTimeout(function () {
-        nobLoading(location);
-    }, 1000);
+            /* Shaft 1 */
+        ".shaft-load > div {" +
+        "    -webkit-animation: loading 1.5s infinite ease-in-out;" +
+        "    -moz-animation: loading 1.5s infinite ease-in-out;" +
+        "    -o-animation: loading 1.5s infinite ease-in-out;" +
+        "    animation: loading 1.5s infinite ease-in-out;" +
+        "    -webkit-transform: scaleY(0.05) translateX(-10px);" +
+        "    -moz-transform: scaleY(0.05) translateX(-10px);" +
+        "    -ms-transform: scaleY(0.05) translateX(-10px);" +
+        "    -o-transform: scaleY(0.05) translateX(-10px);" +
+        "    transform: scaleY(0.05) translateX(-10px);" +
+        "}" +
+
+        "@-webkit-keyframes loading {" +
+        "    50% {" +
+        "    -webkit-transform: scaleY(1.2) translateX(10px);" +
+        "    -moz-transform: scaleY(1.2) translateX(10px);" +
+        "    -ms-transform: scaleY(1.2) translateX(10px);" +
+        "    -o-transform: scaleY(1.2) translateX(10px);" +
+        "    transform: scaleY(1.2) translateX(10px);" +
+        "    background: #56D7C6;" +
+        "}" +
+        "}" +
+        "@-moz-keyframes loading {" +
+        "50% {" +
+        "-webkit-transform: scaleY(1.2) translateX(10px);" +
+        "-moz-transform: scaleY(1.2) translateX(10px);" +
+        "-ms-transform: scaleY(1.2) translateX(10px);" +
+        "-o-transform: scaleY(1.2) translateX(10px);" +
+        "transform: scaleY(1.2) translateX(10px);" +
+        "background: #56D7C6;" +
+        "}" +
+        "}" +
+        "@-o-keyframes loading {" +
+        "50% {" +
+        "-webkit-transform: scaleY(1.2) translateX(10px);" +
+        "-moz-transform: scaleY(1.2) translateX(10px);" +
+        "-ms-transform: scaleY(1.2) translateX(10px);" +
+        "-o-transform: scaleY(1.2) translateX(10px);" +
+        "transform: scaleY(1.2) translateX(10px);" +
+        "background: #56D7C6;" +
+        "}" +
+        "}" +
+        "@keyframes loading {" +
+        "50% {" +
+        "-webkit-transform: scaleY(1.2) translateX(10px);" +
+        "-moz-transform: scaleY(1.2) translateX(10px);" +
+        "-ms-transform: scaleY(1.2) translateX(10px);" +
+        "-o-transform: scaleY(1.2) translateX(10px);" +
+        "transform: scaleY(1.2) translateX(10px);" +
+        "background: #56D7C6;" +
+        "}" +
+        "}" +
+        "</style>" +
+        "<div class=\"shaft-load\">" +
+        "<div class=\"shaft1\"></div>" +
+        "<div class=\"shaft2\"></div>" +
+        "<div class=\"shaft3\"></div>" +
+        "<div class=\"shaft4\"></div>" +
+        "<div class=\"shaft5\"></div>" +
+        "<div class=\"shaft6\"></div>" +
+        "<div class=\"shaft7\"></div>" +
+        "<div class=\"shaft8\"></div>" +
+        "<div class=\"shaft9\"></div>" +
+        "<div class=\"shaft10\"></div>" +
+        "</div>";
+
+    element = null;
 }
 
-function nobStopLoading(name) {
-    clearTimeout(timeoutVar1);
+function nobStopLoading(location) {
+    var element = document.getElementById(location);
+    //element.innerHTML = null;
+    element = null;
 }
 
 // VARS DONE ******************************* COMMENCE CODE
@@ -2928,7 +3101,6 @@ function fetchGDocStuff() {
                 setTimeout(function () {
                     fetchGDocStuff();
                 }, 300000);
-                //nobStopLoading();
                 console.log(JSON.parse(error) + ' error - Parse is now not working qq... Retrying in 5 minutes');
             }
         });
