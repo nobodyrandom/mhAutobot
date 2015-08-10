@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.16b
+// @version    	2.1.17b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
+// @require     https://code.jquery.com/jquery-2.1.4.min.js
 // @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot, https://devcnn.wordpress.com/
 // @updateURL	https://greasyfork.org/scripts/6514-mousehunt-autobot-enhanced-revamp/code/MouseHunt%20AutoBot%20ENHANCED%20+%20REVAMP.meta.js
 // @downloadURL	https://greasyfork.org/scripts/6514-mousehunt-autobot-enhanced-revamp/code/MouseHunt%20AutoBot%20ENHANCED%20+%20REVAMP.user.js
@@ -497,7 +498,7 @@ function eventLocationCheck() {
 }
 
 function ZTalgo() {
-    var location = getPageVariableForChrome('user.location');
+    var location = getPageVariable('user.location');
     console.debug(location);
     if (!(location.indexOf('Zugzwang\'s Tower') > -1)) {
         console.debug('Not in Zugzwang\'s Tower.');
@@ -537,7 +538,7 @@ function ZTalgo() {
 }
 
 function Halloween2014() {
-    var currentLocation = getPageVariableForChrome("user.location");
+    var currentLocation = getPageVariable("user.location");
     console.debug(currentLocation);
     if (currentLocation.indexOf("Haunted Terrortories") > -1) {
         var areaName = document.getElementsByClassName('halloween2014Hud-areaDetails-name')[0].innerHTML;
@@ -559,7 +560,7 @@ function Halloween2014() {
 }
 
 function BurroughRift(minMist, maxMist) {
-    var currentLocation = getPageVariableForChrome("user.location");
+    var currentLocation = getPageVariable("user.location");
     console.debug(currentLocation);
     if (currentLocation.indexOf("Burroughs Rift") > -1) {
         //Tier 0: 0 Mist Canisters
@@ -568,7 +569,7 @@ function BurroughRift(minMist, maxMist) {
         //Tier 3/Red: 19-20 Mist Canisters
 
         var currentMistQuantity = parseInt(document.getElementsByClassName('mistQuantity')[0].innerText);
-        var isMisting = getPageVariableForChrome('user.quests.QuestRiftBurroughs.is_misting');
+        var isMisting = getPageVariable('user.quests.QuestRiftBurroughs.is_misting');
         var mistButton = document.getElementsByClassName('mistButton')[0];
         console.debug('Current Mist Quantity: ' + currentMistQuantity);
         console.debug('Is Misting: ' + isMisting);
@@ -585,7 +586,7 @@ function BurroughRift(minMist, maxMist) {
 }
 
 function lgGeneral() {
-    var location = getPageVariableForChrome('user.location');
+    var location = getPageVariable('user.location');
     console.debug('Current Location: ' + location);
     switch (location) {
         case 'Living Garden':
@@ -613,7 +614,7 @@ function lgGeneral() {
 
 function fieryWarpath() {
     // TODO: Warpath bot
-    var currentLocation = getPageVariableForChrome("user.location");
+    var currentLocation = getPageVariable("user.location");
     console.debug(currentLocation);
 
     if (currentLocation.indexOf("Fiery Warpath") > -1) {
@@ -654,7 +655,7 @@ function fieryWarpath() {
 }
 
 function SunkenCity() {
-    var currentLocation = getPageVariableForChrome("user.location");
+    var currentLocation = getPageVariable("user.location");
     console.debug(currentLocation);
     if (currentLocation.indexOf("Sunken City") > -1) {
         var zone = document.getElementsByClassName('zoneName')[0].innerText;
@@ -704,7 +705,7 @@ function livingGarden() {
             fireEvent(pourButton, 'click');
             var confirmButton = document.getElementsByClassName('confirm button')[0];
             fireEvent(confirmButton, 'click');
-            if (getPageVariableForChrome('user.trinket_name').indexOf('Sponge') > -1) {
+            if (getPageVariable('user.trinket_name').indexOf('Sponge') > -1) {
                 console.debug('Going to disarm');
                 disarmTrap('trinket');
             }
@@ -715,7 +716,7 @@ function livingGarden() {
         }
     } else {
         // Pouring
-        if (getPageVariableForChrome('user.trinket_name').indexOf('Sponge') > -1) {
+        if (getPageVariable('user.trinket_name').indexOf('Sponge') > -1) {
             disarmTrap('trinket');
         }
     }
@@ -728,7 +729,7 @@ function lostCity() {
 
     //disarm searcher charm when cursed is lifted
     if (!isCursed) {
-        if (getPageVariableForChrome('user.trinket_name').indexOf('Searcher') > -1) {
+        if (getPageVariable('user.trinket_name').indexOf('Searcher') > -1) {
             disarmTrap('trinket');
         }
     } else {
@@ -739,12 +740,12 @@ function lostCity() {
 }
 
 function sandDunes() {
-    var hasStampede = getPageVariableForChrome('user.quests.QuestSandDunes.minigame.has_stampede');
+    var hasStampede = getPageVariable('user.quests.QuestSandDunes.minigame.has_stampede');
     console.debug('Has Stampede = ' + hasStampede);
 
     //disarm grubling chow charm when there is no stampede
     if (hasStampede == 'false') {
-        if (getPageVariableForChrome('user.trinket_name').indexOf('Chow') > -1) {
+        if (getPageVariable('user.trinket_name').indexOf('Chow') > -1) {
             disarmTrap('trinket');
         }
     } else {
@@ -757,7 +758,7 @@ function sandDunes() {
 function twistedGarden() {
     var red = parseInt(document.getElementsByClassName('itemImage red')[0].innerText);
     var yellow = parseInt(document.getElementsByClassName('itemImage yellow')[0].innerText);
-    var charmArmed = getPageVariableForChrome('user.trinket_name');
+    var charmArmed = getPageVariable('user.trinket_name');
     console.debug('Red: ' + red + ' Yellow: ' + yellow);
     if (red < 10) {
         if (red <= 8) {
@@ -781,9 +782,9 @@ function twistedGarden() {
 }
 
 function cursedCity() {
-    var cursed = getPageVariableForChrome('user.quests.QuestLostCity.minigame.is_cursed');
+    var cursed = getPageVariable('user.quests.QuestLostCity.minigame.is_cursed');
     var curses = [];
-    var charmArmed = getPageVariableForChrome('user.trinket_name');
+    var charmArmed = getPageVariable('user.trinket_name');
     if (cursed == 'false') {
         if (charmArmed.indexOf('Bravery') > -1 || charmArmed.indexOf('Shine') > -1 || charmArmed.indexOf('Clarity') > -1) {
             disarmTrap('trinket');
@@ -792,7 +793,7 @@ function cursedCity() {
     } else {
         // TODO: Check this/fix cursed city
         for (var i = 0; i < 3; ++i) {
-            curses[i] = getPageVariableForChrome('user.quests.QuestLostCity.minigame.curses[' + i + '].active');
+            curses[i] = getPageVariable('user.quests.QuestLostCity.minigame.curses[' + i + '].active');
             if (curses[i] == 'true') {
                 switch (i) {
                     case 0:
@@ -831,20 +832,21 @@ function sandCrypts() {
 }
 
 function gnawnianExpress(load) {
-    var currentLocation = getPageVariableForChrome("user.location");
+    // TODO: fix all innerText to allow firefox support?
+    var currentLocation = getPageVariable("user.location");
     console.debug(currentLocation);
     if (currentLocation.indexOf("Gnawnian Express") > -1) {
-        var onTrain = getPageVariableForChrome('user.quests.QuestTrainStation.on_train');
-        var charmArmed = getPageVariableForChrome('user.trinket_name');
-        var trapArmed = getPageVariableForChrome('user.weapon_name');
-        if (onTrain == 'false') {
+        var onTrain = getPageVariable('user.quests.QuestTrainStation.on_train');
+        var charmArmed = getPageVariable('user.trinket_name');
+        var trapArmed = getPageVariable('user.weapon_name');
+        if (onTrain == 'false' || onTrain == 0) {
             if (charmArmed.indexOf('Supply Schedule') > -1 || charmArmed.indexOf('Roof Rack') > -1 || charmArmed.indexOf('Greasy Glob') > -1 || charmArmed.indexOf('Door Guard') > -1 || charmArmed.indexOf('Dusty Coal') > -1 || charmArmed.indexOf('Black Powder') > -1 || charmArmed.indexOf('Magmatic Crystal') > -1)
                 disarmTrap('trinket');
 
             if (trapArmed.indexOf('Supply Grabber') > -1 || trapArmed.indexOf('Bandit Deflector') > -1 || trapArmed.indexOf('Engine Doubler') > -1)
                 checkThenArm('best', 'weapon', ['S.L.A.C. II', 'The Law Draw', 'S.L.A.C.']);
         } else {
-            var phase = document.getElementsByClassName('phaseName')[0].innerText;
+            var phase = document.getElementsByClassName('phaseName')[0].textContent;
             phase = phase.substr(7, phase.length);
             console.debug('Current Active Train Phase: ' + phase);
             switch (phase) {
@@ -982,44 +984,50 @@ function loadTrain(location, load) {
     }
 }
 
-function buildTrapList(category, afterBuilding, failedBuilding) {
-    //console.log("running buildTrapList(" + category + ")")
+function buildTrapList(afterBuilding, failedBuilding) {
+    if (debug) console.log("running buildTrapList()")
     var returning;
     //clickTrapSelector(category);
     try {
-        nobAjaxPost('/managers/ajax/users/gettrapcomponents.php', {uh: user.unique_hash}, function (data) {
+        var userHash = getPageVariable("user.unique_hash");
+
+        nobAjaxPost('/managers/ajax/users/gettrapcomponents.php', {
+            uh: userHash
+        }, function (data) {
             NOBtraps = data.components;
             nobStore(NOBtraps, 'traps');
-            //console.log(NOBtraps);
             returning = true;
             afterBuilding();
         }, function (error) {
-            console.log("btl ajax error: " + error);
+            console.log("BuildTrapList ajax error: " + error);
             returning = false;
             failedBuilding();
         });
     } catch (e) {
-        console.log("btl try error: " + e);
+        console.log("BuildTrapList try error: " + e);
     } finally {
         //clickTrapSelector(category);
         return returning;
     }
 }
 
-function checkThenArm(sort, category, name) {  //category = weapon/base/charm/trinket/bait
+function checkThenArm(sort, category, item) {  //category = weapon/base/charm/trinket/bait
     if (category == "charm") {
         category = "trinket";
     }
 
+    if (debug) console.log('RUN checkThenArm(' + item + ')');
+
     var i, j;
     var trapArmed;
     var tempName;
-    var userVariable = getPageVariableForChrome("user." + category + "_name");
+    var userVariable = getPageVariable("user." + category + "_name");
+    if (userVariable === null || userVariable == undefined) userVariable = "";
     var trapArmedOverride = false;
 
     if (sort == 'best') {
-        for (i = 0; i < name.length; i++) {
-            if (userVariable.indexOf(name[i]) == 0) {
+        for (i = 0; i < item.length; i++) {
+            if (userVariable.indexOf(item[i]) == 0) {
                 trapArmed = true;
                 break;
             }
@@ -1027,53 +1035,53 @@ function checkThenArm(sort, category, name) {  //category = weapon/base/charm/tr
 
         if (NOBtraps.length == 0) {
             if (debug) console.log("NOBtraps not built yet, trying to build now.");
-            buildTrapList(category, function () {
-                return checkThenArm(sort, category, name);
+            buildTrapList(function () {
+                return checkThenArm(sort, category, item);
             }, function () {
-                if (debug) console.log("Failed to build trap list, giving up arming: " + name);
+                if (debug) console.log("Failed to build trap list, giving up arming: " + item);
                 return;
             });
         } else {
             if (debug) console.log("Running double check if better one is in inv.");
             // Chunk of code try finds if a better trap is in inventory, if so sets trapArmed to false
-            for (j = 0; j < name.length; j++) {
+            for (j = 0; j < item.length; j++) {
                 for (i = 0; i < NOBtraps.length; i++) {
-                    if (NOBtraps[i].name == name[j] && userVariable.indexOf(NOBtraps[i].name) == 0) {
+                    if (NOBtraps[i].name == item[j] && userVariable.indexOf(NOBtraps[i].name) == 0) {
                         if (debug) console.log("No better traps were found.");
                         trapArmed = true;
 
                         i = NOBtraps.length + 1;
-                        j = name.length + 1;
-                    } else if (NOBtraps[i].classification == category && NOBtraps[i].name == name[j] /*&& userVariable.indexOf(name[i]) != 0*/) {
-                        if (debug) console.log("Found a better trap: " + NOBtraps[i].name + " as compared to " + name[j]);
+                        j = item.length + 1;
+                    } else if (NOBtraps[i].classification == category && NOBtraps[i].name == item[j] /*&& userVariable.indexOf(item[i]) != 0*/) {
+                        if (debug) console.log("Found a better trap: " + NOBtraps[i].name + " as compared to " + item[j]);
                         trapArmed = false;
                         trapArmedOverride = true;
 
                         // breaking out of loops
                         i = NOBtraps.length + 1;
-                        j = name.length + 1;
+                        j = item.length + 1;
                     }
                 }
             }
         }
     } else {
-        trapArmed = (userVariable.indexOf(name) == 0);
+        trapArmed = (userVariable.indexOf(item) == 0);
     }
 
-    if (debug) console.log(name + " armed?: " + trapArmed);
+    if (debug) console.log(item + " armed?: " + trapArmed);
 
     var retryPageVariable = document.getElementById('hud_trapLabel').innerText;
     if (!trapArmedOverride && retryPageVariable == "Charm:" && category == "trinket") {
         var theCharmArmed = document.getElementById('hud_trapPower').innerText;
         if (sort == 'best') {
-            for (i = 0; i < name.length; i++) {
-                //console.log(theCharmArmed + " + " + name[i]);
+            for (i = 0; i < item.length; i++) {
+                //console.log(theCharmArmed + " + " + item[i]);
 
-                if (name[i].length > 13) {
-                    tempName = name[i].substring(0, 13);
+                if (item[i].length > 13) {
+                    tempName = item[i].substring(0, 13);
                     tempName += "...";
                 } else {
-                    tempName = name[i];
+                    tempName = item[i];
                 }
 
                 if (theCharmArmed == tempName) {
@@ -1082,13 +1090,13 @@ function checkThenArm(sort, category, name) {  //category = weapon/base/charm/tr
                 }
             }
         } else {
-            //console.log(theCharmArmed + " + " + name);
+            //console.log(theCharmArmed + " + " + item);
 
-            if (name.length > 13) {
-                tempName = name.substring(0, 13);
+            if (item.length > 13) {
+                tempName = item.substring(0, 13);
                 tempName += "...";
             } else {
-                tempName = name;
+                tempName = item;
             }
 
             if (theCharmArmed == tempName) {
@@ -1102,14 +1110,14 @@ function checkThenArm(sort, category, name) {  //category = weapon/base/charm/tr
         var currBait = document.getElementById('hud_baitName').innerText;
 
         if (sort == 'best') {
-            for (i = 0; i < name.length; i++) {
-                //console.log(theCharmArmed + " + " + name[i]);
+            for (i = 0; i < item.length; i++) {
+                //console.log(theCharmArmed + " + " + item[i]);
 
-                if (name[i].length > 13) {
-                    tempName = name[i].substring(0, 13);
+                if (item[i].length > 13) {
+                    tempName = item[i].substring(0, 13);
                     tempName += "...";
                 } else {
-                    tempName = name[i];
+                    tempName = item[i];
                 }
 
                 switch (category) {
@@ -1131,11 +1139,11 @@ function checkThenArm(sort, category, name) {  //category = weapon/base/charm/tr
                 }
             }
         } else {
-            if (name.length > 13) {
-                tempName = name.substring(0, 13);
+            if (item.length > 13) {
+                tempName = item.substring(0, 13);
                 tempName += "...";
             } else {
-                tempName = name;
+                tempName = item;
             }
 
 
@@ -1160,15 +1168,15 @@ function checkThenArm(sort, category, name) {  //category = weapon/base/charm/tr
     }
 
     // Try to queue trap arming
-    if (debug) console.log("Last run: " + tryingToArm + ", this run: " + name + ", is armed? " + trapArmed + " with override? " + trapArmedOverride);
-    if (!trapArmed && tryingToArm != name) {
-        tryingToArm = name;
+    if (debug) console.log("Last run: " + tryingToArm + ", this run: " + item + ", is armed? " + trapArmed + " with override? " + trapArmedOverride);
+    if (!trapArmed && tryingToArm != item) {
+        tryingToArm = item;
         trapArmedOverride = false;
         var intervalCTA = setInterval(
             function () {
                 if (!arming) {
-                    console.debug("Queueing arming - " + name);
-                    clickThenArmTrapInterval(sort, category, name);
+                    console.debug("Queueing arming - " + item);
+                    clickThenArmTrapInterval(sort, category, item);
                     clearInterval(intervalCTA);
                     intervalCTA = null;
                     return;
@@ -1229,7 +1237,7 @@ function armTrap(sort, name) {
         for (var i = 0; i < tagGroupElement.length; ++i) {
             tagElement = tagGroupElement[i].getElementsByTagName('a');
             for (var j = 0; j < tagElement.length; ++j) {
-                nameElement = tagElement[j].getElementsByClassName('name')[0].innerText;
+                nameElement = tagElement[j].getElementsByClassName('name')[0].textContent;
                 if (nameElement.indexOf(name) == 0) {
                     fireEvent(tagElement[j], 'click');
                     console.debug(name + ' armed');
@@ -1241,7 +1249,7 @@ function armTrap(sort, name) {
         if (sort == 'best') {
             nameArray.shift();
             if (nameArray.length > 0) {
-                console.debug(nameArray);
+                if (debug) console.debug(nameArray);
                 return armTrap(sort, nameArray);
             } else {
                 console.debug('No traps found');
@@ -1542,23 +1550,6 @@ function retrieveData() {
     }
 }
 
-function getPageVariable(name, value) {
-    if (name == "user.next_activeturn_seconds") {
-        nextActiveTime = parseInt(value);
-    } else if (name == "hud.timer_interval") {
-        timerInterval = parseInt(value);
-    } else if (name == "user.has_puzzle") {
-        isKingReward = (value.toString() == true) ? true : false;
-    } else if (name == "user.bait_quantity") {
-        baitQuantity = parseInt(value);
-    } else if (name == "user.location") {
-        currentLocation = value.toString();
-    }
-
-    name = undefined;
-    value = undefined;
-}
-
 function checkJournalDate() {
     var reload = false;
 
@@ -1613,7 +1604,7 @@ function action() {
     try {
         if (isKingReward) {
             kingRewardAction();
-            notifyMe('KR NOW - ' + getPageVariableForChrome('user.username'), 'http://3.bp.blogspot.com/_O2yZIhpq9E8/TBoAMw0fMNI/AAAAAAAAAxo/1ytaIxQQz4o/s1600/Subliminal+Message.JPG', "Kings Reward NOW");
+            notifyMe('KR NOW - ' + getPageVariable('user.username'), 'http://3.bp.blogspot.com/_O2yZIhpq9E8/TBoAMw0fMNI/AAAAAAAAAxo/1ytaIxQQz4o/s1600/Subliminal+Message.JPG', "Kings Reward NOW");
         } else if (pauseAtInvalidLocation && (huntLocation != currentLocation)) {
             // update timer
             displayTimer("Out of pre-defined hunting location...", "Out of pre-defined hunting location...", "Out of pre-defined hunting location...");
@@ -3050,7 +3041,7 @@ function nobTestBetaUI() {
 //   No Cheese Function - Start
 // ################################################################################################
 function noCheeseAction() {
-    notifyMe("No more cheese!!!", 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/cheese.png', getPageVariableForChrome('user.username') + ' has no more cheese.');
+    notifyMe("No more cheese!!!", 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/cheese.png', getPageVariable('user.username') + ' has no more cheese.');
 
     playNoCheeseSound();
 }
@@ -3135,7 +3126,7 @@ function emailCaptcha() {
 
         Parse.Cloud.run('sendKRemail', {
             theEmail: kingRewardEmail,
-            user: getPageVariableForChrome('user.username')
+            user: getPageVariable('user.username')
         }, {
             success: function (data) {
                 if (debug) console.log(data);
@@ -3458,6 +3449,49 @@ function fireEvent(element, event) {
     }
 }
 
+function getPageVariable(name) {
+    if (debug) console.log('RUN GPV(' + name + ')');
+    try {
+        var browser = browserDetection();
+
+        if (browser == 'chrome') {
+            if (name == "user.unique_hash") {
+                return user.unique_hash;
+            } else {
+                return getPageVariableForChrome(name);
+            }
+        } else if (browser == 'firefox') {
+            if (name == "user.next_activeturn_seconds") {
+                return unsafeWindow.user.next_activeturn_seconds;
+            } else if (name == "user.unique_hash") {
+                return unsafeWindow.user.unique_hash;
+            } else if (name == "user.has_puzzle") {
+                return unsafeWindow.user.has_puzzle;
+            } else if (name == "user.bait_quantity") {
+                return unsafeWindow.user.bait_quantity;
+            } else if (name == "user.location") {
+                return unsafeWindow.user.location;
+            } else if (name == "user.trinket_name") {
+                return unsafeWindow.user.trinket_name;
+            } else if (name == "user.weapon_name") {
+                return unsafeWindow.user.weapon_name;
+            } else if (name == "user.quests.QuestTrainStation.on_train") {
+                return unsafeWindow.user.quests.QuestTrainStation.on_train;
+            } else {
+                if (debug) console.log('GPV firefox: ' + name + ' not found.');
+            }
+        } else {
+            if (debug) console.log('GPV other: ' + name + 'not found.');
+        }
+
+        return 'ERROR';
+    } catch (e) {
+        if (debug) console.log('GPV ALL try block error: ' + e);
+    } finally {
+        name = undefined;
+    }
+}
+
 function getPageVariableForChrome(variableName) {
     if (debug) console.log('RUN GPVchrome(' + variableName + ')');
     // google chrome only
@@ -3625,7 +3659,6 @@ function nobInit() {
 }
 
 function nobAjaxGet(url, callback, throwError) {
-    var NOBhasPuzzle = user.has_puzzle;
     if (!NOBhasPuzzle) {
         jQuery.ajax({
             url: url,
@@ -3644,7 +3677,6 @@ function nobAjaxGet(url, callback, throwError) {
 }
 
 function nobAjaxPost(url, data, callback, throwError, dataType) {
-    var NOBhasPuzzle = user.has_puzzle;
     if (!NOBhasPuzzle) {
         if (dataType == null || dataType == undefined) dataType = 'json';
         jQuery.ajax({
@@ -3765,21 +3797,6 @@ function nobMapRequest(handleData) {
 
 function nobLoading(location, name) {
     var element = document.getElementById(location);
-    /*if (counter < 10) {
-     for (var i = 0; i < counter; i++) {
-     dots = dots + ".";
-     }
-     } else {
-     dots = "";
-     counter = 0;
-     }
-     element.innerHTML = "Loading" + dots;
-     counter++;
-
-     timeoutVar1 = setTimeout(function () {
-     nobLoading(location);
-     }, 1000);*/
-
     element.innerHTML = "<style type=\"text/css\">" +
             /* Universal styling */
         "    [class^=\"shaft-load\"] {" +

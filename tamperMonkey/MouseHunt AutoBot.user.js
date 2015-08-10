@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom, Ooi Keng Siang
-// @version    	2.1.16a
+// @version    	2.1.17a
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
+// @require     https://code.jquery.com/jquery-2.1.4.min.js
 // @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot
 // @updateURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.meta.js
 // @downloadURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.user.js
@@ -667,23 +668,6 @@ function retrieveData() {
     }
 }
 
-function getPageVariable(name, value) {
-    if (name == "user.next_activeturn_seconds") {
-        nextActiveTime = parseInt(value);
-    } else if (name == "hud.timer_interval") {
-        timerInterval = parseInt(value);
-    } else if (name == "user.has_puzzle") {
-        isKingReward = (value.toString() == true) ? true : false;
-    } else if (name == "user.bait_quantity") {
-        baitQuantity = parseInt(value);
-    } else if (name == "user.location") {
-        currentLocation = value.toString();
-    }
-
-    name = undefined;
-    value = undefined;
-}
-
 function checkJournalDate() {
     var reload = false;
 
@@ -738,7 +722,7 @@ function action() {
     try {
         if (isKingReward) {
             kingRewardAction();
-            notifyMe('KR NOW - ' + getPageVariableForChrome('user.username'), 'http://3.bp.blogspot.com/_O2yZIhpq9E8/TBoAMw0fMNI/AAAAAAAAAxo/1ytaIxQQz4o/s1600/Subliminal+Message.JPG', "Kings Reward NOW");
+            notifyMe('KR NOW - ' + getPageVariable('user.username'), 'http://3.bp.blogspot.com/_O2yZIhpq9E8/TBoAMw0fMNI/AAAAAAAAAxo/1ytaIxQQz4o/s1600/Subliminal+Message.JPG', "Kings Reward NOW");
         } else if (pauseAtInvalidLocation && (huntLocation != currentLocation)) {
             // update timer
             displayTimer("Out of pre-defined hunting location...", "Out of pre-defined hunting location...", "Out of pre-defined hunting location...");
@@ -2113,7 +2097,7 @@ function nobTestBetaUI() {
 //   No Cheese Function - Start
 // ################################################################################################
 function noCheeseAction() {
-    notifyMe("No more cheese!!!", 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/cheese.png', getPageVariableForChrome('user.username') + ' has no more cheese.');
+    notifyMe("No more cheese!!!", 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/cheese.png', getPageVariable('user.username') + ' has no more cheese.');
 
     playNoCheeseSound();
 }
@@ -2198,7 +2182,7 @@ function emailCaptcha() {
 
         Parse.Cloud.run('sendKRemail', {
             theEmail: kingRewardEmail,
-            user: getPageVariableForChrome('user.username')
+            user: getPageVariable('user.username')
         }, {
             success: function (data) {
                 if (debug) console.log(data);
@@ -2521,6 +2505,49 @@ function fireEvent(element, event) {
     }
 }
 
+function getPageVariable(name) {
+    if (debug) console.log('RUN GPV(' + name + ')');
+    try {
+        var browser = browserDetection();
+
+        if (browser == 'chrome') {
+            if (name == "user.unique_hash") {
+                return user.unique_hash;
+            } else {
+                return getPageVariableForChrome(name);
+            }
+        } else if (browser == 'firefox') {
+            if (name == "user.next_activeturn_seconds") {
+                return unsafeWindow.user.next_activeturn_seconds;
+            } else if (name == "user.unique_hash") {
+                return unsafeWindow.user.unique_hash;
+            } else if (name == "user.has_puzzle") {
+                return unsafeWindow.user.has_puzzle;
+            } else if (name == "user.bait_quantity") {
+                return unsafeWindow.user.bait_quantity;
+            } else if (name == "user.location") {
+                return unsafeWindow.user.location;
+            } else if (name == "user.trinket_name") {
+                return unsafeWindow.user.trinket_name;
+            } else if (name == "user.weapon_name") {
+                return unsafeWindow.user.weapon_name;
+            } else if (name == "user.quests.QuestTrainStation.on_train") {
+                return unsafeWindow.user.quests.QuestTrainStation.on_train;
+            } else {
+                if (debug) console.log('GPV firefox: ' + name + ' not found.');
+            }
+        } else {
+            if (debug) console.log('GPV other: ' + name + 'not found.');
+        }
+
+        return 'ERROR';
+    } catch (e) {
+        if (debug) console.log('GPV ALL try block error: ' + e);
+    } finally {
+        name = undefined;
+    }
+}
+
 function getPageVariableForChrome(variableName) {
     if (debug) console.log('RUN GPVchrome(' + variableName + ')');
     // google chrome only
@@ -2707,7 +2734,6 @@ function nobAjaxGet(url, callback, throwError) {
 }
 
 function nobAjaxPost(url, data, callback, throwError, dataType) {
-    var NOBhasPuzzle = user.has_puzzle;
     if (!NOBhasPuzzle) {
         if (dataType == null || dataType == undefined) dataType = 'json';
         jQuery.ajax({
