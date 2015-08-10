@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.17b
+// @version    	2.1.18b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -1280,6 +1280,7 @@ function clickTrapSelector(strSelect) //strSelect = weapon/base/charm/trinket/ba
 }
 
 function disarmTrap(trapSelector) {
+    if (debug) console.log('RUN disarmTrap(' + trapSelector + ')');
     clickTrapSelector(trapSelector);
     var x;
     var intervalDT = setInterval(
@@ -1291,7 +1292,7 @@ function disarmTrap(trapSelector) {
                         fireEvent(x[i], 'click');
                         clearInterval(intervalDT);
                         intervalDT = null;
-                        return (console.debug('Disarmed ' + trapSeletor));
+                        return (console.debug('Disarmed ' + trapSelector));
                     }
                 }
 
