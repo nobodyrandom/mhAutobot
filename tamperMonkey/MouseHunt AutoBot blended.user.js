@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.18b
+// @version    	2.1.19b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -852,7 +852,7 @@ function gnawnianExpress(load) {
             switch (phase) {
                 case 'Supply Depot':
                     checkThenArm('best', 'weapon', supplyDepotTrap);
-                    var supplyHoarder = parseInt(document.getElementsByClassName('supplyHoarderTab')[0].innerText.substr(0, 1));
+                    var supplyHoarder = parseInt(document.getElementsByClassName('supplyHoarderTab')[0].textContent.substr(0, 1));
                     if (supplyHoarder == 0) {
                         console.debug("Looking for supply hoarder");
                         checkThenArm(null, 'trinket', 'Supply Schedule');
