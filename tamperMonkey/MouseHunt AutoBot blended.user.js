@@ -968,7 +968,7 @@ function loadTrain(location, load) {
                         fireEvent(document.getElementsByClassName('phaseButton')[0], 'click');
                     break;
                 case 'canyon':
-                    var timeLeft = document.getElementsByClassName('phaseTimer')[0].innerText.substr(10);
+                    var timeLeft = document.getElementsByClassName('phaseTimer')[0].textContent.substr(10);
                     // Fire only when time left is less than 16 mins :P (needs checking if works)
                     if (parseInt(timeLeft.substr(0, timeLeft.indexOf(':'))) == 0 && parseInt(timeLeft.substr(timeLeft.indexOf(':') + 1)) <= 16)
                         fireEvent(document.getElementsByClassName('phaseButton')[0], 'click');
