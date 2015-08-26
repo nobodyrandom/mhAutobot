@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.19b
+// @version    	2.1.20b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -934,6 +934,7 @@ function checkMouse(mouseName) {
     }
 }
 
+// For easter event
 function checkCharge(stopDischargeAt) {
     try {
         var charge = parseInt(document.getElementsByClassName("chargeQuantity")[0].innerText);
@@ -962,7 +963,7 @@ function loadTrain(location, load) {
         if (load) {
             switch (location) {
                 case 'raider':
-                    var repellents = parseInt(document.getElementsByClassName('mouseRepellent')[0].getElementsByClassName('quantity')[0].innerText);
+                    var repellents = parseInt(document.getElementsByClassName('mouseRepellent')[0].getElementsByClassName('quantity')[0].textContent);
                     if (repellents >= 10)
                         fireEvent(document.getElementsByClassName('phaseButton')[0], 'click');
                     break;
@@ -1070,9 +1071,9 @@ function checkThenArm(sort, category, item) {  //category = weapon/base/charm/tr
 
     if (debug) console.log(item + " armed?: " + trapArmed);
 
-    var retryPageVariable = document.getElementById('hud_trapLabel').innerText;
+    var retryPageVariable = document.getElementById('hud_trapLabel').textContent;
     if (!trapArmedOverride && retryPageVariable == "Charm:" && category == "trinket") {
-        var theCharmArmed = document.getElementById('hud_trapPower').innerText;
+        var theCharmArmed = document.getElementById('hud_trapPower').textContent;
         if (sort == 'best') {
             for (i = 0; i < item.length; i++) {
                 //console.log(theCharmArmed + " + " + item[i]);
@@ -1104,10 +1105,10 @@ function checkThenArm(sort, category, item) {  //category = weapon/base/charm/tr
             }
         }
         //trapArmed = true;
-    } else if (!trapArmedOverride && category == 'weapon' || category == 'base' || category == 'bait') {
-        var currBase = document.getElementById('hud_base').innerText;
-        var currTrap = document.getElementById('hud_weapon').innerText;
-        var currBait = document.getElementById('hud_baitName').innerText;
+    } else if (!trapArmedOverride && (category == 'weapon' || category == 'base' || category == 'bait')) {
+        var currBase = document.getElementById('hud_base').textContent;
+        var currTrap = document.getElementById('hud_weapon').textContent;
+        var currBait = document.getElementById('hud_baitName').textContent;
 
         if (sort == 'best') {
             for (i = 0; i < item.length; i++) {
@@ -1174,6 +1175,7 @@ function checkThenArm(sort, category, item) {  //category = weapon/base/charm/tr
         trapArmedOverride = false;
         var intervalCTA = setInterval(
             function () {
+                if (debug) console.log(item + " in CTA queue.");
                 if (!arming) {
                     console.debug("Queueing arming - " + item);
                     clickThenArmTrapInterval(sort, category, item);
@@ -1189,36 +1191,37 @@ function checkThenArm(sort, category, item) {  //category = weapon/base/charm/tr
 function clickThenArmTrapInterval(sort, trap, name) //sort = power/luck/attraction
 {
     // Process trap arming queue
-    clickTrapSelector(trap);
-    //var index;
     setTimeout(function () {
-        var sec = 10;
-        var intervalCTATI = setInterval(
-            function () {
-                console.debug("Processing queue item: " + name);
-                var tryArming = armTrap(sort, name);
-                if (tryArming == 'found') {
-                    clearInterval(intervalCTATI);
-                    arming = false;
-                    intervalCTATI = null;
-                    return;
-                } else if (tryArming == 'not found') {
-                    clickTrapSelector(trap);
-                    clearInterval(intervalCTATI);
-                    arming = false;
-                    intervalCTATI = null;
-                    return;
-                } else {
-                    // Error when try arming bugs out, retry clickTrapSelector
-                    --sec;
-                    if (sec <= 0) {
+        clickTrapSelector(trap);
+        setTimeout(function () {
+            var sec = 10;
+            var intervalCTATI = setInterval(
+                function () {
+                    console.debug("Processing queue item: " + name);
+                    var tryArming = armTrap(sort, name);
+                    if (tryArming == 'found') {
+                        clearInterval(intervalCTATI);
+                        arming = false;
+                        intervalCTATI = null;
+                        return;
+                    } else if (tryArming == 'not found') {
                         clickTrapSelector(trap);
-                        sec = 10;
+                        clearInterval(intervalCTATI);
+                        arming = false;
+                        intervalCTATI = null;
+                        return;
+                    } else {
+                        // Error when try arming bugs out, retry clickTrapSelector
+                        if (debug) console.log("Try arming has bugged out.");
+                        --sec;
+                        if (sec <= 0) {
+                            clickTrapSelector(trap);
+                            sec = 10;
+                        }
                     }
-                }
-            }, 1000);
-    }, 2000);
-    return;
+                }, 1000);
+        }, 2500);
+    }, 500);
 }
 
 // name = Brie/Gouda/Swiss (brie = wrong)
@@ -1233,7 +1236,7 @@ function armTrap(sort, name) {
     }
 
     if (tagGroupElement.length > 0) {
-        console.debug('Try to arm ' + name);
+        console.debug('Trying to arm ' + name);
         for (var i = 0; i < tagGroupElement.length; ++i) {
             tagElement = tagGroupElement[i].getElementsByTagName('a');
             for (var j = 0; j < tagElement.length; ++j) {
@@ -2494,6 +2497,10 @@ window.localStorage.setItem(\'addonCode\', document.getElementById(\'addonCode\'
                 NOBspecialMessageDiv.setAttribute('id', 'nobSpecialMessage');
                 NOBspecialMessageDiv.setAttribute('style', 'display: block; position: fixed; bottom: 0; z-index: 999; text-align: center; width: 760px;');
 
+                var nobWhatsNewDiv = document.createElement('div');
+                nobWhatsNewDiv.setAttribute('id', 'nobWhatsNew');
+                nobWhatsNewDiv.setAttribute('style', 'display: block; position: fixed; bottom: 0; left: 0; z-index: 999; text-align: left; width: 200px; height: 100px; padding: 10px 0 10px 10px;');
+
                 var preferenceDiv = document.createElement('div');
                 preferenceDiv.setAttribute('id', 'preferenceDiv');
                 if (showPreference == true)
@@ -2503,6 +2510,7 @@ window.localStorage.setItem(\'addonCode\', document.getElementById(\'addonCode\'
                 preferenceDiv.innerHTML = preferenceHTMLStr;
                 timerDivElement.appendChild(preferenceDiv);
                 timerDivElement.appendChild(NOBspecialMessageDiv);
+                timerDivElement.appendChild(nobWhatsNewDiv);
                 preferenceHTMLStr = null;
                 showPreference = null;
 
@@ -2511,6 +2519,7 @@ window.localStorage.setItem(\'addonCode\', document.getElementById(\'addonCode\'
                 hr3Element = null;
                 preferenceDiv = null;
                 NOBspecialMessageDiv = null;
+                nobWhatsNewDiv = null;
 
                 // embed all msg to the page
                 headerElement.parentNode.insertBefore(timerDivElement, headerElement);
@@ -3650,8 +3659,8 @@ function nobInit() {
                 setTimeout(function () {
                     pingServer();
                 }, 30000);
-                // Hide message after 1H :)
-                hideNOBMessage(3600000);
+                // Hide message after 2H :)
+                hideNOBMessage(7200000);
             }
         }
     } catch (e) {
@@ -3972,7 +3981,7 @@ function nobScript(qqEvent) {
                 }
             } else {
                 mapThere = document.getElementsByClassName('treasureMap')[0];
-                if (mapThere.innerText.indexOf("remaining") == -1) {
+                if (mapThere.textContent.indexOf("remaining") == -1) {
                     mapThere = false;
                     if (debug) console.log("No map, using HTML data now");
                 } else {

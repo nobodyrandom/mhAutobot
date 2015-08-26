@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom, Ooi Keng Siang
-// @version    	2.1.19a
+// @version    	2.1.20a
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -1586,6 +1586,10 @@ window.localStorage.setItem(\'addonCode\', document.getElementById(\'addonCode\'
                 NOBspecialMessageDiv.setAttribute('id', 'nobSpecialMessage');
                 NOBspecialMessageDiv.setAttribute('style', 'display: block; position: fixed; bottom: 0; z-index: 999; text-align: center; width: 760px;');
 
+                var nobWhatsNewDiv = document.createElement('div');
+                nobWhatsNewDiv.setAttribute('id', 'nobWhatsNew');
+                nobWhatsNewDiv.setAttribute('style', 'display: block; position: fixed; bottom: 0; left: 0; z-index: 999; text-align: left; width: 200px; height: 100px; padding: 10px 0 10px 10px;');
+
                 var preferenceDiv = document.createElement('div');
                 preferenceDiv.setAttribute('id', 'preferenceDiv');
                 if (showPreference == true)
@@ -1595,6 +1599,7 @@ window.localStorage.setItem(\'addonCode\', document.getElementById(\'addonCode\'
                 preferenceDiv.innerHTML = preferenceHTMLStr;
                 timerDivElement.appendChild(preferenceDiv);
                 timerDivElement.appendChild(NOBspecialMessageDiv);
+                timerDivElement.appendChild(nobWhatsNewDiv);
                 preferenceHTMLStr = null;
                 showPreference = null;
 
@@ -1603,6 +1608,7 @@ window.localStorage.setItem(\'addonCode\', document.getElementById(\'addonCode\'
                 hr3Element = null;
                 preferenceDiv = null;
                 NOBspecialMessageDiv = null;
+                nobWhatsNewDiv = null;
 
                 // embed all msg to the page
                 headerElement.parentNode.insertBefore(timerDivElement, headerElement);
@@ -2705,8 +2711,8 @@ function nobInit() {
                 setTimeout(function () {
                     pingServer();
                 }, 30000);
-                // Hide message after 1H :)
-                hideNOBMessage(3600000);
+                // Hide message after 2H :)
+                hideNOBMessage(7200000);
             }
         }
     } catch (e) {
@@ -2715,7 +2721,6 @@ function nobInit() {
 }
 
 function nobAjaxGet(url, callback, throwError) {
-    var NOBhasPuzzle = user.has_puzzle;
     if (!NOBhasPuzzle) {
         jQuery.ajax({
             url: url,
@@ -3028,7 +3033,7 @@ function nobScript(qqEvent) {
                 }
             } else {
                 mapThere = document.getElementsByClassName('treasureMap')[0];
-                if (mapThere.innerText.indexOf("remaining") == -1) {
+                if (mapThere.textContent.indexOf("remaining") == -1) {
                     mapThere = false;
                     if (debug) console.log("No map, using HTML data now");
                 } else {
