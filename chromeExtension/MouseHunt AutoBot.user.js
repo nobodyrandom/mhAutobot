@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP chrome ext ver
 // @author      NobodyRandom, Ooi Keng Siang
-// @version    	2.1.15c
+// @version    	2.1.21c
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
+// @require     https://code.jquery.com/jquery-2.1.4.min.js
 // @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot
 // @updateURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.meta.js
 // @downloadURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.user.js
@@ -109,7 +110,7 @@ var addonCode = "";
 // WARNING - Do not modify the code below unless you know how to read and write the script.
 
 // All global variable declaration and default value
-var scriptVersion = "2.1.15c";
+var scriptVersion = "2.1.21c";
 var fbPlatform = false;
 var hiFivePlatform = false;
 var mhPlatform = false;
@@ -667,23 +668,6 @@ function retrieveData() {
     }
 }
 
-function getPageVariable(name, value) {
-    if (name == "user.next_activeturn_seconds") {
-        nextActiveTime = parseInt(value);
-    } else if (name == "hud.timer_interval") {
-        timerInterval = parseInt(value);
-    } else if (name == "user.has_puzzle") {
-        isKingReward = (value.toString() == true) ? true : false;
-    } else if (name == "user.bait_quantity") {
-        baitQuantity = parseInt(value);
-    } else if (name == "user.location") {
-        currentLocation = value.toString();
-    }
-
-    name = undefined;
-    value = undefined;
-}
-
 function checkJournalDate() {
     var reload = false;
 
@@ -738,7 +722,7 @@ function action() {
     try {
         if (isKingReward) {
             kingRewardAction();
-            notifyMe('KR NOW - ' + getPageVariableForChrome('user.username'), 'http://3.bp.blogspot.com/_O2yZIhpq9E8/TBoAMw0fMNI/AAAAAAAAAxo/1ytaIxQQz4o/s1600/Subliminal+Message.JPG', "Kings Reward NOW");
+            notifyMe('KR NOW - ' + getPageVariable('user.username'), 'http://3.bp.blogspot.com/_O2yZIhpq9E8/TBoAMw0fMNI/AAAAAAAAAxo/1ytaIxQQz4o/s1600/Subliminal+Message.JPG', "Kings Reward NOW");
         } else if (pauseAtInvalidLocation && (huntLocation != currentLocation)) {
             // update timer
             displayTimer("Out of pre-defined hunting location...", "Out of pre-defined hunting location...", "Out of pre-defined hunting location...");
@@ -1602,6 +1586,10 @@ window.localStorage.setItem(\'addonCode\', document.getElementById(\'addonCode\'
                 NOBspecialMessageDiv.setAttribute('id', 'nobSpecialMessage');
                 NOBspecialMessageDiv.setAttribute('style', 'display: block; position: fixed; bottom: 0; z-index: 999; text-align: center; width: 760px;');
 
+                var nobWhatsNewDiv = document.createElement('div');
+                nobWhatsNewDiv.setAttribute('id', 'nobWhatsNew');
+                nobWhatsNewDiv.setAttribute('style', 'display: block; position: fixed; bottom: 0; left: 0; z-index: 999; text-align: left; width: 200px; height: 100px; padding: 10px 0 10px 10px;');
+
                 var preferenceDiv = document.createElement('div');
                 preferenceDiv.setAttribute('id', 'preferenceDiv');
                 if (showPreference == true)
@@ -1611,6 +1599,7 @@ window.localStorage.setItem(\'addonCode\', document.getElementById(\'addonCode\'
                 preferenceDiv.innerHTML = preferenceHTMLStr;
                 timerDivElement.appendChild(preferenceDiv);
                 timerDivElement.appendChild(NOBspecialMessageDiv);
+                timerDivElement.appendChild(nobWhatsNewDiv);
                 preferenceHTMLStr = null;
                 showPreference = null;
 
@@ -1619,6 +1608,7 @@ window.localStorage.setItem(\'addonCode\', document.getElementById(\'addonCode\'
                 hr3Element = null;
                 preferenceDiv = null;
                 NOBspecialMessageDiv = null;
+                nobWhatsNewDiv = null;
 
                 // embed all msg to the page
                 headerElement.parentNode.insertBefore(timerDivElement, headerElement);
@@ -2113,7 +2103,7 @@ function nobTestBetaUI() {
 //   No Cheese Function - Start
 // ################################################################################################
 function noCheeseAction() {
-    notifyMe("No more cheese!!!", 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/cheese.png', getPageVariableForChrome('user.username') + ' has no more cheese.');
+    notifyMe("No more cheese!!!", 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/cheese.png', getPageVariable('user.username') + ' has no more cheese.');
 
     playNoCheeseSound();
 }
@@ -2191,14 +2181,14 @@ function kingRewardAction() {
 }
 
 function emailCaptcha() {
-    if (kingRewardEmail !== null && kingRewardEmail != undefined) {
+    if (kingRewardEmail != null && kingRewardEmail != undefined && kingRewardEmail != "") {
         if (debug) console.log('Attempting to email captcha via Parse now.');
 
         Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
 
         Parse.Cloud.run('sendKRemail', {
             theEmail: kingRewardEmail,
-            user: getPageVariableForChrome('user.username')
+            user: getPageVariable('user.username')
         }, {
             success: function (data) {
                 if (debug) console.log(data);
@@ -2521,6 +2511,49 @@ function fireEvent(element, event) {
     }
 }
 
+function getPageVariable(name) {
+    if (debug) console.log('RUN GPV(' + name + ')');
+    try {
+        var browser = browserDetection();
+
+        if (browser == 'chrome') {
+            if (name == "user.unique_hash") {
+                return user.unique_hash;
+            } else {
+                return getPageVariableForChrome(name);
+            }
+        } else if (browser == 'firefox') {
+            if (name == "user.next_activeturn_seconds") {
+                return unsafeWindow.user.next_activeturn_seconds;
+            } else if (name == "user.unique_hash") {
+                return unsafeWindow.user.unique_hash;
+            } else if (name == "user.has_puzzle") {
+                return unsafeWindow.user.has_puzzle;
+            } else if (name == "user.bait_quantity") {
+                return unsafeWindow.user.bait_quantity;
+            } else if (name == "user.location") {
+                return unsafeWindow.user.location;
+            } else if (name == "user.trinket_name") {
+                return unsafeWindow.user.trinket_name;
+            } else if (name == "user.weapon_name") {
+                return unsafeWindow.user.weapon_name;
+            } else if (name == "user.quests.QuestTrainStation.on_train") {
+                return unsafeWindow.user.quests.QuestTrainStation.on_train;
+            } else {
+                if (debug) console.log('GPV firefox: ' + name + ' not found.');
+            }
+        } else {
+            if (debug) console.log('GPV other: ' + name + 'not found.');
+        }
+
+        return 'ERROR';
+    } catch (e) {
+        if (debug) console.log('GPV ALL try block error: ' + e);
+    } finally {
+        name = undefined;
+    }
+}
+
 function getPageVariableForChrome(variableName) {
     if (debug) console.log('RUN GPVchrome(' + variableName + ')');
     // google chrome only
@@ -2678,8 +2711,8 @@ function nobInit() {
                 setTimeout(function () {
                     pingServer();
                 }, 30000);
-                // Hide message after 1H :)
-                hideNOBMessage(3600000);
+                // Hide message after 2H :)
+                hideNOBMessage(7200000);
             }
         }
     } catch (e) {
@@ -2688,7 +2721,6 @@ function nobInit() {
 }
 
 function nobAjaxGet(url, callback, throwError) {
-    var NOBhasPuzzle = user.has_puzzle;
     if (!NOBhasPuzzle) {
         jQuery.ajax({
             url: url,
@@ -2707,9 +2739,9 @@ function nobAjaxGet(url, callback, throwError) {
 }
 
 function nobAjaxPost(url, data, callback, throwError, dataType) {
-    var NOBhasPuzzle = user.has_puzzle;
     if (!NOBhasPuzzle) {
         if (dataType == null || dataType == undefined) dataType = 'json';
+
         jQuery.ajax({
             type: "POST",
             url: url,
@@ -2769,7 +2801,7 @@ function nobGDoc(items, type) {
     nobAjaxPost(sheet, dataSendString, function (data) {
         if (debug) console.log(data);
     }, function (a, b, c) {
-        console.log(b)
+        console.log("nobGDoc error (" + b + "): " + c);
     });
 }
 
@@ -3002,7 +3034,7 @@ function nobScript(qqEvent) {
                 }
             } else {
                 mapThere = document.getElementsByClassName('treasureMap')[0];
-                if (mapThere.innerText.indexOf("remaining") == -1) {
+                if (mapThere.textContent.indexOf("remaining") == -1) {
                     mapThere = false;
                     if (debug) console.log("No map, using HTML data now");
                 } else {
@@ -3017,7 +3049,7 @@ function nobScript(qqEvent) {
                             nobStore(output, "data");
                             nobGDoc(JSON.stringify(output), "map");
                         } else {
-                            console.log(output);
+                            console.log("Map request failed: " + output);
                             mapRequestFailed = true;
                             nobHTMLFetch();
                             output = nobGet('data');
@@ -3053,7 +3085,7 @@ function nobTravel(location) {
         nobAjaxPost(url, data, function (r) {
             console.log(r);
         }, function (a, b, c) {
-            console.log(a, b, c);
+            console.log(b, c);
         });
     }
 }
@@ -3089,7 +3121,7 @@ function fetchGDocStuff() {
                 if (debug) console.log('Current MH AutoBot version: ' + currVer + ' / Server MH AutoBot version: ' + checkVer);
                 if (checkVer > currVer) {
                     var updateElement = document.getElementById('updateElement');
-                    updateElement.innerHTML = "<a href=\"https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp\" target='_blank'><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
+                    updateElement.innerHTML = "<a href=\"https://greasyfork.org/scripts/6092-mousehunt-autobot-revamp/code/MouseHunt%20AutoBot%20REVAMP.user.js\" target='_blank'><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
                 }
 
                 // SPECIAL MESSAGE
