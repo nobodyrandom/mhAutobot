@@ -2741,6 +2741,7 @@ function nobAjaxGet(url, callback, throwError) {
 function nobAjaxPost(url, data, callback, throwError, dataType) {
     if (!NOBhasPuzzle) {
         if (dataType == null || dataType == undefined) dataType = 'json';
+
         jQuery.ajax({
             type: "POST",
             url: url,
@@ -2800,7 +2801,7 @@ function nobGDoc(items, type) {
     nobAjaxPost(sheet, dataSendString, function (data) {
         if (debug) console.log(data);
     }, function (a, b, c) {
-        console.log(b)
+        console.log("nobGDoc error (" + b + "): " + c);
     });
 }
 
@@ -3084,7 +3085,7 @@ function nobTravel(location) {
         nobAjaxPost(url, data, function (r) {
             console.log(r);
         }, function (a, b, c) {
-            console.log(a, b, c);
+            console.log(b, c);
         });
     }
 }
