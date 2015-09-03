@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.20b
+// @version    	2.1.21b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -568,7 +568,7 @@ function BurroughRift(minMist, maxMist) {
         //Tier 2/Green: 6-18 Mist Canisters
         //Tier 3/Red: 19-20 Mist Canisters
 
-        var currentMistQuantity = parseInt(document.getElementsByClassName('mistQuantity')[0].innerText);
+        var currentMistQuantity = parseInt(document.getElementsByClassName('mistQuantity')[0].textContent);
         var isMisting = getPageVariable('user.quests.QuestRiftBurroughs.is_misting');
         var mistButton = document.getElementsByClassName('mistButton')[0];
         console.debug('Current Mist Quantity: ' + currentMistQuantity);
@@ -832,7 +832,7 @@ function sandCrypts() {
 }
 
 function gnawnianExpress(load) {
-    // TODO: fix all innerText to allow firefox support?
+    // TODO: fix all innerText to allow firefox support? SC, LG and easter to go.
     var currentLocation = getPageVariable("user.location");
     console.debug(currentLocation);
     if (currentLocation.indexOf("Gnawnian Express") > -1) {
@@ -3689,6 +3689,7 @@ function nobAjaxGet(url, callback, throwError) {
 function nobAjaxPost(url, data, callback, throwError, dataType) {
     if (!NOBhasPuzzle) {
         if (dataType == null || dataType == undefined) dataType = 'json';
+
         jQuery.ajax({
             type: "POST",
             url: url,
@@ -3748,7 +3749,7 @@ function nobGDoc(items, type) {
     nobAjaxPost(sheet, dataSendString, function (data) {
         if (debug) console.log(data);
     }, function (a, b, c) {
-        console.log(b)
+        console.log("nobGDoc error (" + b + "): " + c);
     });
 }
 
@@ -3996,7 +3997,7 @@ function nobScript(qqEvent) {
                             nobStore(output, "data");
                             nobGDoc(JSON.stringify(output), "map");
                         } else {
-                            console.log(output);
+                            console.log("Map request failed: " + output);
                             mapRequestFailed = true;
                             nobHTMLFetch();
                             output = nobGet('data');
@@ -4032,7 +4033,7 @@ function nobTravel(location) {
         nobAjaxPost(url, data, function (r) {
             console.log(r);
         }, function (a, b, c) {
-            console.log(a, b, c);
+            console.log(b, c);
         });
     }
 }

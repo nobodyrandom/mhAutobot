@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom, Ooi Keng Siang
-// @version    	2.1.20a
+// @version    	2.1.21a
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -3048,7 +3048,7 @@ function nobScript(qqEvent) {
                             nobStore(output, "data");
                             nobGDoc(JSON.stringify(output), "map");
                         } else {
-                            console.log(output);
+                            console.log("Map request failed: " + output);
                             mapRequestFailed = true;
                             nobHTMLFetch();
                             output = nobGet('data');
