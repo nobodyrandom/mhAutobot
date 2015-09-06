@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom, Ooi Keng Siang
-// @version    	2.1.21a
+// @version    	2.1.22a
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -3515,49 +3515,83 @@ function nobCalculateTime(runOnly) {
         nobCalculateOfflineTimers();
 }
 
-function nobCalculateOfflineTimers() {
+function nobCalculateOfflineTimers(runOnly) {
+    if (runOnly != 'seasonal' & runOnly != 'balack' & runOnly != 'fg')
+        runOnly = 'all';
+
     var CurrentTime = currentTimeStamp();
-    for (i = 0; i < 3; i++) {
-        var CurrentName = -1;
-        var CurrentBreakdown = 0;
-        var TotalBreakdown = 0;
-        var iCount2;
+    var CurrentName = -1;
+    var CurrentBreakdown = 0;
+    var TotalBreakdown = 0;
+    var iCount2;
 
-        for (iCount2 = 0; iCount2 < LOCATION_TIMERS[i][1].breakdown.length; iCount2++)
-            TotalBreakdown += LOCATION_TIMERS[i][1].breakdown[iCount2];
+    if (runOnly == 'seasonal') {
+        for (iCount2 = 0; iCount2 < LOCATION_TIMERS[0][1].breakdown.length; iCount2++)
+            TotalBreakdown += LOCATION_TIMERS[0][1].breakdown[iCount2];
 
-        var CurrentValue = Math.floor((CurrentTime - LOCATION_TIMERS[i][1].first) / LOCATION_TIMERS[i][1].length) % TotalBreakdown;
+        var CurrentValue = Math.floor((CurrentTime - LOCATION_TIMERS[0][1].first) / LOCATION_TIMERS[0][1].length) % TotalBreakdown;
 
-        for (iCount2 = 0; iCount2 < LOCATION_TIMERS[i][1].breakdown.length && CurrentName == -1; iCount2++) {
-            CurrentBreakdown += LOCATION_TIMERS[i][1].breakdown[iCount2];
+        for (iCount2 = 0; iCount2 < LOCATION_TIMERS[0][1].breakdown.length && CurrentName == -1; iCount2++) {
+            CurrentBreakdown += LOCATION_TIMERS[0][1].breakdown[iCount2];
 
             if (CurrentValue < CurrentBreakdown) {
                 CurrentName = iCount2;
             }
         }
 
-        var SeasonLength = (LOCATION_TIMERS[i][1].length * LOCATION_TIMERS[i][1].breakdown[CurrentName]);
-        var CurrentTimer = (CurrentTime - LOCATION_TIMERS[i][1].first);
+        var SeasonLength = (LOCATION_TIMERS[0][1].length * LOCATION_TIMERS[0][1].breakdown[CurrentName]);
+        var CurrentTimer = (CurrentTime - LOCATION_TIMERS[0][1].first);
         var SeasonRemaining = 0;
 
         while (CurrentTimer > 0) {
-            for (iCount2 = 0; iCount2 < LOCATION_TIMERS[i][1].breakdown.length && CurrentTimer > 0; iCount2++) {
+            for (iCount2 = 0; iCount2 < LOCATION_TIMERS[0][1].breakdown.length && CurrentTimer > 0; iCount2++) {
                 SeasonRemaining = CurrentTimer;
-                CurrentTimer -= (LOCATION_TIMERS[i][1].length * LOCATION_TIMERS[i][1].breakdown[iCount2]);
+                CurrentTimer -= (LOCATION_TIMERS[0][1].length * LOCATION_TIMERS[0][1].breakdown[iCount2]);
             }
         }
 
         SeasonRemaining = SeasonLength - SeasonRemaining;
 
-        var seasonalDiv = document.getElementById('NOB' + LOCATION_TIMERS[i][0]);
-        var content = "";
-        content += LOCATION_TIMERS[i][0] + ': <font color="' + LOCATION_TIMERS[i][1].color[CurrentName] + '">' + LOCATION_TIMERS[i][1].name[CurrentName] + '</font>';
-        if (LOCATION_TIMERS[i][1].effective != null) {
-            content += ' (' + LOCATION_TIMERS[i][1].effective[CurrentName] + ')';
-        }
+        return LOCATION_TIMERS[0][1].name[CurrentName];
+    } else if (runOnly == 'all') {
+        for (i = 0; i < 3; i++) {
+            for (iCount2 = 0; iCount2 < LOCATION_TIMERS[i][1].breakdown.length; iCount2++)
+                TotalBreakdown += LOCATION_TIMERS[i][1].breakdown[iCount2];
 
-        content += ' &#126; For ' + updateTimer(SeasonRemaining, true);
-        seasonalDiv.innerHTML = content;
+            var CurrentValue = Math.floor((CurrentTime - LOCATION_TIMERS[i][1].first) / LOCATION_TIMERS[i][1].length) % TotalBreakdown;
+
+            for (iCount2 = 0; iCount2 < LOCATION_TIMERS[i][1].breakdown.length && CurrentName == -1; iCount2++) {
+                CurrentBreakdown += LOCATION_TIMERS[i][1].breakdown[iCount2];
+
+                if (CurrentValue < CurrentBreakdown) {
+                    CurrentName = iCount2;
+                }
+            }
+
+            var SeasonLength = (LOCATION_TIMERS[i][1].length * LOCATION_TIMERS[i][1].breakdown[CurrentName]);
+            var CurrentTimer = (CurrentTime - LOCATION_TIMERS[i][1].first);
+            var SeasonRemaining = 0;
+
+            while (CurrentTimer > 0) {
+                for (iCount2 = 0; iCount2 < LOCATION_TIMERS[i][1].breakdown.length && CurrentTimer > 0; iCount2++) {
+                    SeasonRemaining = CurrentTimer;
+                    CurrentTimer -= (LOCATION_TIMERS[i][1].length * LOCATION_TIMERS[i][1].breakdown[iCount2]);
+                }
+            }
+
+            SeasonRemaining = SeasonLength - SeasonRemaining;
+
+            var seasonalDiv = document.getElementById('NOB' + LOCATION_TIMERS[i][0]);
+            var content = "";
+            content += LOCATION_TIMERS[i][0] + ': <font color="' + LOCATION_TIMERS[i][1].color[CurrentName] + '">' + LOCATION_TIMERS[i][1].name[CurrentName] + '</font>';
+            if (LOCATION_TIMERS[i][1].effective != null) {
+                content += ' (' + LOCATION_TIMERS[i][1].effective[CurrentName] + ')';
+            }
+
+            content += ' &#126; For ' + updateTimer(SeasonRemaining, true);
+            seasonalDiv.innerHTML = content;
+        }
+        return;
     }
 }
 

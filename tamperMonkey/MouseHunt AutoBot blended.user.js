@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.21b
+// @version    	2.1.22b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -112,9 +112,9 @@ var bestForgotten = ['Tarannosaurus Rex Trap', 'The Forgotten Art of Dance'];
 var bestDraconic = ['Dragon Lance', 'Ice Maiden'];
 var bestRiftLuck = ['Multi-Crystal Laser', 'Crystal Tower'];
 var bestRiftPower = ['Focused Crystal Laser', 'Crystal Tower'];
-var bestPowerBase = ['Tidal Base', 'Golden Tournament Base', 'Spellbook Base'];
-var bestLuckBase = ['Rift Base', 'Tidal Base', 'Sheep Jade Base', 'Horse Jade Base'];
-var bestAttBasae = ['Birthday Drag', 'Cheesecake Base'];
+var bestPowerBase = ['Tidal Base', 'Golden Tournament Base', 'Fissure Base', 'Spellbook Base'];
+var bestLuckBase = ['Fissure Base', 'Rift Base', 'Tidal Base', 'Sheep Jade Base', 'Horse Jade Base'];
+var bestAttBase = ['Birthday Drag', 'Cheesecake Base'];
 var bestSalt = ['Super Salt', 'Grub Salt'];
 var bestAnchor = ['Golden Anchor', 'Spiked Anchor', 'Empowered Anchor'];
 var bestOxygen = ['Oxygen Burst', 'Empowered Anchor'];
@@ -159,6 +159,9 @@ var hornRetry = 0;
 var nextActiveTime = 900;
 var timerInterval = 2;
 var tryingToArm;
+var armingQueue = [];
+var dequeueingCTA = false;
+var dequeueIntRunning = false;
 var mouseList = [];
 var eventLocation;
 var arming = false;
@@ -487,7 +490,7 @@ function eventLocationCheck() {
             SunkenCity();
             break;
         case 'Zugzwang\'s Tower':
-            ZTalgo();
+            ZTower();
             break;
         case 'Fiery Warpath':
             fieryWarpath();
@@ -497,44 +500,82 @@ function eventLocationCheck() {
     }
 }
 
-function ZTalgo() {
+function ZTower() {
     var location = getPageVariable('user.location');
     console.debug(location);
-    if (!(location.indexOf('Zugzwang\'s Tower') > -1)) {
-        console.debug('Not in Zugzwang\'s Tower.');
+    if (location.indexOf('Zugzwang\'s Tower') == -1 && location.indexOf('Seasonal Garden') == -1) {
+        console.debug('Not in Zugzwang\'s Tower or Seasonal Garden.');
         return;
     }
 
-    retrieveMouseList();
-    var intervalZT = setInterval(
-        function () {
-            if (mouseList.length > 0) {
-                if (checkMouse("Chess Master")) {
-                    //arm Uncharged Scholar Charm & Checkmate Cheese
-                    checkThenArm(null, "trinket", "Uncharged Scholar");
-                    checkThenArm(null, "bait", "Checkmate");
-                } else if (checkMouse("King")) {
-                    //arm Checkmate Cheese
-                    checkThenArm(null, "bait", "Checkmate");
-                } else if (checkMouse("Queen")) {
-                    //arm another charm other than rook charm
-                    checkThenArm(null, "trinket", "Super Power");
-                    disarmTrap('trinket');
-                } else if (checkMouse("Rook")) {
-                    //arm rook charm (if available)
-                    checkThenArm(null, "trinket", "Rook Crumble");
-                } else if (checkMouse("Knight")) {
-                    //arm Sphynx Wrath
-                    checkThenArm(null, "weapon", "Sphynx Wrath");
-                    checkThenArm('best', 'base', bestPowerBase);
+    if (location.indexOf('Seasonal Garden') > -1) {
+        checkThenArm(null, 'bait', 'Gouda');
+        checkThenArm(null, 'trinket', 'Amplifier');
+        checkThenArm('best', 'base', ['Seasonal', 'Fissure', 'Golden Tournament']);
+
+        var season = nobCalculateOfflineTimers('seasonal');
+        console.debug('It is ' + season + ' in Seasonal Gardens right now.');
+        switch (season) {
+            case 'Spring':
+                checkThenArm('best', 'weapon', bestPhysical);
+                break;
+            case 'Summer':
+                checkThenArm('best', 'weapon', bestTactical);
+                break;
+            case 'Autumn':
+                checkThenArm('best', 'weapon', bestShadow);
+                break;
+            case 'Winter':
+                checkThenArm('best', 'weapon', bestHydro);
+                break;
+            default:
+                break;
+        }
+
+        season = null;
+        return;
+    } else if (location.indexOf('Zugzwang\'s Tower') > -1) {
+        var ztTriesLeft = 5;
+        retrieveMouseList();
+        var intervalZT = setInterval(
+            function () {
+                if (mouseList.length > 0) {
+                    if (checkMouse("Chess Master")) {
+                        //arm Uncharged Scholar Charm & Checkmate Cheese
+                        checkThenArm(null, "trinket", "Uncharged Scholar");
+                        checkThenArm(null, "bait", "Checkmate");
+                    } else if (checkMouse("King")) {
+                        //arm Checkmate Cheese
+                        checkThenArm(null, "bait", "Checkmate");
+                    } else if (checkMouse("Queen")) {
+                        //arm another charm other than rook charm
+                        checkThenArm(null, "trinket", "Super Power");
+                        disarmTrap('trinket');
+                    } else if (checkMouse("Rook")) {
+                        //arm rook charm (if available)
+                        checkThenArm(null, "trinket", "Rook Crumble");
+                    } else if (checkMouse("Knight")) {
+                        //arm Sphynx Wrath
+                        checkThenArm(null, "weapon", "Sphynx Wrath");
+                        checkThenArm('best', 'base', bestPowerBase);
+                    }
+                    clearInterval(intervalZT);
+                    intervalZT = null;
+                    mouseList = [];
+                    return;
+                } else {
+                    if (debug) console.log("Count down to ZT bot give up: " + ztTriesLeft);
+                    if (ztTriesLeft == 0) {
+                        clearInterval(intervalZT);
+                        intervalZT = null;
+                        mouseList = [];
+                        ztTriesLeft = null;
+                    }
+                    return;
                 }
-                clearInterval(intervalZT);
-                intervalZT = null;
-                mouseList = [];
-                return;
-            }
-        }, 1000);
-    return;
+            }, 3000);
+        return;
+    }
 }
 
 function Halloween2014() {
@@ -1168,22 +1209,44 @@ function checkThenArm(sort, category, item) {  //category = weapon/base/charm/tr
         }
     }
 
+    //TODO: finish this
+    armingQueue.push([sort, category, item, trapArmed, trapArmedOverride]);
+    if (!dequeueIntRunning) {
+        var dequeueInterval = setInterval(function () {
+            if (debug) console.log('In the queue(' + armingQueue.length + ' ' + dequeueingCTA + '): ');
+            if (debug) console.log(armingQueue);
+
+            if (!dequeueingCTA && armingQueue.length > 0) {
+                dequeueingCTA = true;
+                var tempQueueItem = armingQueue.pop();
+                dequeueCheckThenArm(tempQueueItem[0], tempQueueItem[1], tempQueueItem[2], tempQueueItem[3], tempQueueItem[4]);
+                tempQueueItem = [];
+            } else if (armingQueue.length == 0) {
+                clearInterval(dequeueInterval);
+                dequeueIntRunning = false;
+            }
+        }, 2000);
+    }
+}
+
+function dequeueCheckThenArm(sort, category, item, trapArmed, trapArmedOverride) {
     // Try to queue trap arming
     if (debug) console.log("Last run: " + tryingToArm + ", this run: " + item + ", is armed? " + trapArmed + " with override? " + trapArmedOverride);
     if (!trapArmed && tryingToArm != item) {
         tryingToArm = item;
         trapArmedOverride = false;
-        var intervalCTA = setInterval(
-            function () {
-                if (debug) console.log(item + " in CTA queue.");
-                if (!arming) {
-                    console.debug("Queueing arming - " + item);
-                    clickThenArmTrapInterval(sort, category, item);
-                    clearInterval(intervalCTA);
-                    intervalCTA = null;
-                    return;
-                }
-            }, 2000);
+        var intervalCTA = setInterval(function () {
+            if (debug) console.log(item + " in CTA queue.");
+            if (!arming) {
+                console.debug("Queueing arming - " + item);
+                clickThenArmTrapInterval(sort, category, item);
+                clearInterval(intervalCTA);
+                intervalCTA = null;
+                return;
+            }
+        }, 2000);
+    } else {
+        dequeueingCTA = false;
     }
     return;
 }
@@ -1202,12 +1265,14 @@ function clickThenArmTrapInterval(sort, trap, name) //sort = power/luck/attracti
                     if (tryArming == 'found') {
                         clearInterval(intervalCTATI);
                         arming = false;
+                        dequeueingCTA = false;
                         intervalCTATI = null;
                         return;
                     } else if (tryArming == 'not found') {
                         clickTrapSelector(trap);
                         clearInterval(intervalCTATI);
                         arming = false;
+                        dequeueingCTA = false;
                         intervalCTATI = null;
                         return;
                     } else {
@@ -2429,6 +2494,7 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<select name="algo" onChange="window.localStorage.setItem(\'eventLocation\', value); document.getElementById(\'event\').value=window.localStorage.getItem(\'eventLocation\');">';
                 preferenceHTMLStr += '<option value=""> </option>';
                 preferenceHTMLStr += '<option value="None" selected>None</option>';
+                preferenceHTMLStr += '<option value="Zugzwang\'s Tower">Zugzwang\'s Tower</option>';
                 preferenceHTMLStr += '<option value="Charge Egg 2014">Charge Egg 2014</option>';
                 preferenceHTMLStr += '<option value="Charge Egg 2014(17)">Charge Egg 2014(17)</option>';
                 preferenceHTMLStr += '<option value="Burroughs Rift(Red)">Burroughs Rift(Red)</option>';
@@ -4463,49 +4529,83 @@ function nobCalculateTime(runOnly) {
         nobCalculateOfflineTimers();
 }
 
-function nobCalculateOfflineTimers() {
+function nobCalculateOfflineTimers(runOnly) {
+    if (runOnly != 'seasonal' & runOnly != 'balack' & runOnly != 'fg')
+        runOnly = 'all';
+
     var CurrentTime = currentTimeStamp();
-    for (i = 0; i < 3; i++) {
-        var CurrentName = -1;
-        var CurrentBreakdown = 0;
-        var TotalBreakdown = 0;
-        var iCount2;
+    var CurrentName = -1;
+    var CurrentBreakdown = 0;
+    var TotalBreakdown = 0;
+    var iCount2;
 
-        for (iCount2 = 0; iCount2 < LOCATION_TIMERS[i][1].breakdown.length; iCount2++)
-            TotalBreakdown += LOCATION_TIMERS[i][1].breakdown[iCount2];
+    if (runOnly == 'seasonal') {
+        for (iCount2 = 0; iCount2 < LOCATION_TIMERS[0][1].breakdown.length; iCount2++)
+            TotalBreakdown += LOCATION_TIMERS[0][1].breakdown[iCount2];
 
-        var CurrentValue = Math.floor((CurrentTime - LOCATION_TIMERS[i][1].first) / LOCATION_TIMERS[i][1].length) % TotalBreakdown;
+        var CurrentValue = Math.floor((CurrentTime - LOCATION_TIMERS[0][1].first) / LOCATION_TIMERS[0][1].length) % TotalBreakdown;
 
-        for (iCount2 = 0; iCount2 < LOCATION_TIMERS[i][1].breakdown.length && CurrentName == -1; iCount2++) {
-            CurrentBreakdown += LOCATION_TIMERS[i][1].breakdown[iCount2];
+        for (iCount2 = 0; iCount2 < LOCATION_TIMERS[0][1].breakdown.length && CurrentName == -1; iCount2++) {
+            CurrentBreakdown += LOCATION_TIMERS[0][1].breakdown[iCount2];
 
             if (CurrentValue < CurrentBreakdown) {
                 CurrentName = iCount2;
             }
         }
 
-        var SeasonLength = (LOCATION_TIMERS[i][1].length * LOCATION_TIMERS[i][1].breakdown[CurrentName]);
-        var CurrentTimer = (CurrentTime - LOCATION_TIMERS[i][1].first);
+        var SeasonLength = (LOCATION_TIMERS[0][1].length * LOCATION_TIMERS[0][1].breakdown[CurrentName]);
+        var CurrentTimer = (CurrentTime - LOCATION_TIMERS[0][1].first);
         var SeasonRemaining = 0;
 
         while (CurrentTimer > 0) {
-            for (iCount2 = 0; iCount2 < LOCATION_TIMERS[i][1].breakdown.length && CurrentTimer > 0; iCount2++) {
+            for (iCount2 = 0; iCount2 < LOCATION_TIMERS[0][1].breakdown.length && CurrentTimer > 0; iCount2++) {
                 SeasonRemaining = CurrentTimer;
-                CurrentTimer -= (LOCATION_TIMERS[i][1].length * LOCATION_TIMERS[i][1].breakdown[iCount2]);
+                CurrentTimer -= (LOCATION_TIMERS[0][1].length * LOCATION_TIMERS[0][1].breakdown[iCount2]);
             }
         }
 
         SeasonRemaining = SeasonLength - SeasonRemaining;
 
-        var seasonalDiv = document.getElementById('NOB' + LOCATION_TIMERS[i][0]);
-        var content = "";
-        content += LOCATION_TIMERS[i][0] + ': <font color="' + LOCATION_TIMERS[i][1].color[CurrentName] + '">' + LOCATION_TIMERS[i][1].name[CurrentName] + '</font>';
-        if (LOCATION_TIMERS[i][1].effective != null) {
-            content += ' (' + LOCATION_TIMERS[i][1].effective[CurrentName] + ')';
-        }
+        return LOCATION_TIMERS[0][1].name[CurrentName];
+    } else if (runOnly == 'all') {
+        for (i = 0; i < 3; i++) {
+            for (iCount2 = 0; iCount2 < LOCATION_TIMERS[i][1].breakdown.length; iCount2++)
+                TotalBreakdown += LOCATION_TIMERS[i][1].breakdown[iCount2];
 
-        content += ' &#126; For ' + updateTimer(SeasonRemaining, true);
-        seasonalDiv.innerHTML = content;
+            var CurrentValue = Math.floor((CurrentTime - LOCATION_TIMERS[i][1].first) / LOCATION_TIMERS[i][1].length) % TotalBreakdown;
+
+            for (iCount2 = 0; iCount2 < LOCATION_TIMERS[i][1].breakdown.length && CurrentName == -1; iCount2++) {
+                CurrentBreakdown += LOCATION_TIMERS[i][1].breakdown[iCount2];
+
+                if (CurrentValue < CurrentBreakdown) {
+                    CurrentName = iCount2;
+                }
+            }
+
+            var SeasonLength = (LOCATION_TIMERS[i][1].length * LOCATION_TIMERS[i][1].breakdown[CurrentName]);
+            var CurrentTimer = (CurrentTime - LOCATION_TIMERS[i][1].first);
+            var SeasonRemaining = 0;
+
+            while (CurrentTimer > 0) {
+                for (iCount2 = 0; iCount2 < LOCATION_TIMERS[i][1].breakdown.length && CurrentTimer > 0; iCount2++) {
+                    SeasonRemaining = CurrentTimer;
+                    CurrentTimer -= (LOCATION_TIMERS[i][1].length * LOCATION_TIMERS[i][1].breakdown[iCount2]);
+                }
+            }
+
+            SeasonRemaining = SeasonLength - SeasonRemaining;
+
+            var seasonalDiv = document.getElementById('NOB' + LOCATION_TIMERS[i][0]);
+            var content = "";
+            content += LOCATION_TIMERS[i][0] + ': <font color="' + LOCATION_TIMERS[i][1].color[CurrentName] + '">' + LOCATION_TIMERS[i][1].name[CurrentName] + '</font>';
+            if (LOCATION_TIMERS[i][1].effective != null) {
+                content += ' (' + LOCATION_TIMERS[i][1].effective[CurrentName] + ')';
+            }
+
+            content += ' &#126; For ' + updateTimer(SeasonRemaining, true);
+            seasonalDiv.innerHTML = content;
+        }
+        return;
     }
 }
 
