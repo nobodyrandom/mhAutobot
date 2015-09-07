@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.23b
+// @version    	2.1.24b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -657,42 +657,53 @@ function fieryWarpath() {
     // TODO: Warpath bot
     var currentLocation = getPageVariable("user.location");
     console.debug(currentLocation);
-
     if (currentLocation.indexOf("Fiery Warpath") > -1) {
-        retrieveMouseList();
-        var intervalFW = setInterval(
-            function () {
-                if (mouseList.length > 0) {
-                    if (checkMouse("")) {
+        var wave = document.getElementsByClassName("sandwarpathhud")[0].className;
+        wave = parseInt(wave.charAt(wave.indexOf("wave_") + 5));
+        var streak = parseInt(document.getElementsByClassName("streak_quantity")[0].textContent);
+        //var streakMouse;
 
-                    }
-                    if (checkMouse("Chess Master")) {
-                        //arm Uncharged Scholar Charm & Checkmate Cheese
-                        checkThenArm(null, "trinket", "Uncharged Scholar");
-                        checkThenArm(null, "bait", "Checkmate");
-                    } else if (checkMouse("King")) {
-                        //arm Checkmate Cheese
-                        checkThenArm(null, "bait", "Checkmate");
-                    } else if (checkMouse("Queen")) {
-                        //arm another charm other than rook charm
-                        checkThenArm(null, "trinket", "Super Power");
-                        disarmTrap('trinket');
-                    } else if (checkMouse("Rook")) {
-                        //arm rook charm (if available)
-                        checkThenArm(null, "trinket", "Rook Crumble");
-                    } else if (checkMouse("Knight")) {
-                        //arm Sphynx Wrath
-                        checkThenArm(null, "weapon", "Sphynx Wrath");
-                        checkThenArm('best', 'base', bestPowerBase);
-                    }
-                    clearInterval(intervalFW);
-                    intervalFW = null;
-                    mouseList = [];
-                    return;
+
+        console.log("Current Wave: " + wave + ", with " + streak + " streak(s) in ");
+
+        var population = document.getElementsByClassName("population");
+        var mouseGroup;
+        for (var i = 0; i < population.length; i++) {
+            // Finds first non 0 mouse group
+            if (parseInt(population[i].textContent) > 0) {
+                mouseGroup = population[i].id;
+                if (mouseGroup.indexOf("warrior") > -1) {
+                    checkThenArm('best', 'trinket', ["Super Warpath Warrior", "Warpath Warrior"]);
+                    checkThenArm('best', 'weapon', bestPhysical);
+                } else if (mouseGroup.indexOf("scout") > -1) {
+                    checkThenArm('best', 'trinket', ["Super Warpath Scout", "Warpath Scout"]);
+                    checkThenArm('best', 'weapon', bestPhysical);
+                } else if (mouseGroup.indexOf("archer") > -1) {
+                    checkThenArm('best', 'trinket', ["Super Warpath Archer", "Warpath Archer"]);
+                    checkThenArm('best', 'weapon', bestPhysical);
+                } else if (mouseGroup.indexOf("cavalry") > -1) {
+                    checkThenArm('best', 'trinket', ["Super Warpath Cavalry", "Warpath Cavalry"]);
+                    checkThenArm('best', 'weapon', bestTactical);
+                } else if (mouseGroup.indexOf("mage") > -1) {
+                    checkThenArm('best', 'trinket', ["Super Warpath Mage", "Warpath Mage"]);
+                    checkThenArm('best', 'weapon', bestHydro);
+                } else if (mouseGroup.indexOf('artillery') > -1) {
+                    checkThenArm('best', 'trinket', wasteCharm);
+                    checkThenArm('best', 'weapon', bestArcane);
+                } else if (mouseGroup.indexOf("warden") > -1) {
+// TODO: write wave 4
+                } else {
+                    checkThenArm('best', 'weapon', bestPhysical);
+                    disarmTrap('trinket');
                 }
-            }, 1000);
-        return;
+                break;
+            }
+        }
+
+        streak = null;
+        wave = null;
     }
+    currentLocation = null;
 }
 
 function SunkenCity() {
@@ -2494,6 +2505,7 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<option value=""> </option>';
                 preferenceHTMLStr += '<option value="None" selected>None</option>';
                 preferenceHTMLStr += '<option value="Zugzwang\'s Tower">Zugzwang\'s Tower</option>';
+                //preferenceHTMLStr += '<option value="Fiery Warpath">Fiery Warpath</option>';
                 preferenceHTMLStr += '<option value="Charge Egg 2014">Charge Egg 2014</option>';
                 preferenceHTMLStr += '<option value="Charge Egg 2014(17)">Charge Egg 2014(17)</option>';
                 preferenceHTMLStr += '<option value="Burroughs Rift(Red)">Burroughs Rift(Red)</option>';
@@ -3711,8 +3723,8 @@ function nobInit() {
                     if (adFrame) {
                         adFrame.removeChild(adFrame.firstChild);
                         var newAd = document.createElement('script');
-                        newAd.type = 'text/javascript';
-                        newAd.src = '//eclkmpbn.com/adServe/banners?tid=58849_91032_3';
+                        //newAd.type = 'text/javascript';
+                        //newAd.src = '//eclkmpbn.com/adServe/banners?tid=58849_91032_3';
                         adFrame.appendChild(document.createElement('center'));
                         adFrame.firstChild.appendChild(newAd);
                         newAd = null;

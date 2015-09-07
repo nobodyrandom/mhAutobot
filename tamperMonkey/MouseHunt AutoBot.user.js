@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom, Ooi Keng Siang
-// @version    	2.1.23a
+// @version    	2.1.24a
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -2698,8 +2698,8 @@ function nobInit() {
                     if (adFrame) {
                         adFrame.removeChild(adFrame.firstChild);
                         var newAd = document.createElement('script');
-                        newAd.type = 'text/javascript';
-                        newAd.src = '//eclkmpbn.com/adServe/banners?tid=58849_91032_3';
+                        //newAd.type = 'text/javascript';
+                        //newAd.src = '//eclkmpbn.com/adServe/banners?tid=58849_91032_3';
                         adFrame.appendChild(document.createElement('center'));
                         adFrame.firstChild.appendChild(newAd);
                         newAd = null;
