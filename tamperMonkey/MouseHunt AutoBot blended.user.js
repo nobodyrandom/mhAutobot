@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.24b
+// @version    	2.1.25b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -112,6 +112,7 @@ var bestForgotten = ['Tarannosaurus Rex Trap', 'The Forgotten Art of Dance'];
 var bestDraconic = ['Dragon Lance', 'Ice Maiden'];
 var bestRiftLuck = ['Multi-Crystal Laser', 'Crystal Tower'];
 var bestRiftPower = ['Focused Crystal Laser', 'Crystal Tower'];
+var bestPhysicalBase = ['Physical Brace', 'Tidal Base', 'Golden Tournament Base', 'Fissure Base', 'Spellbook Base'];
 var bestPowerBase = ['Tidal Base', 'Golden Tournament Base', 'Fissure Base', 'Spellbook Base'];
 var bestLuckBase = ['Fissure Base', 'Rift Base', 'Tidal Base', 'Sheep Jade Base', 'Horse Jade Base'];
 var bestAttBase = ['Birthday Drag', 'Cheesecake Base'];
@@ -518,15 +519,19 @@ function ZTower() {
         switch (season) {
             case 'Spring':
                 checkThenArm('best', 'weapon', bestPhysical);
+                checkThenArm('best', 'weapon', bestPhysicalBase);
                 break;
             case 'Summer':
                 checkThenArm('best', 'weapon', bestTactical);
+                checkThenArm('best', 'weapon', bestPowerBase);
                 break;
             case 'Autumn':
                 checkThenArm('best', 'weapon', bestShadow);
+                checkThenArm('best', 'weapon', bestPowerBase);
                 break;
             case 'Winter':
                 checkThenArm('best', 'weapon', bestHydro);
+                checkThenArm('best', 'weapon', bestPowerBase);
                 break;
             default:
                 break;
@@ -654,7 +659,6 @@ function lgGeneral() {
 }
 
 function fieryWarpath() {
-    // TODO: Warpath bot
     var currentLocation = getPageVariable("user.location");
     console.debug(currentLocation);
     if (currentLocation.indexOf("Fiery Warpath") > -1) {
@@ -663,37 +667,61 @@ function fieryWarpath() {
         var streak = parseInt(document.getElementsByClassName("streak_quantity")[0].textContent);
         //var streakMouse;
 
-
         console.log("Current Wave: " + wave + ", with " + streak + " streak(s) in ");
 
         var population = document.getElementsByClassName("population");
         var mouseGroup;
         for (var i = 0; i < population.length; i++) {
+            // Check for high streak
+            if (streak > 6) {
+                checkThenArm('best', 'weapon', bestPhysical);
+                checkThenArm('best', 'base', bestPhysicalBase);
+                checkThenArm('best', 'trinket', ['Super Warpath Commander', 'Warpath Commander'], 'disarm');
+                checkThenArm(null, 'bait', 'SUPER', 'Gouda');
+                break;
+            }
+
+            checkThenArm(null, 'bait', 'Gouda');
             // Finds first non 0 mouse group
             if (parseInt(population[i].textContent) > 0) {
                 mouseGroup = population[i].id;
                 if (mouseGroup.indexOf("warrior") > -1) {
-                    checkThenArm('best', 'trinket', ["Super Warpath Warrior", "Warpath Warrior"]);
+                    checkThenArm('best', 'trinket', ["Super Warpath Warrior", "Warpath Warrior", 'disarm']);
                     checkThenArm('best', 'weapon', bestPhysical);
+                    checkThenArm('best', 'base', bestPhysicalBase);
                 } else if (mouseGroup.indexOf("scout") > -1) {
-                    checkThenArm('best', 'trinket', ["Super Warpath Scout", "Warpath Scout"]);
+                    checkThenArm('best', 'trinket', ["Super Warpath Scout", "Warpath Scout", 'disarm']);
                     checkThenArm('best', 'weapon', bestPhysical);
+                    checkThenArm('best', 'base', bestPhysicalBase);
                 } else if (mouseGroup.indexOf("archer") > -1) {
-                    checkThenArm('best', 'trinket', ["Super Warpath Archer", "Warpath Archer"]);
+                    checkThenArm('best', 'trinket', ["Super Warpath Archer", "Warpath Archer", 'disarm']);
                     checkThenArm('best', 'weapon', bestPhysical);
+                    checkThenArm('best', 'base', bestPhysicalBase);
                 } else if (mouseGroup.indexOf("cavalry") > -1) {
-                    checkThenArm('best', 'trinket', ["Super Warpath Cavalry", "Warpath Cavalry"]);
+                    checkThenArm('best', 'trinket', ["Super Warpath Cavalry", "Warpath Cavalry", 'disarm']);
                     checkThenArm('best', 'weapon', bestTactical);
+                    checkThenArm('best', 'base', bestPowerBase);
                 } else if (mouseGroup.indexOf("mage") > -1) {
-                    checkThenArm('best', 'trinket', ["Super Warpath Mage", "Warpath Mage"]);
+                    checkThenArm('best', 'trinket', ["Super Warpath Mage", "Warpath Mage", 'disarm']);
                     checkThenArm('best', 'weapon', bestHydro);
+                    checkThenArm('best', 'base', bestPowerBase);
                 } else if (mouseGroup.indexOf('artillery') > -1) {
                     checkThenArm('best', 'trinket', wasteCharm);
                     checkThenArm('best', 'weapon', bestArcane);
-                } else if (mouseGroup.indexOf("warden") > -1) {
-// TODO: write wave 4
+                    checkThenArm('best', 'base', bestPowerBase);
+                } else if (mouseGroup.indexOf("gaurd") > -1) {
+                    // wardens: desert_elite_gaurd
+                    checkThenArm('best', 'weapon', bestPhysical);
+                    checkThenArm('best', 'base', bestPhysicalBase);
+                    checkThenArm(null, 'trinket', 'Super Power');
+                } else if (mouseGroup.indexOf("boss") > -1) {
+                    // warmonger: desert_boss
+                    checkThenArm('best', 'weapon', bestPhysical);
+                    checkThenArm('best', 'base', bestPhysicalBase);
+                    checkThenArm('best', 'trinket', ['Monger', 'Super Wealth']);
                 } else {
                     checkThenArm('best', 'weapon', bestPhysical);
+                    checkThenArm('best', 'base', bestPhysicalBase);
                     disarmTrap('trinket');
                 }
                 break;
@@ -924,13 +952,13 @@ function gnawnianExpress(load) {
                     console.debug("Raiders are attacking " + attacking);
                     switch (attacking) {
                         case 'roof':
-                            checkThenArm(null, 'trinket', 'Roof Rack');
+                            checkThenArm(null, 'trinket', 'Roof Rack', 'disarm');
                             break;
                         case 'door':
-                            checkThenArm(null, 'trinket', 'Door Guard');
+                            checkThenArm(null, 'trinket', 'Door Guard', 'disarm');
                             break;
                         case 'rails':
-                            checkThenArm(null, 'trinket', 'Greasy Glob');
+                            checkThenArm(null, 'trinket', 'Greasy Glob', 'disarm');
                             break;
                         default:
                             console.debug('Bot is confused, raiders are not attacking?');
@@ -1064,7 +1092,10 @@ function buildTrapList(afterBuilding, failedBuilding) {
     }
 }
 
-function checkThenArm(sort, category, item) {  //category = weapon/base/charm/trinket/bait
+function checkThenArm(sort, category, item, fail) {  //category = weapon/base/charm/trinket/bait
+    // returns 'armed' if already armed
+    // fail = [] If trap not found pass in array, to do a secondary arm
+
     if (category == "charm") {
         category = "trinket";
     }
@@ -1220,36 +1251,42 @@ function checkThenArm(sort, category, item) {  //category = weapon/base/charm/tr
         }
     }
 
-    armingQueue.push([sort, category, item, trapArmed, trapArmedOverride]);
-    if (!dequeueIntRunning) {
-        var dequeueInterval = setInterval(function () {
-            if (debug) console.log('In the queue(' + armingQueue.length + ' ' + dequeueingCTA + '): ');
-            if (debug) console.log(armingQueue);
+    if (!trapArmed) {
+        armingQueue.push([sort, category, item, trapArmed, trapArmedOverride, fail]);
+        if (!dequeueIntRunning) {
+            var dequeueInterval = setInterval(function () {
+                if (debug) console.log('In the queue(' + armingQueue.length + ' ' + dequeueingCTA + '): ');
+                if (debug) console.log(armingQueue);
 
-            if (!dequeueingCTA && armingQueue.length > 0) {
-                dequeueingCTA = true;
-                var tempQueueItem = armingQueue.pop();
-                dequeueCheckThenArm(tempQueueItem[0], tempQueueItem[1], tempQueueItem[2], tempQueueItem[3], tempQueueItem[4]);
-                tempQueueItem = [];
-            } else if (armingQueue.length == 0) {
-                clearInterval(dequeueInterval);
-                dequeueIntRunning = false;
-            }
-        }, 2000);
+                if (!dequeueingCTA && armingQueue.length > 0) {
+                    dequeueingCTA = true;
+                    var tempQueueItem = armingQueue.pop();
+                    dequeueCheckThenArm(tempQueueItem[0], tempQueueItem[1], tempQueueItem[2], tempQueueItem[3], tempQueueItem[4], tempQueueItem[5]);
+                    tempQueueItem = [];
+                } else if (armingQueue.length == 0) {
+                    clearInterval(dequeueInterval);
+                    dequeueIntRunning = false;
+                }
+            }, 2000);
+        }
+    } else {
+        return 'armed';
     }
 }
 
-function dequeueCheckThenArm(sort, category, item, trapArmed, trapArmedOverride) {
+function dequeueCheckThenArm(sort, category, item, trapArmed, trapArmedOverride, fail) {
     // Try to queue trap arming
     if (debug) console.log("Last run: " + tryingToArm + ", this run: " + item + ", is armed? " + trapArmed + " with override? " + trapArmedOverride);
-    if (!trapArmed && tryingToArm != item) {
+    // TODO: write a check dequeue array to see if theres is double arming
+
+    if (tryingToArm != item) {
         tryingToArm = item;
         trapArmedOverride = false;
         var intervalCTA = setInterval(function () {
             if (debug) console.log(item + " in CTA queue.");
             if (!arming) {
                 console.debug("Queueing arming - " + item);
-                clickThenArmTrapInterval(sort, category, item);
+                clickThenArmTrapInterval(sort, category, item, fail);
                 clearInterval(intervalCTA);
                 intervalCTA = null;
                 return;
@@ -1261,7 +1298,7 @@ function dequeueCheckThenArm(sort, category, item, trapArmed, trapArmedOverride)
     return;
 }
 
-function clickThenArmTrapInterval(sort, trap, name) //sort = power/luck/attraction
+function clickThenArmTrapInterval(sort, trap, name, fail) //sort = power/luck/attraction
 {
     // Process trap arming queue
     setTimeout(function () {
@@ -1271,7 +1308,7 @@ function clickThenArmTrapInterval(sort, trap, name) //sort = power/luck/attracti
             var intervalCTATI = setInterval(
                 function () {
                     console.debug("Processing queue item: " + name);
-                    var tryArming = armTrap(sort, name);
+                    var tryArming = armTrap(sort, name, trap);
                     if (tryArming == 'found') {
                         clearInterval(intervalCTATI);
                         arming = false;
@@ -1280,6 +1317,12 @@ function clickThenArmTrapInterval(sort, trap, name) //sort = power/luck/attracti
                         return;
                     } else if (tryArming == 'not found') {
                         clickTrapSelector(trap);
+                        if (fail == 'disarm') {
+                            disarmTrap(trap);
+                        } else if (fail.length > 0) {
+                            checkThenArm(sort, trap, fail);
+                        }
+
                         clearInterval(intervalCTATI);
                         arming = false;
                         dequeueingCTA = false;
@@ -1300,7 +1343,7 @@ function clickThenArmTrapInterval(sort, trap, name) //sort = power/luck/attracti
 }
 
 // name = Brie/Gouda/Swiss (brie = wrong)
-function armTrap(sort, name) {
+function armTrap(sort, name, trap) {
     var tagGroupElement = document.getElementsByClassName('tagGroup');
     var tagElement;
     var nameElement;
@@ -1326,9 +1369,11 @@ function armTrap(sort, name) {
         console.debug(name + " not found");
         if (sort == 'best') {
             nameArray.shift();
-            if (nameArray.length > 0) {
+            if (nameArray[0] == 'disarm') {
+                disarmTrap(trap);
+            } else if (nameArray.length > 0) {
                 if (debug) console.debug(nameArray);
-                return armTrap(sort, nameArray);
+                return armTrap(sort, nameArray, trap);
             } else {
                 console.debug('No traps found');
                 return 'not found';
@@ -2505,7 +2550,7 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<option value=""> </option>';
                 preferenceHTMLStr += '<option value="None" selected>None</option>';
                 preferenceHTMLStr += '<option value="Zugzwang\'s Tower">Zugzwang\'s Tower</option>';
-                //preferenceHTMLStr += '<option value="Fiery Warpath">Fiery Warpath</option>';
+                preferenceHTMLStr += '<option value="Fiery Warpath">Fiery Warpath</option>';
                 preferenceHTMLStr += '<option value="Charge Egg 2014">Charge Egg 2014</option>';
                 preferenceHTMLStr += '<option value="Charge Egg 2014(17)">Charge Egg 2014(17)</option>';
                 preferenceHTMLStr += '<option value="Burroughs Rift(Red)">Burroughs Rift(Red)</option>';
@@ -3733,7 +3778,7 @@ function nobInit() {
                 } catch (e) {
                     console.log('Remove ad error: ' + e);
                 }
-            }, 1000);
+            }, 5000);
 
             if (NOBpage) {
                 nobHTMLFetch();
