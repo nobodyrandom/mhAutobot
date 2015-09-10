@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.25b
+// @version    	2.1.26b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -112,7 +112,7 @@ var bestForgotten = ['Tarannosaurus Rex Trap', 'The Forgotten Art of Dance'];
 var bestDraconic = ['Dragon Lance', 'Ice Maiden'];
 var bestRiftLuck = ['Multi-Crystal Laser', 'Crystal Tower'];
 var bestRiftPower = ['Focused Crystal Laser', 'Crystal Tower'];
-var bestPhysicalBase = ['Physical Brace', 'Tidal Base', 'Golden Tournament Base', 'Fissure Base', 'Spellbook Base'];
+var bestPhysicalBase = ['Physical Brace Base', 'Tidal Base', 'Golden Tournament Base', 'Fissure Base', 'Spellbook Base'];
 var bestPowerBase = ['Tidal Base', 'Golden Tournament Base', 'Fissure Base', 'Spellbook Base'];
 var bestLuckBase = ['Fissure Base', 'Rift Base', 'Tidal Base', 'Sheep Jade Base', 'Horse Jade Base'];
 var bestAttBase = ['Birthday Drag', 'Cheesecake Base'];
@@ -496,6 +496,8 @@ function eventLocationCheck() {
         case 'Fiery Warpath':
             fieryWarpath();
             break;
+        case 'Fiery Warpath Super':
+            fieryWarpath(true);
         default:
             break;
     }
@@ -658,7 +660,7 @@ function lgGeneral() {
     }
 }
 
-function fieryWarpath() {
+function fieryWarpath(superCharm) {
     var currentLocation = getPageVariable("user.location");
     console.debug(currentLocation);
     if (currentLocation.indexOf("Fiery Warpath") > -1) {
@@ -666,8 +668,29 @@ function fieryWarpath() {
         wave = parseInt(wave.charAt(wave.indexOf("wave_") + 5));
         var streak = parseInt(document.getElementsByClassName("streak_quantity")[0].textContent);
         //var streakMouse;
+        var retreating = false;
+        if (document.getElementsByClassName('desert_general')[0]) {
+            retreating = ((document.getElementsByClassName('desert_general')[0].className.indexOf('inactive') > -1) && (document.getElementsByClassName('desert_supply')[0].className.indexOf('inactive')));
+        }
 
-        console.log("Current Wave: " + wave + ", with " + streak + " streak(s) in ");
+        console.log("Current Wave: " + wave + ", with " + streak + " streak(s) in " + ", mice retreating? " + retreating);
+
+        if (retreating) {
+            checkThenArm('best', 'weapon', bestPhysical);
+            checkThenArm('best', 'base', bestPhysicalBase);
+            checkThenArm('best', 'trinket', wasteCharm);
+            checkThenArm(null, 'bait', 'Gouda');
+            return;
+        }
+
+        var commanderCharm = ['Super Warpath Commander', 'Warpath Commander'];
+        var warriorCharm = ["Super Warpath Warrior", "Warpath Warrior"];
+        var scoutCharm = ["Super Warpath Scout", "Warpath Scout"];
+        var archerCharm = ["Super Warpath Archer", "Warpath Archer"];
+        var cavalryCharm = ["Super Warpath Cavalry", "Warpath Cavalry"];
+        var mageCharm = ["Super Warpath Mage", "Warpath Mage"];
+        var wardenCharm = "Super Power";
+        var bossCharm = 'Monger';
 
         var population = document.getElementsByClassName("population");
         var mouseGroup;
@@ -676,7 +699,7 @@ function fieryWarpath() {
             if (streak > 6) {
                 checkThenArm('best', 'weapon', bestPhysical);
                 checkThenArm('best', 'base', bestPhysicalBase);
-                checkThenArm('best', 'trinket', ['Super Warpath Commander', 'Warpath Commander'], 'disarm');
+                checkThenArm('best', 'trinket', commanderCharm, 'disarm');
                 checkThenArm(null, 'bait', 'SUPER', 'Gouda');
                 break;
             }
@@ -686,23 +709,23 @@ function fieryWarpath() {
             if (parseInt(population[i].textContent) > 0) {
                 mouseGroup = population[i].id;
                 if (mouseGroup.indexOf("warrior") > -1) {
-                    checkThenArm('best', 'trinket', ["Super Warpath Warrior", "Warpath Warrior", 'disarm']);
+                    checkThenArm('best', 'trinket', warriorCharm, 'disarm');
                     checkThenArm('best', 'weapon', bestPhysical);
                     checkThenArm('best', 'base', bestPhysicalBase);
                 } else if (mouseGroup.indexOf("scout") > -1) {
-                    checkThenArm('best', 'trinket', ["Super Warpath Scout", "Warpath Scout", 'disarm']);
+                    checkThenArm('best', 'trinket', scoutCharm, 'disarm');
                     checkThenArm('best', 'weapon', bestPhysical);
                     checkThenArm('best', 'base', bestPhysicalBase);
                 } else if (mouseGroup.indexOf("archer") > -1) {
-                    checkThenArm('best', 'trinket', ["Super Warpath Archer", "Warpath Archer", 'disarm']);
+                    checkThenArm('best', 'trinket', archerCharm, 'disarm');
                     checkThenArm('best', 'weapon', bestPhysical);
                     checkThenArm('best', 'base', bestPhysicalBase);
                 } else if (mouseGroup.indexOf("cavalry") > -1) {
-                    checkThenArm('best', 'trinket', ["Super Warpath Cavalry", "Warpath Cavalry", 'disarm']);
+                    checkThenArm('best', 'trinket', cavalryCharm, 'disarm');
                     checkThenArm('best', 'weapon', bestTactical);
                     checkThenArm('best', 'base', bestPowerBase);
                 } else if (mouseGroup.indexOf("mage") > -1) {
-                    checkThenArm('best', 'trinket', ["Super Warpath Mage", "Warpath Mage", 'disarm']);
+                    checkThenArm('best', 'trinket', mageCharm, 'disarm');
                     checkThenArm('best', 'weapon', bestHydro);
                     checkThenArm('best', 'base', bestPowerBase);
                 } else if (mouseGroup.indexOf('artillery') > -1) {
@@ -713,12 +736,12 @@ function fieryWarpath() {
                     // wardens: desert_elite_gaurd
                     checkThenArm('best', 'weapon', bestPhysical);
                     checkThenArm('best', 'base', bestPhysicalBase);
-                    checkThenArm(null, 'trinket', 'Super Power');
+                    checkThenArm(null, 'trinket', wardenCharm, 'Super Power');
                 } else if (mouseGroup.indexOf("boss") > -1) {
                     // warmonger: desert_boss
                     checkThenArm('best', 'weapon', bestPhysical);
                     checkThenArm('best', 'base', bestPhysicalBase);
-                    checkThenArm('best', 'trinket', ['Monger', 'Super Wealth']);
+                    checkThenArm(null, 'trinket', bossCharm, 'Super Power');
                 } else {
                     checkThenArm('best', 'weapon', bestPhysical);
                     checkThenArm('best', 'base', bestPhysicalBase);
@@ -1076,6 +1099,7 @@ function buildTrapList(afterBuilding, failedBuilding) {
             uh: userHash
         }, function (data) {
             NOBtraps = data.components;
+            if (debug) console.log(NOBtraps);
             nobStore(NOBtraps, 'traps');
             returning = true;
             afterBuilding();
@@ -1095,6 +1119,16 @@ function buildTrapList(afterBuilding, failedBuilding) {
 function checkThenArm(sort, category, item, fail) {  //category = weapon/base/charm/trinket/bait
     // returns 'armed' if already armed
     // fail = [] If trap not found pass in array, to do a secondary arm
+
+    if (item == 'disarm') {
+        return disarmTrap(category);
+    }
+
+    if (item.constructor === Array) {
+        sort = 'best';
+    } else if (typeof item == "string") {
+        sort = null;
+    }
 
     if (category == "charm") {
         category = "trinket";
@@ -1159,7 +1193,6 @@ function checkThenArm(sort, category, item, fail) {  //category = weapon/base/ch
         var theCharmArmed = document.getElementById('hud_trapPower').textContent;
         if (sort == 'best') {
             for (i = 0; i < item.length; i++) {
-                //console.log(theCharmArmed + " + " + item[i]);
 
                 if (item[i].length > 13) {
                     tempName = item[i].substring(0, 13);
@@ -1250,18 +1283,20 @@ function checkThenArm(sort, category, item, fail) {  //category = weapon/base/ch
             }
         }
     }
+    trapArmedOverride = false;
 
     if (!trapArmed) {
-        armingQueue.push([sort, category, item, trapArmed, trapArmedOverride, fail]);
+        if (debug) console.log('Queueing ' + item + ' into armingQueue. (' + sort + category + trapArmed + ')');
+        armingQueue.push([sort, category, item, trapArmed, fail]);
         if (!dequeueIntRunning) {
             var dequeueInterval = setInterval(function () {
-                if (debug) console.log('In the queue(' + armingQueue.length + ' ' + dequeueingCTA + '): ');
+                if (debug) console.log('In the queue(' + armingQueue.length + '): ');
                 if (debug) console.log(armingQueue);
 
                 if (!dequeueingCTA && armingQueue.length > 0) {
                     dequeueingCTA = true;
                     var tempQueueItem = armingQueue.pop();
-                    dequeueCheckThenArm(tempQueueItem[0], tempQueueItem[1], tempQueueItem[2], tempQueueItem[3], tempQueueItem[4], tempQueueItem[5]);
+                    dequeueCheckThenArm(tempQueueItem[0], tempQueueItem[1], tempQueueItem[2], tempQueueItem[3], tempQueueItem[4]);
                     tempQueueItem = [];
                 } else if (armingQueue.length == 0) {
                     clearInterval(dequeueInterval);
@@ -1274,32 +1309,25 @@ function checkThenArm(sort, category, item, fail) {  //category = weapon/base/ch
     }
 }
 
-function dequeueCheckThenArm(sort, category, item, trapArmed, trapArmedOverride, fail) {
+function dequeueCheckThenArm(sort, category, item, trapArmed, fail) {
     // Try to queue trap arming
-    if (debug) console.log(item + ", is armed? " + trapArmed + " with override? " + trapArmedOverride);
+    if (debug) console.log(item + ", is armed? " + trapArmed);
     for (var i = 0; i < armingQueue.length; i++) {
         if (item == armingQueue[i]) {
             armingQueue.splice(i, 1);
         }
     }
 
-    // TODO: Solve teh dequeueIntRunning + dequeueingCTA
-    if (tryingToArm != item) {
-        tryingToArm = item;
-        trapArmedOverride = false;
-        var intervalCTA = setInterval(function () {
-            if (debug) console.log(item + " in CTA queue.");
-            if (!arming) {
-                console.debug("Queueing arming - " + item);
-                clickThenArmTrapInterval(sort, category, item, fail);
-                clearInterval(intervalCTA);
-                intervalCTA = null;
-                return;
-            }
-        }, 2000);
-    } else {
-        dequeueingCTA = false;
-    }
+    var intervalCTA = setInterval(function () {
+        if (debug) console.log(item + " in CTA queue.");
+        if (!arming) {
+            console.debug("Queueing arming - " + item);
+            clickThenArmTrapInterval(sort, category, item, fail);
+            clearInterval(intervalCTA);
+            intervalCTA = null;
+            return;
+        }
+    }, 2000);
     return;
 }
 
@@ -2556,6 +2584,7 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<option value="None" selected>None</option>';
                 preferenceHTMLStr += '<option value="Zugzwang\'s Tower">Zugzwang\'s Tower</option>';
                 preferenceHTMLStr += '<option value="Fiery Warpath">Fiery Warpath</option>';
+                preferenceHTMLStr += '<option value="Fiery Warpath Super">Fiery Warpath (Super charms)</option>';
                 preferenceHTMLStr += '<option value="Charge Egg 2014">Charge Egg 2014</option>';
                 preferenceHTMLStr += '<option value="Charge Egg 2014(17)">Charge Egg 2014(17)</option>';
                 preferenceHTMLStr += '<option value="Burroughs Rift(Red)">Burroughs Rift(Red)</option>';
