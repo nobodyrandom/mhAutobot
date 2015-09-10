@@ -1276,9 +1276,14 @@ function checkThenArm(sort, category, item, fail) {  //category = weapon/base/ch
 
 function dequeueCheckThenArm(sort, category, item, trapArmed, trapArmedOverride, fail) {
     // Try to queue trap arming
-    if (debug) console.log("Last run: " + tryingToArm + ", this run: " + item + ", is armed? " + trapArmed + " with override? " + trapArmedOverride);
-    // TODO: write a check dequeue array to see if theres is double arming
+    if (debug) console.log(item + ", is armed? " + trapArmed + " with override? " + trapArmedOverride);
+    for (var i = 0; i < armingQueue.length; i++) {
+        if (item == armingQueue[i]) {
+            armingQueue.splice(i, 1);
+        }
+    }
 
+    // TODO: Solve teh dequeueIntRunning + dequeueingCTA
     if (tryingToArm != item) {
         tryingToArm = item;
         trapArmedOverride = false;
