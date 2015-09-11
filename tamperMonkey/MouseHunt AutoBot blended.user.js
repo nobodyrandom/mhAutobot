@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.29b
+// @version    	2.1.30b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -2224,11 +2224,11 @@ function embedTimer(targetPage) {
                     text = ' &#126; <a href="javascript:window.open(\'https://docs.google.com/spreadsheet/ccc?key=0Ag_KH_nuVUjbdGtldjJkWUJ4V1ZpUDVwd1FVM0RTM1E#gid=5\');" target=_blank>Go to GDoc</a>';
                     var tempDiv = document.createElement('span');
                     tempDiv.innerHTML = text;
-                    text = ' &#126; <a id="nobRaffle" href="javascript: nobRaffle();">Return raffle tickets</a>';
+                    text = ' &#126; <a id="nobRaffle" href="#" title="Sends back the raffle ticket in inventory.">Return raffle tickets</a>';
                     tempSpan2 = document.createElement('span');
                     tempSpan2.innerHTML = text;
                     var tempSpan3 = document.createElement('span');
-                    tempSpan3.innerHTML = ' &#126; <a id="nobPresents" href="javascript: nobPresent();">Return presents</a>';
+                    tempSpan3.innerHTML = ' &#126; <a id="nobPresent" href="#" title="Sends back the presents in inventory.">Return presents</a>';
                     var tempSpan = document.createElement('span');
                     tempSpan.innerHTML = ' &#126; <a href="javascript:window.open(\'http://goo.gl/forms/ayRsnizwL1\');" target=_blank>Submit a bug report/feedback</a>';
                     loadLinkToUpdateDiv.appendChild(tempDiv);
@@ -3836,6 +3836,7 @@ function nobInit() {
                 createClockArea();
                 clockTick();
                 fetchGDocStuff();
+                nobInjectFFfunctions();
                 setTimeout(function () {
                     pingServer();
                 }, 30000);
@@ -4368,9 +4369,38 @@ function showNOBMessage() {
     document.getElementById('NOBmessage').style.display = 'block'
 }
 
-unsafeWindow.nobRaffle = function () {
+function nobInjectFFfunctions() {
+    var browser = browserDetection();
+    var raffleDiv = document.getElementById('nobRaffle');
+    var presentDiv = document.getElementById('nobPresent');
+
+    if (browser == 'firefox') {
+        unsafeWindow.nobRaffle = exportFunction(nobRaffle, unsafeWindow);
+        unsafeWindow.nobPresent = exportFunction(nobPresent, unsafeWindow);
+
+        raffleDiv.addEventListener('click', function () {
+            unsafeWindow.nobRaffle();
+        });
+        presentDiv.addEventListener('click', function () {
+            unsafeWindow.nobPresent();
+        });
+    } else {
+        // chrome and all other
+        raffleDiv.addEventListener('click', function () {
+            nobRaffle();
+        });
+        presentDiv.addEventListener('click', function () {
+            nobPresent();
+        });
+    }
+    raffleDiv = undefined;
+    presentDiv = undefined;
+}
+
+function nobRaffle() {
     var i;
     var intState = 0;
+    var nobRafGiveUp = 10;
     var nobRafInt = window.setInterval(function () {
         try {
             if (intState == 0 && !($('.tabs a:eq(1)').length > 0)) {
@@ -4410,7 +4440,12 @@ unsafeWindow.nobRaffle = function () {
                 intState = -1;
             }
         } catch (e) {
-            console.log("Raffle interval error: " + e + ", retrying in 2 seconds.");
+            console.log("Raffle interval error: " + e + ", retrying in 2 seconds. Giving up in " + (nobRafGiveUp * 2) + " seconds.");
+            if (nobRafGiveUp < 1) {
+                intState = -1;
+            } else {
+                nobRafGiveUp--;
+            }
         } finally {
             if (intState == 3) {
                 $("a.messengerUINotificationClose")[0].click();
@@ -4433,9 +4468,10 @@ unsafeWindow.nobRaffle = function () {
     }, 2000);
 };
 
-unsafeWindow.nobPresent = function () {
+function nobPresent() {
     var intState = 0;
     var i;
+    var nobPresGiveUp = 10;
     var nobPresInt = window.setInterval(function () {
         try {
             if (intState == 0 && !($('.tabs a:eq(1)').length > 0)) {
@@ -4474,7 +4510,12 @@ unsafeWindow.nobPresent = function () {
                 intState = -1;
             }
         } catch (e) {
-            console.log(e + " error, retrying to continue in 2 secs.");
+            console.log("Present interval error: " + e + ", retrying in 2 seconds. Giving up in " + (nobPresGiveUp * 2) + " seconds.");
+            if (nobPresGiveUp < 1) {
+                intState = -1;
+            } else {
+                nobPresGiveUp--;
+            }
         } finally {
             if (intState == 3) {
                 $("a.messengerUINotificationClose")[0].click();
