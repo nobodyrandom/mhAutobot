@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.27b
+// @version    	2.1.28b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -770,7 +770,7 @@ function SunkenCity() {
     var currentLocation = getPageVariable("user.location");
     console.debug(currentLocation);
     if (currentLocation.indexOf("Sunken City") > -1) {
-        var zone = document.getElementsByClassName('zoneName')[0].innerText;
+        var zone = document.getElementsByClassName('zoneName')[0].textContent;
         console.debug('Current Zone: ' + zone);
         switch (zone) {
             case 'Sand Dollar Sea Bar':
@@ -807,9 +807,9 @@ function SunkenCity() {
 
 function livingGarden() {
     var pourEstimate = document.getElementsByClassName('pourEstimate')[0];
-    if (pourEstimate.innerText != "") {
+    if (pourEstimate.textContent != "") {
         // Not pouring
-        var estimateHunt = parseInt(pourEstimate.innerText);
+        var estimateHunt = parseInt(pourEstimate.textContent);
         console.debug('Estimate Hunt: ' + estimateHunt);
         if (estimateHunt >= 35) {
             console.debug('Going to click Pour...');
@@ -848,6 +848,7 @@ function lostCity() {
         checkThenArm(null, 'trinket', 'Searcher');
     }
     checkThenArm('best', 'weapon', bestArcane);
+    checkThenArm(null, 'bait', 'Dewthief');
     return;
 }
 
@@ -864,12 +865,13 @@ function sandDunes() {
         checkThenArm(null, 'trinket', 'Grubling Chow');
     }
     checkThenArm('best', 'weapon', bestShadow);
+    checkThenArm(null, 'bait', 'Dewthief');
     return;
 }
 
 function twistedGarden() {
-    var red = parseInt(document.getElementsByClassName('itemImage red')[0].innerText);
-    var yellow = parseInt(document.getElementsByClassName('itemImage yellow')[0].innerText);
+    var red = parseInt(document.getElementsByClassName('itemImage red')[0].textContent);
+    var yellow = parseInt(document.getElementsByClassName('itemImage yellow')[0].textContent);
     var charmArmed = getPageVariable('user.trinket_name');
     console.debug('Red: ' + red + ' Yellow: ' + yellow);
     if (red < 10) {
@@ -928,18 +930,20 @@ function cursedCity() {
         }
     }
     checkThenArm('best', 'weapon', bestArcane);
+    checkThenArm(null, 'bait', 'Graveblossom');
     return;
 }
 
 function sandCrypts() {
-    var salt = parseInt(document.getElementsByClassName('salt_charms')[0].innerText);
+    var salt = parseInt(document.getElementsByClassName('salt_charms')[0].textContent);
     console.debug('Salted: ' + salt);
     if (salt >= maxSaltCharged) {
         checkThenArm(null, 'trinket', 'Grub Scent');
     } else {
-        checkThenArm('best', 'trinket', bestSalt);
+        checkThenArm('best', 'trinket', bestSalt, 'disarm');
     }
     checkThenArm('best', 'weapon', bestShadow);
+    checkThenArm(null, 'bait', 'Graveblossom');
     return;
 }
 
@@ -1361,6 +1365,9 @@ function clickThenArmTrapInterval(sort, trap, name, fail) //sort = power/luck/at
                         clickTrapSelector(trap);
                         if (fail == 'disarm') {
                             disarmTrap(trap);
+                        } else if (fail == null || fail == undefined) {
+                            // TODO: Add something when failover was not built?
+                            console.debug('Trap not found, and there were no failover for this setup for now.');
                         } else if (fail.length > 0) {
                             checkThenArm(sort, trap, fail);
                         }
