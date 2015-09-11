@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom, Ooi Keng Siang
-// @version    	2.1.28a
+// @version    	2.1.29a
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -1689,17 +1689,19 @@ function loadPreferenceSettingFromStorage() {
     var kingRewardSoundTemp = getStorage('KingRewardSoundInput');
     if (kingRewardSoundTemp == undefined || kingRewardSoundTemp == null || kingRewardSoundTemp == "") {
         kingRewardSoundTemp = 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3';
-        setStorage('KingRewardSoundInput', kingRewardSoundTemp);
+        setStorage('KingRewardSoundInput', kingWarningSound);
+    } else {
+        kingWarningSound = kingRewardSoundTemp;
     }
-    kingWarningSound = kingRewardSoundTemp;
     kingRewardSoundTemp = undefined;
 
     var kingRewardEmailTemp = getStorage('KingRewardEmail');
     if (kingRewardEmailTemp == undefined || kingRewardEmailTemp == null || kingRewardEmailTemp == "") {
         kingRewardEmailTemp = '';
-        setStorage('KingRewardSoundInput', kingRewardEmailTemp);
+        setStorage('KingRewardEmail', '');
+    } else {
+        kingRewardEmail = kingRewardEmailTemp;
     }
-    kingRewardEmail = kingRewardEmailTemp;
     kingRewardEmailTemp = undefined;
 
     var kingRewardResumeTemp = getStorage("KingRewardResume");
