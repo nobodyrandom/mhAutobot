@@ -948,7 +948,6 @@ function sandCrypts() {
 }
 
 function gnawnianExpress(load) {
-    // TODO: fix all innerText to allow firefox support? SC, LG to go.
     var currentLocation = getPageVariable("user.location");
     console.debug(currentLocation);
     if (currentLocation.indexOf("Gnawnian Express") > -1) {
