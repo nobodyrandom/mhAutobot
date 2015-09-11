@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.26b
+// @version    	2.1.27b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -683,14 +683,23 @@ function fieryWarpath(superCharm) {
             return;
         }
 
-        var commanderCharm = ['Super Warpath Commander', 'Warpath Commander'];
+        var commanderCharm = ["Super Warpath Commander", "Warpath Commander"];
         var warriorCharm = ["Super Warpath Warrior", "Warpath Warrior"];
         var scoutCharm = ["Super Warpath Scout", "Warpath Scout"];
         var archerCharm = ["Super Warpath Archer", "Warpath Archer"];
         var cavalryCharm = ["Super Warpath Cavalry", "Warpath Cavalry"];
         var mageCharm = ["Super Warpath Mage", "Warpath Mage"];
         var wardenCharm = "Super Power";
-        var bossCharm = 'Monger';
+        var bossCharm = "Monger";
+
+        if (!superCharm) {
+            commanderCharm = ["Warpath Commander"];
+            warriorCharm = ["Warpath Warrior"];
+            scoutCharm = ["Warpath Scout"];
+            archerCharm = ["Warpath Archer"];
+            cavalryCharm = ["Warpath Cavalry"];
+            mageCharm = ["Warpath Mage"];
+        }
 
         var population = document.getElementsByClassName("population");
         var mouseGroup;
