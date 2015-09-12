@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.30b
+// @version    	2.1.31b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -683,14 +683,16 @@ function fieryWarpath(superCharm) {
             return;
         }
 
+        var wave4PhysicalTrap = ['Warden Slayer', 'Chrome MonstroBot', 'Sandstorm MonstroBot', 'Sandtail Sentinel'];
+
         var commanderCharm = ["Super Warpath Commander", "Warpath Commander"];
         var warriorCharm = ["Super Warpath Warrior", "Warpath Warrior"];
         var scoutCharm = ["Super Warpath Scout", "Warpath Scout"];
         var archerCharm = ["Super Warpath Archer", "Warpath Archer"];
         var cavalryCharm = ["Super Warpath Cavalry", "Warpath Cavalry"];
         var mageCharm = ["Super Warpath Mage", "Warpath Mage"];
-        var wardenCharm = "Super Power";
-        var bossCharm = "Monger";
+        var wardenCharm = wasteCharm;
+        var bossCharm = ["Monger", "Super Power"];
 
         if (!superCharm) {
             commanderCharm = ["Warpath Commander"];
@@ -741,16 +743,16 @@ function fieryWarpath(superCharm) {
                     checkThenArm('best', 'trinket', wasteCharm);
                     checkThenArm('best', 'weapon', bestArcane);
                     checkThenArm('best', 'base', bestPowerBase);
-                } else if (mouseGroup.indexOf("gaurd") > -1) {
+                } else if (mouseGroup.indexOf("elite_gaurd") > -1) {
                     // wardens: desert_elite_gaurd
-                    checkThenArm('best', 'weapon', bestPhysical);
+                    checkThenArm('best', 'weapon', wave4PhysicalTrap);
                     checkThenArm('best', 'base', bestPhysicalBase);
-                    checkThenArm(null, 'trinket', wardenCharm, 'Super Power');
+                    checkThenArm('best', 'trinket', wardenCharm, wasteCharm);
                 } else if (mouseGroup.indexOf("boss") > -1) {
                     // warmonger: desert_boss
-                    checkThenArm('best', 'weapon', bestPhysical);
+                    checkThenArm('best', 'weapon', wave4PhysicalTrap);
                     checkThenArm('best', 'base', bestPhysicalBase);
-                    checkThenArm(null, 'trinket', bossCharm, 'Super Power');
+                    checkThenArm('best', 'trinket', bossCharm, 'disarm');
                 } else {
                     checkThenArm('best', 'weapon', bestPhysical);
                     checkThenArm('best', 'base', bestPhysicalBase);
