@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.31b
+// @version    	2.1.32b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -679,7 +679,6 @@ function fieryWarpath(superCharm) {
             checkThenArm('best', 'weapon', bestPhysical);
             checkThenArm('best', 'base', bestPhysicalBase);
             checkThenArm('best', 'trinket', wasteCharm);
-            checkThenArm(null, 'bait', 'Gouda');
             return;
         }
 
@@ -1857,7 +1856,7 @@ function action() {
             }, 1000);
         }
     } catch (e) {
-        console.log("action() ERROR - " + e)
+        console.log("action() ERROR - " + e);
     }
 }
 
