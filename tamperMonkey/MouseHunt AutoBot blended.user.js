@@ -159,7 +159,6 @@ var hornRetryMax = 15;
 var hornRetry = 0;
 var nextActiveTime = 900;
 var timerInterval = 2;
-var tryingToArm;
 var armingQueue = [];
 var dequeueingCTA = false;
 var dequeueIntRunning = false;
@@ -170,12 +169,10 @@ var best = 0;
 var maxSaltCharged = 26;
 
 // element in page
-//var titleElement;
 var nextHornTimeElement;
 var checkTimeElement;
 var kingTimeElement;
 var lastKingRewardSumTimeElement;
-//var optionElement;
 var travelElement;
 var hornButton = 'hornbutton';
 var campButton = 'campbutton';
@@ -192,8 +189,6 @@ var NOBpage = false;
 var mapRequestFailed = false;
 var clockTicking = false;
 var clockNeedOn = false;
-var counter = 0;
-var dots = '';
 var LOCATION_TIMERS = [
     ['Seasonal Garden', {
         first: 1283616000,
@@ -906,7 +901,6 @@ function cursedCity() {
         }
         //checkThenArm(null, "trinket", "Super Luck");
     } else {
-        // TODO: Check this/fix cursed city
         for (var i = 0; i < 3; ++i) {
             curses[i] = getPageVariable('user.quests.QuestLostCity.minigame.curses[' + i + '].active');
             if (curses[i] == 'true') {
@@ -1366,7 +1360,7 @@ function clickThenArmTrapInterval(sort, trap, name, fail) //sort = power/luck/at
                         if (fail == 'disarm') {
                             disarmTrap(trap);
                         } else if (fail == null || fail == undefined) {
-                            // TODO: Add something when failover was not built?
+                            //Add something when failover was not built?
                             console.debug('Trap not found, and there were no failover for this setup for now.');
                         } else if (fail.length > 0) {
                             checkThenArm(sort, trap, fail);
