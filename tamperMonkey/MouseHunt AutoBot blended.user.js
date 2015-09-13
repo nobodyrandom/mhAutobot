@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.33b
+// @version    	2.1.34b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -249,6 +249,7 @@ function exeScript() {
         time = time.substr(time.indexOf(':') + 1, 2);
         trapCheckTimeDiff = parseInt(time);
         setStorage("TrapCheckTimeOffset", trapCheckTimeDiff);
+        time = null;
     } catch (e) {
         console.debug('Class element "passive" not found');
         trapCheckTimeDiff = getStorage('TrapCheckTimeOffset');
@@ -3889,6 +3890,7 @@ function nobAjaxPost(url, data, callback, throwError, dataType) {
 }
 
 function updateTimer(timeleft, inhours) {
+    if (debug) console.log('updateTimer(' + timeleft + ')');
     var ReturnValue = "";
 
     var FirstPart, SecondPart, Size;
@@ -3962,7 +3964,7 @@ function nobMapRequest(handleData) {
     var url = "https://www.mousehuntgame.com/managers/ajax/users/relichunter.php";
     var dataSend = {
         'action': 'info',
-        'uh': user.unique_hash,
+        'uh': getPageVariable('user.unique_hash'),
         'viewas': null
     };
     jQuery.ajax({
@@ -3980,6 +3982,9 @@ function nobMapRequest(handleData) {
             handleData(error);
         }
     });
+
+    url = null;
+    dataSend = null;
 }
 
 function nobLoading(location, name) {
@@ -4143,27 +4148,12 @@ function nobScript(qqEvent) {
         var mapThere;
         try {
             var NOBdata = nobGet('data');
-            if (isNewUI) {
-                mapThere = document.getElementById('hudmapitem');
-                if (mapThere !== null) {
-                    mapThere = mapThere.style.cssText;
-                    if (mapThere == 'display: none;') {
-                        mapThere = false;
-                        if (debug) console.log("No map, using HTML data now");
-                    } else {
-                        mapThere = true;
-                    }
-                } else {
-                    mapThere = false;
-                }
+            mapThere = document.getElementsByClassName('treasureMap')[0];
+            if (mapThere.textContent.indexOf("remaining") == -1) {
+                mapThere = false;
+                if (debug) console.log("No map, using HTML data now");
             } else {
-                mapThere = document.getElementsByClassName('treasureMap')[0];
-                if (mapThere.textContent.indexOf("remaining") == -1) {
-                    mapThere = false;
-                    if (debug) console.log("No map, using HTML data now");
-                } else {
-                    mapThere = true;
-                }
+                mapThere = true;
             }
 
             if (NOBdata != null || NOBdata != undefined) {
@@ -4181,7 +4171,7 @@ function nobScript(qqEvent) {
                         }
                     });
                 } else {
-                    console.log("Map fetch failed using USER data from html (" + mapRequestFailed + ", " + mapThere + ")");
+                    console.log("Map fetch failed, using USER data from html (" + mapRequestFailed + ", " + mapThere + ")");
                     nobHTMLFetch();
                     var output = nobGet('data');
                     nobGDoc(output, "user");
@@ -4204,7 +4194,7 @@ function nobTravel(location) {
         var data = {
             "origin": self.getCurrentUserEnvironmentType(),
             "destination": location,
-            'uh': user.unique_hash
+            'uh': getPageVariable('user.unique_hash')
         };
         nobAjaxPost(url, data, function (r) {
             console.log(r);
@@ -4680,6 +4670,7 @@ function nobCalculateTime(runOnly) {
 }
 
 function nobCalculateOfflineTimers(runOnly) {
+    if (debug) console.log('nobCalculateOfflineTimers(' + runOnly + ')');
     if (runOnly != 'seasonal' & runOnly != 'balack' & runOnly != 'fg')
         runOnly = 'all';
 
@@ -4719,6 +4710,12 @@ function nobCalculateOfflineTimers(runOnly) {
         return LOCATION_TIMERS[0][1].name[CurrentName];
     } else if (runOnly == 'all') {
         for (i = 0; i < 3; i++) {
+            // Reset var
+            CurrentTime = currentTimeStamp();
+            CurrentName = -1;
+            CurrentBreakdown = 0;
+            TotalBreakdown = 0;
+
             for (iCount2 = 0; iCount2 < LOCATION_TIMERS[i][1].breakdown.length; iCount2++)
                 TotalBreakdown += LOCATION_TIMERS[i][1].breakdown[iCount2];
 
