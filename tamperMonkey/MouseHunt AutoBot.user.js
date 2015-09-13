@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom, Ooi Keng Siang
-// @version    	2.1.31a
+// @version    	2.1.33a
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -129,7 +129,7 @@ var currentLocation;
 var today = new Date();
 var checkTime = (today.getMinutes() >= trapCheckTimeDiff) ? 3600 + (trapCheckTimeDiff * 60) - (today.getMinutes() * 60 + today.getSeconds()) : (trapCheckTimeDiff * 60) - (today.getMinutes() * 60 + today.getSeconds());
 today = undefined;
-var hornRetryMax = 10;
+var hornRetryMax = 15;
 var hornRetry = 0;
 var nextActiveTime = 900;
 var timerInterval = 2;
@@ -800,7 +800,7 @@ function action() {
             }, 1000);
         }
     } catch (e) {
-        console.log("action() ERROR - " + e)
+        console.log("action() ERROR - " + e);
     }
 }
 
@@ -3323,7 +3323,7 @@ function nobRaffle() {
         } catch (e) {
             console.log("Raffle interval error: " + e + ", retrying in 2 seconds. Giving up in " + (nobRafGiveUp * 2) + " seconds.");
             if (nobRafGiveUp < 1) {
-                intState = -1
+                intState = -1;
             } else {
                 nobRafGiveUp--;
             }
@@ -3393,7 +3393,7 @@ function nobPresent() {
         } catch (e) {
             console.log("Present interval error: " + e + ", retrying in 2 seconds. Giving up in " + (nobPresGiveUp * 2) + " seconds.");
             if (nobPresGiveUp < 1) {
-                intState = -1
+                intState = -1;
             } else {
                 nobPresGiveUp--;
             }
