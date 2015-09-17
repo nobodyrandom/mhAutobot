@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.34b
+// @version    	2.1.40b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -189,6 +189,7 @@ var NOBpage = false;
 var mapRequestFailed = false;
 var clockTicking = false;
 var clockNeedOn = false;
+var NOBadFree = false;
 var LOCATION_TIMERS = [
     ['Seasonal Garden', {
         first: 1283616000,
@@ -815,10 +816,11 @@ function livingGarden() {
             var confirmButton = document.getElementsByClassName('confirm button')[0];
             fireEvent(confirmButton, 'click');
             if (getPageVariable('user.trinket_name').indexOf('Sponge') > -1) {
-                console.debug('Going to disarm');
+                console.debug('Going to disarm sponge charm');
                 disarmTrap('trinket');
             }
         } else if (estimateHunt == 34) {
+            console.debug('Switching to spong charm.');
             checkThenArm('best', 'trinket', 'Sponge');
         } else {
             checkThenArm('best', 'trinket', spongeCharm);
@@ -1149,7 +1151,8 @@ function checkThenArm(sort, category, item, fail) {  //category = weapon/base/ch
     var tempName;
     var userVariable = getPageVariable("user." + category + "_name");
     if (userVariable === null || userVariable == undefined) userVariable = "";
-    var trapArmedOverride = false;
+    if (debug) console.log('Currently armed in userVar: ' + userVariable);
+    var trapArmedOverride = false; // Stops trying to find whether trap has been armed. Assumes trap is not armed.
 
     if (sort == 'best') {
         for (i = 0; i < item.length; i++) {
@@ -1168,17 +1171,21 @@ function checkThenArm(sort, category, item, fail) {  //category = weapon/base/ch
                 return;
             });
         } else {
-            if (debug) console.log("Running double check if better one is in inv.");
+            if (debug) console.log("Running double check if better one is in inv. Finding ");
+            if (debug) console.log(item);
+
             // Chunk of code try finds if a better trap is in inventory, if so sets trapArmed to false
             for (j = 0; j < item.length; j++) {
                 for (i = 0; i < NOBtraps.length; i++) {
-                    if (NOBtraps[i].name == item[j] && userVariable.indexOf(NOBtraps[i].name) == 0) {
+                    if (NOBtraps[i].classification == category && NOBtraps[i].name.indexOf(item[j]) == 0 && userVariable.indexOf(NOBtraps[i].name) != -1) {
+                        // Case 1: The loop rolled back to the curr armed and double checked that it is the same as userVar
                         if (debug) console.log("No better traps were found.");
                         trapArmed = true;
 
                         i = NOBtraps.length + 1;
                         j = item.length + 1;
-                    } else if (NOBtraps[i].classification == category && NOBtraps[i].name == item[j] /*&& userVariable.indexOf(item[i]) != 0*/) {
+                    } else if (NOBtraps[i].classification == category && NOBtraps[i].name.indexOf(item[j]) == 0) {
+                        // Case 2: The loop rolled onto an earlier (better) in the item array
                         if (debug) console.log("Found a better trap: " + NOBtraps[i].name + " as compared to " + item[j]);
                         trapArmed = false;
                         trapArmedOverride = true;
@@ -1189,6 +1196,13 @@ function checkThenArm(sort, category, item, fail) {  //category = weapon/base/ch
                     }
                 }
             }
+            if (trapArmed != true && trapArmed != false) {
+                // Case 3: Rolled through whole array and 0 found.
+                console.log("Error occured when finding a better trap in NOBtrap, giving up arming. User does not own the current trap armed?");
+                return;
+            }
+
+            if (debug) console.log("Double check done. Results: trapArmed=" + trapArmed + ", trapArmedOverride=" + trapArmedOverride);
         }
     } else {
         trapArmed = (userVariable.indexOf(item) == 0);
@@ -1196,54 +1210,83 @@ function checkThenArm(sort, category, item, fail) {  //category = weapon/base/ch
 
     if (debug) console.log(item + " armed?: " + trapArmed);
 
-    var retryPageVariable = document.getElementById('hud_trapLabel').textContent;
-    if (!trapArmedOverride && retryPageVariable == "Charm:" && category == "trinket") {
-        var theCharmArmed = document.getElementById('hud_trapPower').textContent;
-        if (sort == 'best') {
-            for (i = 0; i < item.length; i++) {
+    // TODO: Needs redo for beta UI
+    if (!nobTestBetaUI()) {
+        var retryPageVariable = document.getElementById('hud_trapLabel').textContent;
+        if (!trapArmedOverride && retryPageVariable == "Charm:" && category == "trinket") {
+            var theCharmArmed = document.getElementById('hud_trapPower').textContent;
+            if (sort == 'best') {
+                for (i = 0; i < item.length; i++) {
 
-                if (item[i].length > 13) {
-                    tempName = item[i].substring(0, 13);
+                    if (item[i].length > 13) {
+                        tempName = item[i].substring(0, 13);
+                        tempName += "...";
+                    } else {
+                        tempName = item[i];
+                    }
+
+                    if (theCharmArmed == tempName) {
+                        trapArmed = true;
+                        break;
+                    }
+                }
+            } else {
+                //console.log(theCharmArmed + " + " + item);
+
+                if (item.length > 13) {
+                    tempName = item.substring(0, 13);
                     tempName += "...";
                 } else {
-                    tempName = item[i];
+                    tempName = item;
                 }
 
                 if (theCharmArmed == tempName) {
                     trapArmed = true;
-                    break;
                 }
             }
-        } else {
-            //console.log(theCharmArmed + " + " + item);
+            //trapArmed = true;
+        } else if (!trapArmedOverride && (category == 'weapon' || category == 'base' || category == 'bait')) {
+            var currBase = document.getElementById('hud_base').textContent;
+            var currTrap = document.getElementById('hud_weapon').textContent;
+            var currBait = document.getElementById('hud_baitName').textContent;
 
-            if (item.length > 13) {
-                tempName = item.substring(0, 13);
-                tempName += "...";
+            if (sort == 'best') {
+                for (i = 0; i < item.length; i++) {
+                    //console.log(theCharmArmed + " + " + item[i]);
+
+                    if (item[i].length > 13) {
+                        tempName = item[i].substring(0, 13);
+                        tempName += "...";
+                    } else {
+                        tempName = item[i];
+                    }
+
+                    switch (category) {
+                        case 'weapon':
+                            if (currTrap == tempName)
+                                trapArmed = true;
+                            break;
+                        case 'base':
+                            if (currBase == tempName)
+                                trapArmed = true;
+                            break;
+                        case 'bait':
+                            if (currBait == tempName)
+                                trapArmed = true;
+                            break;
+                        default:
+                            //traparmed = false;
+                            break;
+                    }
+                }
             } else {
-                tempName = item;
-            }
-
-            if (theCharmArmed == tempName) {
-                trapArmed = true;
-            }
-        }
-        //trapArmed = true;
-    } else if (!trapArmedOverride && (category == 'weapon' || category == 'base' || category == 'bait')) {
-        var currBase = document.getElementById('hud_base').textContent;
-        var currTrap = document.getElementById('hud_weapon').textContent;
-        var currBait = document.getElementById('hud_baitName').textContent;
-
-        if (sort == 'best') {
-            for (i = 0; i < item.length; i++) {
-                //console.log(theCharmArmed + " + " + item[i]);
-
-                if (item[i].length > 13) {
-                    tempName = item[i].substring(0, 13);
+                if (item.length > 13) {
+                    tempName = item.substring(0, 13);
                     tempName += "...";
                 } else {
-                    tempName = item[i];
+                    tempName = item;
                 }
+
 
                 switch (category) {
                     case 'weapon':
@@ -1262,32 +1305,6 @@ function checkThenArm(sort, category, item, fail) {  //category = weapon/base/ch
                         //traparmed = false;
                         break;
                 }
-            }
-        } else {
-            if (item.length > 13) {
-                tempName = item.substring(0, 13);
-                tempName += "...";
-            } else {
-                tempName = item;
-            }
-
-
-            switch (category) {
-                case 'weapon':
-                    if (currTrap == tempName)
-                        trapArmed = true;
-                    break;
-                case 'base':
-                    if (currBase == tempName)
-                        trapArmed = true;
-                    break;
-                case 'bait':
-                    if (currBait == tempName)
-                        trapArmed = true;
-                    break;
-                default:
-                    //traparmed = false;
-                    break;
             }
         }
     }
@@ -1319,7 +1336,8 @@ function checkThenArm(sort, category, item, fail) {  //category = weapon/base/ch
 
 function dequeueCheckThenArm(sort, category, item, trapArmed, fail) {
     // Try to queue trap arming
-    if (debug) console.log(item + ", is armed? " + trapArmed);
+    if (debug) console.log("Dequeuer: " + item + ", is armed? " + trapArmed);
+    // Remove this item if its still in armingQueue array
     for (var i = 0; i < armingQueue.length; i++) {
         if (item == armingQueue[i]) {
             armingQueue.splice(i, 1);
@@ -1341,16 +1359,21 @@ function dequeueCheckThenArm(sort, category, item, trapArmed, fail) {
 
 function clickThenArmTrapInterval(sort, trap, name, fail) //sort = power/luck/attraction
 {
+    if (debug) console.log("Pre processing queue item. Opening " + trap + " selector.");
     // Process trap arming queue
     setTimeout(function () {
         clickTrapSelector(trap);
         setTimeout(function () {
             var sec = 10;
+            var intervalCTAGiveUp = 3;
+
             var intervalCTATI = setInterval(
                 function () {
                     console.debug("Processing queue item: " + name);
                     var tryArming = armTrap(sort, name, trap);
                     if (tryArming == 'found') {
+                        if (isNewUI)
+                            clickTrapSelector(trap);
                         clearInterval(intervalCTATI);
                         arming = false;
                         dequeueingCTA = false;
@@ -1376,9 +1399,20 @@ function clickThenArmTrapInterval(sort, trap, name, fail) //sort = power/luck/at
                         // Error when try arming bugs out, retry clickTrapSelector
                         if (debug) console.log("Try arming has bugged out.");
                         --sec;
+
                         if (sec <= 0) {
+                            if (debug) console.log("Try arming has given up.");
                             clickTrapSelector(trap);
                             sec = 10;
+                            intervalCTAGiveUp--;
+                        }
+
+                        if (intervalCTAGiveUp == 0) {
+                            clearInterval(intervalCTATI);
+                            arming = false;
+                            dequeueingCTA = false;
+                            intervalCTATI = null;
+                            return;
                         }
                     }
                 }, 1000);
@@ -1388,42 +1422,77 @@ function clickThenArmTrapInterval(sort, trap, name, fail) //sort = power/luck/at
 
 // name = Brie/Gouda/Swiss (brie = wrong)
 function armTrap(sort, name, trap) {
-    var tagGroupElement = document.getElementsByClassName('tagGroup');
-    var tagElement;
-    var nameElement;
+    if (name == 'disarm')
+        disarmTrap(trap);
 
     if (sort == 'best') {
         var nameArray = name;
         name = name[0];
     }
 
-    if (tagGroupElement.length > 0) {
-        console.debug('Trying to arm ' + name);
-        for (var i = 0; i < tagGroupElement.length; ++i) {
-            tagElement = tagGroupElement[i].getElementsByTagName('a');
-            for (var j = 0; j < tagElement.length; ++j) {
-                nameElement = tagElement[j].getElementsByClassName('name')[0].textContent;
+    if (isNewUI) {
+        var allTraps = document.getElementsByClassName('passedFilters')[0].children;
+        var nameElement;
+
+        if (allTraps.length > 0) {
+            console.debug('Trying to arm ' + name);
+            for (var i = 0; i < allTraps.length; i++) {
+                nameElement = allTraps[i].getElementsByClassName('campPage-trap-itemBrowser-item-name')[0].textContent;
                 if (nameElement.indexOf(name) == 0) {
-                    fireEvent(tagElement[j], 'click');
+                    fireEvent(allTraps[i].getElementsByClassName('campPage-trap-itemBrowser-item-armButton')[0], 'click');
                     console.debug(name + ' armed');
                     return 'found';
                 }
             }
-        }
-        console.debug(name + " not found");
-        if (sort == 'best') {
-            nameArray.shift();
-            if (nameArray[0] == 'disarm') {
-                disarmTrap(trap);
-            } else if (nameArray.length > 0) {
-                if (debug) console.debug(nameArray);
-                return armTrap(sort, nameArray, trap);
+            console.debug(name + " not found");
+            if (sort == 'best') {
+                nameArray.shift();
+                if (nameArray[0] == 'disarm') {
+                    disarmTrap(trap);
+                } else if (nameArray.length > 0) {
+                    if (debug) console.debug(nameArray);
+                    return armTrap(sort, nameArray, trap);
+                } else {
+                    console.debug('No traps found');
+                    return 'not found';
+                }
             } else {
-                console.debug('No traps found');
                 return 'not found';
             }
-        } else {
-            return 'not found';
+        }
+    } else {
+        var tagGroupElement = document.getElementsByClassName('tagGroup');
+        var tagElement;
+        var nameElement;
+
+        if (tagGroupElement.length > 0) {
+            console.debug('Trying to arm ' + name);
+            for (var i = 0; i < tagGroupElement.length; ++i) {
+                tagElement = tagGroupElement[i].getElementsByTagName('a');
+                for (var j = 0; j < tagElement.length; ++j) {
+                    nameElement = tagElement[j].getElementsByClassName('name')[0].textContent;
+                    if (nameElement.indexOf(name) == 0) {
+                        fireEvent(tagElement[j], 'click');
+                        console.debug(name + ' armed');
+                        return 'found';
+                    }
+                }
+            }
+            console.debug(name + " not found");
+            if (sort == 'best') {
+                nameArray.shift();
+                if (nameArray[0] == 'disarm') {
+                    disarmTrap(trap);
+                } else if (nameArray.length > 0) {
+                    if (debug) console.debug(nameArray);
+                    return armTrap(sort, nameArray, trap);
+                } else {
+                    console.debug('No traps found');
+                    return 'not found';
+                }
+            } else {
+                return 'not found';
+            }
         }
     }
     return 'error';
@@ -1431,23 +1500,28 @@ function armTrap(sort, name, trap) {
 
 function clickTrapSelector(strSelect) //strSelect = weapon/base/charm/trinket/bait
 {
-    if (strSelect == "base") {
-        fireEvent(document.getElementsByClassName('trapControlThumb')[0], 'click');
-    } else if (strSelect == "weapon") {
-        fireEvent(document.getElementsByClassName('trapControlThumb')[1], 'click');
-    } else if (strSelect == "charm" || strSelect == "trinket") {
-        fireEvent(document.getElementsByClassName('trapControlThumb')[2], 'click');
-    } else if (strSelect == "bait") {
-        fireEvent(document.getElementsByClassName('trapControlThumb')[3], 'click');
+    if (strSelect == "charm") strSelect = "trinket";
+    if (isNewUI) {
+        fireEvent(document.getElementsByClassName('campPage-trap-armedItem ' + strSelect)[0], 'click');
     } else {
-        return (console.debug("Invalid trapSelector"));
+        if (strSelect == "base") {
+            fireEvent(document.getElementsByClassName('trapControlThumb')[0], 'click');
+        } else if (strSelect == "weapon") {
+            fireEvent(document.getElementsByClassName('trapControlThumb')[1], 'click');
+        } else if (strSelect == "charm" || strSelect == "trinket") {
+            fireEvent(document.getElementsByClassName('trapControlThumb')[2], 'click');
+        } else if (strSelect == "bait") {
+            fireEvent(document.getElementsByClassName('trapControlThumb')[3], 'click');
+        } else {
+            return (console.debug("Invalid trapSelector"));
+        }
     }
     arming = true;
     return (console.debug("Trap selector: " + strSelect + " clicked"));
 }
 
 function disarmTrap(trapSelector) {
-    if (debug) console.log('RUN disarmTrap(' + trapSelector + ')');
+    if (debug) console.log('disarmTrap(' + trapSelector + ')');
     clickTrapSelector(trapSelector);
     var x;
     var intervalDT = setInterval(
@@ -1455,11 +1529,21 @@ function disarmTrap(trapSelector) {
             x = document.getElementsByClassName(trapSelector + ' canDisarm');
             if (x.length > 0) {
                 for (var i = 0; i < x.length; ++i) {
-                    if (x[i].getAttribute('title').indexOf('Click to disarm') > -1) {
-                        fireEvent(x[i], 'click');
-                        clearInterval(intervalDT);
-                        intervalDT = null;
-                        return (console.debug('Disarmed ' + trapSelector));
+                    if (isNewUI) {
+                        x[i] = x[i].getElementsByClassName('campPage-trap-itemBrowser-item-armButton')[0];
+                        if (x[i].textContent == 'Disarm') {
+                            fireEvent(x[i], 'click');
+                            clearInterval(intervalDT);
+                            intervalDT = null;
+                            return (console.debug('Disarmed ' + trapSelector));
+                        }
+                    } else {
+                        if (x[i].getAttribute('title').indexOf('Click to disarm') > -1) {
+                            fireEvent(x[i], 'click');
+                            clearInterval(intervalDT);
+                            intervalDT = null;
+                            return (console.debug('Disarmed ' + trapSelector));
+                        }
                     }
                 }
 
@@ -2828,12 +2912,13 @@ function loadPreferenceSettingFromStorage() {
 
     addonCodeTemp = undefined;
 
+    // nobTrapCounter to only refetch all traps when counter hits 0
     var nobTrapsTemp = nobGet('traps');
     var nobTrapsTempCounter = getStorage('nobTrapsCounter');
     if (nobTrapsTempCounter == undefined || nobTrapsTempCounter === null) {
         nobTrapsTempCounter = 1000;
     }
-    if (nobTrapsTempCounter > 0) {
+    if (nobTrapsTempCounter > 0 && nobTrapsTempCounter < 501) {
         if (!(nobTrapsTemp == undefined || nobTrapsTemp === null)) {
             NOBtraps = JSON.parse(nobTrapsTemp);
         }
@@ -2841,7 +2926,7 @@ function loadPreferenceSettingFromStorage() {
         setStorage('nobTrapsCounter', nobTrapsTempCounter - 1);
     } else {
         NOBtraps = [];
-        setStorage('nobTrapsCounter', 1000);
+        setStorage('nobTrapsCounter', 500);
     }
     nobTrapsTemp = undefined;
     nobTrapsTempCounter = undefined;
@@ -2922,10 +3007,40 @@ function doubleCheckLocation() { //return true if location is camp page (this is
 
 function addGoogleAd() {
     // search for existing ad element and remove it
-    var existingAutoBotAdElement = document.getElementById('autoBotAdDiv');
-    if (existingAutoBotAdElement) {
-        existingAutoBotAdElement.parentNode.removeChild(existingAutoBotAdElement);
-        existingAutoBotAdElement = null;
+    try {
+        if (debug) console.log('Trying to get rid of ad iFrame');
+        var adFrame = document.getElementsByClassName('googleAd')[0];
+        var allowAds = getStorage('allowAds');
+        if (allowAds != null && allowAds != undefined && allowAds != "" && allowAds != "false" && allowAds != false) {
+            allowAds = true;
+        } else {
+            allowAds = false;
+            setStorage('allowAds', 'false');
+        }
+
+        if (!NOBadFree) {
+            NOBadFree = nobGet('adFree');
+            NOBadFree = (NOBadFree == true || NOBadFree == "true");
+        }
+
+        if (debug) console.log('addGoogleAd' + NOBadFree + allowAds);
+        if (adFrame) {
+            adFrame.removeChild(adFrame.firstChild);
+            if (!NOBadFree && allowAds) {
+                var newAd = document.createElement('script');
+                newAd.type = 'text/javascript';
+                newAd.src = '//eclkmpbn.com/adServe/banners?tid=58849_91032_3';
+                adFrame.appendChild(document.createElement('center'));
+                adFrame.firstChild.appendChild(newAd);
+                newAd = null;
+            } else {
+                adFrame.innerHTML = "<a id=\"addAdLink\" href=\"#\">Click here to show ads to support the development of this bot :)</a>";
+            }
+        }
+        adFrame = null;
+        allowAds = null;
+    } catch (e) {
+        console.log('Remove ad error: ' + e);
     }
 }
 
@@ -3189,7 +3304,7 @@ function embedScript() {
     modStr = null;
 }
 
-function nobTestBetaUI() {
+function nobTestBetaUI() { // Return true if beta UI
     header = 'header';
     var testNewUI = document.getElementById(header);
     if (testNewUI != null) {
@@ -3808,31 +3923,15 @@ function nobInit() {
                 NOBpage = true;
             }
 
-            window.setTimeout(function () {
-                try {
-                    if (debug) console.log('Trying to get rid of ad iFrame');
-                    var adFrame = document.getElementsByClassName('googleAd')[0];
-                    if (adFrame) {
-                        adFrame.removeChild(adFrame.firstChild);
-                        var newAd = document.createElement('script');
-                        //newAd.type = 'text/javascript';
-                        //newAd.src = '//eclkmpbn.com/adServe/banners?tid=58849_91032_3';
-                        adFrame.appendChild(document.createElement('center'));
-                        adFrame.firstChild.appendChild(newAd);
-                        newAd = null;
-                    }
-                    adFrame = null;
-                } catch (e) {
-                    console.log('Remove ad error: ' + e);
-                }
-            }, 5000);
-
             if (NOBpage) {
                 nobHTMLFetch();
                 createClockArea();
                 clockTick();
                 fetchGDocStuff();
-                nobInjectFFfunctions();
+                addGoogleAd();
+                setTimeout(function () {
+                    nobInjectFFfunctions();
+                }, 1000);
                 setTimeout(function () {
                     pingServer();
                 }, 30000);
@@ -3890,7 +3989,7 @@ function nobAjaxPost(url, data, callback, throwError, dataType) {
 }
 
 function updateTimer(timeleft, inhours) {
-    if (debug) console.log('updateTimer(' + timeleft + ')');
+    //if (debug) console.log('updateTimer(' + timeleft + ')');
     var ReturnValue = "";
 
     var FirstPart, SecondPart, Size;
@@ -4208,7 +4307,6 @@ function nobTravel(location) {
 function fetchGDocStuff() {
     if (NOBpage) {
         var currVer = scriptVersion;
-        //var currVer = "1.4.400a";
         var checkVer;
 
         document.getElementById('NOBmessage').innerHTML = "Loading";
@@ -4225,6 +4323,11 @@ function fetchGDocStuff() {
             success: function (data) {
                 nobStopLoading();
                 data = JSON.parse(data);
+
+                // Ad Free (returns bool)
+                NOBadFree = data.adFree;
+                nobStore(NOBadFree, 'adFree');
+
                 // MESSAGE PLACING
                 message = data.message;
                 var NOBmessage = document.getElementById('NOBmessage');
@@ -4358,28 +4461,49 @@ function nobInjectFFfunctions() {
     var browser = browserDetection();
     var raffleDiv = document.getElementById('nobRaffle');
     var presentDiv = document.getElementById('nobPresent');
+    var addAdDiv = document.getElementById('addAdLink');
 
     if (browser == 'firefox') {
         unsafeWindow.nobRaffle = exportFunction(nobRaffle, unsafeWindow);
         unsafeWindow.nobPresent = exportFunction(nobPresent, unsafeWindow);
+        unsafeWindow.addGoogleAd = exportFunction(addGoogleAd, unsafeWindow);
 
         raffleDiv.addEventListener('click', function () {
             unsafeWindow.nobRaffle();
+            return false;
         });
         presentDiv.addEventListener('click', function () {
             unsafeWindow.nobPresent();
+            return false;
         });
+        if (addAdDiv) {
+            addAdDiv.addEventListener('click', function () {
+                localStorage.setItem('allowAds', 'true');
+                unsafeWindow.addGoogleAd();
+                return false;
+            });
+        }
     } else {
         // chrome and all other
         raffleDiv.addEventListener('click', function () {
             nobRaffle();
+            return false;
         });
         presentDiv.addEventListener('click', function () {
             nobPresent();
+            return false;
         });
+        if (addAdDiv) {
+            addAdDiv.addEventListener('click', function () {
+                localStorage.setItem('allowAds', 'true');
+                addGoogleAd();
+                return false;
+            });
+        }
     }
     raffleDiv = undefined;
     presentDiv = undefined;
+    addAdDiv = undefined;
 }
 
 function nobRaffle() {
@@ -4587,7 +4711,7 @@ function updateTime() {
     } catch (e) {
         if (debug) console.log("UpdateTime error: " + e);
         clearTimeout(NOBtickerTimout);
-        clearTimeout(NOBtickerInterval)
+        clearTimeout(NOBtickerInterval);
     }
 }
 
@@ -4670,7 +4794,7 @@ function nobCalculateTime(runOnly) {
 }
 
 function nobCalculateOfflineTimers(runOnly) {
-    if (debug) console.log('nobCalculateOfflineTimers(' + runOnly + ')');
+    //if (debug) console.log('nobCalculateOfflineTimers(' + runOnly + ')');
     if (runOnly != 'seasonal' & runOnly != 'balack' & runOnly != 'fg')
         runOnly = 'all';
 

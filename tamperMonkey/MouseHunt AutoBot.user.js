@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom, Ooi Keng Siang
-// @version    	2.1.34a
+// @version    	2.1.40a
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -154,6 +154,7 @@ var NOBpage = false;
 var mapRequestFailed = false;
 var clockTicking = false;
 var clockNeedOn = false;
+var NOBadFree = false;
 var LOCATION_TIMERS = [
     ['Seasonal Garden', {
         first: 1283616000,
@@ -1805,10 +1806,40 @@ function doubleCheckLocation() { //return true if location is camp page (this is
 
 function addGoogleAd() {
     // search for existing ad element and remove it
-    var existingAutoBotAdElement = document.getElementById('autoBotAdDiv');
-    if (existingAutoBotAdElement) {
-        existingAutoBotAdElement.parentNode.removeChild(existingAutoBotAdElement);
-        existingAutoBotAdElement = null;
+    try {
+        if (debug) console.log('Trying to get rid of ad iFrame');
+        var adFrame = document.getElementsByClassName('googleAd')[0];
+        var allowAds = getStorage('allowAds');
+        if (allowAds != null && allowAds != undefined && allowAds != "" && allowAds != "false" && allowAds != false) {
+            allowAds = true;
+        } else {
+            allowAds = false;
+            setStorage('allowAds', 'false');
+        }
+
+        if (!NOBadFree) {
+            NOBadFree = nobGet('adFree');
+            NOBadFree = (NOBadFree == true || NOBadFree == "true");
+        }
+
+        if (debug) console.log('addGoogleAd' + NOBadFree + allowAds);
+        if (adFrame) {
+            adFrame.removeChild(adFrame.firstChild);
+            if (!NOBadFree && allowAds) {
+                var newAd = document.createElement('script');
+                newAd.type = 'text/javascript';
+                newAd.src = '//eclkmpbn.com/adServe/banners?tid=58849_91032_3';
+                adFrame.appendChild(document.createElement('center'));
+                adFrame.firstChild.appendChild(newAd);
+                newAd = null;
+            } else {
+                adFrame.innerHTML = "<a id=\"addAdLink\" href=\"#\">Click here to show ads to support the development of this bot :)</a>";
+            }
+        }
+        adFrame = null;
+        allowAds = null;
+    } catch (e) {
+        console.log('Remove ad error: ' + e);
     }
 }
 
@@ -2071,7 +2102,7 @@ function embedScript() {
     modStr = null;
 }
 
-function nobTestBetaUI() {
+function nobTestBetaUI() { // Return true if beta UI
     header = 'header';
     var testNewUI = document.getElementById(header);
     if (testNewUI != null) {
@@ -2690,31 +2721,15 @@ function nobInit() {
                 NOBpage = true;
             }
 
-            window.setTimeout(function () {
-                try {
-                    if (debug) console.log('Trying to get rid of ad iFrame');
-                    var adFrame = document.getElementsByClassName('googleAd')[0];
-                    if (adFrame) {
-                        adFrame.removeChild(adFrame.firstChild);
-                        var newAd = document.createElement('script');
-                        //newAd.type = 'text/javascript';
-                        //newAd.src = '//eclkmpbn.com/adServe/banners?tid=58849_91032_3';
-                        adFrame.appendChild(document.createElement('center'));
-                        adFrame.firstChild.appendChild(newAd);
-                        newAd = null;
-                    }
-                    adFrame = null;
-                } catch (e) {
-                    console.log('Remove ad error: ' + e);
-                }
-            }, 5000);
-
             if (NOBpage) {
                 nobHTMLFetch();
                 createClockArea();
                 clockTick();
                 fetchGDocStuff();
-                nobInjectFFfunctions();
+                addGoogleAd();
+                setTimeout(function () {
+                    nobInjectFFfunctions();
+                }, 1000);
                 setTimeout(function () {
                     pingServer();
                 }, 30000);
@@ -2772,7 +2787,7 @@ function nobAjaxPost(url, data, callback, throwError, dataType) {
 }
 
 function updateTimer(timeleft, inhours) {
-    if (debug) console.log('updateTimer(' + timeleft + ')');
+    //if (debug) console.log('updateTimer(' + timeleft + ')');
     var ReturnValue = "";
 
     var FirstPart, SecondPart, Size;
@@ -3090,7 +3105,6 @@ function nobTravel(location) {
 function fetchGDocStuff() {
     if (NOBpage) {
         var currVer = scriptVersion;
-        //var currVer = "1.4.400a";
         var checkVer;
 
         document.getElementById('NOBmessage').innerHTML = "Loading";
@@ -3107,6 +3121,11 @@ function fetchGDocStuff() {
             success: function (data) {
                 nobStopLoading();
                 data = JSON.parse(data);
+
+                // Ad Free (returns bool)
+                NOBadFree = data.adFree;
+                nobStore(NOBadFree, 'adFree');
+
                 // MESSAGE PLACING
                 message = data.message;
                 var NOBmessage = document.getElementById('NOBmessage');
@@ -3240,28 +3259,49 @@ function nobInjectFFfunctions() {
     var browser = browserDetection();
     var raffleDiv = document.getElementById('nobRaffle');
     var presentDiv = document.getElementById('nobPresent');
+    var addAdDiv = document.getElementById('addAdLink');
 
     if (browser == 'firefox') {
         unsafeWindow.nobRaffle = exportFunction(nobRaffle, unsafeWindow);
         unsafeWindow.nobPresent = exportFunction(nobPresent, unsafeWindow);
+        unsafeWindow.addGoogleAd = exportFunction(addGoogleAd, unsafeWindow);
 
         raffleDiv.addEventListener('click', function () {
             unsafeWindow.nobRaffle();
+            return false;
         });
         presentDiv.addEventListener('click', function () {
             unsafeWindow.nobPresent();
+            return false;
         });
+        if (addAdDiv) {
+            addAdDiv.addEventListener('click', function () {
+                localStorage.setItem('allowAds', 'true');
+                unsafeWindow.addGoogleAd();
+                return false;
+            });
+        }
     } else {
         // chrome and all other
         raffleDiv.addEventListener('click', function () {
             nobRaffle();
+            return false;
         });
         presentDiv.addEventListener('click', function () {
             nobPresent();
+            return false;
         });
+        if (addAdDiv) {
+            addAdDiv.addEventListener('click', function () {
+                localStorage.setItem('allowAds', 'true');
+                addGoogleAd();
+                return false;
+            });
+        }
     }
     raffleDiv = undefined;
     presentDiv = undefined;
+    addAdDiv = undefined;
 }
 
 function nobRaffle() {
@@ -3469,7 +3509,7 @@ function updateTime() {
     } catch (e) {
         if (debug) console.log("UpdateTime error: " + e);
         clearTimeout(NOBtickerTimout);
-        clearTimeout(NOBtickerInterval)
+        clearTimeout(NOBtickerInterval);
     }
 }
 
@@ -3552,7 +3592,7 @@ function nobCalculateTime(runOnly) {
 }
 
 function nobCalculateOfflineTimers(runOnly) {
-    if (debug) console.log('nobCalculateOfflineTimers(' + runOnly + ')');
+    //if (debug) console.log('nobCalculateOfflineTimers(' + runOnly + ')');
     if (runOnly != 'seasonal' & runOnly != 'balack' & runOnly != 'fg')
         runOnly = 'all';
 
