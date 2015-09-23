@@ -5,7 +5,7 @@
 
 ~~[Original](http://userscripts-mirror.org/scripts/show/78731.html) version made and owned by [Ooi Keng Siang](http://ooiks.com/blog/mousehunt-autobot) \(He no longer develops this code\)~~
 
-######Chrome version is now updated to 2.1.21c script - download it [here](https://github.com/nobodyrandom/mhAutobot/raw/master/chromeExtension.crx)
+######Chrome version is now updated to 2.1.40c script - download it [here](https://github.com/nobodyrandom/mhAutobot/raw/master/chromeExtension.crx)
 
 [REVAMP (A build)](https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) version adapts the original, with few bug fixes and etc \(ver a\)
 
@@ -28,7 +28,7 @@ Features:
 >*	Auto Kings Reward popup (check the settings)
 >*	Auto return raffle tickets
 >*  Auto return presents to friends
->*  Removed Ooi's ads
+>*  Removed Ooi's ads (added in an optional ad system to support me :)
 >*  Removed not working sound player and replaced with a working HTML5 one
 >*  Browser notifications and triggers are now fixed \^.\^
 >*	KR auto resume etc are now fixed
@@ -36,7 +36,7 @@ Features:
 >*  Cleaned code
 >*  BETA UI Support
 >*  Firefox Support
->*  (ver b ONLY) Integrated CnN's bots for automization on areas + automization on G Express, Z Tower
+>*  (ver b ONLY) Integrated CnN's bots for automization on areas + automization on G Express, Z Tower, FW, Iceberg
 
 *****
 Explanations of the files included
