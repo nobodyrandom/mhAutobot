@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom, Ooi Keng Siang
-// @version    	2.1.40a
+// @version    	2.1.42a
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -1584,9 +1584,48 @@ window.localStorage.setItem(\'addonCode\', document.getElementById(\'addonCode\'
                 NOBspecialMessageDiv.setAttribute('id', 'nobSpecialMessage');
                 NOBspecialMessageDiv.setAttribute('style', 'display: block; position: fixed; bottom: 0; z-index: 999; text-align: center; width: 760px;');
 
+                //var nobWhatsNewDiv = document.createElement('div');
+                //nobWhatsNewDiv.setAttribute('id', 'nobWhatsNew');
+                //nobWhatsNewDiv.setAttribute('style', 'display: block; position: fixed; bottom: 0; left: 0; z-index: 999; text-align: left; width: 200px; height: 100px; padding: 10px 0 10px 10px;');
+
                 var nobWhatsNewDiv = document.createElement('div');
-                nobWhatsNewDiv.setAttribute('id', 'nobWhatsNew');
-                nobWhatsNewDiv.setAttribute('style', 'display: block; position: fixed; bottom: 0; left: 0; z-index: 999; text-align: left; width: 200px; height: 100px; padding: 10px 0 10px 10px;');
+                nobWhatsNewDiv.innerHTML = "<style>" +
+                    "@-webkit-keyframes colorRotate {" +
+                    "from {color: rgb(255, 0, 0);}" +
+                    "16.6% {color: rgb(255, 0, 255);}" +
+                    "33.3% {color: rgb(0, 0, 255);}" +
+                    "50% {color: rgb(0, 255, 255);}" +
+                    "66.6% {color: rgb(0, 255, 0);}" +
+                    "83.3% {color: rgb(255, 255, 0);}" +
+                    "to {color: rgb(255, 0, 0);}" +
+
+                    "@-moz-keyframes colorRotate {" +
+                    "from {color: rgb(255, 0, 0);}" +
+                    "16.6% {color: rgb(255, 0, 255);}" +
+                    "33.3% {color: rgb(0, 0, 255);}" +
+                    "50% {color: rgb(0, 255, 255);}" +
+                    "66.6% {color: rgb(0, 255, 0);}" +
+                    "83.3% {color: rgb(255, 255, 0);}" +
+                    "to {color: rgb(255, 0, 0);}" +
+
+                    "@-o-keyframes colorRotate {" +
+                    "from {color: rgb(255, 0, 0);}" +
+                    "16.6% {color: rgb(255, 0, 255);}" +
+                    "33.3% {color: rgb(0, 0, 255);}" +
+                    "50% {color: rgb(0, 255, 255);}" +
+                    "66.6% {color: rgb(0, 255, 0);}" +
+                    "83.3% {color: rgb(255, 255, 0);}" +
+                    "to {color: rgb(255, 0, 0);}" +
+
+                    "@keyframes colorRotate {" +
+                    "from {color: rgb(255, 0, 0);}" +
+                    "16.6% {color: rgb(255, 0, 255);}" +
+                    "33.3% {color: rgb(0, 0, 255);}" +
+                    "50% {color: rgb(0, 255, 255);}" +
+                    "66.6% {color: rgb(0, 255, 0);}" +
+                    "83.3% {color: rgb(255, 255, 0);}" +
+                    "to {color: rgb(255, 0, 0);}" +
+                    "</style>";
 
                 var preferenceDiv = document.createElement('div');
                 preferenceDiv.setAttribute('id', 'preferenceDiv');
@@ -1831,9 +1870,20 @@ function addGoogleAd() {
                 newAd.src = '//eclkmpbn.com/adServe/banners?tid=58849_91032_3';
                 adFrame.appendChild(document.createElement('center'));
                 adFrame.firstChild.appendChild(newAd);
+
+                var removeAdButton = document.createElement('a');
+                removeAdButton.id = 'removeAdLink';
+                removeAdButton.href = 'https://www.mousehuntgame.com/index.php';
+                removeAdButton.innerHTML = 'Click here to remove ads :*(';
+                adFrame.firstChild.appendChild(removeAdButton);
+
+                removeAdButton = null;
                 newAd = null;
+            } else if (!NOBadFree) {
+                adFrame.innerHTML = "<a id=\"addAdLink\" href=\"#\" style=\"-webkit-animation: colorRotate 6s linear 0s infinite; -moz-animation: colorRotate 6s linear 0s infinite; -o-animation: colorRotate 6s linear 0s infinite; animation: colorRotate 6s linear 0s infinite; font-weight: bolder; text-align: center;\">Click here to show ads to support the development of this bot :)</a>";
             } else {
-                adFrame.innerHTML = "<a id=\"addAdLink\" href=\"#\">Click here to show ads to support the development of this bot :)</a>";
+                console.debug("Thanks for donating ^.^");
+                adFrame.innerHTML = "";
             }
         }
         adFrame = null;
@@ -2721,12 +2771,13 @@ function nobInit() {
                 NOBpage = true;
             }
 
+            addGoogleAd();
+
             if (NOBpage) {
                 nobHTMLFetch();
                 createClockArea();
                 clockTick();
                 fetchGDocStuff();
-                addGoogleAd();
                 setTimeout(function () {
                     nobInjectFFfunctions();
                 }, 1000);
@@ -3260,6 +3311,7 @@ function nobInjectFFfunctions() {
     var raffleDiv = document.getElementById('nobRaffle');
     var presentDiv = document.getElementById('nobPresent');
     var addAdDiv = document.getElementById('addAdLink');
+    var removeAdDiv = document.getElementById('removeAdLink');
 
     if (browser == 'firefox') {
         unsafeWindow.nobRaffle = exportFunction(nobRaffle, unsafeWindow);
@@ -3278,7 +3330,12 @@ function nobInjectFFfunctions() {
             addAdDiv.addEventListener('click', function () {
                 localStorage.setItem('allowAds', 'true');
                 unsafeWindow.addGoogleAd();
-                return false;
+            });
+        }
+        if (removeAdDiv) {
+            removeAdDiv.addEventListener('click', function () {
+                localStorage.setItem('allowAds', 'false');
+                unsafeWindow.addGoogleAd();
             });
         }
     } else {
@@ -3295,13 +3352,19 @@ function nobInjectFFfunctions() {
             addAdDiv.addEventListener('click', function () {
                 localStorage.setItem('allowAds', 'true');
                 addGoogleAd();
-                return false;
+            });
+        }
+        if (removeAdDiv) {
+            removeAdDiv.addEventListener('click', function () {
+                localStorage.setItem('allowAds', 'false');
+                addGoogleAd();
             });
         }
     }
     raffleDiv = undefined;
     presentDiv = undefined;
     addAdDiv = undefined;
+    removeAdDiv = undefined;
 }
 
 function nobRaffle() {

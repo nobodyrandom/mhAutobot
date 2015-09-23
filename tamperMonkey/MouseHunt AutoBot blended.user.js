@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.40b
+// @version    	2.1.42b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -495,9 +495,82 @@ function eventLocationCheck() {
             break;
         case 'Fiery Warpath Super':
             fieryWarpath(true);
+            break;
+        case 'Iceberg (Wax)':
+            iceberg('wax');
+            break;
+        case 'Iceberg (Sticky)':
+            iceberg('sticky');
+            break;
         default:
             break;
     }
+}
+
+function iceberg(waxOrSticky) { // takes in string 'wax' or 'sticky'
+    var location = getPageVariable('user.location');
+    console.debug(location);
+    if (location.indexOf('Iceberg') > -1) {
+        var stage = document.getElementsByClassName('currentPhase')[0].textContent;
+        var progress = parseInt(document.getElementsByClassName('user_progress')[0].textContent);
+        console.debug('In ' + stage + ' at ' + progress + ' feets right now.');
+
+        // Check if theres general
+        if (progress == 300 || progress == 600 || progress == 1600 || progress == 1800) {
+            console.debug('General encountered.');
+            checkThenArm('best', 'base', bestPowerBase);
+            checkThenArm(null, 'trinket', 'Super Power', wasteCharm);
+            return;
+        }
+
+        var icebergCharm;
+        if (waxOrSticky == 'sticky') {
+            icebergCharm = ['Sticky', 'Wax'];
+        } else {
+            icebergCharm = ['Wax', 'Sticky'];
+        }
+
+        switch (stage) {
+            case 'Treacherous Tunnels':
+                // magnet base
+                checkThenArm(null, 'base', 'Magnet Base');
+                checkThenArm('best', 'trinket', icebergCharm, wasteCharm);
+                break;
+            case 'Brutal Bulwark':
+                // spiked base
+                checkThenArm(null, 'base', 'Spiked Base');
+                checkThenArm('best', 'trinket', icebergCharm, wasteCharm);
+                break;
+            case 'Bombing Run':
+                // Remote det base
+                checkThenArm('best', 'base', ['Remote Detonator Base', 'Magnet Base']);
+                checkThenArm('best', 'trinket', icebergCharm, wasteCharm);
+                break;
+            case 'The Mad Depths':
+                // Hearthstone base
+                checkThenArm(null, 'base', 'Hearthstone Base');
+                checkThenArm('best', 'trinket', icebergCharm, wasteCharm);
+                break;
+            case 'Icewing\'s Lair':
+            // Deep freeze base for the rest
+            case 'Hidden Depths':
+            case 'The Deep Lair':
+                checkThenArm(null, 'base', 'Deep Freeze Base');
+                var charmArmed = getPageVariable('user.trinket_name');
+                if (charmArmed.indexOf('Wax') > -1 || charmArmed.indexOf('Sticky') > -1)
+                    disarmTrap('trinket');
+                break;
+            default:
+                break;
+        }
+
+        icebergCharm = null;
+        stage = null;
+    } else if (location.indexOf('Slushy Shoreline') > -1) {
+        console.debug('Disarming cheese as wrong area now.');
+        disarmTrap('bait');
+    }
+    location = null;
 }
 
 function ZTower() {
@@ -872,14 +945,15 @@ function twistedGarden() {
     var red = parseInt(document.getElementsByClassName('itemImage red')[0].textContent);
     var yellow = parseInt(document.getElementsByClassName('itemImage yellow')[0].textContent);
     var charmArmed = getPageVariable('user.trinket_name');
-    console.debug('Red: ' + red + ' Yellow: ' + yellow);
-    if (red < 10) {
+    var isPouring = (document.getElementsByClassName('pour')[0].textContent.indexOf('Poured') > -1);
+    console.debug('Red: ' + red + ' Yellow: ' + yellow + ' Pouring: ' + isPouring);
+    if (!isPouring && red < 10) {
         if (red <= 8) {
             checkThenArm('best', 'trinket', redSpongeCharm);
         } else {
             checkThenArm(null, 'trinket', 'Red Sponge');
         }
-    } else if (red == 10 && yellow < 10) {
+    } else if (!isPouring && red == 10 && yellow < 10) {
         if (yellow <= 8) {
             checkThenArm('best', 'trinket', yellowSpongeCharm);
         } else {
@@ -888,6 +962,14 @@ function twistedGarden() {
     } else {
         if (charmArmed.indexOf('Red') > -1 || charmArmed.indexOf('Yellow') > -1) {
             disarmTrap('trinket');
+        }
+        // Pouring now
+        if (!isPouring) {
+            console.debug("Going to pour now...");
+            fireEvent(document.getElementsByClassName('pour')[0], 'click');
+            setTimeout(function () {
+                fireEvent(document.getElementsByClassName('confirm')[0], 'click');
+            }, 1000);
         }
     }
     checkThenArm('best', 'weapon', bestHydro);
@@ -1099,7 +1181,7 @@ function loadTrain(location, load) {
 }
 
 function buildTrapList(afterBuilding, failedBuilding) {
-    if (debug) console.log("running buildTrapList()")
+    if (debug) console.log("running buildTrapList()");
     var returning;
     //clickTrapSelector(category);
     try {
@@ -1126,7 +1208,9 @@ function buildTrapList(afterBuilding, failedBuilding) {
     }
 }
 
+var retryCheckThenArm = true;
 function checkThenArm(sort, category, item, fail) {  //category = weapon/base/charm/trinket/bait
+    // TODO: catch failed check then arm (ie, trap not found) (minor issue)
     // returns 'armed' if already armed
     // fail = [] If trap not found pass in array, to do a secondary arm
 
@@ -1165,7 +1249,7 @@ function checkThenArm(sort, category, item, fail) {  //category = weapon/base/ch
         if (NOBtraps.length == 0) {
             if (debug) console.log("NOBtraps not built yet, trying to build now.");
             buildTrapList(function () {
-                return checkThenArm(sort, category, item);
+                return checkThenArm(sort, category, item, fail);
             }, function () {
                 if (debug) console.log("Failed to build trap list, giving up arming: " + item);
                 return;
@@ -1193,13 +1277,26 @@ function checkThenArm(sort, category, item, fail) {  //category = weapon/base/ch
                         // breaking out of loops
                         i = NOBtraps.length + 1;
                         j = item.length + 1;
+                    } else {
+                        if (debug) console.log('Comparing: ' + NOBtraps[i].name + ' with ' + item[j]);
                     }
                 }
             }
+
             if (trapArmed != true && trapArmed != false) {
                 // Case 3: Rolled through whole array and 0 found.
-                console.log("Error occured when finding a better trap in NOBtrap, giving up arming. User does not own the current trap armed?");
-                return;
+                if (retryCheckThenArm) {
+                    console.log("Error occured when finding a better trap in NOBtrap, giving up arming. User does not own the current trap armed? Retrying to fetch trap list.");
+                    buildTrapList(function () {
+                        retryCheckThenArm = false;
+                        return checkThenArm(sort, category, item, fail);
+                    }, function () {
+                        console.log('Retry failed. Giving up now.');
+                    });
+                } else {
+                    console.log('Retried, but failed again :(');
+                }
+                return 'failed';
             }
 
             if (debug) console.log("Double check done. Results: trapArmed=" + trapArmed + ", trapArmedOverride=" + trapArmedOverride);
@@ -1210,7 +1307,7 @@ function checkThenArm(sort, category, item, fail) {  //category = weapon/base/ch
 
     if (debug) console.log(item + " armed?: " + trapArmed);
 
-    // TODO: Needs redo for beta UI
+    // TODO: Needs redo for beta UI (major issue)
     if (!nobTestBetaUI()) {
         var retryPageVariable = document.getElementById('hud_trapLabel').textContent;
         if (!trapArmedOverride && retryPageVariable == "Charm:" && category == "trinket") {
@@ -2678,6 +2775,8 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<option value=""> </option>';
                 preferenceHTMLStr += '<option value="None" selected>None</option>';
                 preferenceHTMLStr += '<option value="Zugzwang\'s Tower">Zugzwang\'s Tower</option>';
+                preferenceHTMLStr += '<option value="Iceberg (Wax)">Iceberg (Wax)</option>';
+                preferenceHTMLStr += '<option value="Iceberg (Sticky)">Iceberg (Sticky)</option>';
                 preferenceHTMLStr += '<option value="Fiery Warpath">Fiery Warpath</option>';
                 preferenceHTMLStr += '<option value="Fiery Warpath Super">Fiery Warpath (Super charms)</option>';
                 preferenceHTMLStr += '<option value="Charge Egg 2014">Charge Egg 2014</option>';
@@ -2748,9 +2847,48 @@ window.localStorage.setItem(\'addonCode\', document.getElementById(\'addonCode\'
                 NOBspecialMessageDiv.setAttribute('id', 'nobSpecialMessage');
                 NOBspecialMessageDiv.setAttribute('style', 'display: block; position: fixed; bottom: 0; z-index: 999; text-align: center; width: 760px;');
 
+                //var nobWhatsNewDiv = document.createElement('div');
+                //nobWhatsNewDiv.setAttribute('id', 'nobWhatsNew');
+                //nobWhatsNewDiv.setAttribute('style', 'display: block; position: fixed; bottom: 0; left: 0; z-index: 999; text-align: left; width: 200px; height: 100px; padding: 10px 0 10px 10px;');
+
                 var nobWhatsNewDiv = document.createElement('div');
-                nobWhatsNewDiv.setAttribute('id', 'nobWhatsNew');
-                nobWhatsNewDiv.setAttribute('style', 'display: block; position: fixed; bottom: 0; left: 0; z-index: 999; text-align: left; width: 200px; height: 100px; padding: 10px 0 10px 10px;');
+                nobWhatsNewDiv.innerHTML = "<style>" +
+                    "@-webkit-keyframes colorRotate {" +
+                    "from {color: rgb(255, 0, 0);}" +
+                    "16.6% {color: rgb(255, 0, 255);}" +
+                    "33.3% {color: rgb(0, 0, 255);}" +
+                    "50% {color: rgb(0, 255, 255);}" +
+                    "66.6% {color: rgb(0, 255, 0);}" +
+                    "83.3% {color: rgb(255, 255, 0);}" +
+                    "to {color: rgb(255, 0, 0);}" +
+
+                    "@-moz-keyframes colorRotate {" +
+                    "from {color: rgb(255, 0, 0);}" +
+                    "16.6% {color: rgb(255, 0, 255);}" +
+                    "33.3% {color: rgb(0, 0, 255);}" +
+                    "50% {color: rgb(0, 255, 255);}" +
+                    "66.6% {color: rgb(0, 255, 0);}" +
+                    "83.3% {color: rgb(255, 255, 0);}" +
+                    "to {color: rgb(255, 0, 0);}" +
+
+                    "@-o-keyframes colorRotate {" +
+                    "from {color: rgb(255, 0, 0);}" +
+                    "16.6% {color: rgb(255, 0, 255);}" +
+                    "33.3% {color: rgb(0, 0, 255);}" +
+                    "50% {color: rgb(0, 255, 255);}" +
+                    "66.6% {color: rgb(0, 255, 0);}" +
+                    "83.3% {color: rgb(255, 255, 0);}" +
+                    "to {color: rgb(255, 0, 0);}" +
+
+                    "@keyframes colorRotate {" +
+                    "from {color: rgb(255, 0, 0);}" +
+                    "16.6% {color: rgb(255, 0, 255);}" +
+                    "33.3% {color: rgb(0, 0, 255);}" +
+                    "50% {color: rgb(0, 255, 255);}" +
+                    "66.6% {color: rgb(0, 255, 0);}" +
+                    "83.3% {color: rgb(255, 255, 0);}" +
+                    "to {color: rgb(255, 0, 0);}" +
+                    "</style>";
 
                 var preferenceDiv = document.createElement('div');
                 preferenceDiv.setAttribute('id', 'preferenceDiv');
@@ -3032,9 +3170,20 @@ function addGoogleAd() {
                 newAd.src = '//eclkmpbn.com/adServe/banners?tid=58849_91032_3';
                 adFrame.appendChild(document.createElement('center'));
                 adFrame.firstChild.appendChild(newAd);
+
+                var removeAdButton = document.createElement('a');
+                removeAdButton.id = 'removeAdLink';
+                removeAdButton.href = 'https://www.mousehuntgame.com/index.php';
+                removeAdButton.innerHTML = 'Click here to remove ads :*(';
+                adFrame.firstChild.appendChild(removeAdButton);
+
+                removeAdButton = null;
                 newAd = null;
+            } else if (!NOBadFree) {
+                adFrame.innerHTML = "<a id=\"addAdLink\" href=\"#\" style=\"-webkit-animation: colorRotate 6s linear 0s infinite; -moz-animation: colorRotate 6s linear 0s infinite; -o-animation: colorRotate 6s linear 0s infinite; animation: colorRotate 6s linear 0s infinite; font-weight: bolder; text-align: center;\">Click here to show ads to support the development of this bot :)</a>";
             } else {
-                adFrame.innerHTML = "<a id=\"addAdLink\" href=\"#\">Click here to show ads to support the development of this bot :)</a>";
+                console.debug("Thanks for donating ^.^");
+                adFrame.innerHTML = "";
             }
         }
         adFrame = null;
@@ -3923,12 +4072,13 @@ function nobInit() {
                 NOBpage = true;
             }
 
+            addGoogleAd();
+
             if (NOBpage) {
                 nobHTMLFetch();
                 createClockArea();
                 clockTick();
                 fetchGDocStuff();
-                addGoogleAd();
                 setTimeout(function () {
                     nobInjectFFfunctions();
                 }, 1000);
@@ -4462,6 +4612,7 @@ function nobInjectFFfunctions() {
     var raffleDiv = document.getElementById('nobRaffle');
     var presentDiv = document.getElementById('nobPresent');
     var addAdDiv = document.getElementById('addAdLink');
+    var removeAdDiv = document.getElementById('removeAdLink');
 
     if (browser == 'firefox') {
         unsafeWindow.nobRaffle = exportFunction(nobRaffle, unsafeWindow);
@@ -4480,7 +4631,12 @@ function nobInjectFFfunctions() {
             addAdDiv.addEventListener('click', function () {
                 localStorage.setItem('allowAds', 'true');
                 unsafeWindow.addGoogleAd();
-                return false;
+            });
+        }
+        if (removeAdDiv) {
+            removeAdDiv.addEventListener('click', function () {
+                localStorage.setItem('allowAds', 'false');
+                unsafeWindow.addGoogleAd();
             });
         }
     } else {
@@ -4497,13 +4653,19 @@ function nobInjectFFfunctions() {
             addAdDiv.addEventListener('click', function () {
                 localStorage.setItem('allowAds', 'true');
                 addGoogleAd();
-                return false;
+            });
+        }
+        if (removeAdDiv) {
+            removeAdDiv.addEventListener('click', function () {
+                localStorage.setItem('allowAds', 'false');
+                addGoogleAd();
             });
         }
     }
     raffleDiv = undefined;
     presentDiv = undefined;
     addAdDiv = undefined;
+    removeAdDiv = undefined;
 }
 
 function nobRaffle() {
