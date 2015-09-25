@@ -512,7 +512,7 @@ function iceberg(waxOrSticky) { // takes in string 'wax' or 'sticky'
     console.debug(location);
     if (location.indexOf('Iceberg') > -1) {
         var stage = document.getElementsByClassName('currentPhase')[0].textContent;
-        var progress = parseInt(document.getElementsByClassName('user_progress')[0].textContent);
+        var progress = parseInt(document.getElementsByClassName('user_progress')[0].textContent.replace(',', ''));
         console.debug('In ' + stage + ' at ' + progress + ' feets right now.');
 
         // Check if theres general
@@ -1527,9 +1527,9 @@ function armTrap(sort, name, trap) {
         name = name[0];
     }
 
+    var nameElement;
     if (isNewUI) {
         var allTraps = document.getElementsByClassName('passedFilters')[0].children;
-        var nameElement;
 
         if (allTraps.length > 0) {
             console.debug('Trying to arm ' + name);
@@ -1560,7 +1560,6 @@ function armTrap(sort, name, trap) {
     } else {
         var tagGroupElement = document.getElementsByClassName('tagGroup');
         var tagElement;
-        var nameElement;
 
         if (tagGroupElement.length > 0) {
             console.debug('Trying to arm ' + name);
