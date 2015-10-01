@@ -9,7 +9,7 @@
 
 [REVAMP (A build)](https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp) version adapts the original, with few bug fixes and etc \(ver a\)
 
-[ENHANCED + REVAMP (B build)](https://greasyfork.org/en/scripts/6514-mousehunt-autobot-enhanced-revamp) version adapted from version made and owned by [CNN](https://devcnn.wordpress.com/) \(ver b\) \(Just a note, he was **banned** for making and using the ENHANCED version, so up to you if you dare use it\)
+[ENHANCED + REVAMP (B build)](https://greasyfork.org/en/scripts/6514-mousehunt-autobot-enhanced-revamp) version adapted from version made and owned by [CnN](https://devcnn.wordpress.com/) \(ver b\) \(Just a note, he was **banned** for making and using the ENHANCED version, so up to you if you dare use it\)
 
 To install this version, please use GreasyFork [A build](https://greasyfork.org/en/scripts/6092-mousehunt-autobot-revamp), [B build](https://greasyfork.org/en/scripts/6514-mousehunt-autobot-enhanced-revamp) or OpenUser [A build](https://openuserjs.org/scripts/nobodyrandom/MouseHunt_AutoBot_REVAMP), [B build](https://openuserjs.org/scripts/nobodyrandom/MouseHunt_AutoBot_ENHANCED_+_REVAMP)
 
