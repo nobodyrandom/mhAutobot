@@ -61,6 +61,9 @@ var kingWarningSound = 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot
 // // Which email to send KR notiff to (leave blank to disable feature)
 var kingRewardEmail = '';
 
+// // Which
+var kingRewardPhone = '';
+
 // // Play sound when no more cheese (true/false)
 var isNoCheeseSound = false;
 
@@ -501,6 +504,9 @@ function eventLocationCheck() {
             break;
         case 'Iceberg (Sticky)':
             iceberg('sticky');
+            break;
+        case 'Labyrinth':
+            labyrinth();
             break;
         default:
             break;
@@ -1120,6 +1126,10 @@ function retrieveMouseList() {
     return;
 }
 
+function labyrinth() {
+
+}
+
 function checkMouse(mouseName) {
     for (var i = 0; i < mouseList.length; ++i) {
         if (mouseList[i].indexOf(mouseName) > -1) {
@@ -1153,6 +1163,7 @@ function checkCharge(stopDischargeAt) {
     }
 }
 
+// For G Express
 function loadTrain(location, load) {
     try {
         if (load) {
@@ -2670,6 +2681,25 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '</td>';
                 preferenceHTMLStr += '</tr>';
 
+                preferenceHTMLStr += '<tr>';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="Which phone number to send king\'s reward to"><b>SMS number to send King Reward</b></a>';
+                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px;">';
+                preferenceHTMLStr += '<input type="text" id="KingRewardPhoneNumber" name="KingRewardPhoneNumber" value="' + kingRewardPhone + '" />';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+                preferenceHTMLStr += '<tr>';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="Which email to send king\'s reward to"><b>Email to send King Reward</b></a>';
+                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px;">';
+                preferenceHTMLStr += '<input type="text" id="KingRewardEmail" name="KingRewardEmail" value="' + kingRewardEmail + '" />';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
                 if (reloadKingReward) {
                     preferenceHTMLStr += '<tr>';
                     preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
@@ -2774,20 +2804,21 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<option value=""> </option>';
                 preferenceHTMLStr += '<option value="None" selected>None</option>';
                 preferenceHTMLStr += '<option value="Zugzwang\'s Tower">Zugzwang\'s Tower</option>';
-                preferenceHTMLStr += '<option value="Iceberg (Wax)">Iceberg (Wax)</option>';
-                preferenceHTMLStr += '<option value="Iceberg (Sticky)">Iceberg (Sticky)</option>';
                 preferenceHTMLStr += '<option value="Fiery Warpath">Fiery Warpath</option>';
                 preferenceHTMLStr += '<option value="Fiery Warpath Super">Fiery Warpath (Super charms)</option>';
-                preferenceHTMLStr += '<option value="Charge Egg 2014">Charge Egg 2014</option>';
-                preferenceHTMLStr += '<option value="Charge Egg 2014(17)">Charge Egg 2014(17)</option>';
-                preferenceHTMLStr += '<option value="Burroughs Rift(Red)">Burroughs Rift(Red)</option>';
-                preferenceHTMLStr += '<option value="Burroughs Rift(Green)">Burroughs Rift(Green)</option>';
-                preferenceHTMLStr += '<option value="Burroughs Rift(Yellow)">Burroughs Rift(Yellow)</option>';
-                preferenceHTMLStr += '<option value="Halloween 2014">Halloween 2014</option>';
-                preferenceHTMLStr += '<option value="Sunken City">Sunken City</option>';
+                preferenceHTMLStr += '<option value="Iceberg (Wax)">Iceberg (Wax)</option>';
+                preferenceHTMLStr += '<option value="Iceberg (Sticky)">Iceberg (Sticky)</option>';
                 preferenceHTMLStr += '<option value="All LG Area">All LG Area</option>';
                 preferenceHTMLStr += '<option value="Gnawnian Express(Empty)">Gnawnian Express(Empty)</option>';
                 preferenceHTMLStr += '<option value="Gnawnian Express(Full)">Gnawnian Express(Full)</option>';
+                preferenceHTMLStr += '<option value="Burroughs Rift(Yellow)">Burroughs Rift(Yellow)</option>';
+                preferenceHTMLStr += '<option value="Burroughs Rift(Green)">Burroughs Rift(Green)</option>';
+                preferenceHTMLStr += '<option value="Burroughs Rift(Red)">Burroughs Rift(Red)</option>';
+                preferenceHTMLStr += '<option value="Sunken City">Sunken City</option>';
+                //preferenceHTMLStr += '<option value="Labyrinth">Labyrinth</option>';
+                preferenceHTMLStr += '<option value="Charge Egg 2014">Charge Egg 2014</option>';
+                preferenceHTMLStr += '<option value="Charge Egg 2014(17)">Charge Egg 2014(17)</option>';
+                preferenceHTMLStr += '<option value="Halloween 2014">Halloween 2014</option>';
                 preferenceHTMLStr += '</select> Current Selection : ';
                 preferenceHTMLStr += '<input type="text" id="event" name="event" value="' + eventLocation + '"/>';
                 preferenceHTMLStr += '</td>';
