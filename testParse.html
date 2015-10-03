@@ -29,7 +29,7 @@ query.find({
 });*/
 
 Parse.User.logIn('NobodyRandom', 'Abcd1234').then(function (user) {
-    Parse.Cloud.run('sendKRemail', {
+    /*Parse.Cloud.run('sendKRemail', {
         theEmail: 'iamnobodyrandom@yahoo.com',
         user: 'Test'
     }, {
@@ -38,6 +38,14 @@ Parse.User.logIn('NobodyRandom', 'Abcd1234').then(function (user) {
     }, error: function (error) {
         console.log(error);
     }
+     });*/
+
+    Parse.Cloud.run('testSendSMS', {toNumber: '+15197012642'}, {
+        success: function (data) {
+            console.log(data);
+        }, error: function (error) {
+            console.log(error);
+        }
     });
 
     /*var queryRole = new Parse.Query(Parse.Role);
