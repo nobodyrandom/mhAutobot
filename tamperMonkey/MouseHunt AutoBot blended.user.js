@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.42b
+// @version    	2.1.43b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -790,7 +790,7 @@ function fieryWarpath(superCharm) {
                 break;
             }
 
-            checkThenArm(null, 'bait', 'Gouda');
+            //checkThenArm(null, 'bait', 'Gouda');
             // Finds first non 0 mouse group
             if (parseInt(population[i].textContent) > 0) {
                 mouseGroup = population[i].id;
