@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.44b
+// @version    	2.1.45b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -188,6 +188,7 @@ var NOBhasPuzzle;
 var NOBtickerTimout;
 var NOBtickerInterval;
 var NOBtraps = []; // Stores ALL traps, bases, cheese etc available to user
+var NOBhuntsLeft = 0; // Temp for huntFor();
 var NOBpage = false;
 var mapRequestFailed = false;
 var clockTicking = false;
@@ -458,8 +459,12 @@ function checkIntroContainer() {
 
 //// EMBEDING ENHANCED EDITION CODE
 function eventLocationCheck() {
-    console.debug("Running " + eventLocation + " bot.");
+    if (eventLocation != null || eventLocation != "")
+        console.debug("Running " + eventLocation + " bot.");
     switch (eventLocation) {
+        case 'Hunt For':
+            huntFor();
+            break;
         case 'Charge Egg 2014':
             checkCharge(12);
             break;
@@ -510,6 +515,12 @@ function eventLocationCheck() {
             break;
         default:
             break;
+    }
+}
+
+function huntFor() {
+    if (NOBhuntsLeft <= 0) {
+        disarmTrap('bait');
     }
 }
 
@@ -2681,7 +2692,7 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '</td>';
                 preferenceHTMLStr += '</tr>';
 
-                preferenceHTMLStr += '<tr>';
+                /*preferenceHTMLStr += '<tr>';
                 preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
                 preferenceHTMLStr += '<a title="Which phone number to send king\'s reward to"><b>SMS number to send King Reward</b></a>';
                 preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
@@ -2690,6 +2701,7 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<input type="text" id="KingRewardPhoneNumber" name="KingRewardPhoneNumber" value="' + kingRewardPhone + '" />';
                 preferenceHTMLStr += '</td>';
                 preferenceHTMLStr += '</tr>';
+
                 preferenceHTMLStr += '<tr>';
                 preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
                 preferenceHTMLStr += '<a title="Which email to send king\'s reward to"><b>Email to send King Reward</b></a>';
@@ -2698,7 +2710,7 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<td style="height:24px;">';
                 preferenceHTMLStr += '<input type="text" id="KingRewardEmail" name="KingRewardEmail" value="' + kingRewardEmail + '" />';
                 preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '</tr>';
+                 preferenceHTMLStr += '</tr>';*/
 
                 if (reloadKingReward) {
                     preferenceHTMLStr += '<tr>';
@@ -2803,6 +2815,7 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<select name="algo" onChange="window.localStorage.setItem(\'eventLocation\', value); document.getElementById(\'event\').value=window.localStorage.getItem(\'eventLocation\');">';
                 preferenceHTMLStr += '<option value=""> </option>';
                 preferenceHTMLStr += '<option value="None" selected>None</option>';
+                preferenceHTMLStr += '<option value="Hunt For">Hunt for ' + NOBhuntsLeft + ' hunts.</option>';
                 preferenceHTMLStr += '<option value="Zugzwang\'s Tower">Zugzwang\'s Tower</option>';
                 preferenceHTMLStr += '<option value="Fiery Warpath">Fiery Warpath</option>';
                 preferenceHTMLStr += '<option value="Fiery Warpath Super">Fiery Warpath (Super charms)</option>';
@@ -2823,6 +2836,18 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<input type="text" id="event" name="event" value="' + eventLocation + '"/>';
                 preferenceHTMLStr += '</td>';
                 preferenceHTMLStr += '</tr>';
+
+                if (eventLocation == "Hunt For") {
+                    preferenceHTMLStr += '<tr>';
+                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                    preferenceHTMLStr += '<a title="Type in how many hunts you want to hunt for"><b>How many hunts?</b></a>';
+                    preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '<td style="height:24px">';
+                    preferenceHTMLStr += '<input type="number" id="nobHuntsLeftInput" name="nobHuntsLeftInput" value="' + NOBhuntsLeft + '" />';
+                    preferenceHTMLStr += '</td>';
+                    preferenceHTMLStr += '</tr>';
+                }
 
                 preferenceHTMLStr += '<tr>';
                 preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
@@ -2851,6 +2876,7 @@ if (document.getElementById(\'KingRewardResumeInputTrue\').checked == true) { wi
 window.localStorage.setItem(\'KingRewardResumeTime\', document.getElementById(\'KingRewardResumeTimeInput\').value);	\
 if (document.getElementById(\'PauseLocationInputTrue\').checked == true) { window.localStorage.setItem(\'PauseLocation\', \'true\'); } else { window.localStorage.setItem(\'PauseLocation\', \'false\'); }	\
 if (document.getElementById(\'autopopkrTrue\').checked == true) { window.localStorage.setItem(\'autoPopupKR\', \'true\'); } else { window.localStorage.setItem(\'autoPopupKR\', \'false\'); }	\
+if (document.getElementById(\'nobHuntsLeftInput\')) { window.localStorage.setItem(\'NOB-huntsLeft\', document.getElementById(\'nobHuntsLeftInput\').value); } \
 window.localStorage.setItem(\'addonCode\', document.getElementById(\'addonCode\').value);\
 ';
                 if (fbPlatform) {
@@ -3099,6 +3125,11 @@ function loadPreferenceSettingFromStorage() {
     nobTrapsTemp = undefined;
     nobTrapsTempCounter = undefined;
 
+    var nobHuntsLeft = parseInt(nobGet('huntsLeft'));
+    if (nobHuntsLeft > NOBhuntsLeft)
+        NOBhuntsLeft = nobHuntsLeft;
+    nobHuntsLeft = undefined;
+
     var dischargeTemp = getStorage("discharge");
     if (dischargeTemp == undefined || dischargeTemp == null) {
         setStorage("discharge", true.toString());
@@ -3263,6 +3294,10 @@ function soundHorn() {
                     fireEvent(hornElement, 'click');
                     hornElement = null;
 
+                    // NOB hunt until
+                    NOBhuntsLeft--;
+                    nobStore(NOBhuntsLeft, 'huntsLeft');
+
                     // clean up
                     headerElement = null;
                     headerStatus = null;
@@ -3276,6 +3311,10 @@ function soundHorn() {
 
                     // update timer
                     displayTimer("Synchronizing Data...", "Someone had just sound the horn. Synchronizing data...", "Someone had just sound the horn. Synchronizing data...");
+
+                    // NOB hunt until
+                    NOBhuntsLeft--;
+                    nobStore(NOBhuntsLeft, 'huntsLeft');
 
                     // clean up
                     headerElement = null;
