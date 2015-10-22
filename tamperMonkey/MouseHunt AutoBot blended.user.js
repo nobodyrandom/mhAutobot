@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.45b
+// @version    	2.1.46b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -61,8 +61,11 @@ var kingWarningSound = 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot
 // // Which email to send KR notiff to (leave blank to disable feature)
 var kingRewardEmail = '';
 
-// // Which
+// // Which number to send SMS to
 var kingRewardPhone = '';
+
+// // Verification code sent to this number
+var kingRewardPhoneVerify = '';
 
 // // Play sound when no more cheese (true/false)
 var isNoCheeseSound = false;
@@ -489,6 +492,9 @@ function eventLocationCheck() {
         case 'Halloween 2014':
             Halloween2014();
             break;
+        case 'Halloween 2015':
+            Halloween2015();
+            break;
         case 'All LG Area':
             lgGeneral();
             break;
@@ -683,6 +689,28 @@ function Halloween2014() {
         if (isWarning) {
             var trickContainer = document.getElementsByClassName('halloween2014Hud-bait trick_cheese clear-block')[0];
             var treatContainer = document.getElementsByClassName('halloween2014Hud-bait treat_cheese clear-block')[0];
+            if (trickContainer.children[2].getAttribute('class') == 'armNow active') {
+                console.debug('Currently armed: Trick cheese, Going to arm Treat cheese');
+                fireEvent(treatContainer.children[2], 'click');
+            } else {
+                console.debug('Currently armed: Treat cheese, Going to arm Trick cheese');
+                fireEvent(trickContainer.children[2], 'click');
+            }
+        }
+    }
+}
+
+function Halloween2015() {
+    var currentLocation = getPageVariable("user.location");
+    console.debug(currentLocation);
+    if (currentLocation.indexOf("Haunted Terrortories") > -1) {
+        var areaName = document.getElementsByClassName('halloweenHud-areaDetails-name')[0].innerHTML;
+        var warning = document.getElementsByClassName('halloweenHud-areaDetails-warning active').length;
+        var isWarning = (warning > 0);
+        console.debug('Current Area Name: ' + areaName + " Warning: " + isWarning);
+        if (isWarning) {
+            var trickContainer = document.getElementsByClassName('halloweenHud-bait trick_cheese clear-block')[0];
+            var treatContainer = document.getElementsByClassName('halloweenHud-bait treat_cheese clear-block')[0];
             if (trickContainer.children[2].getAttribute('class') == 'armNow active') {
                 console.debug('Currently armed: Trick cheese, Going to arm Treat cheese');
                 fireEvent(treatContainer.children[2], 'click');
@@ -2704,11 +2732,11 @@ function embedTimer(targetPage) {
 
                 preferenceHTMLStr += '<tr>';
                 preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                preferenceHTMLStr += '<a title="Which email to send king\'s reward to"><b>Email to send King Reward</b></a>';
+                 preferenceHTMLStr += '<a title="What was the verification key sent to this number?"><b>Verification key from SMS</b></a>';
                 preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
                 preferenceHTMLStr += '</td>';
                 preferenceHTMLStr += '<td style="height:24px;">';
-                preferenceHTMLStr += '<input type="text" id="KingRewardEmail" name="KingRewardEmail" value="' + kingRewardEmail + '" />';
+                 preferenceHTMLStr += '<input type="text" id="KingRewardPhoneNumberVerify" name="KingRewardPhoneNumberVerify" value="' + kingRewardPhoneVerify + '" />';
                 preferenceHTMLStr += '</td>';
                  preferenceHTMLStr += '</tr>';*/
 
@@ -2832,6 +2860,7 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<option value="Charge Egg 2014">Charge Egg 2014</option>';
                 preferenceHTMLStr += '<option value="Charge Egg 2014(17)">Charge Egg 2014(17)</option>';
                 preferenceHTMLStr += '<option value="Halloween 2014">Halloween 2014</option>';
+                preferenceHTMLStr += '<option value="Halloween 2015">Halloween 2015</option>';
                 preferenceHTMLStr += '</select> Current Selection : ';
                 preferenceHTMLStr += '<input type="text" id="event" name="event" value="' + eventLocation + '"/>';
                 preferenceHTMLStr += '</td>';
@@ -4571,6 +4600,10 @@ function fetchGDocStuff() {
                 }, 300000);
                 console.log(JSON.parse(error) + ' error - Parse is now not working qq... Retrying in 5 minutes');
             }
+        }).then(function (a) {
+
+        }, function (error) {
+
         });
     }
 }
