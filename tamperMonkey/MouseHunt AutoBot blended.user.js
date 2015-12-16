@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.48b
+// @version    	2.1.50b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -726,7 +726,16 @@ function Halloween2015() {
 }
 
 function Winter2015() {
-
+    var currentLocation = getPageVariable("user.location");
+    console.debug(currentLocation);
+    if (currentLocation.indexOf("Extreme Toboggan Challenge") > -1) {
+        var inRun = (document.getElementById('hudLocationContent').firstChild.className.indexOf("on_course") > -1);
+        if (inRun) {
+            checkThenArm('best', 'bait', ["Arctic Asiago", "Gingerbread"]);
+        } else {
+            checkThenArm(null, 'bait', 'Gouda', 'disarm');
+        }
+    }
 }
 
 function BurroughRift(minMist, maxMist) {
@@ -2850,7 +2859,8 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<select name="algo" onChange="window.localStorage.setItem(\'eventLocation\', value); document.getElementById(\'event\').value=window.localStorage.getItem(\'eventLocation\');">';
                 preferenceHTMLStr += '<option value=""> </option>';
                 preferenceHTMLStr += '<option value="None" selected>None</option>';
-                preferenceHTMLStr += '<option value="Hunt For">Hunt for ' + NOBhuntsLeft + ' hunts.</option>';
+                preferenceHTMLStr += '<option value="Hunt For">Hunt for ' + NOBhuntsLeft + ' hunts</option>';
+                preferenceHTMLStr += '<option value="" disabled>--==Normal Bots==--</option>';
                 preferenceHTMLStr += '<option value="Zugzwang\'s Tower">Zugzwang\'s Tower</option>';
                 preferenceHTMLStr += '<option value="Fiery Warpath">Fiery Warpath</option>';
                 preferenceHTMLStr += '<option value="Fiery Warpath Super">Fiery Warpath (Super charms)</option>';
@@ -2864,6 +2874,7 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<option value="Burroughs Rift(Red)">Burroughs Rift(Red)</option>';
                 preferenceHTMLStr += '<option value="Sunken City">Sunken City</option>';
                 //preferenceHTMLStr += '<option value="Labyrinth">Labyrinth</option>';
+                preferenceHTMLStr += '<option value="" disabled>--==Event Bots==--</option>';
                 preferenceHTMLStr += '<option value="Charge Egg 2014">Charge Egg 2014</option>';
                 preferenceHTMLStr += '<option value="Charge Egg 2014(17)">Charge Egg 2014(17)</option>';
                 preferenceHTMLStr += '<option value="Halloween 2014">Halloween 2014</option>';
