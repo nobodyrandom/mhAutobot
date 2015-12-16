@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.47b
+// @version    	2.1.48b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -120,7 +120,7 @@ var bestRiftLuck = ['Multi-Crystal Laser', 'Crystal Tower'];
 var bestRiftPower = ['Focused Crystal Laser', 'Crystal Tower'];
 var bestPhysicalBase = ['Sheep Jade Base', 'Physical Brace Base', 'Tidal Base', 'Golden Tournament Base', 'Fissure Base', 'Spellbook Base'];
 var bestPowerBase = ['Tidal Base', 'Golden Tournament Base', 'Fissure Base', 'Spellbook Base'];
-var bestLuckBase = ['Fissure Base', 'Rift Base', 'Tidal Base', 'Sheep Jade Base', 'Horse Jade Base'];
+var bestLuckBase = ['Fissure Base', 'Rift Base', 'Tidal Base', 'Sheep Jade Base', 'Horse Jade Base', 'Snake Jade Base', 'Dragon Jade Base', 'Papyrus Base'];
 var bestAttBase = ['Birthday Drag', 'Cheesecake Base'];
 var bestSalt = ['Super Salt', 'Grub Salt'];
 var bestAnchor = ['Golden Anchor', 'Spiked Anchor', 'Empowered Anchor'];
@@ -495,6 +495,9 @@ function eventLocationCheck() {
         case 'Halloween 2015':
             Halloween2015();
             break;
+        case 'Winter 2015':
+            Winter2015();
+            break;
         case 'All LG Area':
             lgGeneral();
             break;
@@ -720,6 +723,10 @@ function Halloween2015() {
             }
         }
     }
+}
+
+function Winter2015() {
+
 }
 
 function BurroughRift(minMist, maxMist) {
@@ -2861,6 +2868,7 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<option value="Charge Egg 2014(17)">Charge Egg 2014(17)</option>';
                 preferenceHTMLStr += '<option value="Halloween 2014">Halloween 2014</option>';
                 preferenceHTMLStr += '<option value="Halloween 2015">Halloween 2015</option>';
+                preferenceHTMLStr += '<option value="Winter 2015">Winter 2015</option>';
                 preferenceHTMLStr += '</select> Current Selection : ';
                 preferenceHTMLStr += '<input type="text" id="event" name="event" value="' + eventLocation + '"/>';
                 preferenceHTMLStr += '</td>';
@@ -4140,12 +4148,12 @@ function timeFormatLong(time) {
 // ################################################################################################
 // INIT AJAX CALLS AND INIT CALLS - Function calls after page LOAD
 
-window.onload = function () {
+window.addEventListener("load", function () {
     if (window.frames['name'] != 'aswift_0') {
         if (debug) console.log('Running nobInit in ' + window.frames['name'] + ' frame.');
         nobInit();
     }
-};
+}, false);
 
 function nobInit() {
     if (debug) console.log('RUN nobInit()');

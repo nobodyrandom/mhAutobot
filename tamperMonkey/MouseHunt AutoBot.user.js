@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom, Ooi Keng Siang
-// @version    	2.1.47a
+// @version    	2.1.48a
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -2741,12 +2741,12 @@ function timeFormatLong(time) {
 // ################################################################################################
 // INIT AJAX CALLS AND INIT CALLS - Function calls after page LOAD
 
-window.onload = function () {
+window.addEventListener("load", function () {
     if (window.frames['name'] != 'aswift_0') {
         if (debug) console.log('Running nobInit in ' + window.frames['name'] + ' frame.');
         nobInit();
     }
-};
+}, false);
 
 function nobInit() {
     if (debug) console.log('RUN nobInit()');
