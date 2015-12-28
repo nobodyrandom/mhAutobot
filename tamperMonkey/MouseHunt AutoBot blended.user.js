@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.50b
+// @version    	2.1.51b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -112,9 +112,9 @@ var timerRefreshInterval = 1;
 var bestPhysical = ['Chrome MonstroBot', 'Sandstorm MonstroBot', 'Sandtail Sentinel'];
 var bestTactical = ['Chrome Sphynx Wrath', 'Sphynx Wrath'];
 var bestHydro = ['School of Sharks', 'Rune Shark Trap', 'Chrome Phantasmic Oasis Trap', 'Phantasmic Oasis Trap', 'Oasis Water Node Trap'];
-var bestArcane = ['Grand Arcanum Trap', 'Arcane Blast Trap', 'Arcane Capturing Rod Of Nev'];
+var bestArcane = ['Event Horizon', 'Grand Arcanum Trap', 'Arcane Blast Trap', 'Arcane Capturing Rod Of Nev'];
 var bestShadow = ['Clockwork Portal Trap', 'Reaper\'s Perch', 'Clockapult of Time', 'Clockapult of Winter Past', 'Maniacal Brain Extractor'];
-var bestForgotten = ['Tarannosaurus Rex Trap', 'The Forgotten Art of Dance'];
+var bestForgotten = ['Endless Labyrinth', 'Stale Cupcake Golem', 'Tarannosaurus Rex Trap', 'The Forgotten Art of Dance'];
 var bestDraconic = ['Dragon Lance', 'Ice Maiden'];
 var bestRiftLuck = ['Multi-Crystal Laser', 'Crystal Tower'];
 var bestRiftPower = ['Focused Crystal Laser', 'Crystal Tower'];
