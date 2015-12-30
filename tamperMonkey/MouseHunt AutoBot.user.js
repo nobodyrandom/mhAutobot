@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom, Ooi Keng Siang
-// @version    	2.1.50a
+// @version    	2.1.52a
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -1865,9 +1865,16 @@ function addGoogleAd() {
         if (adFrame) {
             adFrame.removeChild(adFrame.firstChild);
             if (!NOBadFree && allowAds) {
-                var newAd = document.createElement('script');
+                /*var newAd = document.createElement('script');
                 newAd.type = 'text/javascript';
                 newAd.src = '//eclkmpbn.com/adServe/banners?tid=58849_91032_3';
+                adFrame.appendChild(document.createElement('center'));
+                 adFrame.firstChild.appendChild(newAd);*/
+
+                var newAd = document.createElement('div');
+                newAd.innerHTML = "<script async src=\"//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js\"></script>" +
+                    "<ins class=\"adsbygoogle\" style=\"display:block\" data-ad-client=\"ca-pub-7048157428059175\" data-ad-slot=\"3802274848\" data-ad-format=\"auto\"></ins>" +
+                    "<script>(adsbygoogle = window.adsbygoogle || []).push({}); </script>";
                 adFrame.appendChild(document.createElement('center'));
                 adFrame.firstChild.appendChild(newAd);
 
