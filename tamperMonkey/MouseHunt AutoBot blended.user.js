@@ -3281,9 +3281,10 @@ function addGoogleAd() {
                  adFrame.firstChild.appendChild(newAd);*/
 
                 var newAd = document.createElement('div');
+                newAd.style = "height:560px;";
                 newAd.innerHTML = "<script async src=\"//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js\"></script>" +
                     "<ins class=\"adsbygoogle\" style=\"display:block\" data-ad-client=\"ca-pub-7048157428059175\" data-ad-slot=\"3802274848\" data-ad-format=\"auto\"></ins>" +
-                    "<script>(adsbygoogle = window.adsbygoogle || []).push({}); </script>";
+                    "<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>";
                 adFrame.appendChild(document.createElement('center'));
                 adFrame.firstChild.appendChild(newAd);
 
