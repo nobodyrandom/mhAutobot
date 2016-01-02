@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.54b
+// @version    	2.1.55b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
-// @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
+// @require     https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
+// @require     https://greasyfork.org/scripts/13809-mh-auto-kr-solver/code/MH%20Auto%20KR%20Solver.user.js
 // @require     https://code.jquery.com/jquery-2.1.4.min.js
 // @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot, https://devcnn.wordpress.com/
 // @updateURL	https://greasyfork.org/scripts/6514-mousehunt-autobot-enhanced-revamp/code/MouseHunt%20AutoBot%20ENHANCED%20+%20REVAMP.meta.js
@@ -27,6 +28,11 @@
 // == Basic User Preference Setting (Begin) ==
 // // The variable in this section contain basic option will normally edit by most user to suit their own preference
 // // Reload MouseHunt page manually if edit this script while running it for immediate effect.
+
+// // ERROR CHECKING ONLY: Script debug
+var debug = false;
+// // ERROR CHECKING ONLY: KR debug
+var debugKR = false;
 
 // // Extra delay time before sounding the horn. (in seconds)
 // // Default: 10 - 360
@@ -78,6 +84,31 @@ var reloadKingReward = false;
 // // Note: It only take effect if reloadKingReward = true;
 var kingPauseTimeMax = 18000;
 
+// // Auto solve KR
+var isAutoSolve = false;
+
+// // Extra delay time before solving KR. (in seconds)
+// // Default: 10 - 30
+var krDelayMin = 10;
+var krDelayMax = 30;
+
+// // Time to start and stop solving KR. (in hours, 24-hour format)
+// // Example: Script would not auto solve KR between 00:00 - 6:00 when krStopHour = 0 & krStartHour = 6;
+// // To disable this feature, set both to the same value.
+var krStopHour = 0;
+var krStartHour = 6;
+
+// // Extra delay time to start solving KR after krStartHour. (in minutes)
+var krStartHourDelayMin = 10;
+var krStartHourDelayMax = 30;
+
+// // Maximum retry of solving KR.
+// // If KR solved more than this number, pls solve KR manually ASAP in order to prevent MH from caught in botting
+var kingsRewardRetryMax = 3;
+
+// // Time to wait after trap selector clicked (in second)
+var secWait = 7;
+
 // // The script will pause if player at different location that hunt location set before. (true/false)
 // // Note: Make sure you set showTimerInPage to true in order to know what is happening.
 var pauseAtInvalidLocation = false;
@@ -103,25 +134,29 @@ var showTimerInPage = true;
 var showLastPageLoadTime = true;
 
 // // Default time to reload the page when bot encounter error. (in seconds)
-var errorReloadTime = 20;
+var errorReloadTime = 60;
 
-// // Time interval for script timer to update the time. May affact timer accuracy if set too high value. (in seconds)
+// // Time interval for script timer to update the time. May affect timer accuracy if set too high value. (in seconds)
 var timerRefreshInterval = 1;
 
 // // Best weapon/base pre-determined by user. Edit ur best weapon/trap in ascending order. e.g. [best, better, good]
-var bestPhysical = ['Chrome MonstroBot', 'Sandstorm MonstroBot', 'Sandtail Sentinel'];
+var bestPhysical = ['Chrome MonstroBot', 'Sandstorm MonstroBot', 'Sandtail Sentinel', 'Enraged RhinoBot'];
 var bestTactical = ['Chrome Sphynx Wrath', 'Sphynx Wrath'];
-var bestHydro = ['School of Sharks', 'Rune Shark Trap', 'Chrome Phantasmic Oasis Trap', 'Phantasmic Oasis Trap', 'Oasis Water Node Trap'];
+var bestHydro = ['School of Sharks', 'Rune Shark Trap', 'Chrome Phantasmic Oasis Trap', 'Phantasmic Oasis Trap', 'Oasis Water Node Trap', 'Chrome Sphynx Wrath'];
 var bestArcane = ['Event Horizon', 'Grand Arcanum Trap', 'Arcane Blast Trap', 'Arcane Capturing Rod Of Nev'];
 var bestShadow = ['Clockwork Portal Trap', 'Reaper\'s Perch', 'Clockapult of Time', 'Clockapult of Winter Past', 'Maniacal Brain Extractor'];
 var bestForgotten = ['Endless Labyrinth', 'Stale Cupcake Golem', 'Tarannosaurus Rex Trap', 'The Forgotten Art of Dance'];
 var bestDraconic = ['Dragon Lance', 'Ice Maiden'];
 var bestRiftLuck = ['Multi-Crystal Laser', 'Crystal Tower'];
 var bestRiftPower = ['Focused Crystal Laser', 'Crystal Tower'];
-var bestPhysicalBase = ['Sheep Jade Base', 'Physical Brace Base', 'Tidal Base', 'Golden Tournament Base', 'Fissure Base', 'Spellbook Base'];
 var bestPowerBase = ['Tidal Base', 'Golden Tournament Base', 'Fissure Base', 'Spellbook Base'];
 var bestLuckBase = ['Fissure Base', 'Rift Base', 'Tidal Base', 'Sheep Jade Base', 'Horse Jade Base', 'Snake Jade Base', 'Dragon Jade Base', 'Papyrus Base'];
 var bestAttBase = ['Birthday Drag', 'Cheesecake Base'];
+var bestPhysicalBase = ['Sheep Jade Base', 'Physical Brace Base'];
+bestPhysicalBase = bestPhysicalBase.concat(bestPowerBase);
+var bestLGBase = ['Hothouse Base'];
+bestLGBase = bestLGBase.concat(bestLuckBase);
+var bestFWWave4Weapon = ['Warden Slayer Trap', 'Chrome MonstroBot', 'Sandstorm MonstroBot', 'Sandtail Sentinel', 'Enraged RhinoBot'];
 var bestSalt = ['Super Salt', 'Grub Salt'];
 var bestAnchor = ['Golden Anchor', 'Spiked Anchor', 'Empowered Anchor'];
 var bestOxygen = ['Oxygen Burst', 'Empowered Anchor'];
@@ -133,8 +168,22 @@ var supplyDepotTrap = ['Supply Grabber', 'S.L.A.C. II', 'The Law Draw', 'S.L.A.C
 var raiderRiverTrap = ['Bandit Deflector', 'S.L.A.C. II', 'The Law Draw', 'S.L.A.C.'];
 var daredevilCanyonTrap = ['Engine Doubler', 'S.L.A.C. II', 'The Law Draw', 'S.L.A.C.'];
 var coalCharm = ['Magmatic Crystal', 'Black Powder', 'Dusty Coal'];
+var chargeCharm = ['Eggstra Charge', 'Eggscavator'];
+var commanderCharm = ['Super Warpath Commander\'s', 'Warpath Commander\'s'];
+var scOxyBait = ['Fishy Fromage', 'Gouda'];
 
-// // Addon code default (empty string)
+// // Sand Crypts maximum salt for King Grub
+var maxSaltCharged = 25;
+
+// // Sunken City constant variables.
+// // DON'T edit this variable if you don't know what are you editing
+var ZONE_DEFAULT = 1;
+var ZONE_LOOT = 2;
+var ZONE_TREASURE = 4;
+var ZONE_DANGER = 8;
+var ZONE_OXYGEN = 16;
+
+// // Addon code (default: empty string)
 var addonCode = "";
 
 // == Advance User Preference Setting (End) ==
@@ -161,7 +210,7 @@ var currentLocation;
 var today = new Date();
 var checkTime = (today.getMinutes() >= trapCheckTimeDiff) ? 3600 + (trapCheckTimeDiff * 60) - (today.getMinutes() * 60 + today.getSeconds()) : (trapCheckTimeDiff * 60) - (today.getMinutes() * 60 + today.getSeconds());
 today = undefined;
-var hornRetryMax = 15;
+var hornRetryMax = 10;
 var hornRetry = 0;
 var nextActiveTime = 900;
 var timerInterval = 2;
@@ -169,12 +218,14 @@ var armingQueue = [];
 var dequeueingCTA = false;
 var dequeueIntRunning = false;
 var mouseList = [];
-var eventLocation;
+var eventLocation = "None";
+var discharge = false;
 var arming = false;
 var best = 0;
-var maxSaltCharged = 26;
+var kingsRewardRetry = 0;
 
 // element in page
+var titleElement;
 var nextHornTimeElement;
 var checkTimeElement;
 var kingTimeElement;
@@ -228,8 +279,110 @@ var LOCATION_TIMERS = [
     }]
 ];
 
+// CNN KR SOLVER START
+function FinalizePuzzleImageAnswer(answer) {
+    if (answer.length != 5) {
+        //Get a new puzzle
+        if (kingsRewardRetry > kingsRewardRetryMax) {
+            kingsRewardRetry = 0;
+            setStorage("KingsRewardRetry", kingsRewardRetry);
+            alert('Max retry. Pls solve it manually.');
+            return;
+        }
+        else {
+            ++kingsRewardRetry;
+            setStorage("KingsRewardRetry", kingsRewardRetry);
+            var tagName = document.getElementsByTagName("a");
+            for (var i = 0; i < tagName.length; i++) {
+                if (tagName[i].innerText == "Click here to get a new one!") {
+                    fireEvent(tagName[i], 'click');
+                    return;
+                }
+            }
+        }
+    }
+    else {
+        //Submit answer
+        var puzzleAns = document.getElementById("puzzle_answer");
+        if (!puzzleAns) {
+            console.debug("puzzleAns: " + puzzleAns);
+            return;
+        }
+        puzzleAns.value = "";
+        puzzleAns.value = answer;
+        var puzzleSubmit = document.getElementById("puzzle_submit");
+        if (!puzzleSubmit) {
+            console.debug("puzzleSubmit: " + puzzleSubmit);
+            return;
+        }
+
+        fireEvent(puzzleSubmit, 'click');
+        kingsRewardRetry = 0;
+        setStorage("KingsRewardRetry", kingsRewardRetry);
+        var myFrame = document.getElementById('myFrame');
+        if (myFrame)
+            document.body.removeChild(myFrame);
+        window.setTimeout(function () {
+            CheckKRAnswerCorrectness();
+        }, 5000);
+    }
+}
+
+function receiveMessage(event) {
+    console.debug("Event origin: " + event.origin);
+
+    if (event.origin.indexOf("mhcdn") > -1 || event.origin.indexOf("mousehuntgame") > -1 || event.origin.indexOf("dropbox") > -1) {
+        if (event.data.indexOf("~") > -1) {
+            var result = event.data.substring(0, event.data.indexOf("~"));
+            var processedImg = event.data.substring(event.data.indexOf("~") + 1, event.data.length);
+            var now = new Date();
+            var strKR = "KR-" + now.toLocaleString();
+            strKR = strKR.replace(", ", "-");
+            strKR = strKR.replace(" ", "-");
+            strKR += "-" + result;
+            setStorage(strKR, processedImg);
+            FinalizePuzzleImageAnswer(result);
+        }
+    }
+}
+
+function CallKRSolver() {
+    var frame = document.createElement('iframe');
+    frame.setAttribute("id", "myFrame");
+    var img = document.getElementById('puzzleImage');
+    if (debugKR)
+        frame.src = "https://photos-4.dropbox.com/t/2/AAArkp_yNcE-_gLkppu3xeeV2p-y0q0Ml0AhZ0RfCIlYpQ/12/127673959/png/32x32/1/_/1/2/download.png/EM-6pmIYjboGIAcoBw/VXDBwjXQ2NNK6ShussiKls1sCUQSTjvkn3wM5g4Jcro?size=640x480&size_mode=2";
+    else
+        frame.src = img.src;
+    document.body.appendChild(frame);
+}
+
+function CheckKRAnswerCorrectness() {
+    var pageMsg = document.getElementById('pagemessage');
+    if (pageMsg && pageMsg.innerText.toLowerCase().indexOf("unable to claim reward") > -1) // KR answer not correct, re-run OCR
+    {
+        if (kingsRewardRetry > kingsRewardRetryMax) {
+            kingsRewardRetry = 0;
+            setStorage("KingsRewardRetry", kingsRewardRetry);
+            alert('Max retry. Pls solve it manually.');
+            return;
+        }
+        ++kingsRewardRetry;
+        setStorage("KingsRewardRetry", kingsRewardRetry);
+        CallKRSolver();
+    }
+    else
+        window.setTimeout(function () {
+            CheckKRAnswerCorrectness();
+        }, 1000);
+}
+
+window.addEventListener("message", receiveMessage, false);
+if (debugKR)
+    CallKRSolver();
+// CNN KR SOLVER END
+
 // start executing script
-var debug = false;
 if (debug) console.log('STARTING SCRIPT - ver: ' + scriptVersion);
 if (window.top != window.self) {
     if (debug) console.log('In IFRAME - may cause firefox to error, location: ' + window.location.href);
