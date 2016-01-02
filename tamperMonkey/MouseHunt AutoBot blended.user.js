@@ -2890,23 +2890,23 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '</tr>';
 
                 /*preferenceHTMLStr += '<tr>';
-                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                preferenceHTMLStr += '<a title="Which phone number to send king\'s reward to"><b>SMS number to send King Reward</b></a>';
-                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '<td style="height:24px;">';
-                preferenceHTMLStr += '<input type="text" id="KingRewardPhoneNumber" name="KingRewardPhoneNumber" value="' + kingRewardPhone + '" />';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '</tr>';
+                 preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                 preferenceHTMLStr += '<a title="Which phone number to send king\'s reward to"><b>SMS number to send King Reward</b></a>';
+                 preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                 preferenceHTMLStr += '</td>';
+                 preferenceHTMLStr += '<td style="height:24px;">';
+                 preferenceHTMLStr += '<input type="text" id="KingRewardPhoneNumber" name="KingRewardPhoneNumber" value="' + kingRewardPhone + '" />';
+                 preferenceHTMLStr += '</td>';
+                 preferenceHTMLStr += '</tr>';
 
-                preferenceHTMLStr += '<tr>';
-                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                 preferenceHTMLStr += '<tr>';
+                 preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
                  preferenceHTMLStr += '<a title="What was the verification key sent to this number?"><b>Verification key from SMS</b></a>';
-                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '<td style="height:24px;">';
+                 preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                 preferenceHTMLStr += '</td>';
+                 preferenceHTMLStr += '<td style="height:24px;">';
                  preferenceHTMLStr += '<input type="text" id="KingRewardPhoneNumberVerify" name="KingRewardPhoneNumberVerify" value="' + kingRewardPhoneVerify + '" />';
-                preferenceHTMLStr += '</td>';
+                 preferenceHTMLStr += '</td>';
                  preferenceHTMLStr += '</tr>';*/
 
                 if (reloadKingReward) {
@@ -3428,9 +3428,9 @@ function addGoogleAd() {
             adFrame.removeChild(adFrame.firstChild);
             if (!NOBadFree && allowAds) {
                 /*var newAd = document.createElement('script');
-                newAd.type = 'text/javascript';
-                newAd.src = '//eclkmpbn.com/adServe/banners?tid=58849_91032_3';
-                adFrame.appendChild(document.createElement('center'));
+                 newAd.type = 'text/javascript';
+                 newAd.src = '//eclkmpbn.com/adServe/banners?tid=58849_91032_3';
+                 adFrame.appendChild(document.createElement('center'));
                  adFrame.firstChild.appendChild(newAd);*/
 
                 var newAd = document.createElement('div');
@@ -3920,50 +3920,87 @@ function playKingRewardSound() {
     }
 }
 
-function kingRewardCountdownTimer() {
-    var dateNow = new Date();
-    var intervalTime = timeElapsed(lastDateRecorded, dateNow);
-    lastDateRecorded = null;
-    lastDateRecorded = dateNow;
-    dateNow = null;
+/*function kingRewardCountdownTimer() {
+ var dateNow = new Date();
+ var intervalTime = timeElapsed(lastDateRecorded, dateNow);
+ lastDateRecorded = null;
+ lastDateRecorded = dateNow;
+ dateNow = null;
 
-    if (reloadKingReward) {
-        kingPauseTime -= intervalTime;
-    }
+ if (reloadKingReward) {
+ kingPauseTime -= intervalTime;
+ }
 
-    if (lastKingRewardSumTime != -1) {
-        lastKingRewardSumTime += intervalTime;
-    }
+ if (lastKingRewardSumTime != -1) {
+ lastKingRewardSumTime += intervalTime;
+ }
 
-    intervalTime = null;
+ intervalTime = null;
 
-    if (kingPauseTime <= 0) {
-        // update timer
-        displayTimer("King's Reward - Reloading...", "Reloading...", "Reloading...");
+ if (kingPauseTime <= 0) {
+ // update timer
+ displayTimer("King's Reward - Reloading...", "Reloading...", "Reloading...");
 
-        // simulate mouse click on the camp button
-        var campElement = document.getElementsByClassName(campButton)[0].firstChild;
-        fireEvent(campElement, 'click');
-        campElement = null;
+ // simulate mouse click on the camp button
+ var campElement = document.getElementsByClassName(campButton)[0].firstChild;
+ fireEvent(campElement, 'click');
+ campElement = null;
 
-        // reload the page if click on the camp button fail
-        window.setTimeout(function () {
-            reloadWithMessage("Fail to click on camp button. Reloading...", false);
-        }, 5000);
-    } else {
-        if (reloadKingReward) {
-            // update timer
-            displayTimer("King's Reward - Reload in " + timeformat(kingPauseTime),
-                "Reloading in " + timeformat(kingPauseTime),
-                "Reloading in " + timeformat(kingPauseTime));
+ // reload the page if click on the camp button fail
+ window.setTimeout(function () {
+ reloadWithMessage("Fail to click on camp button. Reloading...", false);
+ }, 5000);
+ } else {
+ if (reloadKingReward) {
+ // update timer
+ displayTimer("King's Reward - Reload in " + timeformat(kingPauseTime),
+ "Reloading in " + timeformat(kingPauseTime),
+ "Reloading in " + timeformat(kingPauseTime));
+ }
+
+ // set king reward sum time
+ displayKingRewardSumTime(timeFormatLong(lastKingRewardSumTime));
+
+ if (!checkResumeButton()) {
+ window.setTimeout(function () {
+ (kingRewardCountdownTimer)()
+ }, timerRefreshInterval * 1000);
+ }
+ }
+ }*/
+
+function kingRewardCountdownTimer(interval, isReloadToSolve) {
+    var strTemp = (isReloadToSolve) ? "Reload to solve KR in " : "Solve KR in (extra few sec delay) ";
+    strTemp = strTemp + timeformat(interval);
+    displayTimer(strTemp, strTemp, strTemp);
+    strTemp = null;
+    interval -= timerRefreshInterval;
+    if (interval < 0) {
+        if (isReloadToSolve) {
+            // simulate mouse click on the camp button
+            var campElement = document.getElementsByClassName(strCampButton)[0].firstChild;
+            fireEvent(campElement, 'click');
+            campElement = null;
+
+            // reload the page if click on the camp button fail
+            window.setTimeout(function () {
+                reloadWithMessage("Fail to click on camp button. Reloading...", false);
+            }, 5000);
+        } else {
+            var intervalCRB = setInterval(
+                function () {
+                    if (checkResumeButton()) {
+                        clearInterval(intervalCRB);
+                        intervalCRB = null;
+                        return;
+                    }
+                }, 1000);
+            CallKRSolver();
         }
-
-        // set king reward sum time
-        displayKingRewardSumTime(timeFormatLong(lastKingRewardSumTime));
-
+    } else {
         if (!checkResumeButton()) {
             window.setTimeout(function () {
-                (kingRewardCountdownTimer)()
+                kingRewardCountdownTimer(interval, isReloadToSolve);
             }, timerRefreshInterval * 1000);
         }
     }
