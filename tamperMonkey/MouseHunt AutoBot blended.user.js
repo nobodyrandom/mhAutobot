@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.59b
+// @version    	2.1.60b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require     https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
@@ -96,7 +96,7 @@ var krDelayMax = 30;
 // // Example: Script would not auto solve KR between 00:00 - 6:00 when krStopHour = 0 & krStartHour = 6;
 // // To disable this feature, set both to the same value.
 var krStopHour = 0;
-var krStartHour = 6;
+var krStartHour = 7;
 
 // // Extra delay time to start solving KR after krStartHour. (in minutes)
 var krStartHourDelayMin = 10;
@@ -281,6 +281,8 @@ var LOCATION_TIMERS = [
 
 // CNN KR SOLVER START
 function FinalizePuzzleImageAnswer(answer) {
+    if (debug) console.log("RUN FinalizePuzzleImageAnswer()");
+    if (debug) console.log(answer);
     if (answer.length != 5) {
         //Get a new puzzle
         if (kingsRewardRetry > kingsRewardRetryMax) {
@@ -288,20 +290,18 @@ function FinalizePuzzleImageAnswer(answer) {
             setStorage("KingsRewardRetry", kingsRewardRetry);
             alert('Max retry. Pls solve it manually.');
             return;
-        }
-        else {
+        } else {
             ++kingsRewardRetry;
             setStorage("KingsRewardRetry", kingsRewardRetry);
             var tagName = document.getElementsByTagName("a");
             for (var i = 0; i < tagName.length; i++) {
                 if (tagName[i].innerText == "Click here to get a new one!") {
-                    fireEvent(tagName[i], 'click');
+                    //fireEvent(tagName[i], 'click');
                     return;
                 }
             }
         }
-    }
-    else {
+    } else {
         //Submit answer
         var puzzleAns = document.getElementById("puzzle_answer");
         if (!puzzleAns) {
@@ -347,6 +347,7 @@ function receiveMessage(event) {
 }
 
 function CallKRSolver() {
+    if (debug) console.log("RUN CallKRSolver()");
     var frame = document.createElement('iframe');
     frame.setAttribute("id", "myFrame");
     var img = document.getElementById('puzzleImage');
@@ -3862,6 +3863,52 @@ function playNoCheeseSound() {
 //   King's Reward Function - Start
 // ################################################################################################
 
+/*function kingRewardAction() {
+ // update timer
+ displayTimer("King's Reward!", "King's Reward", "King's Reward!");
+ displayLocation("-");
+
+ // play music if needed
+ playKingRewardSound();
+
+ window.setTimeout(function () {
+ // Autopop KR if needed
+ if (autoPopupKR) {
+ alert("King's Reward NOW");
+ }
+
+ // email the captcha away if needed
+ emailCaptcha();
+ }, 2000);
+
+ // focus on the answer input
+ var inputElementList = document.getElementsByTagName('input');
+ if (inputElementList) {
+ var i;
+ for (i = 0; i < inputElementList.length; ++i) {
+ // check if it is a resume button
+ if (inputElementList[i].getAttribute('name') == "puzzle_answer") {
+ inputElementList[i].focus();
+ break;
+ }
+ }
+ i = null;
+ }
+ inputElementList = null;
+
+ // record last king's reward time
+ var nowDate = new Date();
+ setStorage("lastKingRewardDate", nowDate.toString());
+ nowDate = null;
+
+ if (kingPauseTimeMax <= 0) {
+ kingPauseTimeMax = 1;
+ }
+
+ kingPauseTime = kingPauseTimeMax;
+ kingRewardCountdownTimer();
+ }*/
+
 function kingRewardAction() {
     // update timer
     displayTimer("King's Reward!", "King's Reward", "King's Reward!");
@@ -3869,16 +3916,6 @@ function kingRewardAction() {
 
     // play music if needed
     playKingRewardSound();
-
-    window.setTimeout(function () {
-        // Autopop KR if needed
-        if (autoPopupKR) {
-            alert("King's Reward NOW");
-        }
-
-        // email the captcha away if needed
-        emailCaptcha();
-    }, 2000);
 
     // focus on the answer input
     var inputElementList = document.getElementsByTagName('input');
@@ -3898,14 +3935,33 @@ function kingRewardAction() {
     // record last king's reward time
     var nowDate = new Date();
     setStorage("lastKingRewardDate", nowDate.toString());
-    nowDate = null;
 
-    if (kingPauseTimeMax <= 0) {
-        kingPauseTimeMax = 1;
+    if (!isAutoSolve)
+        return;
+
+    var krDelaySec = krDelayMin + Math.floor(Math.random() * (krDelayMax - krDelayMin));
+    var krStopHourNormalized = krStopHour;
+    var krStartHourNormalized = krStartHour;
+    if (krStopHour > krStartHour) { // e.g. Stop to Start => 22 to 06
+        var offset = 24 - krStopHour;
+        krStartHourNormalized = krStartHour + offset;
+        krStopHourNormalized = 0;
+        nowDate.setHours(nowDate.getHours() + offset);
     }
 
-    kingPauseTime = kingPauseTimeMax;
-    kingRewardCountdownTimer();
+    if (nowDate.getHours() >= krStopHourNormalized && nowDate.getHours() < krStartHourNormalized) {
+        var krDelayMinute = krStartHourDelayMin + Math.floor(Math.random() * (krStartHourDelayMax - krStartHourDelayMin));
+        krDelaySec += krStartHour * 3600 - (nowDate.getHours() * 3600 + nowDate.getMinutes() * 60 + nowDate.getSeconds());
+        krDelaySec += krDelayMinute * 60;
+        var timeNow = new Date();
+        setStorage("Time to start delay", timeNow.toString());
+        setStorage("Delay time", timeformat(krDelaySec))
+        kingRewardCountdownTimer(krDelaySec, true);
+    } else {
+        if (kingsRewardRetry > kingsRewardRetryMax)
+            krDelaySec /= (kingsRewardRetry * 2);
+        kingRewardCountdownTimer(krDelaySec, false);
+    }
 }
 
 function emailCaptcha() {
