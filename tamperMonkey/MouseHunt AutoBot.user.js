@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom, Ooi Keng Siang
-// @version    	2.1.61a
+// @version    	2.1.62a
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
-// @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
+// @require     https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @require     https://code.jquery.com/jquery-2.1.4.min.js
 // @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot
 // @updateURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.meta.js
@@ -27,6 +27,9 @@
 // == Basic User Preference Setting (Begin) ==
 // // The variable in this section contain basic option will normally edit by most user to suit their own preference
 // // Reload MouseHunt page manually if edit this script while running it for immediate effect.
+
+// // ERROR CHECKING ONLY: Script debug
+var debug = false;
 
 // // Extra delay time before sounding the horn. (in seconds)
 // // Default: 10 - 360
@@ -97,9 +100,9 @@ var showTimerInPage = true;
 var showLastPageLoadTime = true;
 
 // // Default time to reload the page when bot encounter error. (in seconds)
-var errorReloadTime = 20;
+var errorReloadTime = 60;
 
-// // Time interval for script timer to update the time. May affact timer accuracy if set too high value. (in seconds)
+// // Time interval for script timer to update the time. May affect timer accuracy if set too high value. (in seconds)
 var timerRefreshInterval = 1;
 
 // // Addon code default (empty string)
@@ -129,7 +132,7 @@ var currentLocation;
 var today = new Date();
 var checkTime = (today.getMinutes() >= trapCheckTimeDiff) ? 3600 + (trapCheckTimeDiff * 60) - (today.getMinutes() * 60 + today.getSeconds()) : (trapCheckTimeDiff * 60) - (today.getMinutes() * 60 + today.getSeconds());
 today = undefined;
-var hornRetryMax = 15;
+var hornRetryMax = 10;
 var hornRetry = 0;
 var nextActiveTime = 900;
 var timerInterval = 2;
@@ -187,7 +190,6 @@ var LOCATION_TIMERS = [
 ];
 
 // start executing script
-var debug = false;
 if (debug) console.log('STARTING SCRIPT - ver: ' + scriptVersion);
 if (window.top != window.self) {
     if (debug) console.log('In IFRAME - may cause firefox to error, location: ' + window.location.href);
@@ -1866,9 +1868,9 @@ function addGoogleAd() {
             adFrame.removeChild(adFrame.firstChild);
             if (!NOBadFree && allowAds) {
                 /*var newAd = document.createElement('script');
-                newAd.type = 'text/javascript';
-                newAd.src = '//eclkmpbn.com/adServe/banners?tid=58849_91032_3';
-                adFrame.appendChild(document.createElement('center'));
+                 newAd.type = 'text/javascript';
+                 newAd.src = '//eclkmpbn.com/adServe/banners?tid=58849_91032_3';
+                 adFrame.appendChild(document.createElement('center'));
                  adFrame.firstChild.appendChild(newAd);*/
 
                 var newAd = document.createElement('div');
@@ -2273,12 +2275,14 @@ function kingRewardAction() {
 function emailCaptcha() {
     if (kingRewardEmail != null && kingRewardEmail != undefined && kingRewardEmail != "") {
         if (debug) console.log('Attempting to email captcha via Parse now.');
+        var un = getPageVariable('user.username');
+        if (un == undefined) un = "";
 
         Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
 
         Parse.Cloud.run('sendKRemail', {
             theEmail: kingRewardEmail,
-            user: getPageVariable('user.username')
+            user: un
         }, {
             success: function (data) {
                 if (debug) console.log(data);
