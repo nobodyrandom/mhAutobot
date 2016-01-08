@@ -1782,7 +1782,7 @@ function loadPreferenceSettingFromStorage() {
     autopopkrTemp = undefined;
 
     var addonCodeTemp = getStorage("addonCode");
-    if (addonCodeTemp == undefined || addonCodeTemp === null || addonCodeTemp == "") {
+    if (addonCodeTemp == undefined || addonCodeTemp === null || addonCodeTemp == "" || addonCodeTemp == "null") {
         setStorage('addonCode', "");
     }
     addonCode = addonCodeTemp;
