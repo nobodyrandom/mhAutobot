@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MH Auto KR Solver
 // @author      Kevin Kwok, CnN
-// @version    	1.0.1
+// @version    	1.0.2
 // @namespace   https://devcnn.wordpress.com/, https://antimatter15.com/
 // @description This is an auto MH KR Solver.
 // @include		http://*/puzzleimage.php*
@@ -24,7 +24,7 @@ function receiveMessage(event) {
     }
 }
 
-if (window.location.href.indexOf("puzzleimage.php") > -1) {
+if (window.location.href.indexOf("puzzleimage.php") > -1 || window.location.href.indexOf("newpuzzzle") > -1) {
     window.addEventListener("message", receiveMessage, false);
     var ocrDelayMin = 1;
     var ocrDelayMax = 3;
