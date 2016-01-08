@@ -1,12 +1,13 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.62b
+// @version    	2.1.63b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
-// @require     https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
-// @require     https://greasyfork.org/scripts/16036-mh-auto-kr-solver/code/MH%20Auto%20KR%20Solver.js?version=99995
 // @require     https://code.jquery.com/jquery-2.1.4.min.js
+// @require     https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
+// @require     https://raw.githubusercontent.com/antimatter15/ocrad.js/master/ocrad.js
+// @require     https://greasyfork.org/scripts/16036-mh-auto-kr-solver/code/MH%20Auto%20KR%20Solver.js?version=100048
 // @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot, https://devcnn.wordpress.com/
 // @updateURL	https://greasyfork.org/scripts/6514-mousehunt-autobot-enhanced-revamp/code/MouseHunt%20AutoBot%20ENHANCED%20+%20REVAMP.meta.js
 // @downloadURL	https://greasyfork.org/scripts/6514-mousehunt-autobot-enhanced-revamp/code/MouseHunt%20AutoBot%20ENHANCED%20+%20REVAMP.user.js
