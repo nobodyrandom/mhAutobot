@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.63b
+// @version    	2.1.64b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require     https://code.jquery.com/jquery-2.1.4.min.js
@@ -96,7 +96,7 @@ var krDelayMax = 30;
 // // Time to start and stop solving KR. (in hours, 24-hour format)
 // // Example: Script would not auto solve KR between 00:00 - 6:00 when krStopHour = 0 & krStartHour = 6;
 // // To disable this feature, set both to the same value.
-var krStopHour = 0;
+var krStopHour = 1;
 var krStartHour = 7;
 
 // // Extra delay time to start solving KR after krStartHour. (in minutes)
@@ -305,6 +305,7 @@ function FinalizePuzzleImageAnswer(answer) {
     } else {
         //Submit answer
         var puzzleAns = document.getElementById("puzzle_answer");
+        if (isNewUI) puzzleAns = document.getElementsByClassName("mousehuntPage-puzzle-form-code")[0];
         if (!puzzleAns) {
             console.debug("puzzleAns: " + puzzleAns);
             return;
@@ -312,6 +313,7 @@ function FinalizePuzzleImageAnswer(answer) {
         puzzleAns.value = "";
         puzzleAns.value = answer;
         var puzzleSubmit = document.getElementById("puzzle_submit");
+        if (isNewUI) puzzleSubmit = document.getElementsByClassName("mousehuntPage-puzzle-form-code-button")[0];
         if (!puzzleSubmit) {
             console.debug("puzzleSubmit: " + puzzleSubmit);
             return;
@@ -351,11 +353,17 @@ function CallKRSolver() {
     if (debug) console.log("RUN CallKRSolver()");
     var frame = document.createElement('iframe');
     frame.setAttribute("id", "myFrame");
-    var img = document.getElementById('puzzleImage');
     if (debugKR) frame.src = "https://photos-5.dropbox.com/t/2/AAB7HHtCknOfTpcuPoDmxCEfIMNFOL0J7b5ZL4IkEehmLw/12/36143186/jpeg/32x32/1/_/1/2/puzzleimage.jpeg/EJT1vBsYw7kvIAIoAg/ufyuSJabyENb5LSl7kn_zadHF20fPJ8cxi313enZ2Qs?size=640x480&size_mode=2";
     //frame.src = "https://photos-4.dropbox.com/t/2/AAArkp_yNcE-_gLkppu3xeeV2p-y0q0Ml0AhZ0RfCIlYpQ/12/127673959/png/32x32/1/_/1/2/download.png/EM-6pmIYjboGIAcoBw/VXDBwjXQ2NNK6ShussiKls1sCUQSTjvkn3wM5g4Jcro?size=640x480&size_mode=2";
-    else
-        frame.src = img.src;
+    else {
+        if (!isNewUI) {
+            var img = document.getElementById('puzzleImage');
+            frame.src = img.src;
+        } else {
+            var img = document.getElementsByClassName('mousehuntPage-puzzle-form-captcha-image')[0];
+            frame.src = img.style.backgroundImage.slice(4, -1).replace(/"/g, "");
+        }
+    }
     document.body.appendChild(frame);
 }
 
@@ -3917,6 +3925,16 @@ function kingRewardAction() {
 
     // play music if needed
     playKingRewardSound();
+
+    window.setTimeout(function () {
+        // Autopop KR if needed
+        if (autoPopupKR) {
+            alert("King's Reward NOW");
+        }
+
+        // email the captcha away if needed
+        emailCaptcha();
+    }, 2000);
 
     // focus on the answer input
     var inputElementList = document.getElementsByTagName('input');
