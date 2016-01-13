@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MH Auto KR Solver
 // @author      Kevin Kwok, CnN
-// @version    	1.0.2
+// @version    	1.0.3
 // @namespace   https://devcnn.wordpress.com/, https://antimatter15.com/
 // @description This is an auto MH KR Solver.
 // @include		http://*/puzzleimage.php*
@@ -9,6 +9,9 @@
 // @include		http://*.dropbox.com/*
 // @include		https://*.dropbox.com/*
 // ==/UserScript==
+
+if (window.top == window.self)  //don't run on the top window
+    return;
 
 function receiveMessage(event) {
     console.debug("Event origin: " + event.origin);
@@ -191,6 +194,12 @@ function KingsRewardSolver() {
     }
 
     // REMOVE CnN's OCRAD, using require to link it in
+    if (typeof OCRAD !== 'undefined') {
+        var script = document.createElement('script');
+        script.type = "text/javascript";
+        script.src = "//greasyfork.org/scripts/16046-ocrad/code/OCRAD.js?version=100053";
+        document.getElementsByTagName('head')[0].appendChild(script);
+    }
 
     // Opening = erode -> dilate
     // Closing = dilate -> erode
