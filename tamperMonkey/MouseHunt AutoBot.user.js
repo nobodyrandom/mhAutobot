@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP
 // @author      NobodyRandom, Ooi Keng Siang
-// @version    	2.1.65a
+// @version    	2.1.66a
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require     https://code.jquery.com/jquery-2.1.4.min.js
