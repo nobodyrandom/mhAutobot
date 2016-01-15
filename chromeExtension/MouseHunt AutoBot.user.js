@@ -1,15 +1,15 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot REVAMP chrome ext ver
 // @author      NobodyRandom, Ooi Keng Siang
-// @version    	2.1.40c
+// @version    	2.1.65c
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
-// @require 	https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @require     https://code.jquery.com/jquery-2.1.4.min.js
+// @require     https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
 // @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot
 // @updateURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.meta.js
 // @downloadURL	https://greasyfork.org/scripts/6092-mousehunt-autobot/code/MouseHunt%20AutoBot.user.js
-// @license 	GNU GPL v2.0
+// @license 	GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
 // @include		http://www.mousehuntgame.com/*
@@ -27,6 +27,9 @@
 // == Basic User Preference Setting (Begin) ==
 // // The variable in this section contain basic option will normally edit by most user to suit their own preference
 // // Reload MouseHunt page manually if edit this script while running it for immediate effect.
+
+// // ERROR CHECKING ONLY: Script debug
+var debug = false;
 
 // // Extra delay time before sounding the horn. (in seconds)
 // // Default: 10 - 360
@@ -97,9 +100,9 @@ var showTimerInPage = true;
 var showLastPageLoadTime = true;
 
 // // Default time to reload the page when bot encounter error. (in seconds)
-var errorReloadTime = 20;
+var errorReloadTime = 60;
 
-// // Time interval for script timer to update the time. May affact timer accuracy if set too high value. (in seconds)
+// // Time interval for script timer to update the time. May affect timer accuracy if set too high value. (in seconds)
 var timerRefreshInterval = 1;
 
 // // Addon code default (empty string)
@@ -110,7 +113,7 @@ var addonCode = "";
 // WARNING - Do not modify the code below unless you know how to read and write the script.
 
 // All global variable declaration and default value
-var scriptVersion = "2.1.40c";
+var scriptVersion = "2.1.65c";
 var fbPlatform = false;
 var hiFivePlatform = false;
 var mhPlatform = false;
@@ -129,7 +132,7 @@ var currentLocation;
 var today = new Date();
 var checkTime = (today.getMinutes() >= trapCheckTimeDiff) ? 3600 + (trapCheckTimeDiff * 60) - (today.getMinutes() * 60 + today.getSeconds()) : (trapCheckTimeDiff * 60) - (today.getMinutes() * 60 + today.getSeconds());
 today = undefined;
-var hornRetryMax = 15;
+var hornRetryMax = 10;
 var hornRetry = 0;
 var nextActiveTime = 900;
 var timerInterval = 2;
@@ -187,7 +190,6 @@ var LOCATION_TIMERS = [
 ];
 
 // start executing script
-var debug = false;
 if (debug) console.log('STARTING SCRIPT - ver: ' + scriptVersion);
 /*if (window.top != window.self) {
  if (debug) console.log('In IFRAME - may cause firefox to error, location: ' + window.location.href);
@@ -1584,9 +1586,48 @@ window.localStorage.setItem(\'addonCode\', document.getElementById(\'addonCode\'
                 NOBspecialMessageDiv.setAttribute('id', 'nobSpecialMessage');
                 NOBspecialMessageDiv.setAttribute('style', 'display: block; position: fixed; bottom: 0; z-index: 999; text-align: center; width: 760px;');
 
+                //var nobWhatsNewDiv = document.createElement('div');
+                //nobWhatsNewDiv.setAttribute('id', 'nobWhatsNew');
+                //nobWhatsNewDiv.setAttribute('style', 'display: block; position: fixed; bottom: 0; left: 0; z-index: 999; text-align: left; width: 200px; height: 100px; padding: 10px 0 10px 10px;');
+
                 var nobWhatsNewDiv = document.createElement('div');
-                nobWhatsNewDiv.setAttribute('id', 'nobWhatsNew');
-                nobWhatsNewDiv.setAttribute('style', 'display: block; position: fixed; bottom: 0; left: 0; z-index: 999; text-align: left; width: 200px; height: 100px; padding: 10px 0 10px 10px;');
+                nobWhatsNewDiv.innerHTML = "<style>" +
+                    "@-webkit-keyframes colorRotate {" +
+                    "from {color: rgb(255, 0, 0);}" +
+                    "16.6% {color: rgb(255, 0, 255);}" +
+                    "33.3% {color: rgb(0, 0, 255);}" +
+                    "50% {color: rgb(0, 255, 255);}" +
+                    "66.6% {color: rgb(0, 255, 0);}" +
+                    "83.3% {color: rgb(255, 255, 0);}" +
+                    "to {color: rgb(255, 0, 0);}" +
+
+                    "@-moz-keyframes colorRotate {" +
+                    "from {color: rgb(255, 0, 0);}" +
+                    "16.6% {color: rgb(255, 0, 255);}" +
+                    "33.3% {color: rgb(0, 0, 255);}" +
+                    "50% {color: rgb(0, 255, 255);}" +
+                    "66.6% {color: rgb(0, 255, 0);}" +
+                    "83.3% {color: rgb(255, 255, 0);}" +
+                    "to {color: rgb(255, 0, 0);}" +
+
+                    "@-o-keyframes colorRotate {" +
+                    "from {color: rgb(255, 0, 0);}" +
+                    "16.6% {color: rgb(255, 0, 255);}" +
+                    "33.3% {color: rgb(0, 0, 255);}" +
+                    "50% {color: rgb(0, 255, 255);}" +
+                    "66.6% {color: rgb(0, 255, 0);}" +
+                    "83.3% {color: rgb(255, 255, 0);}" +
+                    "to {color: rgb(255, 0, 0);}" +
+
+                    "@keyframes colorRotate {" +
+                    "from {color: rgb(255, 0, 0);}" +
+                    "16.6% {color: rgb(255, 0, 255);}" +
+                    "33.3% {color: rgb(0, 0, 255);}" +
+                    "50% {color: rgb(0, 255, 255);}" +
+                    "66.6% {color: rgb(0, 255, 0);}" +
+                    "83.3% {color: rgb(255, 255, 0);}" +
+                    "to {color: rgb(255, 0, 0);}" +
+                    "</style>";
 
                 var preferenceDiv = document.createElement('div');
                 preferenceDiv.setAttribute('id', 'preferenceDiv');
@@ -1741,7 +1782,7 @@ function loadPreferenceSettingFromStorage() {
     autopopkrTemp = undefined;
 
     var addonCodeTemp = getStorage("addonCode");
-    if (addonCodeTemp == undefined || addonCodeTemp === null || addonCodeTemp == "") {
+    if (addonCodeTemp == undefined || addonCodeTemp === null || addonCodeTemp == "" || addonCodeTemp == "null") {
         setStorage('addonCode', "");
     }
     addonCode = addonCodeTemp;
@@ -1826,14 +1867,35 @@ function addGoogleAd() {
         if (adFrame) {
             adFrame.removeChild(adFrame.firstChild);
             if (!NOBadFree && allowAds) {
-                var newAd = document.createElement('script');
-                newAd.type = 'text/javascript';
-                newAd.src = '//eclkmpbn.com/adServe/banners?tid=58849_91032_3';
+                /*var newAd = document.createElement('script');
+                 newAd.type = 'text/javascript';
+                 newAd.src = '//eclkmpbn.com/adServe/banners?tid=58849_91032_3';
+                 adFrame.appendChild(document.createElement('center'));
+                 adFrame.firstChild.appendChild(newAd);*/
+
+                var newAd = document.createElement('div');
+                newAd.style.height = "560px";
                 adFrame.appendChild(document.createElement('center'));
                 adFrame.firstChild.appendChild(newAd);
+                var newAdScript = document.createElement('script');
+                newAdScript.src = "//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js";
+                newAd.innerHTML = "<ins class=\"adsbygoogle\" style=\"display:block\" data-ad-client=\"ca-pub-3255634416502948\" data-ad-slot=\"2618509310\" data-ad-format=\"auto\"></ins>";
+                newAd.appendChild(newAdScript);
+                (adsbygoogle = window.adsbygoogle || []).push({});
+
+                var removeAdButton = document.createElement('a');
+                removeAdButton.id = 'removeAdLink';
+                removeAdButton.href = 'https://www.mousehuntgame.com/index.php';
+                removeAdButton.innerHTML = 'Click here to remove ads :*(';
+                adFrame.firstChild.appendChild(removeAdButton);
+
+                removeAdButton = null;
                 newAd = null;
+            } else if (!NOBadFree) {
+                adFrame.innerHTML = "<a id=\"addAdLink\" href=\"#\" style=\"-webkit-animation: colorRotate 6s linear 0s infinite; -moz-animation: colorRotate 6s linear 0s infinite; -o-animation: colorRotate 6s linear 0s infinite; animation: colorRotate 6s linear 0s infinite; font-weight: bolder; text-align: center;\">Click here to show ads to support the development of this bot :)</a>";
             } else {
-                adFrame.innerHTML = "<a id=\"addAdLink\" href=\"#\">Click here to show ads to support the development of this bot :)</a>";
+                console.debug("Thanks for donating ^.^");
+                adFrame.innerHTML = "";
             }
         }
         adFrame = null;
@@ -2213,12 +2275,14 @@ function kingRewardAction() {
 function emailCaptcha() {
     if (kingRewardEmail != null && kingRewardEmail != undefined && kingRewardEmail != "") {
         if (debug) console.log('Attempting to email captcha via Parse now.');
+        var un = getPageVariable('user.username');
+        if (un == undefined) un = "";
 
         Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
 
         Parse.Cloud.run('sendKRemail', {
             theEmail: kingRewardEmail,
-            user: getPageVariable('user.username')
+            user: un
         }, {
             success: function (data) {
                 if (debug) console.log(data);
@@ -2691,12 +2755,12 @@ function timeFormatLong(time) {
 // ################################################################################################
 // INIT AJAX CALLS AND INIT CALLS - Function calls after page LOAD
 
-window.onload = function () {
+window.addEventListener("load", function () {
     if (window.frames['name'] != 'aswift_0') {
         if (debug) console.log('Running nobInit in ' + window.frames['name'] + ' frame.');
         nobInit();
     }
-};
+}, false);
 
 function nobInit() {
     if (debug) console.log('RUN nobInit()');
@@ -2721,12 +2785,13 @@ function nobInit() {
                 NOBpage = true;
             }
 
+            addGoogleAd();
+
             if (NOBpage) {
                 nobHTMLFetch();
                 createClockArea();
                 clockTick();
                 fetchGDocStuff();
-                addGoogleAd();
                 setTimeout(function () {
                     nobInjectFFfunctions();
                 }, 1000);
@@ -3260,6 +3325,7 @@ function nobInjectFFfunctions() {
     var raffleDiv = document.getElementById('nobRaffle');
     var presentDiv = document.getElementById('nobPresent');
     var addAdDiv = document.getElementById('addAdLink');
+    var removeAdDiv = document.getElementById('removeAdLink');
 
     if (browser == 'firefox') {
         unsafeWindow.nobRaffle = exportFunction(nobRaffle, unsafeWindow);
@@ -3278,7 +3344,11 @@ function nobInjectFFfunctions() {
             addAdDiv.addEventListener('click', function () {
                 localStorage.setItem('allowAds', 'true');
                 unsafeWindow.addGoogleAd();
-                return false;
+            });
+        }
+        if (removeAdDiv) {
+            removeAdDiv.addEventListener('click', function () {
+                localStorage.setItem('allowAds', 'false');
             });
         }
     } else {
@@ -3295,13 +3365,19 @@ function nobInjectFFfunctions() {
             addAdDiv.addEventListener('click', function () {
                 localStorage.setItem('allowAds', 'true');
                 addGoogleAd();
-                return false;
+            });
+        }
+        if (removeAdDiv) {
+            removeAdDiv.addEventListener('click', function () {
+                localStorage.setItem('allowAds', 'false');
+                addGoogleAd();
             });
         }
     }
     raffleDiv = undefined;
     presentDiv = undefined;
     addAdDiv = undefined;
+    removeAdDiv = undefined;
 }
 
 function nobRaffle() {
