@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MH Auto KR Solver
 // @author      Kevin Kwok, CnN
-// @version    	1.0.3
+// @version    	1.0.4
 // @namespace   https://devcnn.wordpress.com/, https://antimatter15.com/
 // @description This is an auto MH KR Solver.
 // @include		http://*/puzzleimage.php*
@@ -10,8 +10,8 @@
 // @include		https://*.dropbox.com/*
 // ==/UserScript==
 
-if (window.top == window.self)  //don't run on the top window
-    return;
+//if (window.top == window.self)  //don't run on the top window
+//return;
 
 function receiveMessage(event) {
     console.debug("Event origin: " + event.origin);
