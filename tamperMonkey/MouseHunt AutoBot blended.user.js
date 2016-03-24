@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.67b
+// @version    	2.1.68b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require     https://code.jquery.com/jquery-2.1.4.min.js
@@ -630,6 +630,12 @@ function eventLocationCheck() {
     switch (eventLocation) {
         case 'Hunt For':
             huntFor();
+            break;
+        case 'Charge Egg 2016':
+            checkCharge2016(12);
+            break;
+        case 'Charge Egg 2016(17)':
+            checkCharge2016(17);
             break;
         case 'Charge Egg 2014':
             checkCharge(12);
@@ -1358,6 +1364,29 @@ function checkMouse(mouseName) {
 }
 
 // For easter event
+function checkCharge2016(stopDischargeAt) {
+    try {
+        var charge = parseInt(document.getElementsByClassName("springHuntHUD-charge-quantity")[0].textContent);
+
+        if (charge == 20) {
+            setStorage("discharge", true.toString());
+            checkThenArm(null, "trinket", "Eggstra");
+        } else if (charge < 20 && charge > stopDischargeAt) {
+            if (getStorage("discharge") == "true") {
+                checkThenArm(null, "trinket", "Eggstra");
+            } else {
+                checkThenArm(null, "trinket", "Eggscavator");
+            }
+        } else if (charge <= stopDischargeAt) {
+            setStorage("discharge", false.toString());
+            checkThenArm(null, "trinket", "Eggscavator");
+        }
+        return;
+    } catch (e) {
+        return console.debug(e.message);
+    }
+}
+
 function checkCharge(stopDischargeAt) {
     try {
         var charge = parseInt(document.getElementsByClassName("chargeQuantity")[0].textContent);
@@ -3075,6 +3104,8 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<option value="Sunken City">Sunken City</option>';
                 //preferenceHTMLStr += '<option value="Labyrinth">Labyrinth</option>';
                 preferenceHTMLStr += '<option value="" disabled>--==Event Bots==--</option>';
+                preferenceHTMLStr += '<option value="Charge Egg 2016">Charge Egg 2016</option>';
+                preferenceHTMLStr += '<option value="Charge Egg 2016(17)">Charge Egg 2016(17)</option>';
                 preferenceHTMLStr += '<option value="Charge Egg 2014">Charge Egg 2014</option>';
                 preferenceHTMLStr += '<option value="Charge Egg 2014(17)">Charge Egg 2014(17)</option>';
                 preferenceHTMLStr += '<option value="Halloween 2014">Halloween 2014</option>';
