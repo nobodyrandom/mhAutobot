@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.68b
+// @version    	2.1.69b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require     https://code.jquery.com/jquery-2.1.4.min.js
@@ -63,7 +63,7 @@ var checkTimeDelayMax = 120;
 var isKingWarningSound = false;
 
 // // Which sound to play when encountering king's reward (need to be .mp3)
-var kingWarningSound = 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/horn.mp3';
+var kingWarningSound = 'https://raw.githubusercontent.com/nobodyrandom/libs/master/resource/horn.mp3';
 
 // // Which email to send KR notiff to (leave blank to disable feature)
 var kingRewardEmail = '';
