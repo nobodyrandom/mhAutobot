@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.69b
+// @version    	2.1.70b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require     https://code.jquery.com/jquery-2.1.4.min.js
-// @require     https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=32976
+// @require     https://greasyfork.org/scripts/7601-parse-db-min/code/Parse%20DB%20min.js?version=132819
 // @require     https://greasyfork.org/scripts/16046-ocrad/code/OCRAD.js?version=100053
 // @require     https://greasyfork.org/scripts/16036-mh-auto-kr-solver/code/MH%20Auto%20KR%20Solver.js?version=102270
 // @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot, https://devcnn.wordpress.com/
@@ -31,7 +31,7 @@
 // // Reload MouseHunt page manually if edit this script while running it for immediate effect.
 
 // // ERROR CHECKING ONLY: Script debug
-var debug = false;
+var debug = true;
 // // ERROR CHECKING ONLY: KR debug
 var debugKR = false;
 
@@ -1314,7 +1314,9 @@ function gnawnianExpress(load) {
                     break;
                 case 'Daredevil Canyon':
                     checkThenArm('best', 'weapon', daredevilCanyonTrap);
+                    if (debug) console.log("Starting to look for " + coalCharm + " charm.");
                     checkThenArm('best', 'trinket', coalCharm);
+                    if (debug) console.log("Done looking for charm.")
                     loadTrain('canyon', load);
                     break;
                 default:
@@ -1536,7 +1538,7 @@ function checkThenArm(sort, category, item, fail) {  //category = weapon/base/ch
                         i = NOBtraps.length + 1;
                         j = item.length + 1;
                     } else {
-                        if (debug) console.log('Comparing: ' + NOBtraps[i].name + ' with ' + item[j]);
+                        //if (debug) console.log('Comparing: ' + NOBtraps[i].name + ' with ' + item[j]);
                     }
                 }
             }
@@ -1572,7 +1574,6 @@ function checkThenArm(sort, category, item, fail) {  //category = weapon/base/ch
             var theCharmArmed = document.getElementById('hud_trapPower').textContent;
             if (sort == 'best') {
                 for (i = 0; i < item.length; i++) {
-
                     if (item[i].length > 13) {
                         tempName = item[i].substring(0, 13);
                         tempName += "...";
@@ -1587,7 +1588,6 @@ function checkThenArm(sort, category, item, fail) {  //category = weapon/base/ch
                 }
             } else {
                 //console.log(theCharmArmed + " + " + item);
-
                 if (item.length > 13) {
                     tempName = item.substring(0, 13);
                     tempName += "...";
@@ -4020,7 +4020,8 @@ function emailCaptcha() {
         var un = getPageVariable('user.username');
         if (un == undefined) un = "";
 
-        Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
+        Parse.initialize("mh-autobot", "unused");
+        Parse.serverURL = 'https://mh-autobot.herokuapp.com/parse';
 
         Parse.Cloud.run('sendKRemail', {
             theEmail: kingRewardEmail,
@@ -4731,7 +4732,7 @@ function nobMapRequest(handleData) {
 function nobLoading(location, name) {
     var element = document.getElementById(location);
     element.innerHTML = "<style type=\"text/css\">" +
-            /* Universal styling */
+        /* Universal styling */
         "    [class^=\"shaft-load\"] {" +
         "    margin: 5px auto;" +
         "    width: 60px;" +
@@ -4806,7 +4807,7 @@ function nobLoading(location, name) {
         "    animation-delay: 0.5s;" +
         "}" +
 
-            /* Shaft 1 */
+        /* Shaft 1 */
         ".shaft-load > div {" +
         "    -webkit-animation: loading 1.5s infinite ease-in-out;" +
         "    -moz-animation: loading 1.5s infinite ease-in-out;" +
@@ -4960,7 +4961,8 @@ function fetchGDocStuff() {
         }
         var userID = theData.sn_user_id;
 
-        Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
+        Parse.initialize("mh-autobot", "unused");
+        Parse.serverURL = 'https://mh-autobot.herokuapp.com/parse';
         Parse.Cloud.run('nobMessage', {'user': userID}, {
             success: function (data) {
                 nobStopLoading();
@@ -5012,7 +5014,8 @@ function pingServer() {
         var theUsername = theData.username;
         var thePassword = theData.sn_user_id;
 
-        Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
+        Parse.initialize("mh-autobot", "unused");
+        Parse.serverURL = 'https://mh-autobot.herokuapp.com/parse';
         Parse.User.logIn(theUsername, thePassword).then(function (user) {
             //console.log("Success parse login");
             return Parse.Promise.as("Login success");
@@ -5379,7 +5382,8 @@ function nobCalculateTime(runOnly) {
     if (runOnly != 'relic' & runOnly != 'toxic' & runOnly != 'none')
         runOnly = 'all';
 
-    Parse.initialize("1YK2gxEAAxFHBHR4DjQ6yQOJocIrtZNYjYwnxFGN", "LFJJnSfmLVSq2ofIyNo25p0XFdmfyWeaj7qG5c1A");
+    Parse.initialize("mh-autobot", "unused");
+    Parse.serverURL = 'https://mh-autobot.herokuapp.com/parse';
     if ((runOnly == 'relic' || runOnly == 'all') && (typeof LOCATION_TIMERS[3][1].url != 'undefined' || LOCATION_TIMERS[3][1].url != 'undefined')) {
         Parse.Cloud.run('nobRelic', {}, {
             success: function (data) {
