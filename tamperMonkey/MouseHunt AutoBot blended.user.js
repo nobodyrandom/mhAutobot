@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Ooi Keng Siang, CnN
-// @version    	2.1.70b
+// @version    	2.1.71b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require     https://code.jquery.com/jquery-2.1.4.min.js
@@ -86,7 +86,7 @@ var reloadKingReward = false;
 var kingPauseTimeMax = 18000;
 
 // // Auto solve KR
-var isAutoSolve = false;
+var isAutoSolve = true;
 
 // // Extra delay time before solving KR. (in seconds)
 // // Default: 10 - 30
@@ -4901,6 +4901,8 @@ function nobScript(qqEvent) {
             if (NOBdata != null || NOBdata != undefined) {
                 if (!mapRequestFailed && mapThere) {
                     nobMapRequest(function (output) {
+                        if (debug) console.log("RUN nobMapRequest()");
+                        if (debug) console.log(output);
                         if (output.status == 200 || output.status == undefined) {
                             nobStore(output, "data");
                             nobGDoc(JSON.stringify(output), "map");
@@ -5385,7 +5387,7 @@ function nobCalculateTime(runOnly) {
     Parse.initialize("mh-autobot", "unused");
     Parse.serverURL = 'https://mh-autobot.herokuapp.com/parse';
     if ((runOnly == 'relic' || runOnly == 'all') && (typeof LOCATION_TIMERS[3][1].url != 'undefined' || LOCATION_TIMERS[3][1].url != 'undefined')) {
-        Parse.Cloud.run('nobRelic', {}, {
+        /*Parse.Cloud.run('nobRelic', {}, {
             success: function (data) {
                 data = JSON.parse(data);
 
@@ -5411,7 +5413,8 @@ function nobCalculateTime(runOnly) {
                 var child = document.getElementById('NOB' + LOCATION_TIMERS[3][0]);
                 child.innerHTML = "<font color='red'>" + error + " error, probably hornTracker, google, or my scripts broke. Please wait awhile, if not just contact me.</font>";
             }
-        });
+        });*/
+        if (debug) console.log("relic hunter will be back :)");
     }
 
     if ((runOnly == 'toxic' || runOnly == 'all') && (typeof LOCATION_TIMERS[4][1].url != 'undefined' || LOCATION_TIMERS[4][1].url != 'undefined')) {
