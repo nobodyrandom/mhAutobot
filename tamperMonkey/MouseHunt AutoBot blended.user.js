@@ -31,7 +31,7 @@
 // // Reload MouseHunt page manually if edit this script while running it for immediate effect.
 
 // // ERROR CHECKING ONLY: Script debug
-var debug = true;
+var debug = false;
 // // ERROR CHECKING ONLY: KR debug
 var debugKR = false;
 
