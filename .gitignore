@@ -3,5 +3,7 @@
 .iml
 
 .idea/
+.idea/*
+*/.idea/
 .DS_Store
 chromeExtension/.DS_Store
