@@ -1787,7 +1787,7 @@ function armTrap(sort, name, trap) {
 
     var nameElement;
     if (isNewUI) {
-        var allTraps = document.getElementsByClassName('passedFilters')[0].children;
+        var allTraps = document.getElementsByClassName('campPage-trap-itemBrowser-item-content');
 
         if (allTraps.length > 0) {
             console.debug('Trying to arm ' + name);
