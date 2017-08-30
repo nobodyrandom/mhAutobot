@@ -1885,8 +1885,8 @@ function disarmTrap(trapSelector) {
                 for (var i = 0; i < x.length; ++i) {
                     if (isNewUI) {
                         x[i] = x[i].getElementsByClassName('campPage-trap-itemBrowser-item-armButton')[0];
-                        if (x[i].textContent == 'Disarm') {
-                            fireEvent(x[i], 'click');
+                        if (x[i].childNodes[0].childNodes[1].childNodes[2].textContent == 'Disarm') {
+                            fireEvent(x[i].childNodes[0].childNodes[1], 'click');
                             clearInterval(intervalDT);
                             intervalDT = null;
                             return (console.debug('Disarmed ' + trapSelector));
