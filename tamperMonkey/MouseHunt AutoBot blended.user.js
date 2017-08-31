@@ -254,7 +254,7 @@ var LOCATION_TIMERS = [
         first: 1283616000,
         length: 288000,
         breakdown: [1, 1, 1, 1],
-        name: ['Summer', 'Autumn', 'Winter', 'Spring'],
+        name: ['Summer', 'Fall', 'Winter', 'Spring'],
         color: ['Red', 'Orange', 'Blue', 'Green'],
         effective: ['tactical', 'shadow', 'hydro', 'physical']
     }],
@@ -272,11 +272,16 @@ var LOCATION_TIMERS = [
         name: ['Open', 'Closed'],
         color: ['Green', 'Red']
     }],
+    ['Toxic Spill', {
+        first: 1503597600,
+		length: 3600,
+		breakdown: [ 15, 16, 18, 18, 24, 24, 24, 12, 12, 24, 24, 24, 18, 18, 16, 15 ],
+		name: [ 'Hero', 'Knight', 'Lord', 'Baron', 'Count', 'Duke', 'Grand Duke', 'Archduke', 'Archduke', 'Grand Duke', 'Duke', 'Count', 'Baron', 'Lord', 'Knight', 'Hero'],
+		color: [ 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green' ],
+		effective: [ 'Rising',  'Rising',  'Rising',  'Rising',  'Rising',  'Rising',  'Rising',  'Rising', 'Falling', 'Falling', 'Falling', 'Falling', 'Falling', 'Falling', 'Falling', 'Falling' ]
+    }],
     ['Relic Hunter', {
         url: 'http://horntracker.com/backend/relichunter.php?functionCall=relichunt'
-    }],
-    ['Toxic Spill', {
-        url: 'http://horntracker.com/backend/new/toxic.php?functionCall=spill'
     }]
 ];
 
@@ -792,7 +797,7 @@ function ZTower() {
                 checkThenArm('best', 'weapon', bestTactical);
                 checkThenArm('best', 'weapon', bestPowerBase);
                 break;
-            case 'Autumn':
+            case 'Fall':
                 checkThenArm('best', 'weapon', bestShadow);
                 checkThenArm('best', 'weapon', bestPowerBase);
                 break;
@@ -5417,8 +5422,8 @@ function nobCalculateTime(runOnly) {
         if (debug) console.log("relic hunter will be back :)");
     }
 
-    if ((runOnly == 'toxic' || runOnly == 'all') && (typeof LOCATION_TIMERS[4][1].url != 'undefined' || LOCATION_TIMERS[4][1].url != 'undefined')) {
-        Parse.Cloud.run('nobToxic', {}, {
+    /*if ((runOnly == 'toxic' || runOnly == 'all') && (typeof LOCATION_TIMERS[4][1].url != 'undefined' || LOCATION_TIMERS[4][1].url != 'undefined')) {
+Parse.Cloud.run('nobToxic', {}, {
             success: function (data) {
                 data = JSON.parse(data);
 
@@ -5452,7 +5457,7 @@ function nobCalculateTime(runOnly) {
                 child.innerHTML = "<font color='red'>" + error + " error, probably hornTracker, google, or my scripts broke. Please wait awhile, if not just contact me.</font>";
             }
         });
-    }
+    }*/
 
     if (runOnly == 'all')
         nobCalculateOfflineTimers();
@@ -5498,7 +5503,7 @@ function nobCalculateOfflineTimers(runOnly) {
 
         return LOCATION_TIMERS[0][1].name[CurrentName];
     } else if (runOnly == 'all') {
-        for (i = 0; i < 3; i++) {
+        for (i = 0; i < 4; i++) {
             // Reset var
             CurrentTime = currentTimeStamp();
             CurrentName = -1;
