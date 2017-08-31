@@ -1794,7 +1794,7 @@ function armTrap(sort, name, trap) {
             for (var i = 0; i < allTraps.length; i++) {
                 nameElement = allTraps[i].getElementsByClassName('campPage-trap-itemBrowser-item-name')[0].textContent;
                 if (nameElement.indexOf(name) == 0) {
-                    fireEvent(allTraps[i].getElementsByClassName('campPage-trap-itemBrowser-item-armButton')[0], 'click');
+                    fireEvent(allTraps[i].parentNode.getElementsByClassName('campPage-trap-itemBrowser-item-armButton')[0], 'click');
                     console.debug(name + ' armed');
                     return 'found';
                 }
