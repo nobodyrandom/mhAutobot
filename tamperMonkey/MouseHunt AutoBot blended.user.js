@@ -3382,8 +3382,10 @@ function labyrinth() {
     var lastHunt = document.getElementsByClassName('labyrinthHUD-hallway-tile locked').length + 1;
     var totalClue = parseInt(document.getElementsByClassName('labyrinthHUD-clueBar-totalClues')[0].innerText);
     console.plog("Entrance:", isAtEntrance, "Intersection:", isAtIntersection, "Exit:", isAtExit);
+
     var objLaby = getStorageToObject('Labyrinth', objDefaultLaby);
     console.plog('District to focus:', objLaby.districtFocus);
+
     bestLabyBase = bestLabyBase.concat(objBestTrap.base.luck).concat(objBestTrap.base.power);
     var charmArmed = getPageVariable('user.trinket_name');
     if (objLaby.armOtherBase != 'false') {
