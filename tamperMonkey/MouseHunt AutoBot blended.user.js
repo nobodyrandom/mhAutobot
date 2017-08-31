@@ -275,7 +275,7 @@ var LOCATION_TIMERS = [
     ['Toxic Spill', {
         first: 1503597600,
 		length: 3600,
-		breakdown: [ 15, 16, 18, 18, 24, 24, 12, 12, 24, 24, 18, 18, 16, 15 ],
+		breakdown: [ 15, 16, 18, 18, 24, 24, 24, 12, 12, 24, 24, 24, 18, 18, 16, 15 ],
 		name: [ 'Hero', 'Knight', 'Lord', 'Baron', 'Count', 'Duke', 'Grand Duke', 'Archduke', 'Archduke', 'Grand Duke', 'Duke', 'Count', 'Baron', 'Lord', 'Knight', 'Hero'],
 		color: [ 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green', 'Green' ],
 		effective: [ 'Rising',  'Rising',  'Rising',  'Rising',  'Rising',  'Rising',  'Rising',  'Rising', 'Falling', 'Falling', 'Falling', 'Falling', 'Falling', 'Falling', 'Falling', 'Falling' ]
