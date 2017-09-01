@@ -189,7 +189,8 @@ var objBestTrap = {
     },
     base: {
         luck: ['Minotaur Base', 'Fissure Base', 'Rift Base', 'Attuned Enerchi Induction Base', 'Monkey Jade Base', 'Sheep Jade Base', 'Depth Charge Base', 'Horse Jade Base', 'Snake Jade Base', 'Dragon Jade Base', 'Eerier Base', 'Papyrus Base'],
-        power: ['Minotaur Base', 'Tidal Base', 'Golden Tournament Base', 'Spellbook Base']
+        power: ['Minotaur Base', 'Tidal Base', 'Golden Tournament Base', 'Spellbook Base'],
+        physical: ['Sheep Jade Base', 'Physical Brace Base', 'Minotaur Base', 'Tidal Base', 'Golden Tournament Base', 'Spellbook Base']
     }
 };
 
@@ -2361,7 +2362,7 @@ function iceberg(waxOrSticky) { // takes in string 'wax' or 'sticky'
         // Check if theres general
         if (progress == 300 || progress == 600 || progress == 1600 || progress == 1800) {
             console.debug('General encountered.');
-            checkThenArm('best', 'base', bestPowerBase);
+            checkThenArm('best', 'base', objBestTrap.base.power);
             checkThenArm(null, 'trinket', 'Super Power', wasteCharm);
             return;
         }
@@ -2859,20 +2860,20 @@ function ZTower() {
         console.debug('It is ' + season + ' in Seasonal Gardens right now.');
         switch (season) {
             case 'Spring':
-                checkThenArm('best', 'weapon', bestPhysical);
-                checkThenArm('best', 'weapon', bestPhysicalBase);
+                checkThenArm('best', 'weapon', objBestTrap.weapon.physical);
+                checkThenArm('best', 'weapon', objBestTrap.base.physical);
                 break;
             case 'Summer':
-                checkThenArm('best', 'weapon', bestTactical);
-                checkThenArm('best', 'weapon', bestPowerBase);
+                checkThenArm('best', 'weapon', objBestTrap.weapon.tactical);
+                checkThenArm('best', 'weapon', objBestTrap.base.power);
                 break;
             case 'Fall':
-                checkThenArm('best', 'weapon', bestShadow);
-                checkThenArm('best', 'weapon', bestPowerBase);
+                checkThenArm('best', 'weapon', objBestTrap.weapon.shadow);
+                checkThenArm('best', 'weapon', objBestTrap.base.power);
                 break;
             case 'Winter':
-                checkThenArm('best', 'weapon', bestHydro);
-                checkThenArm('best', 'weapon', bestPowerBase);
+                checkThenArm('best', 'weapon', objBestTrap.weapon.hydro);
+                checkThenArm('best', 'weapon', objBestTrap.base.power);
                 break;
             default:
                 break;
@@ -2903,7 +2904,7 @@ function ZTower() {
                     } else if (checkMouse("Knight")) {
                         //arm Sphynx Wrath
                         checkThenArm(null, "weapon", "Sphynx Wrath");
-                        checkThenArm('best', 'base', bestPowerBase);
+                        checkThenArm('best', 'base', objBestTrap.base.power);
                     }
                     clearInterval(intervalZT);
                     intervalZT = null;
@@ -3710,8 +3711,8 @@ function fieryWarpath(superCharm) {
         console.log("Current Wave: " + wave + ", with " + streak + " streak(s) in " + ", mice retreating? " + retreating);
 
         if (retreating) {
-            checkThenArm('best', 'weapon', bestPhysical);
-            checkThenArm('best', 'base', bestPhysicalBase);
+            checkThenArm('best', 'weapon', objBestTrap.weapon.physical);
+            checkThenArm('best', 'base', objBestTrap.base.physical);
             checkThenArm('best', 'trinket', wasteCharm);
             return;
         }
@@ -3741,8 +3742,8 @@ function fieryWarpath(superCharm) {
         for (var i = 0; i < population.length; i++) {
             // Check for high streak
             if (streak > 6) {
-                checkThenArm('best', 'weapon', bestPhysical);
-                checkThenArm('best', 'base', bestPhysicalBase);
+                checkThenArm('best', 'weapon', objBestTrap.weapon.physical);
+                checkThenArm('best', 'base', objBestTrap.base.physical);
                 checkThenArm('best', 'trinket', commanderCharm, 'disarm');
                 checkThenArm(null, 'bait', 'SUPER', 'Gouda');
                 break;
@@ -3754,41 +3755,41 @@ function fieryWarpath(superCharm) {
                 mouseGroup = population[i].id;
                 if (mouseGroup.indexOf("warrior") > -1) {
                     checkThenArm('best', 'trinket', warriorCharm, 'disarm');
-                    checkThenArm('best', 'weapon', bestPhysical);
-                    checkThenArm('best', 'base', bestPhysicalBase);
+                    checkThenArm('best', 'weapon', objBestTrap.weapon.physical);
+                    checkThenArm('best', 'base', objBestTrap.base.physical);
                 } else if (mouseGroup.indexOf("scout") > -1) {
                     checkThenArm('best', 'trinket', scoutCharm, 'disarm');
-                    checkThenArm('best', 'weapon', bestPhysical);
-                    checkThenArm('best', 'base', bestPhysicalBase);
+                    checkThenArm('best', 'weapon', objBestTrap.weapon.physical);
+                    checkThenArm('best', 'base', objBestTrap.base.physical);
                 } else if (mouseGroup.indexOf("archer") > -1) {
                     checkThenArm('best', 'trinket', archerCharm, 'disarm');
-                    checkThenArm('best', 'weapon', bestPhysical);
-                    checkThenArm('best', 'base', bestPhysicalBase);
+                    checkThenArm('best', 'weapon', objBestTrap.weapon.physical);
+                    checkThenArm('best', 'base', objBestTrap.base.physical);
                 } else if (mouseGroup.indexOf("cavalry") > -1) {
                     checkThenArm('best', 'trinket', cavalryCharm, 'disarm');
-                    checkThenArm('best', 'weapon', bestTactical);
-                    checkThenArm('best', 'base', bestPowerBase);
+                    checkThenArm('best', 'weapon', objBestTrap.weapon.tactical);
+                    checkThenArm('best', 'base', objBestTrap.base.power);
                 } else if (mouseGroup.indexOf("mage") > -1) {
                     checkThenArm('best', 'trinket', mageCharm, 'disarm');
-                    checkThenArm('best', 'weapon', bestHydro);
-                    checkThenArm('best', 'base', bestPowerBase);
+                    checkThenArm('best', 'weapon', objBestTrap.weapon.hydro);
+                    checkThenArm('best', 'base', objBestTrap.base.power);
                 } else if (mouseGroup.indexOf('artillery') > -1) {
                     checkThenArm('best', 'trinket', wasteCharm);
-                    checkThenArm('best', 'weapon', bestArcane);
-                    checkThenArm('best', 'base', bestPowerBase);
+                    checkThenArm('best', 'weapon', objBestTrap.weapon.arcane);
+                    checkThenArm('best', 'base', objBestTrap.base.power);
                 } else if (mouseGroup.indexOf("elite_gaurd") > -1) {
                     // wardens: desert_elite_gaurd
                     checkThenArm('best', 'weapon', wave4PhysicalTrap);
-                    checkThenArm('best', 'base', bestPhysicalBase);
+                    checkThenArm('best', 'base', objBestTrap.base.physical);
                     checkThenArm('best', 'trinket', wardenCharm, wasteCharm);
                 } else if (mouseGroup.indexOf("boss") > -1) {
                     // warmonger: desert_boss
                     checkThenArm('best', 'weapon', wave4PhysicalTrap);
-                    checkThenArm('best', 'base', bestPhysicalBase);
+                    checkThenArm('best', 'base', objBestTrap.base.physical);
                     checkThenArm('best', 'trinket', bossCharm, 'disarm');
                 } else {
-                    checkThenArm('best', 'weapon', bestPhysical);
-                    checkThenArm('best', 'base', bestPhysicalBase);
+                    checkThenArm('best', 'weapon', objBestTrap.weapon.physical);
+                    checkThenArm('best', 'base', objBestTrap.base.physical);
                     disarmTrap('trinket');
                 }
                 break;
