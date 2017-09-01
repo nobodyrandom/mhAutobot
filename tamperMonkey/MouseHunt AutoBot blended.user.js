@@ -104,6 +104,11 @@ var krStartHour = 4;
 var krStartHourDelayMin = 10;
 var krStartHourDelayMax = 30;
 
+// // Time offset (in seconds) between client time and internet time
+// // -ve - Client time ahead of internet time
+// // +ve - Internet time ahead of client time
+var g_nTimeOffset = 0;
+
 // // Maximum retry of solving KR.
 // // If KR solved more than this number, pls solve KR manually ASAP in order to prevent MH from caught in botting
 var kingsRewardRetryMax = 3;
