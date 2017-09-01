@@ -2861,19 +2861,19 @@ function ZTower() {
         switch (season) {
             case 'Spring':
                 checkThenArm('best', 'weapon', objBestTrap.weapon.physical);
-                checkThenArm('best', 'weapon', objBestTrap.base.physical);
+                checkThenArm('best', 'base', objBestTrap.base.physical);
                 break;
             case 'Summer':
                 checkThenArm('best', 'weapon', objBestTrap.weapon.tactical);
-                checkThenArm('best', 'weapon', objBestTrap.base.power);
+                checkThenArm('best', 'base', objBestTrap.base.power);
                 break;
             case 'Fall':
                 checkThenArm('best', 'weapon', objBestTrap.weapon.shadow);
-                checkThenArm('best', 'weapon', objBestTrap.base.power);
+                checkThenArm('best', 'base', objBestTrap.base.power);
                 break;
             case 'Winter':
                 checkThenArm('best', 'weapon', objBestTrap.weapon.hydro);
-                checkThenArm('best', 'weapon', objBestTrap.base.power);
+                checkThenArm('best', 'base', objBestTrap.base.power);
                 break;
             default:
                 break;
