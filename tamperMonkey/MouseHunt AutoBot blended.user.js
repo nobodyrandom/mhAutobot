@@ -8396,7 +8396,7 @@ function getPageVariable(name) {
     try {
         var browser = browserDetection();
 
-        if (browser == 'chrome') {
+        if (browser == 'chrome' || browser == 'opera') {
             if (name == "user.unique_hash") {
                 return user.unique_hash;
             } else {
