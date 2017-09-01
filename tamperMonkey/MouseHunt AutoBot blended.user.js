@@ -4808,6 +4808,9 @@ function checkThenArm(sort, category, name, isForcedRetry)   //category = weapon
                 }
             }, 1000);
     }
+    else if (trapArmed === undefined && !isForcedRetry) {
+        closeTrapSelector(category);
+    }
 }
 
 function getConstToRealValue(sort, category, name) {
