@@ -2197,7 +2197,7 @@ function clawshot() {
     else var clawshotBase = [ 'Minotaur Base', 'Clockwork Base', 'Fissure Base', 'Tidal Base', 'Attuned Enerchi Induction Base', 'Monkey Jade Base', 'Rooster Jade Base', 'Sheep Jade Base', 'Horse Jade Base', 'Snake Jade Base', 'Refined Pollutinum Base', 'Rift Base', 'Ancient Booster Base', 'Magma Base', 'Depth Charge Base', 'Dragon Jade Base', 'Eerier Base', 'Sprinkly Sweet Cupcake Birthday Base', 'Golden Tournament Base', 'Fracture Base', 'Labyrinth Base', 'Papyrus Base', '2017 New Year\'s Base', 'Enerchi Induction Base', 'Extra Sweet Cupcake Birthday Base', 'Washboard Base', 'Molten Shrapnel Base', 'Eerie Base', 'Spellbook Base', 'Skello-ton Base', 'Living Base', 'Physical Brace Base', 'Silver Tournament Base', 'Cupcake Birthday Base', 'Candy Cane Base', 'Aqua Base', 'Soiled Base', 'Birthday Dragée Cake Base', 'Seasonal Base', 'Runic Base', 'Hothouse Base', 'Crushed Birthday Cake Base', 'Polluted Base', 'Ultimate Iceberg Base', 'Remote Detonator Base', 'Bronze Tournament Base', 'Magnet Base', 'Claw Shot Base', 'Firecracker Base', 'Jade Base', 'Polar Base', 'Gingerbread Base', 'Dehydration Base', 'Spiked Base', 'Carrot Birthday Cake Base', 'Fan Base', 'Hearthstone Base', 'Tiki Base', 'Cheesecake Base', 'Tribal Kaboom Base', 'Chocolate Birthday Cake Base', 'Tribal Base', 'Monolith Base', 'Bamboozler Base', 'Birthday Cake Base', 'Bacon Base', 'Explosive Base', 'Wooden Base with Target', 'Stone Base', 'Deep Freeze Base', 'Wooden Base' ];
     console.debug(location);
     if (location.indexOf('Claw Shot City') > -1) {
-		var successItem = false;
+        var successItem = false;
         var map = document.getElementsByClassName('mousehuntHud-userStat treasureMap  empty')[0]
         //Opens wanted poster if found in current journal entries
         if (map !== undefined) {
@@ -2205,14 +2205,11 @@ function clawshot() {
             var successItem = useJournalItem('Sealed Wanted Poster', true);
             if (successItem) {
                 console.debug("successItem: " + successItem);
-				closePopups();
+                closePopups();
             }
         }
         //Finishes map and opens treasure chest
-        else if (document.getElementsByClassName('mousehuntHud-userStat treasureMap')[0].childNodes[2].textContent.indexOf('Claim your reward') > -1) {
-            console.debug('Map complete')
-			claimMapAndOpenReward();
-        }
+        else claimMapAndOpenReward();
 
         //Uses Sheriff's Badge charm if no map, uses Cactus Charm if using S.L.A.C series trap
         if (map !== undefined && successItem == false && (trapArmed.indexOf('S.L.A.C. II') > -1 || trapArmed.indexOf('S.L.A.C.') > -1)) checkThenArm('best', 'trinket', ['Sheriff\'s Badge Charm', 'Super Cactus Charm', 'Cactus Charm'], wasteCharm);
@@ -8610,35 +8607,37 @@ function closePopups() {
 	}
 }
 
-function ClaimMapAndOpenReward() {
-	var intervalOpenMap = setInterval(
-		function () {
-			if (document.getElementsByClassName('mousehuntHud-userStat treasureMap').length > 0) {
-				fireEvent(document.getElementsByClassName('mousehuntHud-userStat treasureMap')[0].childNodes[2], 'click');
-				clearInterval(intervalOpenMap);
-				intervalOpenMap = null;
-				var intervalClaimMap = setInterval(
-					function () {
-						if (document.getElementsByClassName('treasureMapPopup-action-button highlight').length > 0) {
-							fireEvent(document.getElementsByClassName('treasureMapPopup-action-button highlight')[0], 'click');
-							clearInterval(intervalClaimMap);
-							intervalClaimMap = null;
-							var intervalOpenTreasureChest = setInterval(
-								function () {
-									if (document.getElementsByClassName('treasureMapPopup-action-button openReward').length > 0) {
-										fireEvent(document.getElementsByClassName('treasureMapPopup-action-button openReward')[0], 'click');
-										clearInterval(intervalOpenTreasureChest);
-										intervalOpenTreasureChest = null;
-										closePopups();
-										return;
-									}
-								}, 1000);
-							return;
-						}
-					}, 1000);
-				return;
-			}
-		}, 1000);
+function claimMapAndOpenReward() {
+    if (document.getElementsByClassName('mousehuntHud-userStat treasureMap')[0].childNodes[2].textContent.indexOf('Claim your reward') > -1) {
+        var intervalOpenMap = setInterval(
+            function () {
+                if (document.getElementsByClassName('mousehuntHud-userStat treasureMap').length > 0) {
+                    fireEvent(document.getElementsByClassName('mousehuntHud-userStat treasureMap')[0].childNodes[2], 'click');
+                    clearInterval(intervalOpenMap);
+                    intervalOpenMap = null;
+                    var intervalClaimMap = setInterval(
+                        function () {
+                            if (document.getElementsByClassName('treasureMapPopup-action-button highlight').length > 0) {
+                                fireEvent(document.getElementsByClassName('treasureMapPopup-action-button highlight')[0], 'click');
+                                clearInterval(intervalClaimMap);
+                                intervalClaimMap = null;
+                                var intervalOpenTreasureChest = setInterval(
+                                    function () {
+                                        if (document.getElementsByClassName('treasureMapPopup-action-button openReward').length > 0) {
+                                            fireEvent(document.getElementsByClassName('treasureMapPopup-action-button openReward')[0], 'click');
+                                            clearInterval(intervalOpenTreasureChest);
+                                            intervalOpenTreasureChest = null;
+                                            closePopups();
+                                            return;
+                                        }
+                                    }, 1000);
+                                return;
+                            }
+                        }, 1000);
+                    return;
+                }
+            }, 1000);
+    }
 }
 // ################################################################################################
 //   General Function - End
