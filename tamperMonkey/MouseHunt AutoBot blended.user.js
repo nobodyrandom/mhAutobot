@@ -1228,6 +1228,9 @@ function eventLocationCheck(caller) {
         case 'Fort Rox':
             fortRox();
             break;
+        case 'Claw Shot City':
+            clawshot();
+            break;
         default:
             break;
     }
@@ -2185,6 +2188,40 @@ function ges() {
     checkThenArm(null, 'weapon', objGES[strStage].weapon);
     checkThenArm(null, 'base', objGES[strStage].base);
     checkThenArm(null, 'bait', objGES[strStage].bait);
+}
+
+function clawshot() {
+    var location = getPageVariable('user.location');
+    var trapArmed = getPageVariable('user.weapon_name');
+    if (trapArmed.indexOf('S.L.A.C. II') > -1 || trapArmed.indexOf('S.L.A.C.') > -1) var clawshotBase = ['Minotaur Base', 'Clockwork Base', 'Tidal Base', 'Fissure Base', 'Claw Shot Base', 'Attuned Enerchi Induction Base', 'Refined Pollutinum Base', 'Depth Charge Base', 'Monkey Jade Base', 'Rooster Jade Base', 'Golden Tournament Base', 'Sheep Jade Base', 'Rift Base', 'Horse Jade Base', 'Papyrus Base', 'Snake Jade Base', 'Magma Base', 'Dragon Jade Base', 'Eerier Base', 'Ancient Booster Base', 'Spellbook Base', 'Sprinkly Sweet Cupcake Birthday Base', 'Fracture Base', '2017 New Year\'s Base', 'Silver Tournament Base', 'Molten Shrapnel Base', 'Extra Sweet Cupcake Birthday Base', 'Eerie Base', 'Skello-ton Base', 'Labyrinth Base', 'Enerchi Induction Base', 'Washboard Base', 'Polluted Base', 'Soiled Base', 'Physical Brace Base', 'Living Base', 'Candy Cane Base', 'Cupcake Birthday Base', 'Aqua Base', 'Seasonal Base', 'Hothouse Base', 'Bronze Tournament Base', 'Remote Detonator Base', 'Birthday Dragée Cake Base', 'Magnet Base', 'Jade Base', 'Runic Base', 'Firecracker Base', 'Spiked Base', 'Ultimate Iceberg Base', 'Crushed Birthday Cake Base', 'Gingerbread Base', 'Polar Base', 'Dehydration Base', 'Monolith Base', 'Carrot Birthday Cake Base', 'Explosive Base', 'Fan Base', 'Hearthstone Base', 'Tiki Base', 'Tribal Kaboom Base', 'Tribal Base', 'Chocolate Birthday Cake Base', 'Bamboozler Base', 'Birthday Cake Base', 'Bacon Base', 'Cheesecake Base', 'Stone Base', 'Wooden Base with Target', 'Deep Freeze Base', 'Wooden Base' ];
+    else var clawshotBase = [ 'Minotaur Base', 'Clockwork Base', 'Fissure Base', 'Tidal Base', 'Attuned Enerchi Induction Base', 'Monkey Jade Base', 'Rooster Jade Base', 'Sheep Jade Base', 'Horse Jade Base', 'Snake Jade Base', 'Refined Pollutinum Base', 'Rift Base', 'Ancient Booster Base', 'Magma Base', 'Depth Charge Base', 'Dragon Jade Base', 'Eerier Base', 'Sprinkly Sweet Cupcake Birthday Base', 'Golden Tournament Base', 'Fracture Base', 'Labyrinth Base', 'Papyrus Base', '2017 New Year\'s Base', 'Enerchi Induction Base', 'Extra Sweet Cupcake Birthday Base', 'Washboard Base', 'Molten Shrapnel Base', 'Eerie Base', 'Spellbook Base', 'Skello-ton Base', 'Living Base', 'Physical Brace Base', 'Silver Tournament Base', 'Cupcake Birthday Base', 'Candy Cane Base', 'Aqua Base', 'Soiled Base', 'Birthday Dragée Cake Base', 'Seasonal Base', 'Runic Base', 'Hothouse Base', 'Crushed Birthday Cake Base', 'Polluted Base', 'Ultimate Iceberg Base', 'Remote Detonator Base', 'Bronze Tournament Base', 'Magnet Base', 'Claw Shot Base', 'Firecracker Base', 'Jade Base', 'Polar Base', 'Gingerbread Base', 'Dehydration Base', 'Spiked Base', 'Carrot Birthday Cake Base', 'Fan Base', 'Hearthstone Base', 'Tiki Base', 'Cheesecake Base', 'Tribal Kaboom Base', 'Chocolate Birthday Cake Base', 'Tribal Base', 'Monolith Base', 'Bamboozler Base', 'Birthday Cake Base', 'Bacon Base', 'Explosive Base', 'Wooden Base with Target', 'Stone Base', 'Deep Freeze Base', 'Wooden Base' ];
+    console.debug(location);
+    if (location.indexOf('Claw Shot City') > -1) {
+		var successItem = false;
+        var map = document.getElementsByClassName('mousehuntHud-userStat treasureMap  empty')[0]
+        //Opens wanted poster if found in current journal entries
+        if (map !== undefined) {
+            console.debug("No Map Found");
+            var successItem = useJournalItem('Sealed Wanted Poster', true);
+            if (successItem) {
+                console.debug("successItem: " + successItem);
+				closePopups();
+            }
+        }
+        //Finishes map and opens treasure chest
+        else if (document.getElementsByClassName('mousehuntHud-userStat treasureMap')[0].childNodes[2].textContent.indexOf('Claim your reward') > -1) {
+            console.debug('Map complete')
+			claimMapAndOpenReward();
+        }
+
+        //Uses Sheriff's Badge charm if no map, uses Cactus Charm if using S.L.A.C series trap
+        if (map !== undefined && successItem == false && (trapArmed.indexOf('S.L.A.C. II') > -1 || trapArmed.indexOf('S.L.A.C.') > -1)) checkThenArm('best', 'trinket', ['Sheriff\'s Badge Charm', 'Super Cactus Charm', 'Cactus Charm'], wasteCharm);
+        else if (map !== undefined && successItem == false) checkThenArm('best', 'trinket', ['Sheriff\'s Badge Charm'], wasteCharm);
+        else if (trapArmed.indexOf('S.L.A.C. II') > -1 || trapArmed.indexOf('S.L.A.C.') > -1) checkThenArm('best', 'trinket', ['Super Cactus Charm', 'Cactus Charm'], wasteCharm);
+
+        checkThenArm('best', 'weapon', objBestTrap.weapon.law);
+        checkThenArm('best', 'base', clawshotBase);
+    }
 }
 
 function wwrift() {
@@ -6723,6 +6760,7 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<option value="Iceberg (Wax)">Iceberg (Wax)</option>';
                 preferenceHTMLStr += '<option value="Iceberg (Sticky)">Iceberg (Sticky)</option>';
                 preferenceHTMLStr += '<option value="All LG Area">All LG Area</option>';
+                preferenceHTMLStr += '<option value="Claw Shot City">Claw Shot City</option>';
                 preferenceHTMLStr += '<option value="Gnawnian Express(Empty)">Gnawnian Express(Empty)</option>';
                 preferenceHTMLStr += '<option value="Gnawnian Express(Full)">Gnawnian Express(Full)</option>';
                 preferenceHTMLStr += '<option value="Bristle Woods Rift">Bristle Woods Rift</option>';
@@ -8532,6 +8570,76 @@ function timeFormatLong(time) {
     }
 }
 
+//Clicks on item found in Hunters Journal
+//Use exact name as found in journal for item and true/false if you want to click on a button after clicking the item in the journal.
+//returns True if it found the item, false otherwise
+function useJournalItem(item, clickButton) {
+    var itemElement = document.getElementsByClassName('journaltext');
+    var success = false;
+    itemMatch = new RegExp("[0-9]+ " + item);
+    for(var i = 0; i < itemElement.length; i++ ) {
+        if (itemElement[i].textContent.match(itemMatch) !== null) {
+            for (var j = 0; j < itemElement[i].children.length; j++) {
+                if (itemElement[i].children[j].textContent.indexOf(item) > -1) {
+                    console.debug("Found Item");
+                    fireEvent(itemElement[i].children[j], 'click');
+                    if (clickButton) {
+                        var intervalUseItem = setInterval(
+                            function () {
+                                if (document.querySelectorAll('a[class*=itemView-action-convert-actionButton],a[class*=itemView-action-component-actionButton]').length > 0) {
+                                    fireEvent(document.querySelectorAll('a[class*=itemView-action-convert-actionButton],a[class*=itemView-action-component-actionButton]')[0], 'click');
+                                    clearInterval(intervalUseItem);
+                                    intervalUseItem = null;
+                                    return;
+                                }
+                            }, 1000);
+                    }
+                    success = true;
+                    break;
+                }
+            }
+            break;
+        }
+    }
+    return success;
+}
+
+function closePopups() {
+	for (i = 0; i < document.querySelectorAll('a[id*=jsDialogClose]').length; i++) {
+		fireEvent(document.querySelectorAll('a[id*=jsDialogClose]')[i], 'click');
+	}
+}
+
+function ClaimMapAndOpenReward() {
+	var intervalOpenMap = setInterval(
+		function () {
+			if (document.getElementsByClassName('mousehuntHud-userStat treasureMap').length > 0) {
+				fireEvent(document.getElementsByClassName('mousehuntHud-userStat treasureMap')[0].childNodes[2], 'click');
+				clearInterval(intervalOpenMap);
+				intervalOpenMap = null;
+				var intervalClaimMap = setInterval(
+					function () {
+						if (document.getElementsByClassName('treasureMapPopup-action-button highlight').length > 0) {
+							fireEvent(document.getElementsByClassName('treasureMapPopup-action-button highlight')[0], 'click');
+							clearInterval(intervalClaimMap);
+							intervalClaimMap = null;
+							var intervalOpenTreasureChest = setInterval(
+								function () {
+									if (document.getElementsByClassName('treasureMapPopup-action-button openReward').length > 0) {
+										fireEvent(document.getElementsByClassName('treasureMapPopup-action-button openReward')[0], 'click');
+										clearInterval(intervalOpenTreasureChest);
+										intervalOpenTreasureChest = null;
+										closePopups();
+										return;
+									}
+								}, 1000);
+							return;
+						}
+					}, 1000);
+				return;
+			}
+		}, 1000);
+}
 // ################################################################################################
 //   General Function - End
 // ################################################################################################
