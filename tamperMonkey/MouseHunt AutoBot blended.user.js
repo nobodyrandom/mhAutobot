@@ -2205,7 +2205,7 @@ function clawshot() {
             var successItem = useJournalItem('Sealed Wanted Poster', true);
             if (successItem) {
                 console.debug("successItem: " + successItem);
-                closePopups();
+                setTimeout(function () { closePopups()}, 5000);
             }
         }
         //Finishes map and opens treasure chest
@@ -8602,9 +8602,9 @@ function useJournalItem(item, clickButton) {
 }
 
 function closePopups() {
-	for (i = 0; i < document.querySelectorAll('a[id*=jsDialogClose]').length; i++) {
-		fireEvent(document.querySelectorAll('a[id*=jsDialogClose]')[i], 'click');
-	}
+    for (i = 0; i < document.querySelectorAll('a[id*=jsDialogClose]').length; i++) {
+        fireEvent(document.querySelectorAll('a[id*=jsDialogClose]')[i], 'click');
+    }
 }
 
 function claimMapAndOpenReward() {
@@ -8627,7 +8627,7 @@ function claimMapAndOpenReward() {
                                             fireEvent(document.getElementsByClassName('treasureMapPopup-action-button openReward')[0], 'click');
                                             clearInterval(intervalOpenTreasureChest);
                                             intervalOpenTreasureChest = null;
-                                            closePopups();
+                                            setTimeout(function () { closePopups()}, 5000);
                                             return;
                                         }
                                     }, 1000);
