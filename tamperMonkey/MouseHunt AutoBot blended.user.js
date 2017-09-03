@@ -2205,7 +2205,7 @@ function clawshot() {
             var successItem = useJournalItem('Sealed Wanted Poster', true);
             if (successItem) {
                 console.debug("successItem: " + successItem);
-                setTimeout(function () { closePopups()}, 5000);
+                closePopups();
             }
         }
         //Finishes map and opens treasure chest
@@ -8583,8 +8583,8 @@ function useJournalItem(item, clickButton) {
                     if (clickButton) {
                         var intervalUseItem = setInterval(
                             function () {
-                                if (document.querySelectorAll('a[class*=itemView-action-convert-actionButton]').length > 0) {
-                                    fireEvent(document.querySelectorAll('a[class*=itemView-action-convert-actionButton]')[0], 'click');
+                                if (document.querySelectorAll('div[class*=itemView-actionContainer]').length > 0) {
+                                    fireEvent(document.querySelectorAll('div[class*=itemView-actionContainer]')[0].children[0].children[4], 'click');
                                     clearInterval(intervalUseItem);
                                     intervalUseItem = null;
                                     return;
@@ -8602,9 +8602,15 @@ function useJournalItem(item, clickButton) {
 }
 
 function closePopups() {
-    for (i = 0; i < document.querySelectorAll('a[id*=jsDialogClose]').length; i++) {
-        fireEvent(document.querySelectorAll('a[id*=jsDialogClose]')[i], 'click');
-    }
+    var intervalclosePopups = setInterval(
+        function () {
+            for (i = 0; i < document.querySelectorAll('a[id*=jsDialogClose]').length; i++) {
+                fireEvent(document.querySelectorAll('a[id*=jsDialogClose]')[i], 'click');
+            }
+            clearInterval(intervalclosePopups);
+            intervalclosePopups = null;
+            return;
+        }, 6000);
 }
 
 function claimMapAndOpenReward() {
@@ -8627,7 +8633,7 @@ function claimMapAndOpenReward() {
                                             fireEvent(document.getElementsByClassName('treasureMapPopup-action-button openReward')[0], 'click');
                                             clearInterval(intervalOpenTreasureChest);
                                             intervalOpenTreasureChest = null;
-                                            setTimeout(function () { closePopups()}, 5000);
+                                            closePopups();
                                             return;
                                         }
                                     }, 1000);
