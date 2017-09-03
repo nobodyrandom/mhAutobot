@@ -8583,8 +8583,8 @@ function useJournalItem(item, clickButton) {
                     if (clickButton) {
                         var intervalUseItem = setInterval(
                             function () {
-                                if (document.querySelectorAll('a[class*=itemView-action-convert-actionButton],a[class*=itemView-action-component-actionButton]').length > 0) {
-                                    fireEvent(document.querySelectorAll('a[class*=itemView-action-convert-actionButton],a[class*=itemView-action-component-actionButton]')[0], 'click');
+                                if (document.querySelectorAll('a[class*=itemView-action-convert-actionButton]').length > 0) {
+                                    fireEvent(document.querySelectorAll('a[class*=itemView-action-convert-actionButton]')[0], 'click');
                                     clearInterval(intervalUseItem);
                                     intervalUseItem = null;
                                     return;
