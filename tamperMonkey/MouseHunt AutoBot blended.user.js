@@ -9,8 +9,8 @@
 // @require     https://greasyfork.org/scripts/16046-ocrad/code/OCRAD.js?version=100053
 // @require     https://greasyfork.org/scripts/16036-mh-auto-kr-solver/code/MH%20Auto%20KR%20Solver.js?version=102270
 // @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot, https://devcnn.wordpress.com/
-// @updateURL	https://greasyfork.org/scripts/6514-mousehunt-autobot-enhanced-revamp/code/MouseHunt%20AutoBot%20ENHANCED%20+%20REVAMP.meta.js
-// @downloadURL	https://greasyfork.org/scripts/6514-mousehunt-autobot-enhanced-revamp/code/MouseHunt%20AutoBot%20ENHANCED%20+%20REVAMP.user.js
+// @updateURL	https://greasyfork.org/scripts/32971-mousehunt-autobot-enhanced-revamp/code/MouseHunt%20AutoBot%20ENHANCED%20+%20REVAMP.meta.js
+// @downloadURL	https://greasyfork.org/scripts/32971-mousehunt-autobot-enhanced-revamp/code/MouseHunt%20AutoBot%20ENHANCED%20+%20REVAMP.user.js
 // @license 	GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
@@ -7180,10 +7180,7 @@ function addGoogleAd() {
                 adFrame.appendChild(document.createElement('center'));
                 adFrame.firstChild.appendChild(newAd);
                 var newAdScript = document.createElement('script');
-                newAdScript.src = "//pagead2.google";
-                newAdScript.src += "syndication.com/";
-                newAdScript.src += "pagead/js/adsbygoogle";
-                newAdScript.src += ".js";
+                newAdScript.src = "//pagead2.google" + "syndication.com/" + "pagead/js/adsbygoogle" + ".js";
                 newAd.innerHTML = "<ins class=\"adsbygoogle\" " +
                     "style=\"display:block\" " +
                     "data-" + "ad" + "-client=\"ca-pub-" + "3255634416502948\" " +
@@ -8995,7 +8992,7 @@ function fetchGDocStuff() {
                 if (debug) console.log('Current MH AutoBot version: ' + currVer + ' / Server MH AutoBot version: ' + checkVer);
                 if (checkVer > currVer) {
                     var updateElement = document.getElementById('updateElement');
-                    updateElement.innerHTML = "<a href=\"https://greasyfork.org/scripts/6514-mousehunt-autobot-enhanced-revamp/code/MouseHunt%20AutoBot%20ENHANCED%20+%20REVAMP.user.js\" target='_blank'><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
+                    updateElement.innerHTML = "<a href=\"https://greasyfork.org/scripts/32971-mousehunt-autobot-enhanced-revamp/code/MouseHunt%20AutoBot%20ENHANCED%20+%20REVAMP.user.js\" target='_blank'><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
                 }
 
                 // SPECIAL MESSAGE
