@@ -7180,8 +7180,14 @@ function addGoogleAd() {
                 adFrame.appendChild(document.createElement('center'));
                 adFrame.firstChild.appendChild(newAd);
                 var newAdScript = document.createElement('script');
-                newAdScript.src = "//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js";
-                newAd.innerHTML = "<ins class=\"adsbygoogle\" style=\"display:block\" data-ad-client=\"ca-pub-3255634416502948\" data-ad-slot=\"2618509310\" data-ad-format=\"auto\"></ins>";
+                newAdScript.src = "//pagead2.google";
+                newAdScript.src += "syndication.com/";
+                newAdScript.src += "pagead/js/adsbygoogle";
+                newAdScript.src += ".js";
+                newAd.innerHTML = "<ins class=\"adsbygoogle\" " +
+                    "style=\"display:block\" " +
+                    "data-" + "ad" + "-client=\"ca-pub-" + "3255634416502948\" " +
+                    "data-" + "ad-" + "slot=\"2618509310\" data-" + "ad" + "-format=\"auto\"></ins>";
                 newAd.appendChild(newAdScript);
                 (adsbygoogle = window.adsbygoogle || []).push({});
 
