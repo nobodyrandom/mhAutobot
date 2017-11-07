@@ -11,7 +11,7 @@
 // @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot, https://devcnn.wordpress.com/
 // @updateURL	https://greasyfork.org/scripts/32971-mousehunt-autobot-enhanced-revamp/code/MouseHunt%20AutoBot%20ENHANCED%20+%20REVAMP.meta.js
 // @downloadURL	https://greasyfork.org/scripts/32971-mousehunt-autobot-enhanced-revamp/code/MouseHunt%20AutoBot%20ENHANCED%20+%20REVAMP.user.js
-// @license 	GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
+// @license 	GPL-3.0+; http://www.gnu.org/copyleft/gpl.html
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
 // @include		http://www.mousehuntgame.com/*
