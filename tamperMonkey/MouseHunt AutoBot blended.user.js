@@ -1394,7 +1394,7 @@ function checkCaughtMouse(obj, arrUpdatedUncaught) {
 
 function GetCurrentLocation() {
     var loc = getPageVariable('user.location');
-    console.plog('Current Location:', loc);
+    if (debug) console.plog('Current Location:', loc);
     return loc;
 }
 
@@ -5564,7 +5564,7 @@ function retrieveDataFirst() {
                     hasPuzzleStartIndex += 12;
                     var hasPuzzleEndIndex = scriptString.indexOf(",", hasPuzzleStartIndex);
                     var hasPuzzleString = scriptString.substring(hasPuzzleStartIndex, hasPuzzleEndIndex);
-                    console.plog('hasPuzzleString:', hasPuzzleString);
+                    if (debug) console.plog('hasPuzzleString:', hasPuzzleString);
                     isKingReward = (hasPuzzleString != 'false');
 
                     gotPuzzle = true;
