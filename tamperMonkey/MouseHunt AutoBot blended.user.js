@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Hazado, Ooi Keng Siang, CnN
-// @version    	2.2.4b
+// @version    	2.2.5b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require     https://code.jquery.com/jquery-2.2.2.min.js
@@ -6060,7 +6060,7 @@ function countdownTimer() {
                     // agressive mode should sound the horn whenever it is possible to do so.
                     var headerElement = document.getElementById(header);
                     if (headerElement) {
-                        if (isNewUI)
+                        //if (isNewUI)
                             headerElement = headerElement.firstChild;
                         // the horn image appear before the timer end
                         if (headerElement.getAttribute('class').indexOf(hornReady) != -1) {
@@ -7260,7 +7260,7 @@ function soundHorn() {
             var headerElement = document.getElementById(header);
 
             if (headerElement) {
-                if (isNewUI)
+                //if (isNewUI)
                     headerElement = headerElement.firstChild;
                 // need to make sure that the horn image is ready before we can click on it
                 var headerStatus = headerElement.getAttribute('class');
@@ -7381,7 +7381,7 @@ function afterSoundingHorn() {
 
     var headerElement = document.getElementById(header);
     if (headerElement) {
-        if (isNewUI)
+        //if (isNewUI)
             headerElement = headerElement.firstChild;
         // double check if the horn image is still visible after the script already sound it
         var headerStatus = headerElement.getAttribute('class');
