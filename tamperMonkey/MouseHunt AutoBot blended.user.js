@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Hazado, Ooi Keng Siang, CnN
-// @version    	2.2.3b
+// @version    	2.2.4b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require     https://code.jquery.com/jquery-2.2.2.min.js
@@ -6340,7 +6340,7 @@ function embedTimer(targetPage) {
                                 $('.camp a')[0].removeEventListener('click', ajaxPageSwitchEvent);
                                 ajaxPageSwitchEvent = null;
                             };
-                            $('.camp a')[0].addEventListener('click', ajaxPageSwitchEvent);
+                            //$('.camp a')[0].addEventListener('click', ajaxPageSwitchEvent);
                         }
                     }
 
@@ -6908,6 +6908,12 @@ window.localStorage.setItem(\'addonCode\', document.getElementById(\'addonCode\'
 
         targetPage = null;
     } catch (e) {
+        if (debug) {
+            for (var prop in e) {
+                console.log("embedTimer error stack: " + prop + " value: [" + e[prop] + "]\n");
+            }
+        }
+
         if (debug) console.log('embedTimer error - ' + e)
     }
 }
@@ -7498,9 +7504,10 @@ function embedScript() {
 }
 
 function nobTestBetaUI() { // Return true if beta UI
-    header = 'header';
+    header = 'mousehuntHud';
     var testNewUI = document.getElementById(header);
     if (testNewUI != null) {
+        if (debug) console.log("OLD UI DETECTED");
         // old UI
         hornButton = 'mousehuntHud-huntersHorn-container';
         //campButton = 'campbutton';
@@ -7510,6 +7517,7 @@ function nobTestBetaUI() { // Return true if beta UI
         isNewUI = false;
         return false;
     } else {
+        if (debug) console.log("NEW UI DETECTED");
         // new UI
         hornButton = 'mousehuntHud-huntersHorn-container';
         campButton = 'camp';
