@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Hazado, Ooi Keng Siang, CnN
-// @version    	2.2.2b
+// @version    	2.2.3b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require     https://code.jquery.com/jquery-2.2.2.min.js
@@ -32,14 +32,14 @@
 // // Reload MouseHunt page manually if edit this script while running it for immediate effect.
 
 // // ERROR CHECKING ONLY: Script debug
-var debug = true;
+var debug = false;
 // // ERROR CHECKING ONLY: KR debug
 var debugKR = false;
 
 // // Extra delay time before sounding the horn. (in seconds)
 // // Default: 10 - 360
 var hornTimeDelayMin = 10;
-var hornTimeDelayMax = 360;
+var hornTimeDelayMax = 300;
 
 // // Bot aggressively by ignore all safety measure such as check horn image visible before sounding it. (true/false)
 // // Note: Highly recommended to turn off because it increase the chances of getting caught in botting.
@@ -98,7 +98,7 @@ var krDelayMax = 30;
 // // Example: Script would not auto solve KR between 00:00 - 6:00 when krStopHour = 0 & krStartHour = 6;
 // // To disable this feature, set both to the same value.
 var krStopHour = 3;
-var krStartHour = 4;
+var krStartHour = 3;
 
 // // Extra delay time to start solving KR after krStartHour. (in minutes)
 var krStartHourDelayMin = 10;
@@ -932,6 +932,9 @@ function exeScript() {
 }
 
 function GetTrapCheckTime() {
+    if (getStorage('TrapCheckTimeOffset') != "" || getStorage('TrapCheckTimeOffset') != -1)
+        return parseInt(getStorage('TrapCheckTimeOffset'));
+
     try {
         var passiveElement = document.getElementsByClassName('passive');
         if (passiveElement.length > 0) {
@@ -3364,7 +3367,13 @@ function labyZokor() {
     if (GetCurrentLocation().indexOf("Labyrinth") < 0)
         zokor();
     else
-        labyrinth();
+        tempLabyrinth();
+}
+
+function tempLabyrinth() {
+    if (!$('a.labyrinthHUD-door').hasClass('disabled')) {
+        disarmTrap('bait');
+    }
 }
 
 function labyrinth() {
@@ -5662,7 +5671,9 @@ function getKingRewardStatus() {
     var strValue = getPageVariable('user.has_puzzle');
     console.plog('user.has_puzzle:', strValue);
     return (strValue == 'true');
-    var headerOrHud = (isNewUI) ? document.getElementById('mousehuntHud') : document.getElementById('header');
+    //var headerOrHud = (isNewUI) ? document.getElementById('mousehuntHud') : document.getElementById('mousehuntHud');
+    var headerOrHud = document.getElementById(header);
+
     if (headerOrHud !== null) {
         var textContentLowerCase = headerOrHud.textContent.toLowerCase();
         if (textContentLowerCase.indexOf("king reward") > -1 ||
@@ -5883,9 +5894,9 @@ function action() {
             nobTestBetaUI();
             var headerElement = document.getElementById(header);
             if (headerElement) {
-                if (isNewUI) {
+                //if (isNewUI) {
                     headerElement = headerElement.firstChild;
-                }
+                //}
                 var headerStatus = headerElement.getAttribute('class');
                 if (headerStatus.indexOf(hornReady) != -1) {
                     // if the horn image is visible, why do we need to wait any more, sound the horn!
@@ -5932,7 +5943,7 @@ function countdownTimer() {
 
         // reload the page so that the sound can be play
         // simulate mouse click on the camp button
-        fireEvent(document.getElementsByClassName(campButton)[0].firstChild, 'click');
+        fireEvent(document.getElementsByClassName(campButton)[0], 'click');
 
         // reload the page if click on camp button fail
         window.setTimeout(function () {
@@ -7483,9 +7494,10 @@ function nobTestBetaUI() { // Return true if beta UI
     var testNewUI = document.getElementById(header);
     if (testNewUI != null) {
         // old UI
-        hornButton = 'hornbutton';
-        campButton = 'campbutton';
-        header = 'header';
+        hornButton = 'mousehuntHud-huntersHorn-container';
+        //campButton = 'campbutton';
+        campButton = 'mousehuntHud-campButton';
+        header = 'mousehuntHud';
         hornReady = 'hornready';
         isNewUI = false;
         return false;
@@ -7791,7 +7803,7 @@ function kingRewardCountdownTimer(interval, isReloadToSolve) {
     if (interval < 0) {
         if (isReloadToSolve) {
             // simulate mouse click on the camp button
-            var campElement = document.getElementsByClassName(strCampButton)[0].firstChild;
+            var campElement = document.getElementsByClassName(campButton)[0];
             fireEvent(campElement, 'click');
             campElement = null;
 
