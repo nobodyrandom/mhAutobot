@@ -11,7 +11,7 @@
 // @namespace   https://greasyfork.org/users/6398, http://ooiks.com/blog/mousehunt-autobot, https://devcnn.wordpress.com/
 // @updateURL	https://greasyfork.org/scripts/32971-mousehunt-autobot-enhanced-revamp/code/MouseHunt%20AutoBot%20ENHANCED%20+%20REVAMP.meta.js
 // @downloadURL	https://greasyfork.org/scripts/32971-mousehunt-autobot-enhanced-revamp/code/MouseHunt%20AutoBot%20ENHANCED%20+%20REVAMP.user.js
-// @license 	GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
+// @license 	GPL-3.0+; http://www.gnu.org/copyleft/gpl.html
 // @include		http://mousehuntgame.com/*
 // @include		https://mousehuntgame.com/*
 // @include		http://www.mousehuntgame.com/*
@@ -103,6 +103,11 @@ var krStartHour = 3;
 // // Extra delay time to start solving KR after krStartHour. (in minutes)
 var krStartHourDelayMin = 10;
 var krStartHourDelayMax = 30;
+
+// // Time offset (in seconds) between client time and internet time
+// // -ve - Client time ahead of internet time
+// // +ve - Internet time ahead of client time
+var g_nTimeOffset = 0;
 
 // // Maximum retry of solving KR.
 // // If KR solved more than this number, pls solve KR manually ASAP in order to prevent MH from caught in botting
@@ -4816,6 +4821,9 @@ function checkThenArm(sort, category, name, isForcedRetry)   //category = weapon
                     return;
                 }
             }, 1000);
+    }
+    else if (trapArmed === undefined && !isForcedRetry) {
+        closeTrapSelector(category);
     }
 }
 
