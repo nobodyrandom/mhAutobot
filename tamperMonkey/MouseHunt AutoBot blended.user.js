@@ -593,8 +593,6 @@ function FinalizePuzzleImageAnswer(answer) {
             if (debug) console.plog("puzzleSubmit: " + puzzleSubmit);
             return;
         }
-        // TODO: TESTTTESTTEST
-        return;
 
         fireEvent(puzzleSubmit, 'click');
         kingsRewardRetry = 0;
@@ -602,6 +600,7 @@ function FinalizePuzzleImageAnswer(answer) {
         myFrame = document.getElementById('myFrame');
         if (myFrame)
             document.body.removeChild(myFrame);
+
         window.setTimeout(function () {
             CheckKRAnswerCorrectness();
         }, 5000);
@@ -625,8 +624,7 @@ function receiveMessage(event) {
                 strKR += "RETRY" + kingsRewardRetry;
                 try {
                     setStorage(strKR, processedImg);
-                }
-                catch (e) {
+                } catch (e) {
                     console.perror('receiveMessage', e.message);
                 }
             }
@@ -657,11 +655,11 @@ function CallKRSolver() {
     } else {
         //if (isNewUI) {
 
-            img = document.getElementsByClassName('mousehuntPage-puzzle-form-captcha-image')[0];
+        img = document.getElementsByClassName('mousehuntPage-puzzle-form-captcha-image')[0];
         if (debug) console.log("Captcha Image fetched:")
         if (debug) console.log(img);
 
-            frame.src = img.style.backgroundImage.slice(4, -1).replace(/"/g, "");
+        frame.src = img.style.backgroundImage.slice(4, -1).replace(/"/g, "");
         /*} else {
             img = document.getElementById('puzzleImage');
             frame.src = img.src;
@@ -671,30 +669,18 @@ function CallKRSolver() {
 }
 
 function CheckKRAnswerCorrectness() {
+    var puzzleForm = document.getElementsByClassName("mousehuntPage-puzzle-formContainer")[0];
+    if (puzzleForm.classList.contains("noPuzzle")) {
+        // KR is solved clicking continue now
+
+        resumeKRAfterSolved();
+        return;
+    }
+
     var strTemp = '';
-    if (isNewUI) {
-        var codeError = document.getElementsByClassName("mousehuntPage-puzzle-form-code-error");
-        for (var i = 0; i < codeError.length; i++) {
-            if (codeError[i].innerText.toLowerCase().indexOf("incorrect claim code") > -1) {
-                if (kingsRewardRetry >= kingsRewardRetryMax) {
-                    kingsRewardRetry = 0;
-                    setStorage("KingsRewardRetry", kingsRewardRetry);
-                    strTemp = 'Max ' + kingsRewardRetryMax + 'retries. Pls solve it manually ASAP.';
-                    alert(strTemp);
-                    displayTimer(strTemp, strTemp, strTemp);
-                    console.perror(strTemp);
-                }
-                else {
-                    ++kingsRewardRetry;
-                    setStorage("KingsRewardRetry", kingsRewardRetry);
-                    CallKRSolver();
-                }
-                return;
-            }
-        }
-    } else {
-        var pageMsg = document.getElementById('pagemessage');
-        if (!isNullOrUndefined(pageMsg) && pageMsg.innerText.toLowerCase().indexOf("unable to claim reward") > -1) { // KR answer not correct, re-run OCR
+    var codeError = document.getElementsByClassName("mousehuntPage-puzzle-form-code-error");
+    for (var i = 0; i < codeError.length; i++) {
+        if (codeError[i].innerText.toLowerCase().indexOf("incorrect claim code") > -1) {
             if (kingsRewardRetry >= kingsRewardRetryMax) {
                 kingsRewardRetry = 0;
                 setStorage("KingsRewardRetry", kingsRewardRetry);
@@ -714,6 +700,13 @@ function CheckKRAnswerCorrectness() {
     window.setTimeout(function () {
         CheckKRAnswerCorrectness();
     }, 1000);
+}
+
+function resumeKRAfterSolved() {
+    if (debug) console.log("RUN resumeKRAfterSolved()");
+
+    var resumeButton = document.getElementsByClassName("mousehuntPage-puzzle-form-complete-button")[0];
+    fireEvent(resumeButton, 'click');
 }
 
 window.addEventListener("message", receiveMessage, false);
