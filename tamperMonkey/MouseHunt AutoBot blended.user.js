@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Hazado, Ooi Keng Siang, CnN
-// @version    	2.2.7b
+// @version    	2.2.8b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require     https://code.jquery.com/jquery-2.2.2.min.js
@@ -32,7 +32,7 @@
 // // Reload MouseHunt page manually if edit this script while running it for immediate effect.
 
 // // ERROR CHECKING ONLY: Script debug
-var debug = false;
+var debug = true;
 // // ERROR CHECKING ONLY: KR debug
 var debugKR = false;
 
@@ -5545,6 +5545,9 @@ function retrieveDataFirst() {
                         // safety mode, include extra delay like time in horn image appear
                         //hornTime = nextActiveTime + additionalDelayTime + hornTimeDelay;
                         hornTime = nextActiveTime + hornTimeDelay;
+                        if (nextActiveTime = 0)
+                            eventLocationCheck();
+
                         lastDateRecorded = undefined;
                         lastDateRecorded = new Date();
 
@@ -5651,8 +5654,7 @@ function retrieveDataFirst() {
         gotPuzzle = undefined;
         gotBaitQuantity = undefined;
         return (retrieveSuccess);
-    }
-    catch (e) {
+    } catch (e) {
         console.perror('retrieveDataFirst', e.message);
     }
 }
@@ -5671,8 +5673,7 @@ function GetHornTime() {
                     arrTime[i] = parseInt(arrTime[i]);
                 totalSec = arrTime[0] * 60 + arrTime[1];
             }
-        }
-        else {
+        } else {
             var temp = parseInt(huntTimerElement);
             if (Number.isInteger(temp))
                 totalSec = temp * 60;
@@ -6032,6 +6033,24 @@ function countdownTimer() {
                     displayTimer("Horn: " + timeFormat(hornTime) + " | Check: " + timeFormat(checkTime),
                         timeFormat(hornTime) + "  <i>(included extra " + timeFormat(hornTimeDelay) + " delay & +/- 5 seconds different from MouseHunt timer)</i>",
                         timeFormat(checkTime) + "  <i>(included extra " + timeFormat(checkTimeDelay) + " delay)</i>");
+
+                    // check if user manaually sounded the horn
+                    var scriptNode = document.getElementById("scriptNode");
+                    if (scriptNode) {
+                        var isHornSounded = scriptNode.getAttribute("soundedHornAtt");
+                        if (isHornSounded == "true") {
+                            // sound horn function do the rest
+                            soundHorn();
+
+                            // stop loopping
+                            return;
+                        }
+                        isHornSounded = undefined;
+                    }
+                    scriptNode = undefined;
+
+                    if (hornTime - hornTimeDelay < 0)
+                        eventLocationCheck();
                 } else {
                     displayTimer("Horn: " + timeFormat(hornTime) + " | Check: " + timeFormat(checkTime),
                         timeFormat(hornTime) + "  <i>(lot faster than MouseHunt timer)</i>",
@@ -6058,6 +6077,9 @@ function countdownTimer() {
                         isHornSounded = undefined;
                     }
                     scriptNode = undefined;
+
+                    if (hornTime - hornTimeDelay < 0)
+                        eventLocationCheck();
                 } else {
                     displayTimer("Horn: " + timeFormat(hornTime),
                         timeFormat(hornTime) + "  <i>(lot faster than MouseHunt timer)</i>",
