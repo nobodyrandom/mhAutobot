@@ -6020,6 +6020,10 @@ function countdownTimer() {
 
         intervalTime = undefined;
 
+        if (enableTrapCheck && checkTime == 60) {
+            eventLocationCheck();
+        }
+
         if (hornTime <= 0) {
             // blow the horn!
             soundHorn();
