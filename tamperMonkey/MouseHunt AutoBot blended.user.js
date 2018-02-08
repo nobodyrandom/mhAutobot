@@ -377,13 +377,13 @@ var addonCode = "";
 
 // == Advance User Preference Setting (End) ==
 
+
 // WARNING - Do not modify the code below unless you know how to read and write the script.
 
 // All global variable declaration and default value
 var g_strHTTP = 'http';
-var g_strVersion = "";
+var g_strVersion = scriptVersion = GM_info.script.version;
 var g_strScriptHandler = "";
-var scriptVersion = GM_info.script.version;
 var fbPlatform = false;
 var hiFivePlatform = false;
 var mhPlatform = false;
@@ -395,7 +395,6 @@ var hornTimeDelay = 0;
 var checkTimeDelay = 0;
 var isKingReward = false;
 var lastKingRewardSumTime;
-var kingPauseTime;
 var baitQuantity = -1;
 var huntLocation;
 var currentLocation;
@@ -414,7 +413,6 @@ var mouseList = [];
 var eventLocation = "None";
 var discharge = false;
 var arming = false;
-//var best = 0; <-- why is this even here lol
 var g_arrArmingList = [];
 var kingsRewardRetry = 0;
 var keyKR = [];
@@ -550,7 +548,7 @@ function FinalizePuzzleImageAnswer(answer) {
             var strTemp = 'Max ' + kingsRewardRetryMax + 'retries. Pls solve it manually ASAP.';
             alert(strTemp);
             displayTimer(strTemp, strTemp, strTemp);
-            console.debug(strTemp);
+            console.perror(strTemp);
             return;
         } else {
             ++kingsRewardRetry;
@@ -558,8 +556,8 @@ function FinalizePuzzleImageAnswer(answer) {
             var tagName = document.getElementsByTagName("a");
             for (var i = 0; i < tagName.length; i++) {
                 if (tagName[i].innerText == "Click here to get a new one!") {
-                    // TODO: Find another time to fetch new puzzle
-                    //fireEvent(tagName[i], 'click');
+                    // TODO IMPORTANT: Find another time to fetch new puzzle
+                    fireEvent(tagName[i], 'click');
                     if (isNewUI) {
                         myFrame = document.getElementById('myFrame');
                         if (!isNullOrUndefined(myFrame))
@@ -709,6 +707,64 @@ function resumeKRAfterSolved() {
     fireEvent(resumeButton, 'click');
 }
 
+function addKREntries() {
+    var i, temp, maxLen, keyName;
+    var replaced = "";
+    var nTimezoneOffset = -(new Date().getTimezoneOffset()) * 60000;
+    var count = 1;
+    var strInnerHTML = '';
+    var selectViewKR = document.getElementById('viewKR');
+    if (selectViewKR.options.length > 0) {
+        // append keyKR for new KR entries under new UI
+        for (i = 0; i < window.localStorage.length; i++) {
+            keyName = window.localStorage.key(i);
+            if (keyName.indexOf("KR" + separator) > -1 && keyKR.indexOf(keyName) < 0)
+                keyKR.push(keyName);
+        }
+    }
+    maxLen = keyKR.length.toString().length;
+    for (i = 0; i < keyKR.length; i++) {
+        if (keyKR[i].indexOf("KR" + separator) > -1) {
+            temp = keyKR[i].split(separator);
+            temp.splice(0, 1);
+            temp[0] = parseInt(temp[0]);
+            if (Number.isNaN(temp[0]))
+                temp[0] = 0;
+
+            temp[0] += nTimezoneOffset;
+            temp[0] = (new Date(temp[0])).toISOString();
+            replaced = temp.join("&nbsp;&nbsp;");
+            temp = count.toString();
+            while (temp.length < maxLen) {
+                temp = '0' + temp;
+            }
+            replaced = temp + '. ' + replaced;
+            strInnerHTML += '<option value="' + keyKR[i] + '"' + ((i == keyKR.length - 1) ? ' selected' : '') + '>' + replaced + '</option>';
+            count++;
+        }
+    }
+    if (strInnerHTML !== '')
+        selectViewKR.innerHTML = strInnerHTML;
+}
+
+function setKREntriesColor() {
+    // set KR entries color
+    var i, nCurrent, nNext, strCurrent;
+    var selectViewKR = document.getElementById('viewKR');
+    for (i = 0; i < selectViewKR.children.length; i++) {
+        if (i < selectViewKR.children.length - 1) {
+            nCurrent = parseInt(selectViewKR.children[i].value.split('~')[1]);
+            nNext = parseInt(selectViewKR.children[i + 1].value.split('~')[1]);
+            if (Math.round((nNext - nCurrent) / 60000) < 2)
+                selectViewKR.children[i].style = 'color:red';
+        }
+        strCurrent = selectViewKR.children[i].value.split('~')[2];
+        if (strCurrent == strCurrent.toUpperCase() && selectViewKR.children[i].style.color != 'red') {
+            selectViewKR.children[i].style = 'color:magenta';
+        }
+    }
+}
+
 window.addEventListener("message", receiveMessage, false);
 if (debugKR)
     CallKRSolver();
@@ -761,10 +817,11 @@ function exeScript() {
         titleElm = null;
     }
 
-    // check the trap check setting first
-    trapCheckTimeDiff = GetTrapCheckTime();
-
     try {
+        // check the trap check setting first
+        trapCheckTimeDiff = GetTrapCheckTime();
+
+
         // check the trap check setting first
         if (trapCheckTimeDiff == 60) {
             trapCheckTimeDiff = 0;
@@ -899,7 +956,6 @@ function exeScript() {
             }
         } else if (mhMobilePlatform) {
             // execute at all page of mobile version
-            //if (true) {
             // page to execute the script!
 
             // make sure all the preference already loaded
@@ -907,7 +963,6 @@ function exeScript() {
 
             // embed a place where timer show
             embedTimer(false);
-            //}
         } else if (hiFivePlatform) {
             if (window.location.href == "http://mousehunt.hi5.hitgrab.com/#" ||
                 window.location.href.indexOf("http://mousehunt.hi5.hitgrab.com/?") != -1 ||
@@ -948,7 +1003,7 @@ function exeScript() {
 }
 
 function GetTrapCheckTime() {
-    if (getStorage('TrapCheckTimeOffset') != "" || getStorage('TrapCheckTimeOffset') != -1)
+    if (getStorage('TrapCheckTimeOffset') != "" && getStorage('TrapCheckTimeOffset') != -1)
         return parseInt(getStorage('TrapCheckTimeOffset'));
 
     try {
@@ -958,10 +1013,10 @@ function GetTrapCheckTime() {
             time = time.substr(time.indexOf('m -') - 4, 2);
             setStorage("TrapCheckTimeOffset", time);
             return parseInt(time);
+        } else {
+            throw new Error('passiveElement not found');
         }
-        else throw new Error('passiveElement not found');
-    }
-    catch (e) {
+    } catch (e) {
         console.perror('GetTrapCheckTime', e.message);
         var tempStorage = getStorage('TrapCheckTimeOffset');
         if (isNullOrUndefined(tempStorage)) {
@@ -1099,25 +1154,12 @@ function getJournalDetailFRift() {
     setStorage('LastRecordedJournalFRift', classJournal[0].parentNode.textContent);
 }
 
-/*function specialFeature(caller) {
-    return;
-    var strSpecial = getStorageToVariableStr("SpecialFeature", "None");
-    console.plog('Special Selected:', strSpecial, 'Call From:', caller);
-    switch (strSpecial) {
-        case 'PILLOWCASE':
-            magicalPillowcase();
-            break;
-        default:
-            break;
-    }
-}*/
-
 //// EMBEDING ENHANCED EDITION CODE
 function eventLocationCheck(caller) {
     var selAlgo = getStorageToVariableStr("eventLocation", "None");
     var temp = "";
 
-    if (selAlgo != null || selAlgo != "")
+    if (selAlgo != null && selAlgo != "" && debug)
         console.debug("Running " + selAlgo + " bot.");
 
     switch (selAlgo) {
@@ -1157,6 +1199,12 @@ function eventLocationCheck(caller) {
         case 'Burroughs Rift Custom':
             BRCustom();
             break;
+        case 'Iceberg':
+            iceberg();
+            break;
+        case 'WWRift':
+            wwrift();
+            break;
         case 'Halloween 2016':
             Halloween2016();
             break;
@@ -1168,9 +1216,6 @@ function eventLocationCheck(caller) {
             break;
         case 'GWH2016R':
             gwh();
-            break;
-        case 'WWRift':
-            wwrift();
             break;
         case 'All LG Area':
             var objLGTemplate = {
@@ -1209,6 +1254,9 @@ function eventLocationCheck(caller) {
             break;
         case 'Sunken City Custom':
             SCCustom();
+            break;
+        case 'SG':
+            seasonalGarden();
             break;
         case 'Zugzwang\'s Tower':
             ZTower();
@@ -2371,7 +2419,8 @@ function wwrift() {
 
 function iceberg(waxOrSticky) { // takes in string 'wax' or 'sticky'
     var location = getPageVariable('user.location');
-    console.debug(location);
+    if (debug) console.debug(location);
+
     if (location.indexOf('Iceberg') > -1) {
         var stage = document.getElementsByClassName('currentPhase')[0].textContent;
         var progress = parseInt(document.getElementsByClassName('user_progress')[0].textContent.replace(',', ''));
@@ -4929,7 +4978,7 @@ function armTrapClassicUI(sort, trap, name) {
         name = name[0];
 
     if (tagGroupElement.length > 0) {
-        console.plog('Try to arm', name);
+        if (debug) console.plog('Try to arm', name);
         for (var i = 0; i < tagGroupElement.length; ++i) {
             tagElement = tagGroupElement[i].getElementsByTagName('a');
             for (var j = 0; j < tagElement.length; ++j) {
@@ -5033,8 +5082,7 @@ function clickTrapSelector(strSelect, bForceClick) { //strSelect = weapon/base/c
             return (console.plog('Trap selector', strSelect, 'opened'));
         }
         fireEvent(armedItem, 'click');
-    }
-    else {
+    } else {
         if (bForceClick !== true && document.getElementsByClassName("showComponents " + strSelect).length > 0) { // trap selector opened
             arming = true;
             return (console.plog('Trap selector', strSelect, 'opened'));
@@ -5070,432 +5118,11 @@ function closeTrapSelector(category) {
     }
 }
 
-/*var retryCheckThenArm = true;
-
-function checkThenArmV1(sort, category, item, fail) {  //category = weapon/base/charm/trinket/bait
-    // TODO: catch failed check then arm (ie, trap not found) (minor issue)
-    // returns 'armed' if already armed
-    // fail = [] If trap not found pass in array, to do a secondary arm
-
-    if (item == 'disarm') {
-        return disarmTrap(category);
-    }
-
-    if (item.constructor === Array) {
-        sort = 'best';
-    } else if (typeof item == "string") {
-        sort = null;
-    }
-
-    if (category == "charm") {
-        category = "trinket";
-    }
-
-    if (debug) console.log('RUN checkThenArm(' + item + ')');
-
-    var i, j;
-    var trapArmed;
-    var tempName;
-    var userVariable = getPageVariable("user." + category + "_name");
-    if (userVariable === null || userVariable == undefined) userVariable = "";
-    if (debug) console.log('Currently armed in userVar: ' + userVariable);
-    var trapArmedOverride = false; // Stops trying to find whether trap has been armed. Assumes trap is not armed.
-
-    if (sort == 'best') {
-        for (i = 0; i < item.length; i++) {
-            if (userVariable.indexOf(item[i]) == 0) {
-                trapArmed = true;
-                break;
-            }
-        }
-
-        if (NOBtraps.length == 0) {
-            if (debug) console.log("NOBtraps not built yet, trying to build now.");
-            buildTrapList(function () {
-                return checkThenArm(sort, category, item, fail);
-            }, function () {
-                if (debug) console.log("Failed to build trap list, giving up arming: " + item);
-                return;
-            });
-        } else {
-            if (debug) console.log("Running double check if better one is in inv. Finding ");
-            if (debug) console.log(item);
-
-            // Chunk of code try finds if a better trap is in inventory, if so sets trapArmed to false
-            for (j = 0; j < item.length; j++) {
-                for (i = 0; i < NOBtraps.length; i++) {
-                    if (NOBtraps[i].classification == category && NOBtraps[i].name.indexOf(item[j]) == 0 && userVariable.indexOf(NOBtraps[i].name) != -1) {
-                        // Case 1: The loop rolled back to the curr armed and double checked that it is the same as userVar
-                        if (debug) console.log("No better traps were found.");
-                        trapArmed = true;
-
-                        i = NOBtraps.length + 1;
-                        j = item.length + 1;
-                    } else if (NOBtraps[i].classification == category && NOBtraps[i].name.indexOf(item[j]) == 0) {
-                        // Case 2: The loop rolled onto an earlier (better) in the item array
-                        if (debug) console.log("Found a better trap: " + NOBtraps[i].name + " as compared to " + item[j]);
-                        trapArmed = false;
-                        trapArmedOverride = true;
-
-                        // breaking out of loops
-                        i = NOBtraps.length + 1;
-                        j = item.length + 1;
-                    } else {
-                        //if (debug) console.log('Comparing: ' + NOBtraps[i].name + ' with ' + item[j]);
-                    }
-                }
-            }
-
-            if (trapArmed != true && trapArmed != false) {
-                // Case 3: Rolled through whole array and 0 found.
-                if (retryCheckThenArm) {
-                    console.log("Error occured when finding a better trap in NOBtrap, giving up arming. User does not own the current trap armed? Retrying to fetch trap list.");
-                    buildTrapList(function () {
-                        retryCheckThenArm = false;
-                        return checkThenArm(sort, category, item, fail);
-                    }, function () {
-                        console.log('Retry failed. Giving up now.');
-                    });
-                } else {
-                    console.log('Retried, but failed again :(');
-                }
-                return 'failed';
-            }
-
-            if (debug) console.log("Double check done. Results: trapArmed=" + trapArmed + ", trapArmedOverride=" + trapArmedOverride);
-        }
-    } else {
-        trapArmed = (userVariable.indexOf(item) == 0);
-    }
-
-    if (debug) console.log(item + " armed?: " + trapArmed);
-
-    // TODO: Needs redo for beta UI (major issue)
-    if (!nobTestBetaUI()) {
-        var retryPageVariable = document.getElementById('hud_trapLabel').textContent;
-        if (!trapArmedOverride && retryPageVariable == "Charm:" && category == "trinket") {
-            var theCharmArmed = document.getElementById('hud_trapPower').textContent;
-            if (sort == 'best') {
-                for (i = 0; i < item.length; i++) {
-                    if (item[i].length > 13) {
-                        tempName = item[i].substring(0, 13);
-                        tempName += "...";
-                    } else {
-                        tempName = item[i];
-                    }
-
-                    if (theCharmArmed == tempName) {
-                        trapArmed = true;
-                        break;
-                    }
-                }
-            } else {
-                //console.log(theCharmArmed + " + " + item);
-                if (item.length > 13) {
-                    tempName = item.substring(0, 13);
-                    tempName += "...";
-                } else {
-                    tempName = item;
-                }
-
-                if (theCharmArmed == tempName) {
-                    trapArmed = true;
-                }
-            }
-            //trapArmed = true;
-        } else if (!trapArmedOverride && (category == 'weapon' || category == 'base' || category == 'bait')) {
-            var currBase = document.getElementById('hud_base').textContent;
-            var currTrap = document.getElementById('hud_weapon').textContent;
-            var currBait = document.getElementById('hud_baitName').textContent;
-
-            if (sort == 'best') {
-                for (i = 0; i < item.length; i++) {
-                    //console.log(theCharmArmed + " + " + item[i]);
-
-                    if (item[i].length > 13) {
-                        tempName = item[i].substring(0, 13);
-                        tempName += "...";
-                    } else {
-                        tempName = item[i];
-                    }
-
-                    switch (category) {
-                        case 'weapon':
-                            if (currTrap == tempName)
-                                trapArmed = true;
-                            break;
-                        case 'base':
-                            if (currBase == tempName)
-                                trapArmed = true;
-                            break;
-                        case 'bait':
-                            if (currBait == tempName)
-                                trapArmed = true;
-                            break;
-                        default:
-                            //traparmed = false;
-                            break;
-                    }
-                }
-            } else {
-                if (item.length > 13) {
-                    tempName = item.substring(0, 13);
-                    tempName += "...";
-                } else {
-                    tempName = item;
-                }
-
-
-                switch (category) {
-                    case 'weapon':
-                        if (currTrap == tempName)
-                            trapArmed = true;
-                        break;
-                    case 'base':
-                        if (currBase == tempName)
-                            trapArmed = true;
-                        break;
-                    case 'bait':
-                        if (currBait == tempName)
-                            trapArmed = true;
-                        break;
-                    default:
-                        //traparmed = false;
-                        break;
-                }
-            }
-        }
-    }
-    trapArmedOverride = false;
-
-    if (!trapArmed) {
-        if (debug) console.log('Queueing ' + item + ' into armingQueue. (' + sort + category + trapArmed + ')');
-        armingQueue.push([sort, category, item, trapArmed, fail]);
-        if (!dequeueIntRunning) {
-            var dequeueInterval = setInterval(function () {
-                if (debug) console.log('In the queue(' + armingQueue.length + '): ');
-                if (debug) console.log(armingQueue);
-
-                if (!dequeueingCTA && armingQueue.length > 0) {
-                    dequeueingCTA = true;
-                    var tempQueueItem = armingQueue.pop();
-                    dequeueCheckThenArm(tempQueueItem[0], tempQueueItem[1], tempQueueItem[2], tempQueueItem[3], tempQueueItem[4]);
-                    tempQueueItem = [];
-                } else if (armingQueue.length == 0) {
-                    clearInterval(dequeueInterval);
-                    dequeueIntRunning = false;
-                }
-            }, 2000);
-        }
-    } else {
-        return 'armed';
-    }
-}
-
-function dequeueCheckThenArm(sort, category, item, trapArmed, fail) {
-    // Try to queue trap arming
-    if (debug) console.log("Dequeuer: " + item + ", is armed? " + trapArmed);
-    // Remove this item if its still in armingQueue array
-    for (var i = 0; i < armingQueue.length; i++) {
-        if (item == armingQueue[i]) {
-            armingQueue.splice(i, 1);
-        }
-    }
-
-    var intervalCTA = setInterval(function () {
-        if (debug) console.log(item + " in CTA queue.");
-        if (!arming) {
-            console.debug("Queueing arming - " + item);
-            clickThenArmTrapInterval(sort, category, item, fail);
-            clearInterval(intervalCTA);
-            intervalCTA = null;
-            return;
-        }
-    }, 2000);
-    return;
-}
-
-function clickThenArmTrapInterval(sort, trap, name, fail) //sort = power/luck/attraction
-{
-    if (debug) console.log("Pre processing queue item. Opening " + trap + " selector.");
-    // Process trap arming queue
-    setTimeout(function () {
-        clickTrapSelector(trap);
-        setTimeout(function () {
-            var sec = 10;
-            var intervalCTAGiveUp = 3;
-
-            var intervalCTATI = setInterval(
-                function () {
-                    console.debug("Processing queue item: " + name);
-                    var tryArming = armTrap(sort, name, trap);
-                    if (tryArming == 'found') {
-                        if (isNewUI)
-                            clickTrapSelector(trap);
-                        clearInterval(intervalCTATI);
-                        arming = false;
-                        dequeueingCTA = false;
-                        intervalCTATI = null;
-                        return;
-                    } else if (tryArming == 'not found') {
-                        clickTrapSelector(trap);
-                        if (fail == 'disarm') {
-                            disarmTrap(trap);
-                        } else if (fail == null || fail == undefined) {
-                            //Add something when failover was not built?
-                            console.debug('Trap not found, and there were no failover for this setup for now.');
-                        } else if (fail.length > 0) {
-                            checkThenArm(sort, trap, fail);
-                        }
-
-                        clearInterval(intervalCTATI);
-                        arming = false;
-                        dequeueingCTA = false;
-                        intervalCTATI = null;
-                        return;
-                    } else {
-                        // Error when try arming bugs out, retry clickTrapSelector
-                        if (debug) console.log("Try arming has bugged out.");
-                        --sec;
-
-                        if (sec <= 0) {
-                            if (debug) console.log("Try arming has given up.");
-                            clickTrapSelector(trap);
-                            sec = 10;
-                            intervalCTAGiveUp--;
-                        }
-
-                        if (intervalCTAGiveUp == 0) {
-                            clearInterval(intervalCTATI);
-                            arming = false;
-                            dequeueingCTA = false;
-                            intervalCTATI = null;
-                            return;
-                        }
-                    }
-                }, 1000);
-        }, 2500);
-    }, 500);
-}
-
-// name = Brie/Gouda/Swiss (brie = wrong)
-function armTrap(sort, name, trap) {
-    if (name == 'disarm')
-        disarmTrap(trap);
-
-    if (sort == 'best') {
-        var nameArray = name;
-        name = name[0];
-    }
-
-    var nameElement;
-    if (isNewUI) {
-        var allTraps = document.getElementsByClassName('campPage-trap-itemBrowser-item-content');
-
-        if (allTraps.length > 0) {
-            console.debug('Trying to arm ' + name);
-            for (var i = 0; i < allTraps.length; i++) {
-                nameElement = allTraps[i].getElementsByClassName('campPage-trap-itemBrowser-item-name')[0].textContent;
-                if (nameElement.indexOf(name) == 0) {
-                    fireEvent(allTraps[i].parentNode.getElementsByClassName('campPage-trap-itemBrowser-item-armButton')[0], 'click');
-                    console.debug(name + ' armed');
-                    return 'found';
-                }
-            }
-            console.debug(name + " not found");
-            if (sort == 'best') {
-                nameArray.shift();
-                if (nameArray[0] == 'disarm') {
-                    disarmTrap(trap);
-                } else if (nameArray.length > 0) {
-                    if (debug) console.debug(nameArray);
-                    return armTrap(sort, nameArray, trap);
-                } else {
-                    console.debug('No traps found');
-                    return 'not found';
-                }
-            } else {
-                return 'not found';
-            }
-        }
-    } else {
-        var tagGroupElement = document.getElementsByClassName('tagGroup');
-        var tagElement;
-
-        if (tagGroupElement.length > 0) {
-            console.debug('Trying to arm ' + name);
-            for (var i = 0; i < tagGroupElement.length; ++i) {
-                tagElement = tagGroupElement[i].getElementsByTagName('a');
-                for (var j = 0; j < tagElement.length; ++j) {
-                    nameElement = tagElement[j].getElementsByClassName('name')[0].textContent;
-                    if (nameElement.indexOf(name) == 0) {
-                        fireEvent(tagElement[j], 'click');
-                        console.debug(name + ' armed');
-                        return 'found';
-                    }
-                }
-            }
-            console.debug(name + " not found");
-            if (sort == 'best') {
-                nameArray.shift();
-                if (nameArray[0] == 'disarm') {
-                    disarmTrap(trap);
-                } else if (nameArray.length > 0) {
-                    if (debug) console.debug(nameArray);
-                    return armTrap(sort, nameArray, trap);
-                } else {
-                    console.debug('No traps found');
-                    return 'not found';
-                }
-            } else {
-                return 'not found';
-            }
-        }
-    }
-    return 'error';
-}
-
-function clickTrapSelector(strSelect) //strSelect = weapon/base/charm/trinket/bait
-{
-    if (strSelect == "charm") strSelect = "trinket";
-    if (isNewUI) {
-        fireEvent(document.getElementsByClassName('campPage-trap-armedItem ' + strSelect)[0], 'click');
-    } else {
-        if (strSelect == "base") {
-            fireEvent(document.getElementsByClassName('trapControlThumb')[0], 'click');
-        } else if (strSelect == "weapon") {
-            fireEvent(document.getElementsByClassName('trapControlThumb')[1], 'click');
-        } else if (strSelect == "charm" || strSelect == "trinket") {
-            fireEvent(document.getElementsByClassName('trapControlThumb')[2], 'click');
-        } else if (strSelect == "bait") {
-            fireEvent(document.getElementsByClassName('trapControlThumb')[3], 'click');
-        } else {
-            return (console.debug("Invalid trapSelector"));
-        }
-    }
-    arming = true;
-    return (console.debug("Trap selector: " + strSelect + " clicked"));
-}
-
-function closeTrapSelector(category) {
-    if (isNewUI) {
-        var armedItem = document.getElementsByClassName('campPage-trap-armedItem ' + category)[0];
-        if (!isNullOrUndefined(armedItem) && armedItem.getAttribute('class').indexOf('active') > -1) { // trap selector opened
-            fireEvent(armedItem, 'click');
-            console.plog("Trap selector", category, "closed");
-        }
-    } else {
-        if (document.getElementsByClassName("showComponents " + category).length > 0) {
-            fireEvent(document.getElementById('trapSelectorBrowserClose'), 'click');
-            console.plog("Trap selector", category, "closed");
-        }
-    }
-}*/
-
 //// END EMBED
 
 function retrieveDataFirst() {
     if (debug) console.log('RUN retrieveDataFirst()');
+
     try {
         var gotHornTime = false;
         var gotPuzzle = false;
@@ -5503,6 +5130,7 @@ function retrieveDataFirst() {
         var retrieveSuccess = false;
 
         var scriptElementList = document.getElementsByTagName('script');
+
         if (scriptElementList) {
             var i;
             for (i = 0; i < scriptElementList.length; ++i) {
@@ -5511,7 +5139,6 @@ function retrieveDataFirst() {
                 // get next horn time
                 var hornTimeStartIndex = scriptString.indexOf("next_activeturn_seconds");
                 if (hornTimeStartIndex >= 0) {
-                    var nextActiveTime = 900;
                     hornTimeStartIndex += 25;
                     var hornTimeEndIndex = scriptString.indexOf(",", hornTimeStartIndex);
                     var hornTimerString = scriptString.substring(hornTimeStartIndex, hornTimeEndIndex);
@@ -5545,7 +5172,7 @@ function retrieveDataFirst() {
                         // safety mode, include extra delay like time in horn image appear
                         //hornTime = nextActiveTime + additionalDelayTime + hornTimeDelay;
                         hornTime = nextActiveTime + hornTimeDelay;
-                        if (nextActiveTime = 0)
+                        if (nextActiveTime <= 0)
                             eventLocationCheck();
 
                         lastDateRecorded = undefined;
@@ -5564,7 +5191,6 @@ function retrieveDataFirst() {
                     hornTimeStartIndex = undefined;
                     hornTimeEndIndex = undefined;
                     hornTimerString = undefined;
-                    nextActiveTime = undefined;
                 }
 
                 // get is king's reward or not
@@ -5686,7 +5312,8 @@ function getKingRewardStatus() {
     var strValue = getPageVariable('user.has_puzzle');
     console.plog('user.has_puzzle:', strValue);
     return (strValue == 'true');
-    //var headerOrHud = (isNewUI) ? document.getElementById('mousehuntHud') : document.getElementById('mousehuntHud');
+
+    // Does the following bits even matter lol
     var headerOrHud = document.getElementById(header);
 
     if (headerOrHud !== null) {
@@ -5695,8 +5322,7 @@ function getKingRewardStatus() {
             textContentLowerCase.indexOf("king's reward") > -1 ||
             textContentLowerCase.indexOf("kings reward") > -1) {
             return true;
-        }
-        else
+        } else
             return (strValue == 'true');
     } else
         return false;
@@ -5734,23 +5360,30 @@ function retrieveData() {
         var browser = browserDetection();
 
         // get next horn time
-        if (browser == "firefox") {
-            nextActiveTime = unsafeWindow.user.next_activeturn_seconds;
-            isKingReward = unsafeWindow.user.has_puzzle;
-            baitQuantity = unsafeWindow.user.bait_quantity;
-            currentLocation = unsafeWindow.user.location;
-            NOBhasPuzzle = unsafeWindow.user.has_puzzle;
-        } else if (browser == "opera") {
-            nextActiveTime = user.next_activeturn_seconds;
-            isKingReward = user.has_puzzle;
-            baitQuantity = user.bait_quantity;
-            currentLocation = user.location;
-        } else if (browser == "chrome") {
-            nextActiveTime = parseInt(getPageVariableForChrome("user.next_activeturn_seconds"));
-            isKingReward = (getPageVariableForChrome("user.has_puzzle").toString() != "false");
-            baitQuantity = parseInt(getPageVariableForChrome("user.bait_quantity"));
-            currentLocation = getPageVariableForChrome("user.location");
-            NOBhasPuzzle = user.has_puzzle;
+        if (browser == "firefox" || browser == "opera" || browser == "chrome") {
+            currentLocation = getCurrentLocation();
+            isKingReward = NOBhasPuzzle = getKingRewardStatus();
+            baitQuantity = getBaitQuantity();
+            nextActiveTime = GetHornTime();
+
+            /*if (browser == "firefox") {
+                nextActiveTime = unsafeWindow.user.next_activeturn_seconds;
+                isKingReward = unsafeWindow.user.has_puzzle;
+                baitQuantity = unsafeWindow.user.bait_quantity;
+                currentLocation = unsafeWindow.user.location;
+                NOBhasPuzzle = unsafeWindow.user.has_puzzle;
+            } else if (browser == "opera") {
+                nextActiveTime = user.next_activeturn_seconds;
+                isKingReward = user.has_puzzle;
+                baitQuantity = user.bait_quantity;
+                currentLocation = user.location;
+            } else if (browser == "chrome") {
+                nextActiveTime = parseInt(getPageVariableForChrome("user.next_activeturn_seconds"));
+                isKingReward = (getPageVariableForChrome("user.has_puzzle").toString() != "false");
+                baitQuantity = parseInt(getPageVariableForChrome("user.bait_quantity"));
+                currentLocation = getPageVariableForChrome("user.location");
+                NOBhasPuzzle = user.has_puzzle;
+                */
         } else {
             window.setTimeout(function () {
                 reloadWithMessage("Browser not supported. Reloading...", false);
@@ -5759,7 +5392,7 @@ function retrieveData() {
 
         browser = undefined;
 
-        if (nextActiveTime == "" || isNaN(nextActiveTime)) {
+        if (nextActiveTime === "" || isNaN(nextActiveTime)) {
             // fail to retrieve data, might be due to slow network
 
             // reload the page to see it fix the problem
@@ -5768,9 +5401,13 @@ function retrieveData() {
             }, 5000);
         } else {
             // got the timer right!
-
-            // calculate the delay
-            hornTimeDelay = hornTimeDelayMin + Math.round(Math.random() * (hornTimeDelayMax - hornTimeDelayMin));
+            if (nextActiveTime === 0)
+                hornTimeDelay = 0;
+            else {
+                // calculate the delay
+                hornTimeDelay = hornTimeDelayMin + Math.round(Math.random() * (hornTimeDelayMax - hornTimeDelayMin));
+            }
+            if (debug) console.plog('Horn Time:', nextActiveTime, 'Delay:', hornTimeDelay);
 
             if (!aggressiveMode) {
                 // calculation base on the js in Mousehunt
@@ -5795,15 +5432,21 @@ function retrieveData() {
         }
 
         // get trap check time
-        if (enableTrapCheck) {
+        /*if (enableTrapCheck) {
             var today = new Date();
             checkTimeDelay = checkTimeDelayMin + Math.round(Math.random() * (checkTimeDelayMax - checkTimeDelayMin));
             checkTime = (today.getMinutes() >= trapCheckTimeDiff) ? 3600 + (trapCheckTimeDiff * 60) - (today.getMinutes() * 60 + today.getSeconds()) : (trapCheckTimeDiff * 60) - (today.getMinutes() * 60 + today.getSeconds());
             checkTime += checkTimeDelay;
             today = undefined;
-        }
+        }*/
+
+        CalculateNextTrapCheckInMinute();
+        getJournalDetail();
+        eventLocationCheck('retrieveData()');
+        //specialFeature('retrieveData()');
+        mapHunting();
     } catch (e) {
-        console.log("retrieveData() ERROR - " + e);
+        if (debug) console.log("retrieveData() ERROR - " + e);
     }
 }
 
@@ -5858,6 +5501,7 @@ function checkJournalDate() {
 
 function action() {
     if (debug) console.log("Run action()");
+
     try {
         if (isKingReward) {
             kingRewardAction();
@@ -5907,11 +5551,8 @@ function action() {
 
             // check if the horn image is visible
             nobTestBetaUI();
-            var headerElement = document.getElementById(header);
+            var headerElement = document.getElementById(header).firstChild;
             if (headerElement) {
-                //if (isNewUI) {
-                headerElement = headerElement.firstChild;
-                //}
                 var headerStatus = headerElement.getAttribute('class');
                 if (headerStatus.indexOf(hornReady) != -1) {
                     // if the horn image is visible, why do we need to wait any more, sound the horn!
@@ -5924,10 +5565,10 @@ function action() {
             }
             headerElement = undefined;
 
-            if (isHornSounding == false) {
+            if (isHornSounding === false) {
                 // start timer
                 window.setTimeout(function () {
-                    countdownTimer()
+                    countdownTimer();
                 }, timerRefreshInterval * 1000);
             }
 
@@ -5935,7 +5576,10 @@ function action() {
         }
         if (!isKingReward) {
             window.setTimeout(function () {
-                eventLocationCheck();
+                getJournalDetail();
+                eventLocationCheck('action()');
+                //specialFeature('action()');
+                mapHunting();
                 runAddonCode();
             }, 1000);
         }
@@ -6003,32 +5647,27 @@ function countdownTimer() {
         lastDateRecorded = dateNow;
         dateNow = undefined;
 
-        if (enableTrapCheck) {
-            // update time
-            hornTime -= intervalTime;
-            checkTime -= intervalTime;
-            if (lastKingRewardSumTime != -1) {
-                lastKingRewardSumTime += intervalTime;
-            }
-        } else {
-            // update time
-            hornTime -= intervalTime;
-            if (lastKingRewardSumTime != -1) {
-                lastKingRewardSumTime += intervalTime;
-            }
+        // Update time
+        hornTime -= intervalTime;
+        if (lastKingRewardSumTime != -1) {
+            lastKingRewardSumTime += intervalTime;
         }
+        if (enableTrapCheck)
+            checkTime -= intervalTime;
 
         intervalTime = undefined;
 
-        if (enableTrapCheck && checkTime == 60) {
+        // Check event location 60s before trap check
+        if (enableTrapCheck && checkTime == 60)
             eventLocationCheck();
-        }
 
         if (hornTime <= 0) {
             // blow the horn!
+            hornTime = 0;
             soundHorn();
         } else if (enableTrapCheck && checkTime <= 0) {
             // trap check!
+            checkTime = 0;
             trapCheck();
         } else {
             if (enableTrapCheck) {
@@ -6090,10 +5729,8 @@ function countdownTimer() {
                         "-");
 
                     // agressive mode should sound the horn whenever it is possible to do so.
-                    var headerElement = document.getElementById(header);
+                    var headerElement = document.getElementById(header).firstChild;
                     if (headerElement) {
-                        //if (isNewUI)
-                        headerElement = headerElement.firstChild;
                         // the horn image appear before the timer end
                         if (headerElement.getAttribute('class').indexOf(hornReady) != -1) {
                             // who care, blow the horn first!
@@ -6212,9 +5849,9 @@ function embedTimer(targetPage) {
                 var titleElement = document.createElement('div');
                 titleElement.setAttribute('id', 'titleElement');
                 if (targetPage && aggressiveMode) {
-                    titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/6514-mousehunt-autobot-enhanced-revamp\" target=\"_blank\">MouseHunt AutoBot ENHANCED + REVAMP (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing" + (isNewUI ? " ~ Beta UI" : "") + "</b> - <font color='red'>Aggressive Mode</font>";
+                    titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/32971-mousehunt-autobot-enhanced-revamp\" target=\"_blank\">MouseHunt AutoBot ENHANCED + REVAMP (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing" + (isNewUI ? " ~ Beta UI" : "") + "</b> - <font color='red'>Aggressive Mode</font>";
                 } else {
-                    titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/6514-mousehunt-autobot-enhanced-revamp\" target=\"_blank\">MouseHunt AutoBot ENHANCED + REVAMP (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing" + (isNewUI ? " ~ Beta UI" : "") + "</b>";
+                    titleElement.innerHTML = "<b><a href=\"https://greasyfork.org/en/scripts/32971-mousehunt-autobot-enhanced-revamp\" target=\"_blank\">MouseHunt AutoBot ENHANCED + REVAMP (version " + scriptVersion + ")</a> + MouseHunt AutoBot Additional thing" + (isNewUI ? " ~ Beta UI" : "") + "</b>";
                 }
                 timerDivElement.appendChild(titleElement);
                 titleElement = null;
@@ -6271,18 +5908,18 @@ function embedTimer(targetPage) {
                     lastKingRewardDate = null;
                     lastDateStr = null;
 
-                    if (showLastPageLoadTime) {
+                    /*if (showLastPageLoadTime) {
                         var nowDate = new Date();
 
                         // last page load time
-                        var loadTimeElement = document.createElement('div');
-                        loadTimeElement.setAttribute('id', 'loadTimeElement');
-                        loadTimeElement.innerHTML = "<b>Last Page Load: </b>" + nowDate.toDateString() + " " + nowDate.toTimeString().substring(0, 8);
+                        //var loadTimeElement = document.createElement('div');
+                        //loadTimeElement.setAttribute('id', 'loadTimeElement');
+                        //loadTimeElement.innerHTML = "<b>Last Page Load: </b>" + nowDate.toDateString() + " " + nowDate.toTimeString().substring(0, 8);
                         //timerDivElement.appendChild(loadTimeElement);
 
-                        loadTimeElement = null;
+                        //loadTimeElement = null;
                         nowDate = null;
-                    }
+                    }*/
 
                     var timersElementToggle = document.createElement('a');
                     var text = document.createTextNode('Toggle timers');
@@ -6363,6 +6000,7 @@ function embedTimer(targetPage) {
                             nobInit();
                             return;
                         } else {
+                            //TODO: Need to fix this
                             var ajaxPageSwitchEvent = function (e) {
                                 setTimeout(function () {
                                     document.getElementById('titleElement').parentNode.remove();
@@ -6421,8 +6059,17 @@ function embedTimer(targetPage) {
                 timerDivElement.appendChild(showPreferenceLinkDiv);
 
                 var showPreferenceSpan = document.createElement('span');
-                var showPreferenceLinkStr = '<a id="showPreferenceLink" name="showPreferenceLink" onclick="if (document.getElementById(\'showPreferenceLink\').innerHTML == \'<b>[Hide Preference]</b>\') { document.getElementById(\'preferenceDiv\').style.display=\'none\';  document.getElementById(\'showPreferenceLink\').innerHTML=\'<b>[Show Preference]</b>\'; } else { document.getElementById(\'preferenceDiv\').style.display=\'block\'; document.getElementById(\'showPreferenceLink\').innerHTML=\'<b>[Hide Preference]</b>\'; }">';
-                if (showPreference == true)
+                var showPreferenceLinkStr = '<a id="showPreferenceLink" name="showPreferenceLink" onclick="' +
+                    'if (document.getElementById(\'showPreferenceLink\').innerHTML == \'<b>[Hide Preference]</b>\') {' +
+                    'document.getElementById(\'preferenceDiv\').style.display=\'none\';' +
+                    'document.getElementById(\'showPreferenceLink\').innerHTML=\'<b>[Show Preference]</b>\';' +
+                    '} else {' +
+                    'document.getElementById(\'preferenceDiv\').style.display=\'block\';' +
+                    'document.getElementById(\'showPreferenceLink\').innerHTML=\'<b>[Hide Preference]</b>\';' +
+                    '}' +
+                    '">';
+
+                if (showPreference === true)
                     showPreferenceLinkStr += '<b>[Hide Preference]</b>';
                 else
                     showPreferenceLinkStr += '<b>[Show Preference]</b>';
@@ -6434,203 +6081,261 @@ function embedTimer(targetPage) {
                 showPreferenceSpan = null;
                 showPreferenceLinkDiv = null;
 
-                var hr2Element = document.createElement('hr');
-                timerDivElement.appendChild(hr2Element);
-                hr2Element = null;
-
                 var preferenceHTMLStr = '<table border="0" width="100%">';
+
+                preferenceHTMLStr += '<tr><td colspan="2" style="padding: 2px 0; border-bottom: 1px solid orange;"></td></tr>';
+                preferenceHTMLStr += '<tr><td colspan="2" style="height: 5px;"></td></tr>';
+
+                preferenceHTMLStr += '<tr>';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="Bot aggressively by ignore all safety measure such as check horn image visible before sounding it"><b>Aggressive Mode</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="AggressiveModeInput" onchange="var isDisable = (value == \'true\') ? \'disabled\' : \'\'; document.getElementById(\'HornTimeDelayMinInput\').disabled=isDisable; document.getElementById(\'HornTimeDelayMaxInput\').disabled=isDisable;">';
                 if (aggressiveMode) {
-                    preferenceHTMLStr += '<tr>';
-                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                    preferenceHTMLStr += '<a title="Bot aggressively by ignore all safety measure such as check horn image visible before sounding it">';
-                    preferenceHTMLStr += '<b>Aggressive Mode</b>';
-                    preferenceHTMLStr += '</a>';
-                    preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                    preferenceHTMLStr += '</td>';
-                    preferenceHTMLStr += '<td style="height:24px">';
-                    preferenceHTMLStr += '<input type="radio" id="AggressiveModeInputTrue" name="AggressiveModeInput" value="true" onchange="if (document.getElementById(\'AggressiveModeInputTrue\').checked == true) { document.getElementById(\'HornTimeDelayMinInput\').disabled=\'disabled\'; document.getElementById(\'HornTimeDelayMaxInput\').disabled=\'disabled\';}" checked="checked"/> True';
-                    preferenceHTMLStr += '   ';
-                    preferenceHTMLStr += '<input type="radio" id="AggressiveModeInputFalse" name="AggressiveModeInput" value="false" onchange="if (document.getElementById(\'AggressiveModeInputFalse\').checked == true) { document.getElementById(\'HornTimeDelayMinInput\').disabled=\'\'; document.getElementById(\'HornTimeDelayMaxInput\').disabled=\'\';}"/> False';
-                    preferenceHTMLStr += '</td>';
-                    preferenceHTMLStr += '</tr>';
-                    preferenceHTMLStr += '<tr>';
-                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                    preferenceHTMLStr += '<a title="Extra delay time before sounding the horn (in seconds)">';
-                    preferenceHTMLStr += '<b>Horn Time Delay</b>';
-                    preferenceHTMLStr += '</a>';
-                    preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                    preferenceHTMLStr += '</td>';
-                    preferenceHTMLStr += '<td style="height:24px">';
-                    preferenceHTMLStr += '<input type="text" id="HornTimeDelayMinInput" name="HornTimeDelayMinInput" disabled="disabled" value="' + hornTimeDelayMin.toString() + '"/> seconds';
-                    preferenceHTMLStr += ' ~ ';
-                    preferenceHTMLStr += '<input type="text" id="HornTimeDelayMaxInput" name="HornTimeDelayMaxInput" disabled="disabled" value="' + hornTimeDelayMax.toString() + '"/> seconds';
-                    preferenceHTMLStr += '</td>';
-                    preferenceHTMLStr += '</tr>';
-                } else {
-                    preferenceHTMLStr += '<tr>';
-                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                    preferenceHTMLStr += '<a title="Bot aggressively by ignore all safety measure such as check horn image visible before sounding it">';
-                    preferenceHTMLStr += '<b>Aggressive Mode</b>';
-                    preferenceHTMLStr += '</a>';
-                    preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                    preferenceHTMLStr += '</td>';
-                    preferenceHTMLStr += '<td style="height:24px">';
-                    preferenceHTMLStr += '<input type="radio" id="AggressiveModeInputTrue" name="AggressiveModeInput" value="true" onchange="if (document.getElementById(\'AggressiveModeInputTrue\').checked == true) { document.getElementById(\'HornTimeDelayMinInput\').disabled=\'disabled\'; document.getElementById(\'HornTimeDelayMaxInput\').disabled=\'disabled\';}"/> True';
-                    preferenceHTMLStr += '   ';
-                    preferenceHTMLStr += '<input type="radio" id="AggressiveModeInputFalse" name="AggressiveModeInput" value="false" onchange="if (document.getElementById(\'AggressiveModeInputFalse\').checked == true) { document.getElementById(\'HornTimeDelayMinInput\').disabled=\'\'; document.getElementById(\'HornTimeDelayMaxInput\').disabled=\'\';}" checked="checked"/> False';
-                    preferenceHTMLStr += '</td>';
-                    preferenceHTMLStr += '</tr>';
-                    preferenceHTMLStr += '<tr>';
-                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                    preferenceHTMLStr += '<a title="Extra delay time before sounding the horn (in seconds)">';
-                    preferenceHTMLStr += '<b>Horn Time Delay</b>';
-                    preferenceHTMLStr += '</a>&nbsp;&nbsp;:&nbsp;&nbsp;';
-                    preferenceHTMLStr += '</td>';
-                    preferenceHTMLStr += '<td style="height:24px">';
-                    preferenceHTMLStr += '<input type="text" id="HornTimeDelayMinInput" name="HornTimeDelayMinInput" value="' + hornTimeDelayMin.toString() + '"/> seconds';
-                    preferenceHTMLStr += ' ~ ';
-                    preferenceHTMLStr += '<input type="text" id="HornTimeDelayMaxInput" name="HornTimeDelayMaxInput" value="' + hornTimeDelayMax.toString() + '"/> seconds';
-                    preferenceHTMLStr += '</td>';
-                    preferenceHTMLStr += '</tr>';
+                    preferenceHTMLStr += '<option value="false">False</option>';
+                    preferenceHTMLStr += '<option value="true" selected>True</option>';
+                    temp = 'disabled';
                 }
+                else {
+                    preferenceHTMLStr += '<option value="false" selected>False</option>';
+                    preferenceHTMLStr += '<option value="true">True</option>';
+                    temp = '';
+                }
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;<a title="Extra delay time before sounding the horn (in seconds)"><b>Delay:</b></a>&emsp;';
+                preferenceHTMLStr += '<input type="number" id="HornTimeDelayMinInput" min="0" max="360" size="5" value="' + hornTimeDelayMin.toString() + '" ' + temp + '> seconds ~ ';
+                preferenceHTMLStr += '<input type="number" id="HornTimeDelayMaxInput" min="1" max="361" size="5" value="' + hornTimeDelayMax.toString() + '" ' + temp + '> seconds';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+                preferenceHTMLStr += '<tr>';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="Extra delay time before sounding the horn (in seconds)">';
+                preferenceHTMLStr += '<b>Horn Time Delay</b>';
+                preferenceHTMLStr += '</a>';
+                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<input type="text" id="HornTimeDelayMinInput" name="HornTimeDelayMinInput" disabled="disabled" value="' + hornTimeDelayMin.toString() + '"/> seconds';
+                preferenceHTMLStr += ' ~ ';
+                preferenceHTMLStr += '<input type="text" id="HornTimeDelayMaxInput" name="HornTimeDelayMaxInput" disabled="disabled" value="' + hornTimeDelayMax.toString() + '"/> seconds';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr>';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="Enable trap check once an hour"><b>Trap Check</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="TrapCheckInput" onchange="var isDisable = (value == \'false\') ? \'disabled\' : \'\'; document.getElementById(\'TrapCheckTimeDelayMinInput\').disabled=isDisable; document.getElementById(\'TrapCheckTimeDelayMaxInput\').disabled=isDisable;">';
                 if (enableTrapCheck) {
-                    preferenceHTMLStr += '<tr>';
-                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                    preferenceHTMLStr += '<a title="Enable trap check once an hour"><b>Trap Check</b></a>';
-                    preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                    preferenceHTMLStr += '</td>';
-                    preferenceHTMLStr += '<td style="height:24px">';
-                    preferenceHTMLStr += '<input type="radio" id="TrapCheckInputTrue" name="TrapCheckInput" value="true" onchange="if (document.getElementById(\'TrapCheckInputTrue\').checked == true) { document.getElementById(\'TrapCheckTimeOffsetInput\').disabled=\'\'; document.getElementById(\'TrapCheckTimeDelayMinInput\').disabled=\'\'; document.getElementById(\'TrapCheckTimeDelayMaxInput\').disabled=\'\';}" checked="checked"/> True';
-                    preferenceHTMLStr += '   ';
-                    preferenceHTMLStr += '<input type="radio" id="TrapCheckInputFalse" name="TrapCheckInput" value="false" onchange="if (document.getElementById(\'TrapCheckInputFalse\').checked == true) { document.getElementById(\'TrapCheckTimeOffsetInput\').disabled=\'disabled\'; document.getElementById(\'TrapCheckTimeDelayMinInput\').disabled=\'disabled\'; document.getElementById(\'TrapCheckTimeDelayMaxInput\').disabled=\'disabled\';}"/> False';
-                    preferenceHTMLStr += '</td>';
-                    preferenceHTMLStr += '</tr>';
-                    preferenceHTMLStr += '<tr>';
-                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                    preferenceHTMLStr += '<a title="Trap check time different value (00 minutes - 45 minutes)"><b>Trap Check Time Offset</b></a>';
-                    preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                    preferenceHTMLStr += '</td>';
-                    preferenceHTMLStr += '<td style="height:24px">';
-                    preferenceHTMLStr += '<input type="text" id="TrapCheckTimeOffsetInput" name="TrapCheckTimeOffsetInput" value="' + trapCheckTimeDiff.toString() + '"/> seconds';
-                    preferenceHTMLStr += '</td>';
-                    preferenceHTMLStr += '</tr>';
-                    preferenceHTMLStr += '<tr>';
-                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                    preferenceHTMLStr += '<a title="Extra delay time to trap check (in seconds)"><b>Trap Check Time Delay</b></a>';
-                    preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                    preferenceHTMLStr += '</td>';
-                    preferenceHTMLStr += '<td style="height:24px">';
-                    preferenceHTMLStr += '<input type="text" id="TrapCheckTimeDelayMinInput" name="TrapCheckTimeDelayMinInput" value="' + checkTimeDelayMin.toString() + '"/> seconds';
-                    preferenceHTMLStr += ' ~ ';
-                    preferenceHTMLStr += '<input type="text" id="TrapCheckTimeDelayMaxInput" name="TrapCheckTimeDelayMaxInput" value="' + checkTimeDelayMax.toString() + '"/> seconds';
-                    preferenceHTMLStr += '</td>';
-                    preferenceHTMLStr += '</tr>';
-                } else {
-                    preferenceHTMLStr += '<tr>';
-                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                    preferenceHTMLStr += '<a title="Enable trap check once an hour"><b>Trap Check</b></a>';
-                    preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                    preferenceHTMLStr += '</td>';
-                    preferenceHTMLStr += '<td style="height:24px">';
-                    preferenceHTMLStr += '<input type="radio" id="TrapCheckInputTrue" name="TrapCheckInput" value="true" onchange="if (document.getElementById(\'TrapCheckInputTrue\').checked == true) { document.getElementById(\'TrapCheckTimeOffsetInput\').disabled=\'\'; document.getElementById(\'TrapCheckTimeDelayMinInput\').disabled=\'\'; document.getElementById(\'TrapCheckTimeDelayMaxInput\').disabled=\'\';}"/> True';
-                    preferenceHTMLStr += '   ';
-                    preferenceHTMLStr += '<input type="radio" id="TrapCheckInputFalse" name="TrapCheckInput" value="false" onchange="if (document.getElementById(\'TrapCheckInputFalse\').checked == true) { document.getElementById(\'TrapCheckTimeOffsetInput\').disabled=\'disabled\'; document.getElementById(\'TrapCheckTimeDelayMinInput\').disabled=\'disabled\'; document.getElementById(\'TrapCheckTimeDelayMaxInput\').disabled=\'disabled\';}" checked="checked"/> False';
-                    preferenceHTMLStr += '</td>';
-                    preferenceHTMLStr += '</tr>';
-                    preferenceHTMLStr += '<tr>';
-                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                    preferenceHTMLStr += '<a title="Trap check time different value (00 minutes - 45 minutes)"><b>Trap Check Time Offset</b></a>';
-                    preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                    preferenceHTMLStr += '</td>';
-                    preferenceHTMLStr += '<td style="height:24px">';
-                    preferenceHTMLStr += '<input type="text" id="TrapCheckTimeOffsetInput" name="TrapCheckTimeOffsetInput" disabled="disabled" value="' + trapCheckTimeDiff.toString() + '"/> seconds';
-                    preferenceHTMLStr += '</td>';
-                    preferenceHTMLStr += '</tr>';
-                    preferenceHTMLStr += '<tr>';
-                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                    preferenceHTMLStr += '<a title="Extra delay time to trap check (in seconds)"><b>Trap Check Time Delay</b></a>';
-                    preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                    preferenceHTMLStr += '</td>';
-                    preferenceHTMLStr += '<td style="height:24px">';
-                    preferenceHTMLStr += '<input type="text" id="TrapCheckTimeDelayMinInput" name="TrapCheckTimeDelayMinInput" disabled="disabled" value="' + checkTimeDelayMin.toString() + '"/> seconds';
-                    preferenceHTMLStr += ' ~ ';
-                    preferenceHTMLStr += '<input type="text" id="TrapCheckTimeDelayMaxInput" name="TrapCheckTimeDelayMaxInput" disabled="disabled" value="' + checkTimeDelayMax.toString() + '"/> seconds';
-                    preferenceHTMLStr += '</td>';
-                    preferenceHTMLStr += '</tr>';
+                    preferenceHTMLStr += '<option value="false">False</option>';
+                    preferenceHTMLStr += '<option value="true" selected>True</option>';
+                    temp = '';
                 }
+                else {
+                    preferenceHTMLStr += '<option value="false" selected>False</option>';
+                    preferenceHTMLStr += '<option value="true">True</option>';
+                    temp = 'disabled';
+                }
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;<a title="Extra delay time to trap check (in seconds)"><b>Delay:</b></a>&emsp;';
+                preferenceHTMLStr += '<input type="number" id="TrapCheckTimeDelayMinInput" min="0" max="360" size="5" value="' + checkTimeDelayMin.toString() + '" ' + temp + '> seconds ~ ';
+                preferenceHTMLStr += '<input type="number" id="TrapCheckTimeDelayMaxInput" min="1" max="361" size="5" value="' + checkTimeDelayMax.toString() + '" ' + temp + '> seconds';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                /*
+                preferenceHTMLStr += '<tr>';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="Play sound when encounter king\'s reward"><b>Play King Reward Sound</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="PlayKingRewardSoundInput" >';
                 if (isKingWarningSound) {
-                    preferenceHTMLStr += '<tr>';
-                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                    preferenceHTMLStr += '<a title="Play sound when encounter king\'s reward"><b>Play King Reward Sound</b></a>';
-                    preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                    preferenceHTMLStr += '</td>';
-                    preferenceHTMLStr += '<td style="height:24px">';
-                    preferenceHTMLStr += '<input type="radio" id="PlayKingRewardSoundInputTrue" name="PlayKingRewardSoundInput" value="true" checked="checked"/> True';
-                    preferenceHTMLStr += '   ';
-                    preferenceHTMLStr += '<input type="radio" id="PlayKingRewardSoundInputFalse" name="PlayKingRewardSoundInput" value="false" /> False';
-                    preferenceHTMLStr += '</td>';
-                    preferenceHTMLStr += '</tr>';
+                    preferenceHTMLStr += '<option value="false">False</option>';
+                    preferenceHTMLStr += '<option value="true" selected>True</option>';
+                }
+                else {
+                    preferenceHTMLStr += '<option value="false" selected>False</option>';
+                    preferenceHTMLStr += '<option value="true">True</option>';
+                }
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+                */
+
+                preferenceHTMLStr += '<tr>';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="Auto Popup on KR"><b>Auto KR Popup</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="autoPopKR" >';
+                preferenceHTMLStr += '<option value="false"' + (!autoPopupKR) ? ' selected' : '' + '>False</option>';
+                preferenceHTMLStr += '<option value="true"' + (autoPopupKR) ? ' selected' : '' + '>True</option>';
+                preferenceHTMLStr += '</select>'
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr>';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="Solve King Reward automatically"><b>Auto Solve King Reward</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="AutoSolveKRInput" onchange="var isDisable = (value == \'false\') ? \'disabled\' : \'\'; document.getElementById(\'AutoSolveKRDelayMinInput\').disabled=isDisable; document.getElementById(\'AutoSolveKRDelayMaxInput\').disabled=isDisable;">';
+                if (isAutoSolve) {
+                    preferenceHTMLStr += '<option value="false">False</option>';
+                    preferenceHTMLStr += '<option value="true" selected>True</option>';
+                    temp = '';
                 } else {
-                    preferenceHTMLStr += '<tr>';
-                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                    preferenceHTMLStr += '<a title="Play sound when encounter king\'s reward"><b>Play King Reward Sound</b></a>';
-                    preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                    preferenceHTMLStr += '</td>';
-                    preferenceHTMLStr += '<td style="height:24px">';
-                    preferenceHTMLStr += '<input type="radio" id="PlayKingRewardSoundInputTrue" name="PlayKingRewardSoundInput" value="true" /> True';
-                    preferenceHTMLStr += '   ';
-                    preferenceHTMLStr += '<input type="radio" id="PlayKingRewardSoundInputFalse" name="PlayKingRewardSoundInput" value="false" checked="checked"/> False';
-                    preferenceHTMLStr += '</td>';
-                    preferenceHTMLStr += '</tr>';
+                    preferenceHTMLStr += '<option value="false" selected>False</option>';
+                    preferenceHTMLStr += '<option value="true">True</option>';
+                    temp = 'disabled';
                 }
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;<a title="Extra delay time to solve King Reward (in seconds)"><b>Delay:</b></a>&emsp;';
+                preferenceHTMLStr += '<input type="number" id="AutoSolveKRDelayMinInput" min="0" max="360" size="5" value="' + krDelayMin.toString() + '" ' + temp + '> seconds ~ ';
+                preferenceHTMLStr += '<input type="number" id="AutoSolveKRDelayMaxInput" min="1" max="361" size="5" value="' + krDelayMax.toString() + '" ' + temp + '> seconds';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
 
+                /*
                 preferenceHTMLStr += '<tr>';
                 preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                preferenceHTMLStr += '<a title="Solve King Reward automatically"><b>Auto Solve King Reward</b></a>';
-                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '<a title="Save King Reward image into localStorage"><b>Save King Reward Image</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;';
                 preferenceHTMLStr += '</td>';
                 preferenceHTMLStr += '<td style="height:24px">';
-                if (isAutoSolve) {
-                    preferenceHTMLStr += '<input type="radio" id="AutoSolveKRInputTrue" name="AutoSolveKRInput" value="true" onchange="if (document.getElementById(\'AutoSolveKRInputTrue\').checked == true) { document.getElementById(\'AutoSolveKRDelayMinInput\').disabled=\'\'; document.getElementById(\'AutoSolveKRDelayMaxInput\').disabled=\'\';}" checked="checked"/> True';
-                    preferenceHTMLStr += '   ';
-                    preferenceHTMLStr += '<input type="radio" id="AutoSolveKRInputFalse" name="AutoSolveKRInput" value="false" onchange="if (document.getElementById(\'AutoSolveKRInputFalse\').checked == true) { document.getElementById(\'AutoSolveKRDelayMinInput\').disabled=\'disabled\'; document.getElementById(\'AutoSolveKRDelayMaxInput\').disabled=\'disabled\';}"/> False';
+                preferenceHTMLStr += '<select id="SaveKRImageInput" >';
+                if (saveKRImage) {
+                    preferenceHTMLStr += '<option value="false">False</option>';
+                    preferenceHTMLStr += '<option value="true" selected>True</option>';
                 }
                 else {
-                    preferenceHTMLStr += '<input type="radio" id="AutoSolveKRInputTrue" name="AutoSolveKRInput" value="true" onchange="if (document.getElementById(\'AutoSolveKRInputTrue\').checked == true) { document.getElementById(\'AutoSolveKRDelayMinInput\').disabled=\'\'; document.getElementById(\'AutoSolveKRDelayMaxInput\').disabled=\'\';}"/> True';
-                    preferenceHTMLStr += '   ';
-                    preferenceHTMLStr += '<input type="radio" id="AutoSolveKRInputFalse" name="AutoSolveKRInput" value="false" onchange="if (document.getElementById(\'AutoSolveKRInputFalse\').checked == true) { document.getElementById(\'AutoSolveKRDelayMinInput\').disabled=\'disabled\'; document.getElementById(\'AutoSolveKRDelayMaxInput\').disabled=\'disabled\';}" checked="checked"/> False';
+                    preferenceHTMLStr += '<option value="false" selected>False</option>';
+                    preferenceHTMLStr += '<option value="true">True</option>';
                 }
+                preferenceHTMLStr += '</select>';
                 preferenceHTMLStr += '</td>';
                 preferenceHTMLStr += '</tr>';
+                */
+
+                /*
                 preferenceHTMLStr += '<tr>';
                 preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                preferenceHTMLStr += '<a title="Extra delay time to solve King Reward (in seconds)"><b>Auto Solve King Reward Delay</b></a>';
-                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '<a title="View Saved King Reward Image from localStorage"><b>View King Reward Image</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;';
                 preferenceHTMLStr += '</td>';
                 preferenceHTMLStr += '<td style="height:24px">';
-                if (isAutoSolve) {
-                    preferenceHTMLStr += '<input type="text" id="AutoSolveKRDelayMinInput" name="AutoSolveKRDelayMinInput" value="' + krDelayMin.toString() + '"/> seconds';
-                    preferenceHTMLStr += ' ~ ';
-                    preferenceHTMLStr += '<input type="text" id="AutoSolveKRDelayMaxInput" name="AutoSolveKRDelayMaxInput" value="' + krDelayMax.toString() + '"/> seconds';
+                preferenceHTMLStr += '<select id="viewKR">';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<input type="button" id="buttonViewKR" value="View" onclick="var keyValue = document.getElementById(\'viewKR\').value;var value = window.localStorage.getItem(keyValue);if(value.indexOf(\'data:image/png;base64,\') > -1){var pom = document.createElement(\'a\');pom.setAttribute(\'href\', value);pom.setAttribute(\'download\', keyValue.split(\'~\')[2]+\'.png\');if(document.createEvent){var event = document.createEvent(\'MouseEvents\');event.initEvent(\'click\', true, true);pom.dispatchEvent(event);}else pom.click();}else if(value.indexOf(\'i.imgur.com\') > -1){var win = window.open(value, \'_blank\');if(win)win.focus();else alert(\'Please allow popups for this site\');}">';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+                */
+
+                preferenceHTMLStr += '<tr>';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="The script will pause if player at different location that hunt location set before"><b>Remember Location</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="PauseLocationInput" >';
+                if (pauseAtInvalidLocation) {
+                    preferenceHTMLStr += '<option value="false">False</option>';
+                    preferenceHTMLStr += '<option value="true" selected>True</option>';
                 }
                 else {
-                    preferenceHTMLStr += '<input type="text" id="AutoSolveKRDelayMinInput" name="AutoSolveKRDelayMinInput" disabled="disabled" value="' + krDelayMin.toString() + '"/> seconds';
-                    preferenceHTMLStr += ' ~ ';
-                    preferenceHTMLStr += '<input type="text" id="AutoSolveKRDelayMaxInput" name="AutoSolveKRDelayMaxInput" disabled="disabled" value="' + krDelayMax.toString() + '"/> seconds';
+                    preferenceHTMLStr += '<option value="false" selected>False</option>';
+                    preferenceHTMLStr += '<option value="true">True</option>';
                 }
+                preferenceHTMLStr += '</select>';
                 preferenceHTMLStr += '</td>';
                 preferenceHTMLStr += '</tr>';
 
                 preferenceHTMLStr += '<tr>';
-                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                preferenceHTMLStr += '<a title="Play which sound when encountering king\'s reward"><b>King Reward Sound</b></a>';
-                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a><b>Best Weapon for </b></a>';
+                preferenceHTMLStr += '<select id="selectBestTrapPowerType" style="width:75px;" onchange="initControlsBestTrap();">';
+                preferenceHTMLStr += '<option value="arcane">Arcane</option>';
+                preferenceHTMLStr += '<option value="draconic">Draconic</option>';
+                preferenceHTMLStr += '<option value="forgotten">Forgotten</option>';
+                preferenceHTMLStr += '<option value="hydro">Hydro</option>';
+                preferenceHTMLStr += '<option value="law">Law</option>';
+                preferenceHTMLStr += '<option value="physical">Physical</option>';
+                preferenceHTMLStr += '<option value="rift">Rift</option>';
+                preferenceHTMLStr += '<option value="shadow">Shadow</option>';
+                preferenceHTMLStr += '<option value="tactical">Tactical</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;:&nbsp;&nbsp;';
                 preferenceHTMLStr += '</td>';
-                preferenceHTMLStr += '<td style="height:24px;">';
-                preferenceHTMLStr += '<input type="text" id="KingRewardSoundInput" name="KingRewardSoundInput" value="' + kingWarningSound + '" />';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectBestTrapWeapon" style="width: 300px" onchange="saveBestTrap();">';
+                preferenceHTMLStr += '</select>';
                 preferenceHTMLStr += '</td>';
                 preferenceHTMLStr += '</tr>';
 
+                preferenceHTMLStr += '<tr>';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a><b>Best Base for </b></a>';
+                preferenceHTMLStr += '<select id="selectBestTrapBaseType" style="width:75px;" onchange="initControlsBestTrap();">';
+                preferenceHTMLStr += '<option value="luck">Luck</option>';
+                preferenceHTMLStr += '<option value="power">Power</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectBestTrapBase" onchange="saveBestTrap();">';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                /*
+                preferenceHTMLStr += '<tr>';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a><b>Support Me</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<input type="button" id="inputShowAds" value="Click to Show Ads" onclick="onIdAdsClicked()">';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+                */
+
+                preferenceHTMLStr += '<tr>';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;" colspan="2">';
+                preferenceHTMLStr += '(Changes above this line only take place after user save the preference) ';
+                preferenceHTMLStr += '<input type="button" id="PreferenceSaveInput" value="Save" onclick="\
+				window.localStorage.setItem(\'AggressiveMode\', 		document.getElementById(\'AggressiveModeInput\').value);\
+				window.localStorage.setItem(\'HornTimeDelayMin\', 		document.getElementById(\'HornTimeDelayMinInput\').value);\
+				window.localStorage.setItem(\'HornTimeDelayMax\', 		document.getElementById(\'HornTimeDelayMaxInput\').value);\
+				window.localStorage.setItem(\'TrapCheck\', 				document.getElementById(\'TrapCheckInput\').value);\
+				window.localStorage.setItem(\'TrapCheckTimeDelayMin\',	document.getElementById(\'TrapCheckTimeDelayMinInput\').value);\
+				window.localStorage.setItem(\'TrapCheckTimeDelayMax\', 	document.getElementById(\'TrapCheckTimeDelayMaxInput\').value);\
+				window.localStorage.setItem(\'PlayKingRewardSound\', 	document.getElementById(\'PlayKingRewardSoundInput\').value);\
+				window.localStorage.setItem(\'AutoSolveKR\', 			document.getElementById(\'AutoSolveKRInput\').value);\
+				window.localStorage.setItem(\'AutoSolveKRDelayMin\', 	document.getElementById(\'AutoSolveKRDelayMinInput\').value);\
+				window.localStorage.setItem(\'AutoSolveKRDelayMax\', 	document.getElementById(\'AutoSolveKRDelayMaxInput\').value);\
+				window.localStorage.setItem(\'SaveKRImage\', 			document.getElementById(\'SaveKRImageInput\').value);\
+				window.localStorage.setItem(\'PauseLocation\', 			document.getElementById(\'PauseLocationInput\').value);\
+				window.localStorage.setItem(\'autoPopupKR\',            document.getElementById(\'autoPopKR\').value);\
+				';
+                if (fbPlatform)
+                    temp = 'window.location.href=\'' + g_strHTTP + '://www.mousehuntgame.com/canvas/\';';
+                else if (hiFivePlatform)
+                    temp = 'window.location.href=\'' + g_strHTTP + '://www.mousehunt.hi5.hitgrab.com/\';';
+                else if (mhPlatform)
+                    temp = 'window.location.href=\'' + g_strHTTP + '://www.mousehuntgame.com/\';';
+
+                preferenceHTMLStr += temp + '"/>&nbsp;&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr>';
+                preferenceHTMLStr += '<td style="height:24px" colspan="2">';
+                preferenceHTMLStr += '<div style="width: 100%; height: 1px; background: #000000; overflow: hidden;">';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                /*
+                preferenceHTMLStr += '<tr id="trSpecialFeature" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select special feature"><b>Special Feature</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectSpecialFeature" onchange="onSelectSpecialFeature();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '<option value="PILLOWCASE">Open Magical Pillowcase</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+                */
+
+                /*
                 preferenceHTMLStr += '<tr>';
                 preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
                 preferenceHTMLStr += '<a title="Which email to send king\'s reward to"><b>Email to send King Reward</b></a>';
@@ -6640,6 +6345,84 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<input type="text" id="KingRewardEmail" name="KingRewardEmail" value="' + kingRewardEmail + '" />';
                 preferenceHTMLStr += '</td>';
                 preferenceHTMLStr += '</tr>';
+                */
+
+                // Map Hunting Features
+                /*
+                preferenceHTMLStr += '<tr>';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="Turn on/off Map Hunting feature"><b>Season 4 Map Hunting</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectMapHunting" onChange="onSelectMapHuntingChanged();">';
+                preferenceHTMLStr += '<option value="false">False</option>';
+                preferenceHTMLStr += '<option value="true">True</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+                */
+
+                preferenceHTMLStr += '<tr id="trUncaughtMouse" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="Click button Get to retrieve all uncaught mouse"><b>Uncaught Mouse</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectMouseList"></select>';
+                preferenceHTMLStr += '<input type="button" id="inputSelectMouse" title="Click to select the mouse from the left dropdown list" value="Select This Mouse" onclick="onInputSelectMouse();" disabled>&nbsp;&nbsp;';
+                preferenceHTMLStr += '<input type="button" id="inputGetMouse" title="Click to Get all uncaught mouse from treasure map" value="Refresh Uncaught Mouse List" onclick="onInputGetMouse();">';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trSelectedUncaughtMouse" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select desired uncaught mouse"><b>Selected Mouse</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<input type="text" id="inputUncaughtMouse" value="" disabled>&nbsp;&nbsp;';
+                preferenceHTMLStr += '<input type="button" id="inputClearUncaughtMouse" title="Click to clear the selected mouse" value="Clear" onclick="onInputClearUncaughtMouse();">';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trCatchLogic" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select desired catch logic"><b>Catch Logic</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectCatchLogic" onchange="saveMapHunting();">';
+                preferenceHTMLStr += '<option value="OR">When either one of the Selected Mouse was caught</option>';
+                preferenceHTMLStr += '<option value="AND">When all of the Selected Mouse were caught</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trMapHuntingTrapSetup" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="Select trap setup after catch logic is fulfilled"><b>After Caught</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectWeapon" style="width: 75px" onchange="saveMapHunting();">';
+                preferenceHTMLStr += '<option value="Remain">Remain</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectBase" style="width: 75px" onchange="saveMapHunting();">';
+                preferenceHTMLStr += '<option value="Remain">Remain</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectTrinket" style="width: 75px" onchange="saveMapHunting();">';
+                preferenceHTMLStr += '<option value="Remain">Remain</option>';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectBait" style="width: 75px" onchange="saveMapHunting();">';
+                preferenceHTMLStr += '<option value="Remain">Remain</option>';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trMapHuntingLeave" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select to leave map after catch logic is fulfilled"><b>Leave Map After Caught</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectLeaveMap" onchange="saveMapHunting();">';
+                preferenceHTMLStr += '<option value="false">False</option>';
+                preferenceHTMLStr += '<option value="true">True</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
 
                 /*preferenceHTMLStr += '<tr>';
                  preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
@@ -6661,7 +6444,7 @@ function embedTimer(targetPage) {
                  preferenceHTMLStr += '</td>';
                  preferenceHTMLStr += '</tr>';*/
 
-                if (reloadKingReward) {
+                /*if (reloadKingReward) {
                     preferenceHTMLStr += '<tr>';
                     preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
                     preferenceHTMLStr += '<a title="Reload the the page according to King Reward Resume Time when encount King Reward"><b>King Reward Resume</b></a>';
@@ -6703,8 +6486,9 @@ function embedTimer(targetPage) {
                     preferenceHTMLStr += '<input type="text" id="KingRewardResumeTimeInput" name="KingRewardResumeTimeInput" disabled="disabled" value="' + kingPauseTimeMax.toString() + '"/> seconds';
                     preferenceHTMLStr += '</td>';
                     preferenceHTMLStr += '</tr>';
-                }
-                if (pauseAtInvalidLocation) {
+                }*/
+
+                /*if (pauseAtInvalidLocation) {
                     preferenceHTMLStr += '<tr>';
                     preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
                     preferenceHTMLStr += '<a title="The script will pause if player at different location that hunt location set before"><b>Remember Location</b></a>';
@@ -6728,33 +6512,9 @@ function embedTimer(targetPage) {
                     preferenceHTMLStr += '<input type="radio" id="PauseLocationInputFalse" name="PauseLocationInput" value="false" checked="checked"/> False';
                     preferenceHTMLStr += '</td>';
                     preferenceHTMLStr += '</tr>';
-                }
-                if (autoPopupKR) {
-                    preferenceHTMLStr += '<tr>';
-                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                    preferenceHTMLStr += '<a title="Auto Popup on KR"><b>Auto KR Popup</b></a>';
-                    preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                    preferenceHTMLStr += '</td>';
-                    preferenceHTMLStr += '<td style="height:24px">';
-                    preferenceHTMLStr += '<input type="radio" id="autopopkrTrue" name="autopopkrInput" value="true" checked="checked"/> True';
-                    preferenceHTMLStr += '   ';
-                    preferenceHTMLStr += '<input type="radio" id="autopopkrFalse" name="autopopkrInput" value="false" /> False';
-                    preferenceHTMLStr += '</td>';
-                    preferenceHTMLStr += '</tr>';
-                } else {
-                    preferenceHTMLStr += '<tr>';
-                    preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
-                    preferenceHTMLStr += '<a title="Auto Popup on KR"><b>Auto KR Popup</b></a>';
-                    preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
-                    preferenceHTMLStr += '</td>';
-                    preferenceHTMLStr += '<td style="height:24px">';
-                    preferenceHTMLStr += '<input type="radio" id="autopopkrTrue" name="autopopkrInput" value="true"/> True';
-                    preferenceHTMLStr += '   ';
-                    preferenceHTMLStr += '<input type="radio" id="autopopkrFalse" name="autopopkrInput" value="false" checked="checked"/> False';
-                    preferenceHTMLStr += '</td>';
-                    preferenceHTMLStr += '</tr>';
-                }
+                }*/
 
+                /*
                 preferenceHTMLStr += '<tr>';
                 preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
                 preferenceHTMLStr += '<a title="Select the script algorithm based on certain event / location"><b>Event or Location</b></a>';
@@ -6799,6 +6559,1460 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<input type="text" id="event" name="event" value="' + eventLocation + '"/>';
                 preferenceHTMLStr += '</td>';
                 preferenceHTMLStr += '</tr>';
+                */
+
+                preferenceHTMLStr += '<tr>';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="Select the script algorithm based on certain event / location"><b>Event or Location</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="eventAlgo" style="width:150px" onChange="window.sessionStorage.setItem(\'eventLocation\', value); showOrHideTr(value);">';
+                preferenceHTMLStr += '<option value="None" selected>None</option>';
+                preferenceHTMLStr += '<option value="All LG Area">All LG Area</option>';
+                preferenceHTMLStr += '<option value="BC/JOD">BC => JOD</option>';
+                preferenceHTMLStr += '<option value="Bristle Woods Rift">Bristle Woods Rift</option>';
+                preferenceHTMLStr += '<option value="Burroughs Rift(Red)">Burroughs Rift(Red)</option>';
+                preferenceHTMLStr += '<option value="Burroughs Rift(Green)">Burroughs Rift(Green)</option>';
+                preferenceHTMLStr += '<option value="Burroughs Rift(Yellow)">Burroughs Rift(Yellow)</option>';
+                preferenceHTMLStr += '<option value="Burroughs Rift Custom">Burroughs Rift Custom</option>';
+                preferenceHTMLStr += '<option value="Charge Egg 2016 Medium + High">Charge Egg 2016 Medium + High</option>';
+                preferenceHTMLStr += '<option value="Charge Egg 2016 High">Charge Egg 2016 High</option>';
+                preferenceHTMLStr += '<option value="FG/AR">FG => AR</option>';
+                preferenceHTMLStr += '<option value="Fiery Warpath">Fiery Warpath</option>';
+                preferenceHTMLStr += '<option value="Fort Rox">Fort Rox</option>';
+                preferenceHTMLStr += '<option value="Furoma Rift">Furoma Rift</option>';
+                preferenceHTMLStr += '<option value="GES">Gnawnian Express Station</option>';
+                //preferenceHTMLStr += '<option value="GWH2016R">GWH 2016</option>';
+                preferenceHTMLStr += '<option value="Iceberg">Iceberg</option>';
+                preferenceHTMLStr += '<option value="Labyrinth">Labyrinth</option>';
+                preferenceHTMLStr += '<option value="SG">Seasonal Garden</option>';
+                preferenceHTMLStr += '<option value="Sunken City">Sunken City</option>';
+                preferenceHTMLStr += '<option value="Sunken City Custom">Sunken City Custom</option>';
+                preferenceHTMLStr += '<option value="Test">Test</option>';
+                preferenceHTMLStr += '<option value="WWRift">WWRift</option>';
+                preferenceHTMLStr += '<option value="Zokor">Zokor</option>';
+                preferenceHTMLStr += '<option value="ZT">Zugzwang\'s Tower</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<input type="button" id="inputResetReload" title="Reset setting of current selected algo" value="Reset & Reload" onclick="onInputResetReload();' + temp + '">';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trBCJODSubLocation" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a><b>Sub-Location</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectBCJODSublocation" onchange="initControlsBCJOD();">';
+                preferenceHTMLStr += '<option value="JOD">Jungle of Dread</option>';
+                preferenceHTMLStr += '<option value="LOW">BC Low Tide</option>';
+                preferenceHTMLStr += '<option value="MID">BC Mid Tide</option>';
+                preferenceHTMLStr += '<option value="HIGH">BC High Tide</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trBCJODTrapSetup" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select trap setup based on current sub-location"><b>Trap Setup </b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectBCJODWeapon" style="width: 75px;" onchange="saveBCJOD();">';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectBCJODBase" style="width: 75px;" onchange="saveBCJOD();">';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectBCJODTrinket" style="width: 75px;" onchange="saveBCJOD();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectBCJODBait" style="width: 75px;" onchange="saveBCJOD();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '<option value="Vanilla Stilton Cheese">Vanilla Stilton Cheese</option>';
+                preferenceHTMLStr += '<option value="Vengeful Vanilla Stilton Cheese">Vengeful Vanilla Stilton Cheese</option>';
+                preferenceHTMLStr += '<option value="Brie Cheese">Brie</option>';
+                preferenceHTMLStr += '<option value="Toxic Brie">Toxic Brie</option>';
+                preferenceHTMLStr += '<option value="Gouda">Gouda</option>';
+                preferenceHTMLStr += '<option value="SUPER">SB+</option>';
+                preferenceHTMLStr += '<option value="Toxic SUPER">Toxic SB+</option>';
+                preferenceHTMLStr += '<option value="Ghoulgonzola">Ghoulgonzola</option>';
+                preferenceHTMLStr += '<option value="Candy Corn">Candy Corn</option>';
+                preferenceHTMLStr += '<option value="ANY_HALLOWEEN">Ghoulgonzola/Candy Corn</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trFGARSubLocation" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a><b>Sub-Location</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectFGARSublocation" onchange="initControlsFGAR();">';
+                preferenceHTMLStr += '<option value="FG">Forbidden Grove</option>';
+                preferenceHTMLStr += '<option value="AR">Acolyte Realm</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trFGARTrapSetup" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select trap setup based on current sub-location"><b>Trap Setup </b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectFGARWeapon" style="width: 75px;" onchange="saveFGAR();">';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectFGARBase" style="width: 75px;" onchange="saveFGAR();">';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectFGARTrinket" style="width: 75px;" onchange="saveFGAR();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectFGARBait" style="width: 75px;" onchange="saveFGAR();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '<option value="Runic Cheese">Runic Cheese</option>';
+                preferenceHTMLStr += '<option value="Ancient Cheese">Ancient Cheese</option>';
+                preferenceHTMLStr += '<option value="Brie Cheese">Brie</option>';
+                preferenceHTMLStr += '<option value="Toxic Brie">Toxic Brie</option>';
+                preferenceHTMLStr += '<option value="Gouda">Gouda</option>';
+                preferenceHTMLStr += '<option value="SUPER">SB+</option>';
+                preferenceHTMLStr += '<option value="Toxic SUPER">Toxic SB+</option>';
+                preferenceHTMLStr += '<option value="Ghoulgonzola">Ghoulgonzola</option>';
+                preferenceHTMLStr += '<option value="Candy Corn">Candy Corn</option>';
+                preferenceHTMLStr += '<option value="ANY_HALLOWEEN">Ghoulgonzola/Candy Corn</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trBWRiftAutoChoosePortal" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Choose portal automatically"><b>Auto Choose Portal</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectBWRiftChoosePortal" style="width: 75px;" onchange="onSelectBWRiftChoosePortal();">';
+                preferenceHTMLStr += '<option value="false">False</option>';
+                preferenceHTMLStr += '<option value="true">True</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trBWRiftChoosePortalAfterCC" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Choose portal after Chamber Cleaver has been caught"><b>Choose Portal</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectBWRiftChoosePortalAfterCC" style="width: 75px;" onchange="saveBWRift();">';
+                preferenceHTMLStr += '<option value="false">False</option>';
+                preferenceHTMLStr += '<option value="true">True</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;After Chamber Cleaver Caught';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trBWRiftPortalPriority" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select portal priority"><b>Portal Priority </b></a>';
+                preferenceHTMLStr += '<select id="selectBWRiftPriority" style="width: 75px;" onchange="initControlsBWRift();">';
+                for (i = 1; i <= 13; i++) {
+                    if (i == 1)
+                        preferenceHTMLStr += '<option value="' + i + '">' + i + ' (Highest)</option>';
+                    else if (i == 13)
+                        preferenceHTMLStr += '<option value="' + i + '">' + i + ' (Lowest)</option>';
+                    else
+                        preferenceHTMLStr += '<option value="' + i + '">' + i + '</option>';
+                }
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectBWRiftPortal" onchange="saveBWRift();">';
+                preferenceHTMLStr += '<option value="GEARWORKS">Gearworks</option>';
+                preferenceHTMLStr += '<option value="ANCIENT">Ancient Lab</option>';
+                preferenceHTMLStr += '<option value="RUNIC">Runic Laboratory</option>';
+                preferenceHTMLStr += '<option value="AL/RL_MSC">AL/RL (MSC)</option>';
+                preferenceHTMLStr += '<option value="AL/RL_BSC">AL/RL (BSC)</option>';
+                preferenceHTMLStr += '<option value="TIMEWARP">Timewarp Chamber</option>';
+                preferenceHTMLStr += '<option value="LUCKY">Lucky Tower</option>';
+                preferenceHTMLStr += '<option value="HIDDEN">Hidden Treasury</option>';
+                preferenceHTMLStr += '<option value="GUARD">Guard Barracks</option>';
+                preferenceHTMLStr += '<option value="SECURITY">Security Chamber</option>';
+                preferenceHTMLStr += '<option value="FROZEN">Frozen Alcove</option>';
+                preferenceHTMLStr += '<option value="FURNACE">Furnace Room</option>';
+                preferenceHTMLStr += '<option value="INGRESS">Ingress Chamber</option>';
+                preferenceHTMLStr += '<option value="PURSUER">Pursuer Mousoleum</option>';
+                preferenceHTMLStr += '<option value="ACOLYTE">Acolyte Chamber</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trBWRiftPortalPriorityCursed" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select portal priority when get cursed"><b>Portal Priority - Cursed </b></a>';
+                preferenceHTMLStr += '<select id="selectBWRiftPriorityCursed" style="width: 75px;" onchange="initControlsBWRift();">';
+                for (i = 1; i <= 13; i++) {
+                    if (i == 1)
+                        preferenceHTMLStr += '<option value="' + i + '">' + i + ' (Highest)</option>';
+                    else if (i == 13)
+                        preferenceHTMLStr += '<option value="' + i + '">' + i + ' (Lowest)</option>';
+                    else
+                        preferenceHTMLStr += '<option value="' + i + '">' + i + '</option>';
+                }
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectBWRiftPortalCursed" onchange="saveBWRift();">';
+                preferenceHTMLStr += '<option value="GEARWORKS">Gearworks</option>';
+                preferenceHTMLStr += '<option value="ANCIENT">Ancient Lab</option>';
+                preferenceHTMLStr += '<option value="RUNIC">Runic Laboratory</option>';
+                preferenceHTMLStr += '<option value="AL/RL_MSC">AL/RL (MSC)</option>';
+                preferenceHTMLStr += '<option value="AL/RL_BSC">AL/RL (BSC)</option>';
+                preferenceHTMLStr += '<option value="TIMEWARP">Timewarp Chamber</option>';
+                preferenceHTMLStr += '<option value="LUCKY">Lucky Tower</option>';
+                preferenceHTMLStr += '<option value="HIDDEN">Hidden Treasury</option>';
+                preferenceHTMLStr += '<option value="GUARD">Guard Barracks</option>';
+                preferenceHTMLStr += '<option value="SECURITY">Security Chamber</option>';
+                preferenceHTMLStr += '<option value="FROZEN">Frozen Alcove</option>';
+                preferenceHTMLStr += '<option value="FURNACE">Furnace Room</option>';
+                preferenceHTMLStr += '<option value="INGRESS">Ingress Chamber</option>';
+                preferenceHTMLStr += '<option value="PURSUER">Pursuer Mousoleum</option>';
+                preferenceHTMLStr += '<option value="ACOLYTE">Acolyte Chamber</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trBWRiftMinTimeSand" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select minimum time sand before entering Acolyte Chamber (AC)"><b>Min Time Sand </b></a>';
+                preferenceHTMLStr += '<select id="selectBWRiftBuffCurse" style="width: 75px;" onchange="initControlsBWRift();">';
+                preferenceHTMLStr += '<option value="0">No Buff & No Curse</option>';
+                preferenceHTMLStr += '<option value="1">Fourth Portal & No Curse</option>';
+                preferenceHTMLStr += '<option value="2">Acolyte Influence & No Curse</option>';
+                preferenceHTMLStr += '<option value="3">Acolyte Influence + Fourth Portal & No Curse</option>';
+                preferenceHTMLStr += '<option value="4">Paladin\'s Bane & No Curse</option>';
+                preferenceHTMLStr += '<option value="5">Paladin\'s Bane + Fourth Portal & No Curse</option>';
+                preferenceHTMLStr += '<option value="6">Paladin\'s Bane + Acolyte Influence & No Curse</option>';
+                preferenceHTMLStr += '<option value="7">All Buffs & No Curse</option>';
+                preferenceHTMLStr += '<option value="8">Buff(s) & Curse(s)</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<input type="number" id="inputMinTimeSand" min="0" max="99999" style="width:75px" value="50" onchange="onInputMinTimeSandChanged(this);">&nbsp;&nbsp;Before Enter AC';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trBWRiftMinRSC" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select minimum Runic String Cheese before entering Acolyte Chamber (AC)&#13;Note 1: Total RSC = 2*RSC Pot + RSC"><b>Min Runic String Cheese</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectBWRiftMinRSCType" style="width: 75px;" onchange="onSelectBWRiftMinRSCType();">';
+                preferenceHTMLStr += '<option value="NUMBER">Number</option>';
+                preferenceHTMLStr += '<option value="GEQ">Greater or Equal to Min Time Sand</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<input type="number" id="inputMinRSC" min="0" max="99999" style="width:75px" value="50" onchange="onInputMinRSCChanged(this);">&nbsp;&nbsp;Before Enter AC';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trBWRiftEnterMinigame" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select to enter minigame with curse(s)"><b>Enter Minigame with Curse(s)</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectBWRiftEnterWCurse" style="width: 75px;" onchange="saveBWRift();">';
+                preferenceHTMLStr += '<option value="false">False</option>';
+                preferenceHTMLStr += '<option value="true">True</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trBWRiftSubLocation" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Chamber in Bristle Woods Rift"><b>Sub-Location</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectBWRiftChamber" onchange="initControlsBWRift();">';
+                preferenceHTMLStr += '<option value="NONE">Non-Chamber</option>';
+                preferenceHTMLStr += '<option value="GEARWORKS">Gearworks</option>';
+                preferenceHTMLStr += '<option value="ANCIENT">Ancient Lab</option>';
+                preferenceHTMLStr += '<option value="RUNIC">Runic Laboratory</option>';
+                preferenceHTMLStr += '<option value="TIMEWARP">Timewarp Chamber</option>';
+                preferenceHTMLStr += '<option value="LUCKY">Lucky Tower</option>';
+                preferenceHTMLStr += '<option value="HIDDEN">Hidden Treasury</option>';
+                preferenceHTMLStr += '<option value="GUARD">Guard Barracks</option>';
+                preferenceHTMLStr += '<option value="SECURITY">Security Chamber</option>';
+                preferenceHTMLStr += '<option value="FROZEN">Frozen Alcove</option>';
+                preferenceHTMLStr += '<option value="FURNACE">Furnace Room</option>';
+                preferenceHTMLStr += '<option value="INGRESS">Ingress Chamber</option>';
+                preferenceHTMLStr += '<option value="PURSUER">Pursuer Mousoleum</option>';
+                preferenceHTMLStr += '<option value="ACOLYTE_CHARGING">Acolyte Chamber Charging</option>';
+                preferenceHTMLStr += '<option value="ACOLYTE_DRAINING">Acolyte Chamber Draining</option>';
+                preferenceHTMLStr += '<option value="ACOLYTE_DRAINED">Acolyte Chamber Drained</option>';
+                preferenceHTMLStr += '<option value="SEPARATOR" disabled>========= Separator =========</option>';
+                preferenceHTMLStr += '<option value="NONE_CURSED">Non-Chamber Cursed</option>';
+                preferenceHTMLStr += '<option value="GEARWORKS_CURSED">Gearworks Cursed</option>';
+                preferenceHTMLStr += '<option value="ANCIENT_CURSED">Ancient Lab Cursed</option>';
+                preferenceHTMLStr += '<option value="RUNIC_CURSED">Runic Laboratory Cursed</option>';
+                preferenceHTMLStr += '<option value="TIMEWARP_CURSED">Timewarp Chamber Cursed</option>';
+                preferenceHTMLStr += '<option value="LUCKY_CURSED">Lucky Tower Cursed</option>';
+                preferenceHTMLStr += '<option value="HIDDEN_CURSED">Hidden Treasury Cursed</option>';
+                preferenceHTMLStr += '<option value="GUARD_CURSED">Guard Barracks Cursed</option>';
+                preferenceHTMLStr += '<option value="SECURITY_CURSED">Security Chamber Cursed</option>';
+                preferenceHTMLStr += '<option value="FROZEN_CURSED">Frozen Alcove Cursed</option>';
+                preferenceHTMLStr += '<option value="FURNACE_CURSED">Furnace Room Cursed</option>';
+                preferenceHTMLStr += '<option value="INGRESS_CURSED">Ingress Chamber Cursed</option>';
+                preferenceHTMLStr += '<option value="PURSUER_CURSED">Pursuer Mousoleum Cursed</option>';
+                preferenceHTMLStr += '<option value="ACOLYTE_CHARGING_CURSED">Acolyte Chamber Charging Cursed</option>';
+                preferenceHTMLStr += '<option value="ACOLYTE_DRAINING_CURSED">Acolyte Chamber Draining Cursed</option>';
+                preferenceHTMLStr += '<option value="ACOLYTE_DRAINED_CURSED">Acolyte Chamber Drained Cursed</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trBWRiftMasterTrapSetup" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select trap setup based on current chamber"><b>Master Trap Setup</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectBWRiftWeapon" style="width: 75px;" onchange="saveBWRift();">';
+                preferenceHTMLStr += '<option value="Timesplit Dissonance Weapon">TDW</option>';
+                preferenceHTMLStr += '<option value="Mysteriously unYielding">MYNORCA</option>';
+                preferenceHTMLStr += '<option value="Focused Crystal Laser">FCL</option>';
+                preferenceHTMLStr += '<option value="Multi-Crystal Laser">MCL</option>';
+                preferenceHTMLStr += '<option value="Biomolecular Re-atomizer Trap">BRT</option>';
+                preferenceHTMLStr += '<option value="Crystal Tower">CT</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectBWRiftBase" style="width: 75px;" onchange="saveBWRift();">';
+                preferenceHTMLStr += '<option value="Clockwork Base">Clockwork</option>';
+                preferenceHTMLStr += '<option value="Fissure Base">Fissure</option>';
+                preferenceHTMLStr += '<option value="Rift Base">Rift</option>';
+                preferenceHTMLStr += '<option value="Fracture Base">Fracture</option>';
+                preferenceHTMLStr += '<option value="Enerchi Induction Base">Enerchi</option>';
+                preferenceHTMLStr += '<option value="Attuned Enerchi Induction Base">A. Enerchi</option>';
+                preferenceHTMLStr += '<option value="Minotaur Base">Minotaur</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectBWRiftTrinket" style="width: 75px;" onchange="saveBWRift();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectBWRiftBait" style="width: 75px;" onchange="saveBWRift();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '<option value="Runic String">Runic</option>';
+                preferenceHTMLStr += '<option value="Ancient String">Ancient</option>';
+                preferenceHTMLStr += '<option value="Runic/Ancient">Runic/Ancient</option>';
+                preferenceHTMLStr += '<option value="Runic=>Ancient">Runic=>Ancient</option>';
+                preferenceHTMLStr += '<option value="Magical String">Magical</option>';
+                preferenceHTMLStr += '<option value="Brie String">Brie</option>';
+                preferenceHTMLStr += '<option value="Swiss String">Swiss</option>';
+                preferenceHTMLStr += '<option value="Marble String">Marble</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectBWRiftActivatePocketWatch" style="width: 75px;" onchange="saveBWRift();">';
+                preferenceHTMLStr += '<option value="false">Deactivate Quantum Pocketwatch</option>';
+                preferenceHTMLStr += '<option value="true">Activate Quantum Pocketwatch</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trBWRiftTrapSetupSpecial" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select trap setup based on current chamber"><b>Conditional Trap Setup </b></a>';
+                preferenceHTMLStr += '<select id="selectBWRiftCleaverStatus" style="width:75px;display:none" onchange="initControlsBWRift();">';
+                preferenceHTMLStr += '<option value="0">Cleaver Not Available</option>';
+                preferenceHTMLStr += '<option value="1">Cleaver Available</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectBWRiftAlertLvl" style="width:75px;display:none" onchange="initControlsBWRift();">';
+                for (i = 0; i <= 6; i++)
+                    preferenceHTMLStr += '<option value="' + i + '">Alert Lvl ' + i + '</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectBWRiftFTC" style="width:75px;display:none" onchange="initControlsBWRift();">';
+                for (i = 0; i <= 3; i++)
+                    preferenceHTMLStr += '<option value="' + i + '">FTC ' + i + '</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectBWRiftHunt" style="width:75px;display:none" onchange="initControlsBWRift();">';
+                for (i = 0; i <= 15; i++)
+                    preferenceHTMLStr += '<option value="' + i + '">Hunt ' + i + '</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectBWRiftWeaponSpecial" style="width: 75px;" onchange="saveBWRift();">';
+                preferenceHTMLStr += '<option value="MASTER">Master</option>';
+                preferenceHTMLStr += '<option value="Timesplit Dissonance Weapon">TDW</option>';
+                preferenceHTMLStr += '<option value="Mysteriously unYielding">MYNORCA</option>';
+                preferenceHTMLStr += '<option value="Focused Crystal Laser">FCL</option>';
+                preferenceHTMLStr += '<option value="Multi-Crystal Laser">MCL</option>';
+                preferenceHTMLStr += '<option value="Biomolecular Re-atomizer Trap">BRT</option>';
+                preferenceHTMLStr += '<option value="Crystal Tower">CT</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectBWRiftBaseSpecial" style="width: 75px;" onchange="saveBWRift();">';
+                preferenceHTMLStr += '<option value="MASTER">Master</option>';
+                preferenceHTMLStr += '<option value="Clockwork Base">Clockwork</option>';
+                preferenceHTMLStr += '<option value="Fissure Base">Fissure</option>';
+                preferenceHTMLStr += '<option value="Rift Base">Rift</option>';
+                preferenceHTMLStr += '<option value="Fracture Base">Fracture</option>';
+                preferenceHTMLStr += '<option value="Enerchi Induction Base">Enerchi</option>';
+                preferenceHTMLStr += '<option value="Attuned Enerchi Induction Base">A. Enerchi</option>';
+                preferenceHTMLStr += '<option value="Minotaur Base">Minotaur</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectBWRiftTrinketSpecial" style="width: 75px;" onchange="saveBWRift();">';
+                preferenceHTMLStr += '<option value="MASTER">Master</option>';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectBWRiftBaitSpecial" style="width: 75px;" onchange="saveBWRift();">';
+                preferenceHTMLStr += '<option value="MASTER">Master</option>';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '<option value="Runic String">Runic</option>';
+                preferenceHTMLStr += '<option value="Ancient String">Ancient</option>';
+                preferenceHTMLStr += '<option value="Runic/Ancient">Runic/Ancient</option>';
+                preferenceHTMLStr += '<option value="Runic=>Ancient">Runic=>Ancient</option>';
+                preferenceHTMLStr += '<option value="Magical String">Magical</option>';
+                preferenceHTMLStr += '<option value="Brie String">Brie</option>';
+                preferenceHTMLStr += '<option value="Swiss String">Swiss</option>';
+                preferenceHTMLStr += '<option value="Marble String">Marble</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectBWRiftActivatePocketWatchSpecial" style="width: 75px;" onchange="saveBWRift();">';
+                preferenceHTMLStr += '<option value="MASTER">Master</option>';
+                preferenceHTMLStr += '<option value="false">Deactivate Quantum Pocketwatch</option>';
+                preferenceHTMLStr += '<option value="true">Activate Quantum Pocketwatch</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trBWRiftActivatePocketWatch" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Activate Quantum Pocketwatch forcibly"><b>Force Activate Quantum</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectBWRiftForceActiveQuantum" style="width: 75px;" onchange="onSelectBWRiftForceActiveQuantum();">';
+                preferenceHTMLStr += '<option value="false">False</option>';
+                preferenceHTMLStr += '<option value="true">True</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;If Remaining Loot/Obelisk Charge &le;&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '<input type="number" id="inputRemainingLootA" min="1" max="100" size="5" value="1" onchange="onInputRemaininigLootAChanged(this);">';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trBWRiftDeactivatePocketWatch" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Deactivate Quantum Pocketwatch forcibly"><b>Force Deactivate Quantum</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectBWRiftForceDeactiveQuantum" style="width: 75px;" onchange="onSelectBWRiftForceDeactiveQuantum();">';
+                preferenceHTMLStr += '<option value="false">False</option>';
+                preferenceHTMLStr += '<option value="true">True</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;If Remaining Loot/Obelisk Charge &le;&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '<input type="number" id="inputRemainingLootD" min="1" max="100" size="5" value="1" onchange="onInputRemaininigLootDChanged(this);">';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trFRoxTrapSetup" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select trap setup based on current stage"><b>Trap Setup for </b></a>';
+                preferenceHTMLStr += '<select id="selectFRoxStage" onchange="initControlsFRox();">';
+                preferenceHTMLStr += '<option value="DAY">Day</option>';
+                preferenceHTMLStr += '<option value="TWILIGHT">Twilight</option>';
+                preferenceHTMLStr += '<option value="MIDNIGHT">Midnight</option>';
+                preferenceHTMLStr += '<option value="PITCH">Pitch</option>';
+                preferenceHTMLStr += '<option value="UTTER">Utter Darkness</option>';
+                preferenceHTMLStr += '<option value="FIRST">First Light</option>';
+                preferenceHTMLStr += '<option value="DAWN">Dawn</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectFRoxWeapon" style="width: 75px;" onchange="saveFRox();"></select>';
+                preferenceHTMLStr += '<select id="selectFRoxBase" style="width: 75px;" onchange="saveFRox();"></select>';
+                preferenceHTMLStr += '<select id="selectFRoxTrinket" style="width: 75px;" onchange="saveFRox();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectFRoxBait" style="width: 75px;" onchange="saveFRox();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '<option value="Brie Cheese">Brie</option>';
+                preferenceHTMLStr += '<option value="Toxic Brie">Toxic Brie</option>';
+                preferenceHTMLStr += '<option value="Gouda">Gouda</option>';
+                preferenceHTMLStr += '<option value="SUPER">SB+</option>';
+                preferenceHTMLStr += '<option value="Toxic SUPER">Toxic SB+</option>';
+                preferenceHTMLStr += '<option value="Crescent">Crescent</option>';
+                preferenceHTMLStr += '<option value="Moon">Moon</option>';
+                preferenceHTMLStr += '<option value="ANY_LUNAR">Moon/Crescent</option>';
+                preferenceHTMLStr += '<option value="Moon=>Crescent">Moon=>Crescent</option>';
+                preferenceHTMLStr += '<option value="Crescent=>Moon">Crescent=>Moon</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectFRoxActivateTower" style="width: 75px;" onchange="saveFRox();">';
+                preferenceHTMLStr += '<option value="false">Deactivate Tower</option>';
+                preferenceHTMLStr += '<option value="true">Activate Tower</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trFRoxDeactiveTower" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select to deactivate tower when full HP"><b>Deactivate Tower When HP Full</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectFRoxFullHPDeactivate" onchange="saveFRox();">';
+                preferenceHTMLStr += '<option value="false">False</option>';
+                preferenceHTMLStr += '<option value="true">True</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trGESTrapSetup" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a><b>Trap Setup at </b></a>';
+                preferenceHTMLStr += '<select id="selectGESStage" style="width: 75px;" onchange="initControlsGES();">';
+                preferenceHTMLStr += '<option value="SD_BEFORE">Supply Depot (No Supply Rush)</option>';
+                preferenceHTMLStr += '<option value="SD_AFTER">Supply Depot (Supply Rush)</option>';
+                preferenceHTMLStr += '<option value="RR">Raider River</option>';
+                preferenceHTMLStr += '<option value="DC">Daredevil Canyon</option>';
+                preferenceHTMLStr += '<option value="WAITING">Waiting</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectGESTrapWeapon" style="width: 75px;" onchange="saveGES();">';
+                preferenceHTMLStr += '<option value="S.L.A.C.">S.L.A.C.</option>';
+                preferenceHTMLStr += '<option value="S.L.A.C. II">S.L.A.C. II</option>';
+                preferenceHTMLStr += '<option value="Supply Grabber">Supply Grabber</option>';
+                preferenceHTMLStr += '<option value="Bandit Deflector">Bandit Deflector</option>';
+                preferenceHTMLStr += '<option value="Engine Doubler">Engine Doubler</option>';
+                preferenceHTMLStr += '<option value="The Law Draw">The Law Draw</option>';
+                preferenceHTMLStr += '<option value="Law Laser Trap">Law Laser Trap</option>';
+                preferenceHTMLStr += '<option value="Meteor Prison Core Trap">Meteor Prison Core Trap</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectGESTrapBase" style="width: 75px" onchange="saveGES();">';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectGESTrapTrinket" style="width: 75px;" onchange="saveGES();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectGESRRTrapTrinket" style="width: 75px;display:none" onchange="saveGES();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '<option value="AUTO">Roof Rack/Door Guard/Greasy Glob</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectGESDCTrapTrinket" style="width: 75px;display:none" onchange="saveGES();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '<option value="AUTO">Magmatic Crystal/Black Powder/Dusty Coal</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectGESTrapBait" style="width: 75px" onchange="saveGES();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '<option value="Brie Cheese">Brie</option>';
+                preferenceHTMLStr += '<option value="Toxic Brie">Toxic Brie</option>';
+                preferenceHTMLStr += '<option value="Gouda">Gouda</option>';
+                preferenceHTMLStr += '<option value="SUPER">SB+</option>';
+                preferenceHTMLStr += '<option value="Toxic SUPER">Toxic SB+</option>';
+                preferenceHTMLStr += '<option value="Ghoulgonzola">Ghoulgonzola</option>';
+                preferenceHTMLStr += '<option value="Candy Corn">Candy Corn</option>';
+                preferenceHTMLStr += '<option value="ANY_HALLOWEEN">Ghoulgonzola/Candy Corn</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trGESSDLoadCrate" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a><b>Load Crate</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectGESSDLoadCrate" onchange="onSelectGESSDLoadCrate();">';
+                preferenceHTMLStr += '<option value="false">False</option>';
+                preferenceHTMLStr += '<option value="true">True</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;<a><b>When Crate &ge; :</b></a>&nbsp;';
+                preferenceHTMLStr += '<input type="number" id="inputMinCrate" min="1" max="50" size="5" value="11" onchange="saveGES(this);">';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trGESRRRepellent" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a><b>Use Repellent</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectGESRRRepellent" onchange="onSelectGESRRRepellent();">';
+                preferenceHTMLStr += '<option value="false">False</option>';
+                preferenceHTMLStr += '<option value="true">True</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;<a><b>When Repellent &ge; :</b></a>&nbsp;';
+                preferenceHTMLStr += '<input type="number" id="inputMinRepellent" min="1" max="50" size="5" value="11" onchange="saveGES(this);">';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trGESDCStokeEngine" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a><b>Stoke Engine</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectGESDCStokeEngine" onchange="onSelectGESDCStokeEngine();">';
+                preferenceHTMLStr += '<option value="false">False</option>';
+                preferenceHTMLStr += '<option value="true">True</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;<a><b>When Fuel Nuggests &ge;:</b></a>&nbsp;';
+                preferenceHTMLStr += '<input type="number" id="inputMinFuelNugget" min="1" max="20" size="5" value="20" onchange="saveGES(this);">';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trWWRiftFactionFocus" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select a faction to focus on"><b>Faction to Focus</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectWWRiftFaction" onchange="onSelectWWRiftFaction();">';
+                preferenceHTMLStr += '<option value="CC">Crazed Clearing</option>';
+                preferenceHTMLStr += '<option value="GGT">Gigantic Gnarled Tree</option>';
+                preferenceHTMLStr += '<option value="DL">Deep Lagoon</option>';
+                preferenceHTMLStr += '<option value="MBW_40_44">MBW 40 &le; Rage &le; 44</option>';
+                preferenceHTMLStr += '<option value="MBW_45_48">MBW 45 &le; Rage &le; 48</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trWWRiftFactionFocusNext" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select next faction to focus on"><b>Next Faction to Focus</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectWWRiftFactionNext" onchange="saveWWRift();">';
+                preferenceHTMLStr += '<option value="Remain">Remain</option>';
+                preferenceHTMLStr += '<option value="CC">Crazed Clearing</option>';
+                preferenceHTMLStr += '<option value="GGT">Gigantic Gnarled Tree</option>';
+                preferenceHTMLStr += '<option value="DL">Deep Lagoon</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trWWRiftTrapSetup" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select to trap setup based on certain range of rage"><b>Trap Setup for Rage</b></a>';
+                preferenceHTMLStr += '<select id="selectWWRiftRage" onchange="initControlsWWRift();">';
+                preferenceHTMLStr += '<option value="0">0-24</option>';
+                preferenceHTMLStr += '<option value="25">25-49</option>';
+                preferenceHTMLStr += '<option value="50">50</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectWWRiftTrapWeapon" onchange="saveWWRift();">';
+                preferenceHTMLStr += '<option value="Timesplit Dissonance Weapon">TDW</option>';
+                preferenceHTMLStr += '<option value="Mysteriously unYielding">MYNORCA</option>';
+                preferenceHTMLStr += '<option value="Focused Crystal Laser">FCL</option>';
+                preferenceHTMLStr += '<option value="Multi-Crystal Laser">MCL</option>';
+                preferenceHTMLStr += '<option value="Biomolecular Re-atomizer Trap">BRT</option>';
+                preferenceHTMLStr += '<option value="Crystal Tower">CT</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectWWRiftTrapBase" style="width: 75px" onchange="saveWWRift();">';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectWWRiftTrapTrinket" style="width: 75px" onchange="saveWWRift();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '<option value="FSC">Faction Specific Charm</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectWWRiftTrapBait" onchange="saveWWRift();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '<option value="Magical String">Magical</option>';
+                preferenceHTMLStr += '<option value="Brie String">Brie</option>';
+                preferenceHTMLStr += '<option value="Swiss String">Swiss</option>';
+                preferenceHTMLStr += '<option value="Marble String">Marble</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trWWRiftMBWMinRage" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select minimum rage to hunt MBW"><b>Min Rage to Hunt MBW</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<input type="number" id="inputMinRage" min="40" max="48" size="5" value="40" onchange="onInputMinRageChanged(this);">';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trWWRiftMBWTrapSetup" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a><b>Trap Setup When </b></a>';
+                preferenceHTMLStr += '<select id="selectWWRiftMBWBar4044" style="width: 75px; display:none" onchange="initControlsWWRift();">';
+                preferenceHTMLStr += '<option value="25_0">0 Bar &ge; 25 Rage</option>';
+                preferenceHTMLStr += '<option value="25_1">1 Bar &ge; 25 Rage</option>';
+                preferenceHTMLStr += '<option value="25_2">2 Bars &ge; 25 Rage</option>';
+                preferenceHTMLStr += '<option value="MIN_RAGE_0">3 Bars &ge; 25 Rage / 0 Bar &ge; Min Rage to Hunt MBW</option>';
+                preferenceHTMLStr += '<option value="MIN_RAGE_1">1 Bar &ge; Min Rage to Hunt MBW</option>';
+                preferenceHTMLStr += '<option value="MIN_RAGE_2">2 Bars &ge; Min Rage to Hunt MBW</option>';
+                preferenceHTMLStr += '<option value="MIN_RAGE_3">3 Bars &ge; Min Rage to Hunt MBW</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectWWRiftMBWBar4548" style="width: 75px; display:none" onchange="initControlsWWRift();">';
+                preferenceHTMLStr += '<option value="25_0">0 Bar &ge; 25 Rage</option>';
+                preferenceHTMLStr += '<option value="25_1">1 Bar &ge; 25 Rage</option>';
+                preferenceHTMLStr += '<option value="25_2">2 Bars &ge; 25 Rage</option>';
+                preferenceHTMLStr += '<option value="44_0">3 Bars &ge; 25 Rage / 0 Bar &ge; 44 Rage</option>';
+                preferenceHTMLStr += '<option value="44_1">1 Bar &ge; 44 Rage</option>';
+                preferenceHTMLStr += '<option value="44_2">2 Bars &ge; 44 Rage</option>';
+                preferenceHTMLStr += '<option value="44_3">3 Bars &ge; 44 Rage / 0 Bar &ge; Min Rage to Hunt MBW</option>';
+                preferenceHTMLStr += '<option value="MIN_RAGE_1">1 Bar &ge; Min Rage to Hunt MBW</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectWWRiftMBWTrapWeapon" onchange="saveWWRift();">';
+                preferenceHTMLStr += '<option value="Timesplit Dissonance Weapon">TDW</option>';
+                preferenceHTMLStr += '<option value="Mysteriously unYielding">MYNORCA</option>';
+                preferenceHTMLStr += '<option value="Focused Crystal Laser">FCL</option>';
+                preferenceHTMLStr += '<option value="Multi-Crystal Laser">MCL</option>';
+                preferenceHTMLStr += '<option value="Biomolecular Re-atomizer Trap">BRT</option>';
+                preferenceHTMLStr += '<option value="Crystal Tower">CT</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectWWRiftMBWTrapBase" style="width: 75px" onchange="saveWWRift();">';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectWWRiftMBWTrapTrinket" style="width: 75px" onchange="saveWWRift();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '<option value="FSCLR">Faction Specific Charm (Lowest Rage)</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectWWRiftMBWTrapBait" onchange="saveWWRift();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '<option value="Lactrodectus Lancashire">LLC</option>';
+                preferenceHTMLStr += '<option value="Magical String">Magical</option>';
+                preferenceHTMLStr += '<option value="Brie String">Brie</option>';
+                preferenceHTMLStr += '<option value="Swiss String">Swiss</option>';
+                preferenceHTMLStr += '<option value="Marble String">Marble</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trFREnterBattery" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select which battery level to enter Pagoda"><b>Enter at Battery</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectEnterAtBattery" onchange="saveFR();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                for (i = 1; i <= 10; i++)
+                    preferenceHTMLStr += '<option value="' + i + '">' + i + '</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trFRRetreatBattery" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select which battery level to retreat from  Pagoda"><b>Retreat at Battery</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectRetreatAtBattery" onchange="saveFR();">';
+                for (i = 0; i <= 10; i++)
+                    preferenceHTMLStr += '<option value="' + i + '">' + i + '</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trFRTrapSetupAtBattery" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select trap setup for each battery"><b>Trap Setup at Battery</b></a>&nbsp;&nbsp;';
+                preferenceHTMLStr += '<select id="selectTrapSetupAtBattery" onchange="initControlsFR();">';
+                for (i = 0; i <= 10; i++)
+                    preferenceHTMLStr += '<option value="' + i + '">' + i + '</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectFRTrapWeapon" onchange="saveFR();">';
+                preferenceHTMLStr += '<option value="Timesplit Dissonance Weapon">TDW</option>';
+                preferenceHTMLStr += '<option value="Mysteriously unYielding">MYNORCA</option>';
+                preferenceHTMLStr += '<option value="Focused Crystal Laser">FCL</option>';
+                preferenceHTMLStr += '<option value="Multi-Crystal Laser">MCL</option>';
+                preferenceHTMLStr += '<option value="Biomolecular Re-atomizer Trap">BRT</option>';
+                preferenceHTMLStr += '<option value="Crystal Tower">CT</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectFRTrapBase" onchange="saveFR();">';
+                preferenceHTMLStr += '<option value="Clockwork Base">Clockwork</option>';
+                preferenceHTMLStr += '<option value="Fissure Base">Fissure</option>';
+                preferenceHTMLStr += '<option value="Rift Base">Rift</option>';
+                preferenceHTMLStr += '<option value="Fracture Base">Fracture</option>';
+                preferenceHTMLStr += '<option value="Enerchi Induction Base">Enerchi</option>';
+                preferenceHTMLStr += '<option value="Attuned Enerchi Induction Base">A. Enerchi</option>';
+                preferenceHTMLStr += '<option value="Minotaur Base">Minotaur</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectFRTrapTrinket" style="width: 75px" onchange="saveFR();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectFRTrapBait" style="width: 75px" onchange="onSelectFRTrapBait();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '<option value="Ascended">Ascended</option>';
+                preferenceHTMLStr += '<option value="Null Onyx Gorgonzola">Null Onyx Gorgonzola</option>';
+                preferenceHTMLStr += '<option value="Rift Rumble">Rift Rumble</option>';
+                preferenceHTMLStr += '<option value="Rift Glutter">Rift Glutter</option>';
+                preferenceHTMLStr += '<option value="Rift Susheese">Rift Susheese</option>';
+                preferenceHTMLStr += '<option value="Rift Combat">Rift Combat</option>';
+                preferenceHTMLStr += '<option value="ANY_MASTER">Glutter/Combat/Susheese</option>';
+                preferenceHTMLStr += '<option value="BALANCE_MASTER">Balance Heirloom</option>';
+                preferenceHTMLStr += '<option value="ORDER_MASTER">Master Cheese in Order</option>';
+                preferenceHTMLStr += '<option value="Master Fusion">Master Fusion</option>';
+                preferenceHTMLStr += '<option value="Maki String">Maki</option>';
+                preferenceHTMLStr += '<option value="Magical String">Magical</option>';
+                preferenceHTMLStr += '<option value="Brie String">Brie</option>';
+                preferenceHTMLStr += '<option value="Swiss String">Swiss</option>';
+                preferenceHTMLStr += '<option value="Marble String">Marble</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectFRTrapBaitMasterOrder" style="width: 75px;display:none" onchange="saveFR();">';
+                preferenceHTMLStr += '<option value="Glutter=>Combat=>Susheese">Glutter=>Combat=>Susheese</option>';
+                preferenceHTMLStr += '<option value="Glutter=>Susheese=>Combat">Glutter=>Susheese=>Combat</option>';
+                preferenceHTMLStr += '<option value="Combat=>Glutter=>Susheese">Combat=>Glutter=>Susheese</option>';
+                preferenceHTMLStr += '<option value="Combat=>Susheese=>Glutter">Combat=>Susheese=>Glutter</option>';
+                preferenceHTMLStr += '<option value="Susheese=>Glutter=>Combat">Susheese=>Glutter=>Combat</option>';
+                preferenceHTMLStr += '<option value="Susheese=>Combat=>Glutter">Susheese=>Combat=>Glutter</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trIceberg" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select to trap setup based on current phase"><b>Trap Setup for</b></a>';
+                preferenceHTMLStr += '<select id="selectIcebergPhase" style="width: 75px" onchange="initControlsIceberg();">';
+                preferenceHTMLStr += '<option value="GENERAL">Iceberg General</option>';
+                preferenceHTMLStr += '<option value="TREACHEROUS">Treacherous Tunnels</option>';
+                preferenceHTMLStr += '<option value="BRUTAL">Brutal Bulwark</option>';
+                preferenceHTMLStr += '<option value="BOMBING">Bombing Run</option>';
+                preferenceHTMLStr += '<option value="MAD">Mad Depths</option>';
+                preferenceHTMLStr += '<option value="ICEWING">Icewing\'s Lair</option>';
+                preferenceHTMLStr += '<option value="HIDDEN">Hidden Depths</option>';
+                preferenceHTMLStr += '<option value="DEEP">The Deep Lair</option>';
+                preferenceHTMLStr += '<option value="SLUSHY">Slushy Shoreline</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectIcebergBase" style="width: 75px" onchange="saveIceberg();">';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectIcebergTrinket" style="width: 75px" onchange="saveIceberg();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectIcebergBait" style="width: 75px" onchange="saveIceberg();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '<option value="Brie Cheese">Brie</option>';
+                preferenceHTMLStr += '<option value="Toxic Brie">Toxic Brie</option>';
+                preferenceHTMLStr += '<option value="Gouda">Gouda</option>';
+                preferenceHTMLStr += '<option value="SUPER">SB+</option>';
+                preferenceHTMLStr += '<option value="Toxic SUPER">Toxic SB+</option>';
+                preferenceHTMLStr += '<option value="Ghoulgonzola">Ghoulgonzola</option>';
+                preferenceHTMLStr += '<option value="Candy Corn">Candy Corn</option>';
+                preferenceHTMLStr += '<option value="ANY_HALLOWEEN">Ghoulgonzola/Candy Corn</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trZTFocus" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select to chesspiece side to focus"><b>Side to Focus</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectZTFocus" onchange="saveZT();">';
+                preferenceHTMLStr += '<option value="MYSTIC">Mystic Only</option>';
+                preferenceHTMLStr += '<option value="TECHNIC">Technic Only</option>';
+                preferenceHTMLStr += '<option value="MYSTIC=>TECHNIC">Mystic First Technic Second</option>';
+                preferenceHTMLStr += '<option value="TECHNIC=>MYSTIC">Technic First Mystic Second</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+                preferenceHTMLStr += '<tr id="trZTTrapSetup1st" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select trap setup based on first focus-side chesspiece order"><b>First Side Trap Setup for </b></a>';
+                preferenceHTMLStr += '<select id="selectZTMouseOrder1st" onchange="initControlsZT();">';
+                preferenceHTMLStr += '<option value="PAWN">Pawn</option>';
+                preferenceHTMLStr += '<option value="KNIGHT">Knight</option>';
+                preferenceHTMLStr += '<option value="BISHOP">Bishop</option>';
+                preferenceHTMLStr += '<option value="ROOK">Rook</option>';
+                preferenceHTMLStr += '<option value="QUEEN">Queen</option>';
+                preferenceHTMLStr += '<option value="KING">King</option>';
+                preferenceHTMLStr += '<option value="CHESSMASTER">Chessmaster</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectZTWeapon1st" style="width: 75px" onchange="saveZT();">';
+                preferenceHTMLStr += '<option value="MPP/TPP">Focused-Side Pawn Pincher</option>';
+                preferenceHTMLStr += '<option value="BPT/OAT">Focused-Side Trap BPT/OAT</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectZTBase1st" style="width: 75px" onchange="saveZT();">';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectZTTrinket1st" style="width: 75px" onchange="saveZT();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectZTBait1st" style="width: 75px" onchange="saveZT();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '<option value="Brie Cheese">Brie</option>';
+                preferenceHTMLStr += '<option value="Toxic Brie">Toxic Brie</option>';
+                preferenceHTMLStr += '<option value="Gouda">Gouda</option>';
+                preferenceHTMLStr += '<option value="SUPER">SB+</option>';
+                preferenceHTMLStr += '<option value="Toxic SUPER">Toxic SB+</option>';
+                preferenceHTMLStr += '<option value="Ghoulgonzola">Ghoulgonzola</option>';
+                preferenceHTMLStr += '<option value="Candy Corn">Candy Corn</option>';
+                preferenceHTMLStr += '<option value="ANY_HALLOWEEN">Ghoulgonzola/Candy Corn</option>';
+                preferenceHTMLStr += '<option value="Checkmate">Checkmate</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+                preferenceHTMLStr += '<tr id="trZTTrapSetup2nd" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select trap setup based on second focus-side chesspiece order"><b>Second Side Trap Setup for </b></a>';
+                preferenceHTMLStr += '<select id="selectZTMouseOrder2nd" onchange="initControlsZT();">';
+                preferenceHTMLStr += '<option value="PAWN">Pawn</option>';
+                preferenceHTMLStr += '<option value="KNIGHT">Knight</option>';
+                preferenceHTMLStr += '<option value="BISHOP">Bishop</option>';
+                preferenceHTMLStr += '<option value="ROOK">Rook</option>';
+                preferenceHTMLStr += '<option value="QUEEN">Queen</option>';
+                preferenceHTMLStr += '<option value="KING">King</option>';
+                preferenceHTMLStr += '<option value="CHESSMASTER">Chessmaster</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectZTWeapon2nd" style="width: 75px" onchange="saveZT();">';
+                preferenceHTMLStr += '<option value="MPP/TPP">Focused-Side Pawn Pincher</option>';
+                preferenceHTMLStr += '<option value="BPT/OAT">Focused-Side Trap BPT/OAT</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectZTBase2nd" style="width: 75px" onchange="saveZT();">';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectZTTrinket2nd" style="width: 75px" onchange="saveZT();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectZTBait2nd" style="width: 75px" onchange="saveZT();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '<option value="Brie Cheese">Brie</option>';
+                preferenceHTMLStr += '<option value="Toxic Brie">Toxic Brie</option>';
+                preferenceHTMLStr += '<option value="Gouda">Gouda</option>';
+                preferenceHTMLStr += '<option value="SUPER">SB+</option>';
+                preferenceHTMLStr += '<option value="Toxic SUPER">Toxic SB+</option>';
+                preferenceHTMLStr += '<option value="Ghoulgonzola">Ghoulgonzola</option>';
+                preferenceHTMLStr += '<option value="Candy Corn">Candy Corn</option>';
+                preferenceHTMLStr += '<option value="ANY_HALLOWEEN">Ghoulgonzola/Candy Corn</option>';
+                preferenceHTMLStr += '<option value="Checkmate">Checkmate</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trSGTrapSetup" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select to trap setup based on certain season"><b>Trap Setup For </b></a>';
+                preferenceHTMLStr += '<select id="selectSGSeason" onchange="initControlsSG();">';
+                preferenceHTMLStr += '<option value="SPRING">Spring</option>';
+                preferenceHTMLStr += '<option value="SUMMER">Summer</option>';
+                preferenceHTMLStr += '<option value="FALL">Fall</option>';
+                preferenceHTMLStr += '<option value="WINTER">Winter</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectSGTrapWeapon" style="width: 75px" onchange="saveSG();">';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectSGTrapBase" style="width: 75px" onchange="saveSG();">';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectSGTrapTrinket" style="width: 75px" onchange="saveSG();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectSGTrapBait" style="width: 75px" onchange="saveSG();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '<option value="Brie Cheese">Brie</option>';
+                preferenceHTMLStr += '<option value="Toxic Brie">Toxic Brie</option>';
+                preferenceHTMLStr += '<option value="Gouda">Gouda</option>';
+                preferenceHTMLStr += '<option value="SUPER">SB+</option>';
+                preferenceHTMLStr += '<option value="Toxic SUPER">Toxic SB+</option>';
+                preferenceHTMLStr += '<option value="Ghoulgonzola">Ghoulgonzola</option>';
+                preferenceHTMLStr += '<option value="Candy Corn">Candy Corn</option>';
+                preferenceHTMLStr += '<option value="ANY_HALLOWEEN">Ghoulgonzola/Candy Corn</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trSGDisarmBait" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select to disarm bait when amplifier is fully charged"><b>Disarm Bait</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectSGDisarmBait" onchange="saveSG();">';
+                preferenceHTMLStr += '<option value="false">False</option>';
+                preferenceHTMLStr += '<option value="true">True</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;After Amplifier Fully Charged';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trLGTGAutoFill" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a><b>Auto Fill in </b></a>';
+                preferenceHTMLStr += '<select id="selectLGTGAutoFillSide" onchange="initControlsLG();">';
+                preferenceHTMLStr += '<option value="LG">Living Garden</option>';
+                preferenceHTMLStr += '<option value="TG">Twisted Garden</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectLGTGAutoFillState" onchange="saveLG();">';
+                preferenceHTMLStr += '<option value="false">False</option>';
+                preferenceHTMLStr += '<option value="true">True</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+                preferenceHTMLStr += '<tr id="trLGTGAutoPour" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a><b>Auto Pour in </b></a>';
+                preferenceHTMLStr += '<select id="selectLGTGAutoPourSide" onchange="initControlsLG();">';
+                preferenceHTMLStr += '<option value="LG">Living Garden</option>';
+                preferenceHTMLStr += '<option value="TG">Twisted Garden</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectLGTGAutoPourState" onchange="saveLG();">';
+                preferenceHTMLStr += '<option value="false">False</option>';
+                preferenceHTMLStr += '<option value="true">True</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+                preferenceHTMLStr += '<tr id="trPourTrapSetup" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a><b>After Poured in </b></a>';
+                preferenceHTMLStr += '<select id="selectLGTGSide" onchange="initControlsLG();">';
+                preferenceHTMLStr += '<option value="LG">Living Garden</option>';
+                preferenceHTMLStr += '<option value="TG">Twisted Garden</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectLGTGBase" style="width: 75px" onchange="saveLG();">';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectLGTGTrinket" style="width: 75px" onchange="saveLG();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectLGTGBait" style="width: 75px" onchange="saveLG();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '<option value="Gouda">Gouda</option>';
+                preferenceHTMLStr += '<option value="SUPER">SB+</option>';
+                preferenceHTMLStr += '<option value="Toxic SUPER">Toxic SB+</option>';
+                preferenceHTMLStr += '<option value="Duskshade Camembert">Duskshade Camembert</option>';
+                preferenceHTMLStr += '<option value="Lunaria Camembert">Lunaria Camembert</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+                preferenceHTMLStr += '<tr id="trCurseLiftedTrapSetup" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a><b>After Curse Lifted in </b></a>';
+                preferenceHTMLStr += '<select id="selectLCCCSide" onchange="initControlsLG();">';
+                preferenceHTMLStr += '<option value="LC">Lost City</option>';
+                preferenceHTMLStr += '<option value="CC">Cursed City</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectLCCCBase" style="width: 75px" onchange="saveLG();">';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectLCCCTrinket" style="width: 75px" onchange="saveLG();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+                preferenceHTMLStr += '<tr id="trSaltedTrapSetup" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a><b>Trap Setup </b></a>';
+                preferenceHTMLStr += '<select id="selectSaltedStatus" onchange="initControlsLG();">';
+                preferenceHTMLStr += '<option value="before">During</option>';
+                preferenceHTMLStr += '<option value="after">After</option>';
+                preferenceHTMLStr += '</select><a><b> Salt Charging</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectSCBase" style="width: 75px" onchange="saveLG();">';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;<a title="Max number of salt before hunting King Grub"><b>Salt Charge : </b></a>';
+                preferenceHTMLStr += '<input type="number" id="inputKGSalt" min="1" max="50" size="5" value="25" onchange="saveLG();">';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trGWHTrapSetup" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select trap setup based on anchor/boost status"><b>Trap Setup When </b></a>';
+                preferenceHTMLStr += '<select id="selectGWHZone" style="width: 75px" onchange="initControlsGWH2016();">';
+                preferenceHTMLStr += '<option value="ORDER1">Simple Zone With Order</option>';
+                preferenceHTMLStr += '<option value="ORDER2">Deluxe Zone With Order</option>';
+                preferenceHTMLStr += '<option value="NONORDER1">Simple Zone W/O Order</option>';
+                preferenceHTMLStr += '<option value="NONORDER2">Deluxe Zone W/O Order</option>';
+                preferenceHTMLStr += '<option value="WINTER_WASTELAND">Winter Wasteland</option>';
+                preferenceHTMLStr += '<option value="SNOWBALL_STORM">Snowball Storm</option>';
+                preferenceHTMLStr += '<option value="FLYING">Flying</option>';
+                preferenceHTMLStr += '<option value="NEW_YEAR\'S_PARTY">New Year\'s Party</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectGWHWeapon" style="width: 75px" onchange="saveGWH2016();">';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectGWHBase" style="width: 75px" onchange="saveGWH2016();">';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectGWHTrinket" style="width: 75px;" onchange="onSelectGWHTrinketChanged();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '<option value="ANCHOR_FAC/EAC">FAC/EAC</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectGWHBait" style="width: 75px" onchange="saveGWH2016();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '<option value="ANY_FESTIVE_BRIE">AA/Festive Cheese/Brie</option>';
+                preferenceHTMLStr += '<option value="ANY_FESTIVE_GOUDA">AA/Festive Cheese/Gouda</option>';
+                preferenceHTMLStr += '<option value="ANY_FESTIVE_SB">AA/Festive Cheese/SUPER|brie+</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectGWHBoost" style="width: 75px" onchange="saveGWH2016();">';
+                preferenceHTMLStr += '<option value="false">Not Boost</option>';
+                preferenceHTMLStr += '<option value="true">Boost</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+                preferenceHTMLStr += '<tr id="trGWHTurboBoost" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select to always Turbo boost (500m)"><b>Always Turbo Boost</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectGWHUseTurboBoost" onchange="saveGWH2016();">';
+                preferenceHTMLStr += '<option value="false">False</option>';
+                preferenceHTMLStr += '<option value="true">True</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+                preferenceHTMLStr += '<tr id="trGWHFlying" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select minimum AA to take flight"><b>Min AA to Fly (&ge;)</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<input type="number" id="inputMinAA" min="0" max="9007199254740991" style="width:50px" value="20" onchange="onInputMinAAChanged(this);">';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+                preferenceHTMLStr += '<tr id="trGWHFlyingFirework" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select minimum firework to take flight"><b>Min Firework to Fly (&ge;)</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<input type="number" id="inputMinFirework" min="0" max="9007199254740991" style="width:50px" value="20" onchange="onInputMinWorkChanged(this);">';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+                preferenceHTMLStr += '<tr id="trGWHFlyingLand" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select whether land after firework run out"><b>Land after Firework Run Out</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectGWHLandAfterRunOutFirework" onchange="saveGWH2016();">';
+                preferenceHTMLStr += '<option value="false">False</option>';
+                preferenceHTMLStr += '<option value="true">True</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trSCCustom" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="Select custom algorithm"><b>SC Custom Algorithm</b></a>';
+                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectSCHuntZone" style="width:75px" onChange="initControlsSCCustom();">';
+                preferenceHTMLStr += '<option value="ZONE_NOT_DIVE">Surface</option>';
+                preferenceHTMLStr += '<option value="ZONE_DEFAULT">Default</option>';
+                preferenceHTMLStr += '<option value="ZONE_CORAL">Coral</option>';
+                preferenceHTMLStr += '<option value="ZONE_SCALE">Scale</option>';
+                preferenceHTMLStr += '<option value="ZONE_BARNACLE">Barnacle</option>';
+                preferenceHTMLStr += '<option value="ZONE_TREASURE">Treasure</option>';
+                preferenceHTMLStr += '<option value="ZONE_DANGER">Danger</option>';
+                preferenceHTMLStr += '<option value="ZONE_DANGER_PP">Danger PP MT</option>';
+                preferenceHTMLStr += '<option value="ZONE_DANGER_PP_LOTA">Danger PP LOTA</option>';
+                preferenceHTMLStr += '<option value="ZONE_OXYGEN">Oxygen</option>';
+                preferenceHTMLStr += '<option value="ZONE_BONUS">Bonus</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectSCHuntZoneEnable" style="width:75px;display:none" onChange="saveSCCustomAlgo();">';
+                preferenceHTMLStr += '<option value="true">Hunt</option>';
+                preferenceHTMLStr += '<option value="false">Jet Through</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectSCHuntBait" style="width: 75px" onchange="saveSCCustomAlgo();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '<option value="Brie Cheese">Brie</option>';
+                preferenceHTMLStr += '<option value="Toxic Brie">Toxic Brie</option>';
+                preferenceHTMLStr += '<option value="Gouda">Gouda</option>';
+                preferenceHTMLStr += '<option value="SUPER">SB+</option>';
+                preferenceHTMLStr += '<option value="Toxic SUPER">Toxic SB+</option>';
+                preferenceHTMLStr += '<option value="Ghoulgonzola">Ghoulgonzola</option>';
+                preferenceHTMLStr += '<option value="Candy Corn">Candy Corn</option>';
+                preferenceHTMLStr += '<option value="ANY_HALLOWEEN">Ghoulgonzola/Candy Corn</option>';
+                preferenceHTMLStr += '<option value="Fishy Fromage">Fishy Fromage</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectSCHuntTrinket" style="width: 75px" onchange="saveSCCustomAlgo();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '<option value="Empowered Anchor">EAC</option>';
+                preferenceHTMLStr += '<option value="GAC_EAC">GAC, EAC</option>';
+                preferenceHTMLStr += '<option value="SAC_EAC">SAC, EAC</option>';
+                preferenceHTMLStr += '<option value="UAC_EAC">UAC, EAC</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trSCCustomUseSmartJet" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select to always use Smart Water Jet Charm"><b>Use Smart Jet</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectSCUseSmartJet" onchange="saveSCCustomAlgo();">';
+                preferenceHTMLStr += '<option value="false">False</option>';
+                preferenceHTMLStr += '<option value="true">True</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trLabyrinth" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="Select a district to focus on"><b>District to Focus</b></a>';
+                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectLabyrinthDistrict" onChange="onSelectLabyrinthDistrict();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '<option value="FEALTY">Fealty</option>';
+                preferenceHTMLStr += '<option value="TECH">Tech</option>';
+                preferenceHTMLStr += '<option value="SCHOLAR">Scholar</option>';
+                preferenceHTMLStr += '<option value="TREASURY">Treasury</option>';
+                preferenceHTMLStr += '<option value="FARMING">Farming</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trLabyrinthDisarm" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="Select to disarm cheese at X last hunt in hallway when total clues near 100"><b>Security Disarm</b></a>';
+                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectLabyrinthDisarm" onChange="onSelectLabyrinthDisarm();">';
+                preferenceHTMLStr += '<option value="false">False</option>';
+                preferenceHTMLStr += '<option value="true">True</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;At Last&nbsp;';
+                preferenceHTMLStr += '<input type="number" id="inputLabyrinthLastHunt" min="2" max="10" style="width:40px" value="2" onchange="onInputLabyrinthLastHuntChanged(this);">&nbsp;Hunt(s) in Hallway Near 100 Total Clues';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trLabyrinthArmOtherBase" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select to arm other base if Compass Magnet Charm is currently armed"><b>Arm Other Base</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectLabyrinthOtherBase" style="width: 75px" onchange="saveLaby();">';
+                preferenceHTMLStr += '<option value="false">False</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;If Compass Magnet Charm is armed';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trLabyrinthDisarmCompass" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a><b>Disarm Compass Magnet</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectLabyrinthDisarmCompass" onchange="onSelectLabyrinthDisarmCompass();">';
+                preferenceHTMLStr += '<option value="true">True</option>';
+                preferenceHTMLStr += '<option value="false">False</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;If Dead End Clue &le; :&nbsp;';
+                preferenceHTMLStr += '<input type="number" id="inputLabyrinthDEC" min="0" max="20" style="width:40px" value="0" onchange="onInputLabyrinthDECChanged(this);">';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trPriorities15" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="Select hallway priorities when focus-district clues less than 15"><b>Priorities (Focus-District Clues < 15)</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectHallway15Plain" onChange="saveLaby();">';
+                preferenceHTMLStr += '<option value="lp">Long Plain Hallway First</option>';
+                preferenceHTMLStr += '<option value="sp">Short Plain Hallway First</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trPriorities1560" style="display:table-row;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="Select hallway priorities when focus-district clues within 15 and 60"><b>Priorities (15 < Focus-District Clues < 60)</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectHallway1560Superior" onchange="saveLaby();">';
+                preferenceHTMLStr += '<option value="ls">Long Superior Hallway First</option>';
+                preferenceHTMLStr += '<option value="ss">Short Superior Hallway First</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectHallway1560Plain" onchange="saveLaby();">';
+                preferenceHTMLStr += '<option value="lp">Long Plain Hallway First</option>';
+                preferenceHTMLStr += '<option value="sp">Short Plain Hallway First</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trPriorities60" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="Select hallway priorities when focus-district clues more than 60"><b>Priorities (Focus-District Clues > 60)</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectHallway60Epic" onchange="saveLaby();">';
+                preferenceHTMLStr += '<option value="le">Long Epic Hallway First</option>';
+                preferenceHTMLStr += '<option value="se">Short Epic Hallway First</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectHallway60Superior" onchange="saveLaby();">';
+                preferenceHTMLStr += '<option value="ls">Long Superior Hallway First</option>';
+                preferenceHTMLStr += '<option value="ss">Short Superior Hallway First</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectHallway60Plain" onchange="saveLaby();">';
+                preferenceHTMLStr += '<option value="lp">Long Plain Hallway First</option>';
+                preferenceHTMLStr += '<option value="sp">Short Plain Hallway First</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trLabyrinthOtherHallway" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="Choose doors other than focused door when there is no available focused door to be choosen"><b>Open Non-Focus Door</b></a>';
+                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="chooseOtherDoors" onChange="\
+				saveLaby();\
+				document.getElementById(\'typeOtherDoors\').disabled = (value == \'false\') ? \'disabled\' : \'\'; ">';
+                preferenceHTMLStr += '<option value="false">False</option>';
+                preferenceHTMLStr += '<option value="true">True</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;<a title="Select a choosing type for non-focused doors"><b>Choosing Type:</b></a>&emsp;';
+                preferenceHTMLStr += '<select id="typeOtherDoors" onChange="saveLaby();">';
+                preferenceHTMLStr += '<option value="SHORTEST_ONLY">Shortest Length Only</option>';
+                preferenceHTMLStr += '<option value="FEWEST_ONLY">Fewest Clue Only</option>';
+                preferenceHTMLStr += '<option value="SHORTEST_FEWEST">Shortest Length => Fewest Clue</option>';
+                preferenceHTMLStr += '<option value="FEWEST_SHORTEST">Fewest Clue => Shortest Length </option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trLabyrinthWeaponFarming" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select weapon type in farming hallways"><b>Weapon Type in Farming</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectLabyrinthWeaponType" onchange="saveLaby();">';
+                preferenceHTMLStr += '<option value="Forgotten">Forgotten</option>';
+                preferenceHTMLStr += '<option value="Arcane">Arcane</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trZokorTrapSetup" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="Select trap setup under different boss status"><b>Trap Setup When</b></a>';
+                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectZokorBossStatus" onChange="initControlsZokor();">';
+                preferenceHTMLStr += '<option value="INCOMING">Boss Incoming</option>';
+                preferenceHTMLStr += '<option value="ACTIVE">Boss Active</option>';
+                preferenceHTMLStr += '<option value="DEFEATED">Boss Defeated</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;';
+                preferenceHTMLStr += '<select id="selectZokorBait" style="width: 75px" onChange="saveZokor();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '<option value="Brie Cheese">Brie</option>';
+                preferenceHTMLStr += '<option value="Toxic Brie">Toxic Brie</option>';
+                preferenceHTMLStr += '<option value="Gouda">Gouda</option>';
+                preferenceHTMLStr += '<option value="SUPER">SB+</option>';
+                preferenceHTMLStr += '<option value="Toxic SUPER">Toxic SB+</option>';
+                preferenceHTMLStr += '<option value="Ghoulgonzola">Ghoulgonzola</option>';
+                preferenceHTMLStr += '<option value="Candy Corn">Candy Corn</option>';
+                preferenceHTMLStr += '<option value="ANY_HALLOWEEN">Ghoulgonzola/Candy Corn</option>';
+                preferenceHTMLStr += '<option value="Glowing Gruyere">GG</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;';
+                preferenceHTMLStr += '<select id="selectZokorTrinket" style="width: 75px" onChange="saveZokor();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trFWWave" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="Select FW wave"><b>Wave</b></a>';
+                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectFWWave" onChange="initControlsFW();">';
+                preferenceHTMLStr += '<option value="1">1</option>';
+                preferenceHTMLStr += '<option value="2">2</option>';
+                preferenceHTMLStr += '<option value="3">3</option>';
+                preferenceHTMLStr += '<option value="4">4</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trFWTrapSetup" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select trap setup based on certain FW wave"><b>Physical Trap Setup</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectFWTrapSetupWeapon" style="width: 75px" onchange="saveFW();">';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectFWTrapSetupBase" style="width: 75px" onchange="saveFW();">';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trFW4TrapSetup" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select trap setup based on warden status"><b>Trap Setup </b></a>';
+                preferenceHTMLStr += '<select id="selectFW4WardenStatus" onchange="initControlsFW();">';
+                preferenceHTMLStr += '<option value="before">Before</option>';
+                preferenceHTMLStr += '<option value="after">After</option>';
+                preferenceHTMLStr += '</select><a><b> Clear Warden</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectFW4TrapSetupWeapon" style="width: 75px" onchange="saveFW();">';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectFW4TrapSetupBase" style="width: 75px" onchange="saveFW();">';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectFW4TrapSetupTrinket" style="width: 75px" onchange="saveFW();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectFW4TrapSetupBait" style="width: 75px" onchange="saveFW();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '<option value="Brie Cheese">Brie</option>';
+                preferenceHTMLStr += '<option value="Toxic Brie">Toxic Brie</option>';
+                preferenceHTMLStr += '<option value="Gouda">Gouda</option>';
+                preferenceHTMLStr += '<option value="SUPER">SB+</option>';
+                preferenceHTMLStr += '<option value="Toxic SUPER">Toxic SB+</option>';
+                preferenceHTMLStr += '<option value="Ghoulgonzola">Ghoulgonzola</option>';
+                preferenceHTMLStr += '<option value="Candy Corn">Candy Corn</option>';
+                preferenceHTMLStr += '<option value="ANY_HALLOWEEN">Ghoulgonzola/Candy Corn</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trFWFocusType" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="Select either Normal (Warrior, Scout, Archer) or Special (Cavalry, Mage)"><b>Soldier Type to Focus</b></a>';
+                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectFWFocusType" onChange="saveFW();">';
+                preferenceHTMLStr += '<option value="NORMAL">Normal</option>';
+                preferenceHTMLStr += '<option value="SPECIAL">Special</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;<a title="Select which soldier type comes first based on population"><b>Priorities:</b></a>&emsp;';
+                preferenceHTMLStr += '<select id="selectFWPriorities" onChange="saveFW();">';
+                preferenceHTMLStr += '<option value="HIGHEST">Highest Population First</option>';
+                preferenceHTMLStr += '<option value="LOWEST">Lowest Population First</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trFWStreak" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="Select streak"><b>Streak</b></a>';
+                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectFWStreak" onChange="initControlsFW();">';
+                preferenceHTMLStr += '<option value="0">0</option>';
+                preferenceHTMLStr += '<option value="1">1</option>';
+                preferenceHTMLStr += '<option value="2">2</option>';
+                preferenceHTMLStr += '<option value="3">3</option>';
+                preferenceHTMLStr += '<option value="4">4</option>';
+                preferenceHTMLStr += '<option value="5">5</option>';
+                preferenceHTMLStr += '<option value="6">6</option>';
+                preferenceHTMLStr += '<option value="7">7</option>';
+                preferenceHTMLStr += '<option value="8">8</option>';
+                preferenceHTMLStr += '<option value="9">9</option>';
+                preferenceHTMLStr += '<option value="10">10</option>';
+                preferenceHTMLStr += '<option value="11">11</option>';
+                preferenceHTMLStr += '<option value="12">12</option>';
+                preferenceHTMLStr += '<option value="13">13</option>';
+                preferenceHTMLStr += '<option value="14">14</option>';
+                preferenceHTMLStr += '<option value="15">15</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectFWCheese" style="width: 75px" onChange="saveFW();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '<option value="Brie Cheese">Brie</option>';
+                preferenceHTMLStr += '<option value="Toxic Brie">Toxic Brie</option>';
+                preferenceHTMLStr += '<option value="Gouda">Gouda</option>';
+                preferenceHTMLStr += '<option value="SUPER">SB+</option>';
+                preferenceHTMLStr += '<option value="Toxic SUPER">Toxic SB+</option>';
+                preferenceHTMLStr += '<option value="Ghoulgonzola">Ghoulgonzola</option>';
+                preferenceHTMLStr += '<option value="Candy Corn">Candy Corn</option>';
+                preferenceHTMLStr += '<option value="ANY_HALLOWEEN">Ghoulgonzola/Candy Corn</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectFWCharmType" style="width: 75px" onChange="saveFW();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '<option value="Warpath">Warpath</option>';
+                preferenceHTMLStr += '<option value="Super Warpath">Super Warpath</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectFWSpecial" style="width: 75px" onChange="saveFW();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '<option value="COMMANDER">Commander</option>';
+                preferenceHTMLStr += '<option value="GARGANTUA">Gargantua</option>';
+                preferenceHTMLStr += '<option value="GARGANTUA_GGC" disabled="disabled">Gargantua GGC</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trFWLastType" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="Select config when there is only one soldier type left"><b>Last Soldier Type</b></a>';
+                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px;">';
+                preferenceHTMLStr += '<select id="selectFWLastTypeConfig" onChange="saveFW();">';
+                preferenceHTMLStr += '<option value="CONFIG_STREAK">Follow Streak Config</option>';
+                preferenceHTMLStr += '<option value="CONFIG_GOUDA">Gouda & No Warpath Charm</option>';
+                preferenceHTMLStr += '<option value="NO_WARPATH">No Warpath Charm Only</option>';
+                preferenceHTMLStr += '<option value="CONFIG_UNCHANGED">Trap Setup Unchanged</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;<a title="Select whether to include Artillery in checking of Last Soldier"><b>Include Artillery:</b></a>&emsp;';
+                preferenceHTMLStr += '<select id="selectFWLastTypeConfigIncludeArtillery" onchange="saveFW();">';
+                preferenceHTMLStr += '<option value="true">True</option>';
+                preferenceHTMLStr += '<option value="false">False</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trFWSupportConfig" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;"><a title="Select whether to disarm any Warpath Charm when supports are gone"><b>Disarm Warpath Charm</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
+                preferenceHTMLStr += '<td style="height:24px">';
+                preferenceHTMLStr += '<select id="selectFWSupportConfig" onchange="saveFW();">';
+                preferenceHTMLStr += '<option value="false">False</option>';
+                preferenceHTMLStr += '<option value="true">True</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;When Support Retreated';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trBRConfig" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="Select the mist tier to hunt"><b>Hunt At</b></a>';
+                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px;">';
+                preferenceHTMLStr += '<select id="selectBRHuntMistTier" onChange="onSelectBRHuntMistTierChanged();">';
+                preferenceHTMLStr += '<option value="Red">Red</option>';
+                preferenceHTMLStr += '<option value="Green">Green</option>';
+                preferenceHTMLStr += '<option value="Yellow">Yellow</option>';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;Mist Tier';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trBRToggle" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="Select the amount of hunt to toggle canister"><b>Toggle Canister Every</b></a>';
+                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px;">';
+                preferenceHTMLStr += '<input type="number" id="inputToggleCanister" min="1" max="999" value="1" onchange="onInputToggleCanisterChanged(this);">&nbsp;&nbsp;Hunt(s)';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr id="trBRTrapSetup" style="display:none;">';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
+                preferenceHTMLStr += '<a title="Select trap setup combination for respective mist tier"><b>Trap Setup</b></a>';
+                preferenceHTMLStr += '&nbsp;&nbsp;:&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '<td style="height:24px;">';
+                preferenceHTMLStr += '<select id="selectBRTrapWeapon" onchange="saveBR();">';
+                preferenceHTMLStr += '<option value="Timesplit Dissonance Weapon">TDW</option>';
+                preferenceHTMLStr += '<option value="Mysteriously unYielding">MYNORCA</option>';
+                preferenceHTMLStr += '<option value="Focused Crystal Laser">FCL</option>';
+                preferenceHTMLStr += '<option value="Multi-Crystal Laser">MCL</option>';
+                preferenceHTMLStr += '<option value="Biomolecular Re-atomizer Trap">BRT</option>';
+                preferenceHTMLStr += '<option value="Crystal Tower">CT</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectBRTrapBase" style="width: 75px" onchange="saveBR();">';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectBRTrapTrinket" style="width: 75px" onchange="saveBR();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<select id="selectBRTrapBait" onchange="saveBR();">';
+                preferenceHTMLStr += '<option value="None">None</option>';
+                preferenceHTMLStr += '<option value="Polluted Parmesan">PP</option>';
+                preferenceHTMLStr += '<option value="Terre Ricotta">Terre</option>';
+                preferenceHTMLStr += '<option value="Magical String">Magical</option>';
+                preferenceHTMLStr += '<option value="Brie String">Brie</option>';
+                preferenceHTMLStr += '<option value="Swiss String">Swiss</option>';
+                preferenceHTMLStr += '<option value="Marble String">Marble</option>';
+                preferenceHTMLStr += '<option value="Undead String Emmental">USE</option>';
+                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
+
+                preferenceHTMLStr += '<tr>';
+                preferenceHTMLStr += '<td style="height:24px; text-align:right;" colspan="2">';
+                preferenceHTMLStr += '<input type="button" id="AlgoConfigSaveInput" title="Save changes of Event or Location without reload, take effect after current hunt" value="Apply" onclick="setSessionToLocal();">&nbsp;&nbsp;&nbsp;';
+                preferenceHTMLStr += '<input type="button" id="AlgoConfigSaveReloadInput" title="Save changes of Event or Location with reload, take effect immediately" value="Apply & Reload" onclick="setSessionToLocal();' + temp + '">&nbsp;&nbsp;&nbsp;';
+                preferenceHTMLStr += '</td>';
+                preferenceHTMLStr += '</tr>';
 
                 if (eventLocation == "Hunt For") {
                     preferenceHTMLStr += '<tr>';
@@ -6823,6 +8037,9 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '</td>';
                 preferenceHTMLStr += '</tr>';
 
+                preferenceHTMLStr += '</table>';
+
+                /*
                 preferenceHTMLStr += '<tr>';
                 preferenceHTMLStr += '<td style="height:24px; text-align:right;" colspan="2">';
                 preferenceHTMLStr += '(Changes only take place after user save the preference) ';
@@ -6863,6 +8080,7 @@ window.localStorage.setItem(\'addonCode\', document.getElementById(\'addonCode\'
                 preferenceHTMLStr += '&nbsp;&nbsp;&nbsp;</td>';
                 preferenceHTMLStr += '</tr>';
                 preferenceHTMLStr += '</table>';
+                */
 
                 var NOBspecialMessageDiv = document.createElement('div');
                 NOBspecialMessageDiv.setAttribute('id', 'nobSpecialMessage');
@@ -6913,7 +8131,7 @@ window.localStorage.setItem(\'addonCode\', document.getElementById(\'addonCode\'
 
                 var preferenceDiv = document.createElement('div');
                 preferenceDiv.setAttribute('id', 'preferenceDiv');
-                if (showPreference == true)
+                if (showPreference === true)
                     preferenceDiv.setAttribute('style', 'display: block');
                 else
                     preferenceDiv.setAttribute('style', 'display: none');
@@ -6934,6 +8152,47 @@ window.localStorage.setItem(\'addonCode\', document.getElementById(\'addonCode\'
                 // embed all msg to the page
                 headerElement.parentNode.insertBefore(timerDivElement, headerElement);
                 timerDivElement = null;
+
+                var scriptElement = document.createElement("script");
+                scriptElement.setAttribute('type', "text/javascript");
+                scriptElement.setAttribute('id', "scriptUIFunction");
+                scriptElement.innerHTML = functionToHTMLString(bodyJS);
+                headerElement.parentNode.insertBefore(scriptElement, headerElement);
+                scriptElement = null;
+
+                addKREntries();
+                setKREntriesColor();
+
+                // insert trap list
+                var objSelectStr = {
+                    weapon: ['selectWeapon', 'selectZTWeapon1st', 'selectZTWeapon2nd', 'selectBestTrapWeapon', 'selectFWTrapSetupWeapon', 'selectFW4TrapSetupWeapon', 'selectSGTrapWeapon', 'selectFRoxWeapon', 'selectGWHWeapon', 'selectBCJODWeapon', 'selectFGARWeapon'],
+                    base: ['selectBase', 'selectLabyrinthOtherBase', 'selectZTBase1st', 'selectZTBase2nd', 'selectBestTrapBase', 'selectFWTrapSetupBase', 'selectFW4TrapSetupBase', 'selectLGTGBase', 'selectLCCCBase', 'selectSCBase', 'selectIcebergBase', 'selectGESTrapBase', 'selectSGTrapBase', 'selectFRoxBase', 'selectGWHBase', 'selectBRTrapBase', 'selectWWRiftTrapBase', 'selectWWRiftMBWTrapBase', 'selectBCJODBase', 'selectFGARBase'],
+                    trinket: ['selectZokorTrinket', 'selectTrinket', 'selectZTTrinket1st', 'selectZTTrinket2nd', 'selectFRTrapTrinket', 'selectBRTrapTrinket', 'selectLGTGTrinket', 'selectLCCCTrinket', 'selectIcebergTrinket', 'selectWWRiftTrapTrinket', 'selectWWRiftMBWTrapTrinket', 'selectGESTrapTrinket', 'selectGESRRTrapTrinket', 'selectGESDCTrapTrinket', 'selectFW4TrapSetupTrinket', 'selectSGTrapTrinket', 'selectSCHuntTrinket', 'selectFRoxTrinket', 'selectGWHTrinket', 'selectGESTrapTrinket', 'selectBWRiftTrinket', 'selectBWRiftTrinketSpecial', 'selectBCJODTrinket', 'selectFGARTrinket'],
+                    bait: ['selectBait', 'selectGWHBait']
+                };
+                var temp;
+                var optionEle;
+                for (var prop in objTrapCollection) {
+                    if (objTrapCollection.hasOwnProperty(prop)) {
+                        objTrapCollection[prop] = objTrapCollection[prop].sort();
+                        for (i = 0; i < objTrapCollection[prop].length; i++) {
+                            optionEle = document.createElement("option");
+                            optionEle.setAttribute('value', objTrapCollection[prop][i]);
+                            optionEle.innerText = objTrapCollection[prop][i];
+                            if (objSelectStr.hasOwnProperty(prop)) {
+                                for (var j = 0; j < objSelectStr[prop].length; j++) {
+                                    temp = document.getElementById(objSelectStr[prop][j]);
+                                    if (!isNullOrUndefined(temp))
+                                        temp.appendChild(optionEle.cloneNode(true));
+                                }
+                            }
+                        }
+                    }
+                }
+                document.getElementById('idRestore').style.display = (targetPage) ? 'table-row' : 'none';
+                document.getElementById('idGetLogAndPreference').style.display = (targetPage) ? 'table-row' : 'none';
+                document.getElementById('clearTrapList').style.display = (targetPage) ? 'table-row' : 'none';
+                document.getElementById('showPreferenceLink').style.display = (targetPage) ? 'table-row' : 'none';
             }
             headerElement = null;
         }
@@ -6951,6 +8210,7 @@ window.localStorage.setItem(\'addonCode\', document.getElementById(\'addonCode\'
 }
 
 function loadPreferenceSettingFromStorage() {
+    /*
     var aggressiveModeTemp = getStorage("AggressiveMode");
     if (aggressiveModeTemp == undefined || aggressiveModeTemp == null) {
         setStorage("AggressiveMode", aggressiveMode.toString());
@@ -7123,6 +8383,544 @@ function loadPreferenceSettingFromStorage() {
     krDelayMin = getStorageToVariableInt("AutoSolveKRDelayMin", krDelayMin);
     krDelayMax = getStorageToVariableInt("AutoSolveKRDelayMax", krDelayMax);
     kingsRewardRetry = getStorageToVariableInt("KingsRewardRetry", kingsRewardRetry);
+    */
+    aggressiveMode = getStorageToVariableBool("AggressiveMode", aggressiveMode);
+    hornTimeDelayMin = getStorageToVariableInt("HornTimeDelayMin", hornTimeDelayMin);
+    hornTimeDelayMax = getStorageToVariableInt("HornTimeDelayMax", hornTimeDelayMax);
+    enableTrapCheck = getStorageToVariableBool("TrapCheck", enableTrapCheck);
+    checkTimeDelayMin = getStorageToVariableInt("TrapCheckTimeDelayMin", checkTimeDelayMin);
+    checkTimeDelayMax = getStorageToVariableInt("TrapCheckTimeDelayMax", checkTimeDelayMax);
+    isKingWarningSound = getStorageToVariableBool("PlayKingRewardSound", isKingWarningSound);
+    isAutoSolve = getStorageToVariableBool("AutoSolveKR", isAutoSolve);
+    krDelayMin = getStorageToVariableInt("AutoSolveKRDelayMin", krDelayMin);
+    krDelayMax = getStorageToVariableInt("AutoSolveKRDelayMax", krDelayMax);
+    kingsRewardRetry = getStorageToVariableInt("KingsRewardRetry", kingsRewardRetry);
+    pauseAtInvalidLocation = getStorageToVariableBool("PauseLocation", pauseAtInvalidLocation);
+    saveKRImage = getStorageToVariableBool("SaveKRImage", saveKRImage);
+    g_nTimeOffset = getStorageToVariableInt("TimeOffset", g_nTimeOffset);
+    discharge = getStorageToVariableBool("discharge", discharge);
+    try {
+        keyKR = [];
+        var keyName = "";
+        var keyRemove = [];
+        var i, j, value, objTest;
+        for (i = 0; i < window.localStorage.length; i++) {
+            keyName = window.localStorage.key(i);
+            if (keyName.indexOf("KR-") > -1) { // remove old KR entries
+                keyRemove.push(keyName);
+            }
+            else if (keyName.indexOf("KR" + separator) > -1) {
+                keyKR.push(keyName);
+            }
+            value = getStorage(keyName); // remove entries of duplicate JSON.stringify
+            if (value.indexOf("{") > -1) {
+                try {
+                    objTest = JSON.parse(value);
+                    if (typeof objTest == 'string') {
+                        setStorage(keyName, objTest);
+                        setSessionStorage(keyName, objTest);
+                    }
+                }
+                catch (e) {
+                    console.perror(keyName, e.message);
+                }
+            }
+        }
+
+        for (i = 0; i < keyRemove.length; i++) {
+            removeStorage(keyRemove[i]);
+        }
+
+        if (keyKR.length > maxSaveKRImage) {
+            keyKR = keyKR.sort();
+            var count = Math.floor(maxSaveKRImage / 2);
+            for (i = 0; i < count; i++)
+                removeStorage(keyKR[i]);
+        }
+
+        // Backward compatibility of SCCustom
+        var temp = "";
+        var keyValue = "";
+        var obj = {};
+        var bResave = false;
+        var objSCCustomBackward = {
+            zone: ['ZONE_NOT_DIVE'],
+            zoneID: [0],
+            isHunt: [true],
+            bait: ['Gouda'],
+            trinket: ['None'],
+            useSmartJet: false
+        };
+        for (var prop in objSCZone) {
+            if (objSCZone.hasOwnProperty(prop)) {
+                keyName = "SCCustom_" + prop;
+                keyValue = window.localStorage.getItem(keyName);
+                if (!isNullOrUndefined(keyValue)) {
+                    keyValue = keyValue.split(',');
+                    objSCCustomBackward.zone[objSCZone[prop]] = prop;
+                    objSCCustomBackward.zoneID[objSCZone[prop]] = objSCZone[prop];
+                    objSCCustomBackward.isHunt[objSCZone[prop]] = (keyValue[0] === 'true' || keyValue[0] === true);
+                    objSCCustomBackward.bait[objSCZone[prop]] = keyValue[1];
+                    objSCCustomBackward.trinket[objSCZone[prop]] = keyValue[2];
+                    removeStorage(keyName);
+                }
+            }
+        }
+        if (objSCCustomBackward.zone.length > 1) {
+            setStorage('SCCustom', JSON.stringify(objSCCustomBackward));
+            setSessionStorage('SCCustom', JSON.stringify(objSCCustomBackward));
+        }
+
+        keyValue = getStorage("SCCustom");
+        if (!isNullOrUndefined(keyValue)) {
+            obj = JSON.parse(keyValue);
+            bResave = false;
+            var arrTempOri = ['NoSC', 'TT', 'EAC', 'scAnchorTreasure', 'scAnchorDanger', 'scAnchorUlti'];
+            var arrTempNew = ['None', 'Treasure Trawling Charm', 'Empowered Anchor Charm', 'GAC_EAC', 'SAC_EAC', 'UAC_EAC'];
+            var nIndex = -1;
+            for (var prop in obj) {
+                if (obj.hasOwnProperty(prop) && prop == 'trinket') {
+                    for (i = 0; i < obj[prop].length; i++) {
+                        nIndex = arrTempOri.indexOf(obj[prop][i]);
+                        if (nIndex > -1) {
+                            obj[prop][i] = arrTempNew[nIndex];
+                            bResave = true;
+                        }
+                    }
+                }
+            }
+            if (obj.zone.indexOf('ZONE_DANGER_PP_LOTA') < 0) {
+                obj.zone = ['ZONE_NOT_DIVE', 'ZONE_DEFAULT', 'ZONE_CORAL', 'ZONE_SCALE', 'ZONE_BARNACLE', 'ZONE_TREASURE', 'ZONE_DANGER', 'ZONE_DANGER_PP', 'ZONE_OXYGEN', 'ZONE_BONUS', 'ZONE_DANGER_PP_LOTA'];
+                obj.zoneID = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+                nIndex = obj.zone.indexOf('ZONE_DANGER_PP');
+                obj.isHunt[10] = obj.isHunt[nIndex];
+                obj.bait[10] = obj.bait[nIndex];
+                obj.trinket[10] = obj.trinket[nIndex];
+                bResave = true;
+            }
+            if (bResave) {
+                setStorage("SCCustom", JSON.stringify(obj));
+                setSessionStorage("SCCustom", JSON.stringify(obj));
+            }
+        }
+
+        // Backward compatibility of SGZT
+        keyValue = getStorage("SGZT");
+        if (!isNullOrUndefined(keyValue)) {
+            setStorage("SGarden", keyValue);
+            setSessionStorage("SGarden", keyValue);
+            removeStorage("SGZT");
+            removeSessionStorage("SGZT");
+        }
+
+        // Backward compatibility of ZTower
+        keyValue = getStorage("ZTower");
+        if (!isNullOrUndefined(keyValue)) {
+            obj = JSON.parse(keyValue);
+            bResave = false;
+            var arrTemp = new Array(7).fill('');
+            for (var prop in obj) {
+                if (obj.hasOwnProperty(prop) &&
+                    (prop == 'weapon' || prop == 'base' || prop == 'trinket' || prop == 'bait')) {
+                    if (obj[prop].length == 7) {
+                        obj[prop] = obj[prop].concat(arrTemp);
+                        bResave = true;
+                    }
+                    if (prop == 'bait') {
+                        for (i = 0; i < obj[prop].length; i++) {
+                            if (obj[prop][i] == 'Brie') {
+                                obj[prop][i] = 'Brie Cheese';
+                                bResave = true;
+                            }
+                        }
+                    }
+                }
+            }
+            if (bResave) {
+                setStorage("ZTower", JSON.stringify(obj));
+                setSessionStorage("ZTower", JSON.stringify(obj));
+            }
+        }
+
+        // Backward compatibility of BRCustom
+        keyValue = getStorage("BRCustom");
+        if (!isNullOrUndefined(keyValue)) {
+            obj = JSON.parse(keyValue);
+            bResave = false;
+            for (i = 0; i < obj.trinket.length; i++) {
+                if (obj.trinket[i] == 'None' || obj.trinket[i] == 'NoAbove' || obj.trinket[i] === '' || isNullOrUndefined(obj.trinket[i]))
+                    continue;
+                if (obj.trinket[i].indexOf('Charm') < 0) {
+                    obj.trinket[i] += ' Charm';
+                    bResave = true;
+                }
+            }
+            if (bResave) {
+                setStorage("BRCustom", JSON.stringify(obj));
+                setSessionStorage("BRCustom", JSON.stringify(obj));
+            }
+        }
+
+        // Backward compatibility of FRift
+        keyValue = getStorage("FRift");
+        if (!isNullOrUndefined(keyValue)) {
+            obj = JSON.parse(keyValue);
+            bResave = false;
+            for (i = 0; i < obj.trinket.length; i++) {
+                if (obj.trinket[i] == 'None' || obj.trinket[i] == 'NoAbove' || obj.trinket[i] === '' || isNullOrUndefined(obj.trinket[i]))
+                    continue;
+                if (obj.trinket[i].indexOf('Charm') < 0) {
+                    obj.trinket[i] += ' Charm';
+                    bResave = true;
+                }
+            }
+            if (bResave) {
+                setStorage("FRift", JSON.stringify(obj));
+                setSessionStorage("FRift", JSON.stringify(obj));
+            }
+        }
+
+        // Remove old LG
+        keyValue = getStorage("LGArea");
+        if (!isNullOrUndefined(keyValue) && keyValue.split(",").length == 2) {
+            removeStorage("LGArea");
+            removeSessionStorage("LGArea");
+        }
+
+        // Backward compatibility of FW
+        keyValue = getStorage('FW');
+        if (isNullOrUndefined(keyValue)) {
+            obj = {};
+            for (i = 1; i <= 4; i++) {
+                temp = 'FW_Wave' + i;
+                keyValue = getStorage(temp);
+                if (!isNullOrUndefined(keyValue)) {
+                    obj['wave' + i] = JSON.parse(keyValue);
+                    removeStorage(temp);
+                    removeSessionStorage(temp);
+                }
+                else {
+                    obj['wave' + i] = JSON.parse(JSON.stringify(objDefaultFW));
+                }
+            }
+            setStorage('FW', JSON.stringify(obj));
+        }
+        else {
+            obj = JSON.parse(keyValue);
+            bResave = false;
+            for (i = 1; i <= 4; i++) {
+                temp = 'wave' + i;
+                for (j = 0; j < obj[temp].cheese.length; j++) {
+                    if (obj[temp].cheese[j] == 'Brie') {
+                        obj[temp].cheese[j] = 'Brie Cheese';
+                        bResave = true;
+                    }
+                }
+            }
+            if (bResave) {
+                setStorage("FW", JSON.stringify(obj));
+                setSessionStorage("FW", JSON.stringify(obj));
+            }
+        }
+
+        // Backward compatibility of Labyrinth
+        keyValue = getStorage('Labyrinth');
+        if (isNullOrUndefined(keyValue)) {
+            obj = {};
+            temp = getStorage('Labyrinth_DistrictFocus');
+            keyValue = getStorage('Labyrinth_HallwayPriorities');
+            if (isNullOrUndefined(keyValue)) {
+                obj = JSON.parse(JSON.stringify(objDefaultLaby));
+            }
+            else {
+                obj = JSON.parse(keyValue);
+                if (isNullOrUndefined(temp))
+                    temp = 'None';
+                obj.districtFocus = temp;
+            }
+            setStorage('Labyrinth', JSON.stringify(obj));
+            temp = ['Labyrinth_DistrictFocus', 'Labyrinth_HallwayPriorities'];
+            for (i = 0; i < temp.length; i++) {
+                removeStorage(temp[i]);
+                removeSessionStorage(temp[i]);
+            }
+        }
+
+        // Backward compatibility of Zokor
+        keyValue = getStorage('Zokor');
+        if (!isNullOrUndefined(keyValue)) {
+            obj = JSON.parse(keyValue);
+            bResave = false;
+            for (i = 0; i < obj.bait.length; i++) {
+                if (obj.bait[i] == 'Brie') {
+                    obj.bait[i] = 'Brie Cheese';
+                    bResave = true;
+                }
+            }
+            if (bResave) {
+                setStorage('Zokor', JSON.stringify(obj));
+                setSessionStorage('Zokor', JSON.stringify(obj));
+            }
+        }
+
+        // Backward compatibility of GWH2016R
+        keyValue = getStorage('GWH2016R');
+        if (!isNullOrUndefined(keyValue)) {
+            obj = JSON.parse(keyValue);
+            bResave = false;
+            if (obj.zone.indexOf("NEW_YEAR'S_PARTY") < 0) {
+                obj.zone.push("NEW_YEAR'S_PARTY");
+                obj.weapon.push('');
+                obj.base.push('');
+                obj.trinket.push('');
+                obj.bait.push('');
+                obj.boost.push(false);
+                bResave = true;
+            }
+            if (bResave) {
+                setStorage('GWH2016R', JSON.stringify(obj));
+                setSessionStorage('GWH2016R', JSON.stringify(obj));
+            }
+        }
+
+        // Disable GWH2016
+        if (getStorageToVariableStr("eventLocation", "None").indexOf('GWH2016') > -1)
+            setStorage("eventLocation", "None");
+
+        // Backward compatibility of GES
+        keyValue = getStorage('GES');
+        if (!isNullOrUndefined(keyValue)) {
+            obj = JSON.parse(keyValue);
+            if (isNullOrUndefined(obj.SD_BEFORE)) {
+                var objNew = {
+                    bLoadCrate: obj.SD.bLoadCrate,
+                    nMinCrate: obj.SD.nMinCrate,
+                    bUseRepellent: obj.RR.bUseRepellent,
+                    nMinRepellent: obj.RR.nMinRepellent,
+                    bStokeEngine: obj.DC.bStokeEngine,
+                    nMinFuelNugget: obj.DC.nMinFuelNugget,
+                    SD_BEFORE: {
+                        weapon: obj.SD.weapon,
+                        base: obj.SD.base,
+                        trinket: obj.SD.trinket.before,
+                        bait: obj.SD.bait,
+                    },
+                    SD_AFTER: {
+                        weapon: obj.SD.weapon,
+                        base: obj.SD.base,
+                        trinket: obj.SD.trinket.after,
+                        bait: obj.SD.bait,
+                    },
+                    RR: {
+                        weapon: obj.RR.weapon,
+                        base: obj.RR.base,
+                        trinket: obj.RR.trinket,
+                        bait: obj.RR.bait,
+                    },
+                    DC: {
+                        weapon: obj.DC.weapon,
+                        base: obj.DC.base,
+                        trinket: obj.DC.trinket,
+                        bait: obj.DC.bait,
+                    },
+                    WAITING: {
+                        weapon: '',
+                        base: '',
+                        trinket: '',
+                        bait: ''
+                    }
+                };
+                setStorage('GES', JSON.stringify(objNew));
+                setSessionStorage('GES', JSON.stringify(objNew));
+            }
+        }
+
+        // Backward compatibility of BWRift
+        keyValue = getStorage('BWRift');
+        if (!isNullOrUndefined(keyValue)) {
+            obj = JSON.parse(keyValue);
+            bResave = false;
+            if (obj.order.length != 16) {
+                obj.order = ['NONE', 'GEARWORKS', 'ANCIENT', 'RUNIC', 'TIMEWARP', 'GUARD', 'SECURITY', 'FROZEN', 'FURNACE', 'INGRESS', 'PURSUER', 'ACOLYTE_CHARGING', 'ACOLYTE_DRAINING', 'ACOLYTE_DRAINED', 'LUCKY', 'HIDDEN'];
+                bResave = true;
+            }
+            if (obj.priorities.length != 13) {
+                if (obj.priorities.length == 11) {
+                    obj.priorities.push('LUCKY');
+                    obj.priorities.push('HIDDEN');
+                }
+                else
+                    obj.priorities = ['SECURITY', 'FURNACE', 'PURSUER', 'ACOLYTE', 'LUCKY', 'HIDDEN', 'TIMEWARP', 'RUNIC', 'ANCIENT', 'GEARWORKS', 'GEARWORKS', 'GEARWORKS', 'GEARWORKS'];
+                bResave = true;
+            }
+            if (isNullOrUndefined(obj.specialActivate)) {
+                obj.specialActivate = {
+                    forceActivate: new Array(16).fill(false),
+                    remainingLootActivate: new Array(16).fill(1),
+                    forceDeactivate: new Array(16).fill(obj.forceDeactivate),
+                    remainingLootDeactivate: new Array(16).fill(obj.remainingLootDeactivate)
+                };
+                delete obj.forceDeactivate;
+                delete obj.remainingLootDeactivate;
+                bResave = true;
+            }
+            if (obj.minTimeSand.length != 9) {
+                var arrTemp = new Array(9);
+                arrTemp[0] = obj.minTimeSand[0];
+                arrTemp[8] = obj.minTimeSand[2];
+                for (i = 1; i <= 7; i++)
+                    arrTemp[i] = obj.minTimeSand[1];
+                obj.minTimeSand = arrTemp;
+                bResave = true;
+            }
+            var objTemp = {
+                arrTemp: ['master', 'specialActivate', 'gw', 'al', 'rl', 'gb', 'ic', 'fa'],
+                arrLength: [16, 16, 2, 2, 2, 7, 4, 16],
+            };
+            for (i = 0; i < objTemp.arrTemp.length; i++) {
+                if (obj.hasOwnProperty(objTemp.arrTemp[i])) {
+                    for (var prop in obj[objTemp.arrTemp[i]]) {
+                        if (obj[objTemp.arrTemp[i]].hasOwnProperty(prop)) {
+                            while (obj[objTemp.arrTemp[i]][prop].length < objTemp.arrLength[i]) {
+                                obj[objTemp.arrTemp[i]][prop].push(obj[objTemp.arrTemp[i]][prop][0]);
+                                bResave = true;
+                            }
+                            if (obj[objTemp.arrTemp[i]][prop].length < (objTemp.arrLength[i] * 2)) {
+                                obj[objTemp.arrTemp[i]][prop] = obj[objTemp.arrTemp[i]][prop].concat(obj[objTemp.arrTemp[i]][prop]);
+                                bResave = true;
+                            }
+                        }
+                    }
+                }
+            }
+            if (bResave) {
+                setStorage('BWRift', JSON.stringify(obj));
+                setSessionStorage('BWRift', JSON.stringify(obj));
+            }
+        }
+    }
+    catch (e) {
+        console.perror('loadPreferenceSettingFromStorage', e.message);
+    }
+    getTrapList();
+    getBestTrap();
+    bestLGBase = arrayConcatUnique(bestLGBase, objBestTrap.base.luck);
+    bestSCBase = arrayConcatUnique(bestSCBase, objBestTrap.base.luck);
+}
+
+function getTrapList(category) {
+    var temp = "";
+    var arrObjList;
+    if (category === null || category === undefined)
+        arrObjList = Object.keys(objTrapList);
+    else
+        arrObjList = [category];
+
+    for (var i = 0; i < arrObjList.length; i++) {
+        temp = getStorageToVariableStr("TrapList" + capitalizeFirstLetter(arrObjList[i]), "");
+        if (temp === "") {
+            objTrapList[arrObjList[i]] = [];
+        }
+        else {
+            try {
+                objTrapList[arrObjList[i]] = temp.split(",");
+            }
+            catch (e) {
+                objTrapList[arrObjList[i]] = [];
+            }
+        }
+    }
+}
+
+function clearTrapList(category) {
+    var arrObjList;
+    if (category === null || category === undefined)
+        arrObjList = Object.keys(objTrapList);
+    else
+        arrObjList = [category];
+
+    for (var i = 0; i < arrObjList.length; i++) {
+        removeStorage("TrapList" + capitalizeFirstLetter(arrObjList[i]));
+        objTrapList[arrObjList[i]] = [];
+    }
+}
+
+function capitalizeFirstLetter(strIn) {
+    return strIn.charAt(0).toUpperCase() + strIn.slice(1);
+}
+
+function getTrapListFromTrapSelector(sort, category, name, isForcedRetry) {
+    clickTrapSelector(category);
+    objTrapList[category] = [];
+    var sec = secWait;
+    var retry = armTrapRetry;
+    var i, j, tagGroupElement, tagElement, nameElement, itemEle;
+    var intervalGTLFTS = setInterval(
+        function () {
+            if (isNewUI)
+                itemEle = document.getElementsByClassName('campPage-trap-itemBrowser-item');
+            else
+                tagGroupElement = document.getElementsByClassName('tagGroup');
+
+            if (isNewUI && itemEle.length > 0) {
+                for (i = 0; i < itemEle.length; i++) {
+                    nameElement = itemEle[i].getElementsByClassName('campPage-trap-itemBrowser-item-name')[0].textContent;
+                    objTrapList[category].push(nameElement);
+                }
+                setStorage("TrapList" + capitalizeFirstLetter(category), objTrapList[category].join(","));
+                clearInterval(intervalGTLFTS);
+                arming = false;
+                intervalGTLFTS = null;
+                checkThenArm(sort, category, name, isForcedRetry);
+                return;
+            }
+            else if (!isNewUI && tagGroupElement.length > 0) {
+                for (i = 0; i < tagGroupElement.length; ++i) {
+                    tagElement = tagGroupElement[i].getElementsByTagName('a');
+                    for (j = 0; j < tagElement.length; ++j) {
+                        nameElement = tagElement[j].getElementsByClassName('name')[0].innerText;
+                        objTrapList[category].push(nameElement);
+                    }
+                }
+                setStorage("TrapList" + capitalizeFirstLetter(category), objTrapList[category].join(","));
+                clearInterval(intervalGTLFTS);
+                arming = false;
+                intervalGTLFTS = null;
+                checkThenArm(sort, category, name, isForcedRetry);
+                return;
+            }
+            else {
+                --sec;
+                if (sec <= 0) {
+                    clickTrapSelector(category);
+                    sec = secWait;
+                    --retry;
+                    if (retry <= 0) {
+                        clearInterval(intervalGTLFTS);
+                        arming = false;
+                        intervalGTLFTS = null;
+                        return;
+                    }
+                }
+            }
+        }, 1000);
+    return;
+}
+
+function getBestTrap() {
+    var obj = getStorage("BestTrap");
+    if (!isNullOrUndefined(obj)) {
+        obj = JSON.parse(obj);
+        for (var prop in obj) {
+            if (obj.hasOwnProperty(prop) && objBestTrap.hasOwnProperty(prop)) {
+                for (var prop1 in obj[prop]) {
+                    if (obj[prop].hasOwnProperty(prop1) && objBestTrap[prop].hasOwnProperty(prop1)) {
+                        objBestTrap[prop][prop1] = arrayConcatUnique([obj[prop][prop1]], objBestTrap[prop][prop1]);
+                    }
+                }
+            }
+        }
+    }
 }
 
 function getStorageToVariableInt(storageName, defaultInt) {
@@ -7132,8 +8930,19 @@ function getStorageToVariableInt(storageName, defaultInt) {
         setStorage(storageName, defaultInt);
     } else {
         tempInt = parseInt(temp);
+        if (Number.isNaN(tempInt))
+            tempInt = defaultInt;
     }
     return tempInt;
+}
+
+function getStorageToVariableStr(storageName, defaultStr) {
+    var temp = getStorage(storageName);
+    if (isNullOrUndefined(temp)) {
+        setStorage(storageName, defaultStr);
+        temp = defaultStr;
+    }
+    return temp;
 }
 
 function getStorageToVariableBool(storageName, defaultBool) {
@@ -7146,6 +8955,36 @@ function getStorageToVariableBool(storageName, defaultBool) {
     } else {
         return false;
     }
+}
+
+function getStorageToObject(keyName, objDefault) {
+    var obj = getStorage(keyName);
+    var bCheckNewProp = true;
+    if (isNullOrUndefined(obj)) {
+        obj = JSON.stringify(objDefault);
+        setStorage(keyName, obj);
+        bCheckNewProp = false;
+    }
+    obj = JSON.parse(obj);
+    if (bCheckNewProp) {
+        if (assignMissingDefault(obj, objDefault)) {
+            setStorage(keyName, JSON.stringify(obj));
+        }
+    }
+
+    return obj;
+}
+
+function assignMissingDefault(obj, objDefault) {
+    var bResave = false;
+    for (var prop in objDefault) {
+        if (objDefault.hasOwnProperty(prop) && !obj.hasOwnProperty(prop)) {
+            obj[prop] = objDefault[prop];
+            bResave = true;
+        }
+    }
+
+    return bResave;
 }
 
 function displayTimer(title, nextHornTime, checkTime) {
@@ -8218,7 +10057,7 @@ function browserDetection() {
     else if (userAgentStr.indexOf("chrome") >= 0)
         browserName = "chrome";
     setStorage('Browser', browserName);
-    setStorage('UserAgent', userAgentStr);
+    //setStorage('UserAgent', userAgentStr);
     return browserName;
 }
 
