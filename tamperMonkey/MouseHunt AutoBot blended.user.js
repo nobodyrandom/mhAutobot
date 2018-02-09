@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Hazado, Ooi Keng Siang, CnN
-// @version    	2.2.10b
+// @version    	2.3.0b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require     https://code.jquery.com/jquery-2.2.2.min.js
@@ -1156,6 +1156,8 @@ function getJournalDetailFRift() {
 
 //// EMBEDING ENHANCED EDITION CODE
 function eventLocationCheck(caller) {
+    if (debug) console.log("RUN eventLocationCheck(" + caller + ")");
+
     var selAlgo = getStorageToVariableStr("eventLocation", "None");
     var temp = "";
 
@@ -3432,7 +3434,7 @@ function labyZokor() {
     if (GetCurrentLocation().indexOf("Labyrinth") < 0)
         zokor();
     else
-        tempLabyrinth();
+        labyrinth();
 }
 
 function tempLabyrinth() {
@@ -6294,6 +6296,7 @@ function embedTimer(targetPage) {
 				window.localStorage.setItem(\'SaveKRImage\', 			document.getElementById(\'SaveKRImageInput\').value);\
 				window.localStorage.setItem(\'PauseLocation\', 			document.getElementById(\'PauseLocationInput\').value);\
 				window.localStorage.setItem(\'autoPopupKR\',            document.getElementById(\'autoPopKR\').value);\
+				setSessionToLocal();\
 				';
                 if (fbPlatform)
                     temp = 'window.location.href=\'' + g_strHTTP + '://www.mousehuntgame.com/canvas/\';';
@@ -6552,7 +6555,7 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<a title="Select the script algorithm based on certain event / location"><b>Event or Location</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;';
                 preferenceHTMLStr += '</td>';
                 preferenceHTMLStr += '<td style="height:24px">';
-                preferenceHTMLStr += '<select id="eventAlgo" style="width:150px" onChange="window.localStorage.setItem(\'eventLocation\', value); showOrHideTr(value);">';
+                preferenceHTMLStr += '<select id="eventAlgo" style="width:150px" onChange="window.sessionStorage.setItem(\'eventLocation\', value); showOrHideTr(value);">';
                 preferenceHTMLStr += '<option value="None" selected>None</option>';
                 preferenceHTMLStr += '<option value="All LG Area">All LG Area</option>';
                 preferenceHTMLStr += '<option value="BC/JOD">BC => JOD</option>';
