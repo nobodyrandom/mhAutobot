@@ -183,7 +183,7 @@ var objTrapCollection = {
 var objBestTrap = {
     weapon: {
         arcane: ['New Horizon Trap', 'Event Horizon', 'Grand Arcanum Trap', 'Chrome Arcane Capturing Rod', 'Arcane Blast Trap', 'Arcane Capturing Rod Of Nev'],
-        draconic: ['Dragonvine Ballista Trap', 'Dragon Lance', 'Ice Maiden'],
+        draconic: ['Dragonvine Ballista Trap', 'Harrowing Holiday Harpoon Harp', 'Dragon Lance', 'Ice Maiden'],
         forgotten: ['Infinite Labyrinth Trap', 'Endless Labyrinth Trap', 'Crystal Crucible Trap', 'Stale Cupcake Golem Trap', 'Tarannosaurus Rex Trap', 'Crystal Mineral Crusher Trap', 'The Forgotten Art of Dance'],
         hydro: ['School of Sharks', 'Rune Shark Trap', 'Chrome Phantasmic Oasis Trap', 'Phantasmic Oasis Trap', 'Oasis Water Node Trap', 'Steam Laser Mk. III', 'Steam Laser Mk. II', 'Steam Laser Mk. I', 'Ancient Spear Gun'],
         law: ['Meteor Prison Core Trap', 'The Law Draw', 'Law Laser Trap', 'Engine Doubler', 'Bandit Deflector', 'Supply Grabber', 'S.L.A.C. II', 'S.L.A.C.'],
