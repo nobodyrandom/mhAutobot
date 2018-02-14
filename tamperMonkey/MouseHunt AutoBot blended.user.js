@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Hazado, Ooi Keng Siang, CnN
-// @version    	2.3.0b
+// @version    	2.3.1b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require     https://code.jquery.com/jquery-2.2.2.min.js
@@ -39,7 +39,7 @@ var debugKR = false;
 // // Extra delay time before sounding the horn. (in seconds)
 // // Default: 10 - 360
 var hornTimeDelayMin = 10;
-var hornTimeDelayMax = 300;
+var hornTimeDelayMax = 240;
 
 // // Bot aggressively by ignore all safety measure such as check horn image visible before sounding it. (true/false)
 // // Note: Highly recommended to turn off because it increase the chances of getting caught in botting.
@@ -1531,6 +1531,10 @@ function bwRift() {
     };
 
     var objBWRift = getStorageToObject('BWRift', objDefaultBWRift);
+
+    if (debug) console.log("RUN BWRift() using:");
+    if (debug) console.log(objBWRift);
+
     var objUser = JSON.parse(getPageVariable('JSON.stringify(user.quests.QuestRiftBristleWoods)'));
     var nIndex = -1;
     var nLootRemaining = objUser.progress_remaining;
@@ -1581,6 +1585,8 @@ function bwRift() {
     }
     console.plog('Buff & Curse Index:', nIndexBuffCurse, 'Obj:', objUser.status_effects);
     if (nIndex === 0 || objUser.chamber_status == 'open') {
+        // Choosing portal
+
         var classPortalContainer = document.getElementsByClassName('riftBristleWoodsHUD-portalContainer');
         if (classPortalContainer.length > 0) {
             var objPortal = {
@@ -1711,6 +1717,7 @@ function bwRift() {
             }
         }
     }
+
     var objTemp = {
         weapon: '',
         base: '',
@@ -1718,6 +1725,7 @@ function bwRift() {
         bait: '',
         activate: false
     };
+
     if (nIndex === 0)
         strChamberName = 'NONE';
     if (nIndexBuffCurse == 8)
@@ -1742,14 +1750,16 @@ function bwRift() {
         var nAlertLvl = (isNullOrUndefined(objUser.minigame.guard_chamber)) ? -1 : parseInt(objUser.minigame.guard_chamber.status.split("_")[1]);
         console.plog('Guard Barracks Alert Lvl:', nAlertLvl);
         if (Number.isNaN(nAlertLvl) || nAlertLvl < 0 || nAlertLvl > 6) {
+            // Not alerted yet
             for (var prop in objTemp) {
                 if (objTemp.hasOwnProperty(prop))
                     objTemp[prop] = objBWRift.master[prop][nIndex];
             }
-        }
-        else {
+        } else {
+            // Alert on
             if (nIndexBuffCurse == 8)
                 nAlertLvl += 7;
+
             for (var prop in objTemp) {
                 if (objTemp.hasOwnProperty(prop))
                     objTemp[prop] = (objBWRift.gb[prop][nAlertLvl] == 'MASTER') ? objBWRift.master[prop][nIndex] : objBWRift.gb[prop][nAlertLvl];
@@ -1766,6 +1776,9 @@ function bwRift() {
                 objTemp[prop] = objBWRift.master[prop][nIndex];
         }
     }
+
+    if (debug) console.log("BW RIFT ARMING:");
+    if (debug) console.log(objTemp);
 
     checkThenArm(null, 'weapon', objTemp.weapon);
     checkThenArm(null, 'base', objTemp.base);
@@ -8149,8 +8162,8 @@ window.localStorage.setItem(\'addonCode\', document.getElementById(\'addonCode\'
                 headerElement.parentNode.insertBefore(scriptElement, headerElement);
                 scriptElement = null;
 
-                addKREntries();
-                setKREntriesColor();
+                //addKREntries();
+                //setKREntriesColor();
 
                 // insert trap list
                 var objSelectStr = {
@@ -8178,9 +8191,9 @@ window.localStorage.setItem(\'addonCode\', document.getElementById(\'addonCode\'
                         }
                     }
                 }
-                document.getElementById('idRestore').style.display = (targetPage) ? 'table-row' : 'none';
-                document.getElementById('idGetLogAndPreference').style.display = (targetPage) ? 'table-row' : 'none';
-                document.getElementById('clearTrapList').style.display = (targetPage) ? 'table-row' : 'none';
+                //document.getElementById('idRestore').style.display = (targetPage) ? 'table-row' : 'none';
+                //document.getElementById('idGetLogAndPreference').style.display = (targetPage) ? 'table-row' : 'none';
+                //document.getElementById('clearTrapList').style.display = (targetPage) ? 'table-row' : 'none';
                 document.getElementById('showPreferenceLink').style.display = (targetPage) ? 'table-row' : 'none';
             }
             headerElement = null;
@@ -8194,7 +8207,8 @@ window.localStorage.setItem(\'addonCode\', document.getElementById(\'addonCode\'
             }
         }
 
-        if (debug) console.log('embedTimer error - ' + e)
+        if (debug) console.log('embedTimer error - ' + e);
+        if (debug) console.log(e);
     }
 }
 
