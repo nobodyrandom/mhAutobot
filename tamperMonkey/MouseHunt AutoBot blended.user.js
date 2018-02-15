@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Hazado, Ooi Keng Siang, CnN
-// @version    	2.3.1b
+// @version    	2.3.2b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require     https://code.jquery.com/jquery-2.2.2.min.js
@@ -6296,21 +6296,23 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<td style="height:24px; text-align:right;" colspan="2">';
                 preferenceHTMLStr += '(Changes above this line only take place after user save the preference) ';
                 preferenceHTMLStr += '<input type="button" id="PreferenceSaveInput" value="Save" onclick="\
-				window.localStorage.setItem(\'AggressiveMode\', 		document.getElementById(\'AggressiveModeInput\').value);\
+				try {window.localStorage.setItem(\'AggressiveMode\', 		document.getElementById(\'AggressiveModeInput\').value);\
 				window.localStorage.setItem(\'HornTimeDelayMin\', 		document.getElementById(\'HornTimeDelayMinInput\').value);\
 				window.localStorage.setItem(\'HornTimeDelayMax\', 		document.getElementById(\'HornTimeDelayMaxInput\').value);\
 				window.localStorage.setItem(\'TrapCheck\', 				document.getElementById(\'TrapCheckInput\').value);\
 				window.localStorage.setItem(\'TrapCheckTimeDelayMin\',	document.getElementById(\'TrapCheckTimeDelayMinInput\').value);\
 				window.localStorage.setItem(\'TrapCheckTimeDelayMax\', 	document.getElementById(\'TrapCheckTimeDelayMaxInput\').value);\
-				window.localStorage.setItem(\'PlayKingRewardSound\', 	document.getElementById(\'PlayKingRewardSoundInput\').value);\
 				window.localStorage.setItem(\'AutoSolveKR\', 			document.getElementById(\'AutoSolveKRInput\').value);\
 				window.localStorage.setItem(\'AutoSolveKRDelayMin\', 	document.getElementById(\'AutoSolveKRDelayMinInput\').value);\
 				window.localStorage.setItem(\'AutoSolveKRDelayMax\', 	document.getElementById(\'AutoSolveKRDelayMaxInput\').value);\
-				window.localStorage.setItem(\'SaveKRImage\', 			document.getElementById(\'SaveKRImageInput\').value);\
 				window.localStorage.setItem(\'PauseLocation\', 			document.getElementById(\'PauseLocationInput\').value);\
 				window.localStorage.setItem(\'autoPopupKR\',            document.getElementById(\'autoPopKR\').value);\
-				setSessionToLocal();\
+				setSessionToLocal();} catch(e) {console.log(e);}\
 				';
+
+                //window.localStorage.setItem('PlayKingRewardSound', 	document.getElementById('PlayKingRewardSoundInput').value);
+                //window.localStorage.setItem('SaveKRImage', 			document.getElementById('SaveKRImageInput').value);
+
                 if (fbPlatform)
                     temp = 'window.location.href=\'' + g_strHTTP + '://www.mousehuntgame.com/canvas/\';';
                 else if (hiFivePlatform)
