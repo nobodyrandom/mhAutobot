@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Hazado, Ooi Keng Siang, CnN
-// @version    	2.3.3b
+// @version    	2.3.4b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require     https://code.jquery.com/jquery-2.2.2.min.js
@@ -4948,14 +4948,15 @@ function clickThenArmTrapInterval(sort, trap, name) { //sort = power/luck/attrac
                 intervalCTATI = null;
                 if (armStatus == NOT_FOUND) {
                     //clearTrapList(trap);
-                    if (trap == 'trinket')
+                    if (trap == 'trinket') {
                         disarmTrap('trinket');
-                    else
                         closeTrapSelector(trap);
+                    } else {
+                        closeTrapSelector(trap);
+                    }
                 }
                 return;
-            }
-            else {
+            } else {
                 --sec;
                 if (sec <= 0) {
                     if (isNewUI)
@@ -5027,16 +5028,17 @@ function armTrapClassicUI(sort, trap, name) {
         }
         if (sort == 'best' || sort == 'any') {
             arrName.shift();
-            if (arrName.length > 0)
+            if (arrName.length > 0) {
                 return armTrapClassicUI(sort, trap, arrName);
-            else
+            } else {
                 return NOT_FOUND;
-        }
-        else
+            }
+        } else {
             return NOT_FOUND;
-    }
-    else
+        }
+    } else {
         return LOADING;
+    }
 }
 
 function armTrapNewUI(sort, trap, name) {
@@ -6072,6 +6074,7 @@ function embedTimer(targetPage) {
                     '} else {' +
                     'document.getElementById(\'preferenceDiv\').style.display=\'block\';' +
                     'document.getElementById(\'showPreferenceLink\').innerHTML=\'<b>[Hide Preference]</b>\';' +
+                    'initEventAlgo();' +
                     '}' +
                     '">';
 
@@ -6574,7 +6577,7 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '</td>';
                 preferenceHTMLStr += '<td style="height:24px">';
                 preferenceHTMLStr += '<select id="eventAlgo" style="width:150px" onChange="window.sessionStorage.setItem(\'eventLocation\', value); showOrHideTr(value);">';
-                preferenceHTMLStr += '<option value="None" selected>None</option>';
+                preferenceHTMLStr += '<option value="None">None</option>';
                 preferenceHTMLStr += '<option value="All LG Area">All LG Area</option>';
                 preferenceHTMLStr += '<option value="BC/JOD">BC => JOD</option>';
                 preferenceHTMLStr += '<option value="Bristle Woods Rift">Bristle Woods Rift</option>';
@@ -7714,7 +7717,7 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '</td>';
                 preferenceHTMLStr += '</tr>';
 
-                preferenceHTMLStr += '<tr id="trPriorities1560" style="display:table-row;">';
+                preferenceHTMLStr += '<tr id="trPriorities1560" style="display:none;">';
                 preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
                 preferenceHTMLStr += '<a title="Select hallway priorities when focus-district clues within 15 and 60"><b>Priorities (15 < Focus-District Clues < 60)</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;</td>';
                 preferenceHTMLStr += '<td style="height:24px">';
@@ -11904,6 +11907,33 @@ function bodyJS() {
                 }
             }
         }
+    }
+
+    function initEventAlgo() {
+        var algoOnLocal = window.localStorage.getItem("eventLocation");
+        var algoOnSession = window.sessionStorage.getItem("eventLocation");
+        try {
+            if (algoOnSession === undefined || algoOnSession === null)
+                algoOnSession = algoOnLocal;
+        } catch (e) {
+            algoOnSession = algoOnLocal;
+        }
+
+        if (algoOnSession != algoOnLocal) {
+            if (debug) console.log("initEventAlgo() WARNING: Session algo is different from local storage." + algoOnSession + " | " + algoOnLocal);
+        }
+
+        var eventAlgoSelect = document.getElementById("eventAlgo");
+        var eventAlgoSelectOpt = eventAlgoSelect.options;
+        for (var opt, j = 0; opt = eventAlgoSelectOpt[j]; j++) {
+            if (opt.value == algoOnSession) {
+                eventAlgoSelect.selectedIndex = j;
+                showOrHideTr(algoOnSession);
+                return;
+            }
+        }
+
+        if (debug) console.log("Algo not found: " + algoOnSession);
     }
 
     function onInputResetReload() {
