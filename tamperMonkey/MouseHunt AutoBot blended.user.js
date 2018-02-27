@@ -561,14 +561,12 @@ function FinalizePuzzleImageAnswer(answer) {
                 if (tagName[i].innerText == "Click here to get a new one!") {
                     // TODO IMPORTANT: Find another time to fetch new puzzle
                     fireEvent(tagName[i], 'click');
-                    if (isNewUI) {
-                        myFrame = document.getElementById('myFrame');
-                        if (!isNullOrUndefined(myFrame))
-                            document.body.removeChild(myFrame);
-                        window.setTimeout(function () {
-                            CallKRSolver();
-                        }, 6000);
-                    }
+                    myFrame = document.getElementById('myFrame');
+                    if (!isNullOrUndefined(myFrame))
+                        document.body.removeChild(myFrame);
+                    window.setTimeout(function () {
+                        CallKRSolver();
+                    }, 6000);
                     return;
                 }
             }
@@ -2062,22 +2060,22 @@ function gnawnianExpress(load) {
 
 function loadTrain(location) {
     try {
-            switch (location) {
-                case 'raider':
-                    var repellents = parseInt(document.getElementsByClassName('mouseRepellent')[0].getElementsByClassName('quantity')[0].textContent);
-                    if (repellents >= 10)
-                        fireEvent(document.getElementsByClassName('phaseButton')[0], 'click');
-                    break;
-                case 'canyon':
-                    var timeLeft = document.getElementsByClassName('phaseTimer')[0].textContent.substr(10);
-                    // Fire only when time left is less than 16 mins :P (needs checking if works)
-                    if (parseInt(timeLeft.substr(0, timeLeft.indexOf(':'))) == 0 && parseInt(timeLeft.substr(timeLeft.indexOf(':') + 1)) <= 16)
-                        fireEvent(document.getElementsByClassName('phaseButton')[0], 'click');
-                    break;
-                default:
+        switch (location) {
+            case 'raider':
+                var repellents = parseInt(document.getElementsByClassName('mouseRepellent')[0].getElementsByClassName('quantity')[0].textContent);
+                if (repellents >= 10)
                     fireEvent(document.getElementsByClassName('phaseButton')[0], 'click');
-                    break;
-            }
+                break;
+            case 'canyon':
+                var timeLeft = document.getElementsByClassName('phaseTimer')[0].textContent.substr(10);
+                // Fire only when time left is less than 16 mins :P (needs checking if works)
+                if (parseInt(timeLeft.substr(0, timeLeft.indexOf(':'))) == 0 && parseInt(timeLeft.substr(timeLeft.indexOf(':') + 1)) <= 16)
+                    fireEvent(document.getElementsByClassName('phaseButton')[0], 'click');
+                break;
+            default:
+                fireEvent(document.getElementsByClassName('phaseButton')[0], 'click');
+                break;
+        }
         return;
     } catch (e) {
         if (debug) console.debug(e.message);
