@@ -247,10 +247,13 @@ var wasteCharm = ['Tarnished', 'Unstable', 'Wealth'];
 var redSpongeCharm = ['Red Double', 'Red Sponge'];
 var yellowSpongeCharm = ['Yellow Double', 'Yellow Sponge'];
 var spongeCharm = ['Double Sponge', 'Sponge'];
-var supplyDepotTrap = ['Supply Grabber', 'S.L.A.C. II', 'The Law Draw', 'S.L.A.C.'];
-var raiderRiverTrap = ['Bandit Deflector', 'S.L.A.C. II', 'The Law Draw', 'S.L.A.C.'];
-var daredevilCanyonTrap = ['Engine Doubler', 'S.L.A.C. II', 'The Law Draw', 'S.L.A.C.'];
+
+// GES Preferences
+var supplyDepotTrap = ['Meteor Prison Core Trap', 'Supply Grabber', 'S.L.A.C. II', 'The Law Draw', 'S.L.A.C.'];
+var raiderRiverTrap = ['Meteor Prison Core Trap', 'Bandit Deflector', 'S.L.A.C. II', 'The Law Draw', 'S.L.A.C.'];
+var daredevilCanyonTrap = ['Meteor Prison Core Trap', 'Engine Doubler', 'S.L.A.C. II', 'The Law Draw', 'S.L.A.C.'];
 var coalCharm = ['Magmatic Crystal', 'Black Powder', 'Dusty Coal'];
+
 //var chargeCharm = ['Eggstra Charge', 'Eggscavator'];
 var scOxyBait = ['Fishy Fromage', 'Gouda'];
 
@@ -1187,7 +1190,9 @@ function eventLocationCheck(caller) {
             gnawnianExpress(true);
             break;
         case 'GES':
-            ges();
+            // USING A SMARTER GES
+            gnawnianExpress(true);
+            //ges();
             break;
         case 'Burroughs Rift(Red)':
             BurroughRift(true, 19, 20);
@@ -2014,7 +2019,7 @@ function gnawnianExpress(load) {
                         console.debug("Supply hoarder is present. Disarming charm now...");
                         disarmTrap('trinket');
                     }
-                    loadTrain('depot', load);
+                    if (load) loadTrain('depot');
                     break;
                 case 'Raider River':
                     checkThenArm('best', 'weapon', raiderRiverTrap);
@@ -2039,14 +2044,14 @@ function gnawnianExpress(load) {
                             disarmTrap('trinket');
                             break;
                     }
-                    loadTrain('raider', load);
+                    if (load) loadTrain('raider');
                     break;
                 case 'Daredevil Canyon':
                     checkThenArm('best', 'weapon', daredevilCanyonTrap);
                     if (debug) console.log("Starting to look for " + coalCharm + " charm.");
                     checkThenArm('best', 'trinket', coalCharm);
                     if (debug) console.log("Done looking for charm.")
-                    loadTrain('canyon', load);
+                    if (load) loadTrain('canyon');
                     break;
                 default:
                     break;
@@ -2055,9 +2060,8 @@ function gnawnianExpress(load) {
     }
 }
 
-function loadTrain(location, load) {
+function loadTrain(location) {
     try {
-        if (load) {
             switch (location) {
                 case 'raider':
                     var repellents = parseInt(document.getElementsByClassName('mouseRepellent')[0].getElementsByClassName('quantity')[0].textContent);
@@ -2074,10 +2078,9 @@ function loadTrain(location, load) {
                     fireEvent(document.getElementsByClassName('phaseButton')[0], 'click');
                     break;
             }
-        }
         return;
     } catch (e) {
-        console.debug(e.message);
+        if (debug) console.debug(e.message);
         return;
     }
 }
@@ -5653,6 +5656,8 @@ function countdownTimer() {
         displayTimer("No more cheese!", "Cannot hunt without the cheese...", "Cannot hunt without the cheese...");
         displayLocation(huntLocation);
         displayKingRewardSumTime(null);
+
+        noCheeseAction();
 
         // pause the script
     } else {
@@ -9417,6 +9422,49 @@ function noCheeseAction() {
     notifyMe("No more cheese!!!", 'https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/cheese.png', getPageVariable('user.username') + ' has no more cheese.');
 
     playNoCheeseSound();
+
+    // Start rearm detector, set for every 10s to make sure not to interupt user
+    var checkRearmInterval = setInterval(function () {
+        try {
+            var ajaxBaitName = getPageText("hud_baitName");
+            if (ajaxBaitName.indexOf("None!") === -1) {
+                // Detected rearm
+                if (debug) console.log("Detected cheese has been rearmed.");
+                cheeseRearmedAction();
+
+                clearInterval(checkRearmInterval);
+                checkRearmInterval = null;
+            }
+        } catch (e) {
+            if (debug) console.log("noCheeseAction ERROR: " + e);
+            if (debug) console.log("Cancelling check rearm, just in case.");
+
+            clearInterval(checkRearmInterval);
+            checkRearmInterval = null;
+        }
+    }, 10000);
+}
+
+function cheeseRearmedAction() {
+    try {
+        displayTimer("Cheese rearmed!", "Detected cheese armed, rearming bot now.", "Detected cheese armed, rearming bot now.");
+
+        // sync the time again, maybe user already click the horn
+        retrieveData();
+
+        checkJournalDate();
+
+        // clean up
+        headerElement = null;
+        headerStatus = null;
+
+        // loop again
+        window.setTimeout(function () {
+            countdownTimer();
+        }, timerRefreshInterval * 1000);
+    } catch (e) {
+        if (debug) console.log(e);
+    }
 }
 
 function playNoCheeseSound() {
@@ -9444,52 +9492,6 @@ function playNoCheeseSound() {
 // ################################################################################################
 //   King's Reward Function - Start
 // ################################################################################################
-
-/*function kingRewardAction() {
- // update timer
- displayTimer("King's Reward!", "King's Reward", "King's Reward!");
- displayLocation("-");
-
- // play music if needed
- playKingRewardSound();
-
- window.setTimeout(function () {
- // Autopop KR if needed
- if (autoPopupKR) {
- alert("King's Reward NOW");
- }
-
- // email the captcha away if needed
- emailCaptcha();
- }, 2000);
-
- // focus on the answer input
- var inputElementList = document.getElementsByTagName('input');
- if (inputElementList) {
- var i;
- for (i = 0; i < inputElementList.length; ++i) {
- // check if it is a resume button
- if (inputElementList[i].getAttribute('name') == "puzzle_answer") {
- inputElementList[i].focus();
- break;
- }
- }
- i = null;
- }
- inputElementList = null;
-
- // record last king's reward time
- var nowDate = new Date();
- setStorage("lastKingRewardDate", nowDate.toString());
- nowDate = null;
-
- if (kingPauseTimeMax <= 0) {
- kingPauseTimeMax = 1;
- }
-
- kingPauseTime = kingPauseTimeMax;
- kingRewardCountdownTimer();
- }*/
 
 function kingRewardAction() {
     if (debug) console.log("RUN kingRewardAction()");
@@ -9641,55 +9643,6 @@ function playKingRewardSound() {
         snippet = null;
     }
 }
-
-/*function kingRewardCountdownTimer() {
- var dateNow = new Date();
- var intervalTime = timeElapsed(lastDateRecorded, dateNow);
- lastDateRecorded = null;
- lastDateRecorded = dateNow;
- dateNow = null;
-
- if (reloadKingReward) {
- kingPauseTime -= intervalTime;
- }
-
- if (lastKingRewardSumTime != -1) {
- lastKingRewardSumTime += intervalTime;
- }
-
- intervalTime = null;
-
- if (kingPauseTime <= 0) {
- // update timer
- displayTimer("King's Reward - Reloading...", "Reloading...", "Reloading...");
-
- // simulate mouse click on the camp button
- var campElement = document.getElementsByClassName(campButton)[0].firstChild;
- fireEvent(campElement, 'click');
- campElement = null;
-
- // reload the page if click on the camp button fail
- window.setTimeout(function () {
- reloadWithMessage("Fail to click on camp button. Reloading...", false);
- }, 5000);
- } else {
- if (reloadKingReward) {
- // update timer
- displayTimer("King's Reward - Reload in " + timeFormat(kingPauseTime),
- "Reloading in " + timeFormat(kingPauseTime),
- "Reloading in " + timeFormat(kingPauseTime));
- }
-
- // set king reward sum time
- displayKingRewardSumTime(timeFormatLong(lastKingRewardSumTime));
-
- if (!checkResumeButton()) {
- window.setTimeout(function () {
- (kingRewardCountdownTimer)()
- }, timerRefreshInterval * 1000);
- }
- }
- }*/
 
 function kingRewardCountdownTimer(interval, isReloadToSolve) {
     var strTemp = (isReloadToSolve) ? "Reload to solve KR in " : "Solve KR in (extra few sec delay) ";
@@ -10374,6 +10327,15 @@ function getPageVariableForChrome(variableName) {
         return (value);
     } finally {
         value = null;
+    }
+}
+
+function getPageText(idName) {
+    try {
+        return (document.getElementById(idName).innerText);
+    } catch (e) {
+        if (debug) console.log("getPageText(" + idName + ") ERROR: " + e);
+        if (debug) console.log(e);
     }
 }
 
