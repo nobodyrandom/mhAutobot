@@ -384,7 +384,7 @@ var addonCode = "";
 // WARNING - Do not modify the code below unless you know how to read and write the script.
 
 // All global variable declaration and default value
-var g_strHTTP = 'http';
+var g_strHTTP = 'https';
 var g_strVersion = scriptVersion = GM_info.script.version;
 var g_strScriptHandler = "";
 var fbPlatform = false;
@@ -10265,7 +10265,7 @@ function fireEvent(element, event) {
 }
 
 function getPageVariable(name) {
-    if (debug) console.log('RUN GPV(' + name + ')');
+    //if (debug) console.log('RUN GPV(' + name + ')');
     try {
         var browser = browserDetection();
 
@@ -10308,7 +10308,7 @@ function getPageVariable(name) {
 }
 
 function getPageVariableForChrome(variableName) {
-    if (debug) console.log('RUN GPVchrome(' + variableName + ')');
+    //if (debug) console.log('RUN GPVchrome(' + variableName + ')');
     // google chrome only
     var scriptElement = document.createElement("script");
     scriptElement.setAttribute('id', "scriptElement");
