@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Hazado, Ooi Keng Siang, CnN
-// @version    	2.3.5b
+// @version    	2.3.6b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require     https://code.jquery.com/jquery-2.2.2.min.js
@@ -805,7 +805,7 @@ try {
 exeScript();
 
 function exeScript() {
-    if (debug) console.log('RUN exeScript()');
+    if (debug) console.log('RUN %cexeScript()', 'color: #9cffbd');
     browser = browserDetection();
     try {
         var titleElm = document.getElementById('titleElement');
@@ -821,7 +821,6 @@ function exeScript() {
     try {
         // check the trap check setting first
         trapCheckTimeDiff = GetTrapCheckTime();
-
 
         // check the trap check setting first
         if (trapCheckTimeDiff == 60) {
@@ -908,6 +907,8 @@ function exeScript() {
 
                     // start script action
                     action();
+
+                    nobInit();
                 } else {
                     // fail to retrieve data, display error msg and reload the page
                     document.title = "Fail to retrieve data from page. Reloading in " + timeFormat(errorReloadTime);
@@ -918,6 +919,8 @@ function exeScript() {
             } else {
                 // not in hunters camp, just show the title of autobot version
                 embedTimer(false);
+
+                nobInit();
             }
         } else if (mhPlatform) {
             if (window.location.href == "http://www.mousehuntgame.com/" ||
@@ -944,6 +947,8 @@ function exeScript() {
 
                     // start script action
                     action();
+
+                    nobInit();
                 } else {
                     // fail to retrieve data, display error msg and reload the page
                     document.title = "Fail to retrieve data from page. Reloading in " + timeFormat(errorReloadTime);
@@ -986,6 +991,8 @@ function exeScript() {
 
                     // start script action
                     action();
+
+                    nobInit();
                 } else {
                     // fail to retrieve data, display error msg and reload the page
                     document.title = "Fail to retrieve data from page. Reloading in " + timeFormat(errorReloadTime);
@@ -996,6 +1003,8 @@ function exeScript() {
             } else {
                 // not in hunters camp, just show the title of autobot version
                 embedTimer(false);
+
+                nobInit();
             }
         }
     } catch (e) {
@@ -1031,7 +1040,7 @@ function GetTrapCheckTime() {
 }
 
 function checkIntroContainer() {
-    if (debug) console.log('RUN checkIntroContainer()');
+    if (debug) console.log('RUN %ccheckIntroContainer()', 'color: #bada55');
     var gotIntroContainerDiv = false;
 
     var introContainerDiv = document.getElementById('introContainer');
@@ -5156,34 +5165,16 @@ function retrieveDataFirst() {
                     var hornTimeEndIndex = scriptString.indexOf(",", hornTimeStartIndex);
                     var hornTimerString = scriptString.substring(hornTimeStartIndex, hornTimeEndIndex);
                     nextActiveTime = parseInt(hornTimerString);
+                    if (debug) console.log("From substr: " + nextActiveTime + ", from page var: " + getPageVariable("user.next_activeturn_seconds"));
 
                     hornTimeDelay = hornTimeDelayMin + Math.round(Math.random() * (hornTimeDelayMax - hornTimeDelayMin));
 
                     if (!aggressiveMode) {
                         // calculation base on the js in Mousehunt
                         var additionalDelayTime = Math.ceil(nextActiveTime * 0.1);
+                        // Safety switch
+                        hornTimeDelay += additionalDelayTime + 5;
 
-                        // need to found out the mousehunt provided timer interval to determine the additional delay
-                        var timerIntervalStartIndex = scriptString.indexOf("hud.timer_interval");
-                        if (timerIntervalStartIndex >= 0) {
-                            timerIntervalStartIndex += 21;
-                            var timerIntervalEndIndex = scriptString.indexOf(";", timerIntervalStartIndex);
-                            var timerIntervalString = scriptString.substring(timerIntervalStartIndex, timerIntervalEndIndex);
-                            var timerInterval = parseInt(timerIntervalString);
-
-                            // calculation base on the js in Mousehunt
-                            if (timerInterval == 1) {
-                                additionalDelayTime = 2;
-                            }
-
-                            timerIntervalStartIndex = undefined;
-                            timerIntervalEndIndex = undefined;
-                            timerIntervalString = undefined;
-                            timerInterval = undefined;
-                        }
-
-                        // safety mode, include extra delay like time in horn image appear
-                        //hornTime = nextActiveTime + additionalDelayTime + hornTimeDelay;
                         hornTime = nextActiveTime + hornTimeDelay;
                         if (nextActiveTime <= 0)
                             eventLocationCheck();
@@ -5212,8 +5203,9 @@ function retrieveDataFirst() {
                     hasPuzzleStartIndex += 12;
                     var hasPuzzleEndIndex = scriptString.indexOf(",", hasPuzzleStartIndex);
                     var hasPuzzleString = scriptString.substring(hasPuzzleStartIndex, hasPuzzleEndIndex);
-                    if (debug) console.plog('hasPuzzleString:', hasPuzzleString);
                     isKingReward = (hasPuzzleString != 'false');
+
+                    if (debug) console.log("Fetched isKingReward: " + isKingReward);
 
                     gotPuzzle = true;
 
@@ -5230,6 +5222,8 @@ function retrieveDataFirst() {
                     var baitQuantityString = scriptString.substring(baitQuantityStartIndex, baitQuantityEndIndex);
                     baitQuantity = parseInt(baitQuantityString);
 
+                    if (debug) console.log("Fetched baitQuantity: " + baitQuantity);
+
                     gotBaitQuantity = true;
 
                     baitQuantityStartIndex = undefined;
@@ -5245,6 +5239,8 @@ function retrieveDataFirst() {
                     locationEndIndex = scriptString.indexOf("\"", locationStartIndex);
                     var locationString = scriptString.substring(locationStartIndex, locationEndIndex);
                     currentLocation = locationString;
+
+                    if (debug) console.log("Fetched currentLocation: " + currentLocation);
 
                     locationStartIndex = undefined;
                     locationEndIndex = undefined;
@@ -5292,6 +5288,9 @@ function retrieveDataFirst() {
         gotHornTime = undefined;
         gotPuzzle = undefined;
         gotBaitQuantity = undefined;
+
+        if (debug) console.log("END retrieveDataFirst with " + retrieveSuccess);
+
         return (retrieveSuccess);
     } catch (e) {
         console.perror('retrieveDataFirst', e.message);
@@ -5378,25 +5377,6 @@ function retrieveData() {
             isKingReward = NOBhasPuzzle = getKingRewardStatus();
             baitQuantity = getBaitQuantity();
             nextActiveTime = GetHornTime();
-
-            /*if (browser == "firefox") {
-                nextActiveTime = unsafeWindow.user.next_activeturn_seconds;
-                isKingReward = unsafeWindow.user.has_puzzle;
-                baitQuantity = unsafeWindow.user.bait_quantity;
-                currentLocation = unsafeWindow.user.location;
-                NOBhasPuzzle = unsafeWindow.user.has_puzzle;
-            } else if (browser == "opera") {
-                nextActiveTime = user.next_activeturn_seconds;
-                isKingReward = user.has_puzzle;
-                baitQuantity = user.bait_quantity;
-                currentLocation = user.location;
-            } else if (browser == "chrome") {
-                nextActiveTime = parseInt(getPageVariableForChrome("user.next_activeturn_seconds"));
-                isKingReward = (getPageVariableForChrome("user.has_puzzle").toString() != "false");
-                baitQuantity = parseInt(getPageVariableForChrome("user.bait_quantity"));
-                currentLocation = getPageVariableForChrome("user.location");
-                NOBhasPuzzle = user.has_puzzle;
-                */
         } else {
             window.setTimeout(function () {
                 reloadWithMessage("Browser not supported. Reloading...", false);
@@ -5503,7 +5483,7 @@ function checkJournalDate() {
 }
 
 function action() {
-    if (debug) console.log("Run action()");
+    if (debug) console.log("Run %caction()", 'color: #00ff00');
 
     try {
         if (isKingReward) {
@@ -6001,8 +5981,7 @@ function embedTimer(targetPage) {
                     if (isNewUI || nobTestBetaUI()) {
                         // try check if ajax was called
                         if (doubleCheckLocation()) {
-                            exeScript();
-                            nobInit();
+                            action();
                             return;
                         }
                     }
@@ -6097,8 +6076,8 @@ function embedTimer(targetPage) {
                     temp = '';
                 }
                 preferenceHTMLStr += '</select>&nbsp;&nbsp;<a title="Extra delay time before sounding the horn (in seconds)"><b>Delay:</b></a>&emsp;';
-                preferenceHTMLStr += '<input type="number" id="HornTimeDelayMinInput" min="0" max="360" size="5" value="' + hornTimeDelayMin.toString() + '" ' + temp + '> seconds ~ ';
-                preferenceHTMLStr += '<input type="number" id="HornTimeDelayMaxInput" min="1" max="361" size="5" value="' + hornTimeDelayMax.toString() + '" ' + temp + '> seconds';
+                preferenceHTMLStr += '<input type="number" id="HornTimeDelayMinInput" min="0" max="600" size="5" value="' + hornTimeDelayMin.toString() + '" ' + temp + '> seconds ~ ';
+                preferenceHTMLStr += '<input type="number" id="HornTimeDelayMaxInput" min="1" max="601" size="5" value="' + hornTimeDelayMax.toString() + '" ' + temp + '> seconds';
                 preferenceHTMLStr += '</td>';
                 preferenceHTMLStr += '</tr>';
                 preferenceHTMLStr += '<tr>';
@@ -6287,7 +6266,8 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<td style="height:24px; text-align:right;" colspan="2">';
                 preferenceHTMLStr += '(Changes above this line only take place after user save the preference) ';
                 preferenceHTMLStr += '<input type="button" id="PreferenceSaveInput" value="Save" onclick="\
-				try {window.localStorage.setItem(\'AggressiveMode\', 		document.getElementById(\'AggressiveModeInput\').value);\
+				try {\
+				window.localStorage.setItem(\'AggressiveMode\', 		document.getElementById(\'AggressiveModeInput\').value);\
 				window.localStorage.setItem(\'HornTimeDelayMin\', 		document.getElementById(\'HornTimeDelayMinInput\').value);\
 				window.localStorage.setItem(\'HornTimeDelayMax\', 		document.getElementById(\'HornTimeDelayMaxInput\').value);\
 				window.localStorage.setItem(\'TrapCheck\', 				document.getElementById(\'TrapCheckInput\').value);\
@@ -6298,7 +6278,8 @@ function embedTimer(targetPage) {
 				window.localStorage.setItem(\'AutoSolveKRDelayMax\', 	document.getElementById(\'AutoSolveKRDelayMaxInput\').value);\
 				window.localStorage.setItem(\'PauseLocation\', 			document.getElementById(\'PauseLocationInput\').value);\
 				window.localStorage.setItem(\'autoPopupKR\',            document.getElementById(\'autoPopKR\').value);\
-				setSessionToLocal();} catch(e) {console.log(e);}\
+				setSessionToLocal();\
+				} catch(e) {console.log(e);}\
 				';
 
                 //window.localStorage.setItem('PlayKingRewardSound', 	document.getElementById('PlayKingRewardSoundInput').value);
@@ -9119,6 +9100,8 @@ function addGoogleAd() {
 // ################################################################################################
 
 function soundHorn() {
+    if (debug) console.log("RUN %csoundHorn()", "color: #bada55");
+
     if (!isNewUI || doubleCheckLocation()) {
         // update timer
         displayTimer("Ready to Blow The Horn...", "Ready to Blow The Horn...", "Ready to Blow The Horn...");
@@ -9250,7 +9233,7 @@ function soundHorn() {
 }
 
 function afterSoundingHorn() {
-    if (debug) console.log("Run afterSoundingHorn()");
+    if (debug) console.log("RUN %cafterSoundingHorn()", "color: #bada55");
     var scriptNode = document.getElementById("scriptNode");
     if (scriptNode) {
         scriptNode.setAttribute("soundedHornAtt", "false");
@@ -9492,7 +9475,7 @@ function playNoCheeseSound() {
 // ################################################################################################
 
 function kingRewardAction() {
-    if (debug) console.log("RUN kingRewardAction()");
+    if (debug) console.log("RUN %ckingRewardAction()", "color: #bada55");
 
     // update timer
     displayTimer("King's Reward!", "King's Reward", "King's Reward!");
@@ -10234,7 +10217,7 @@ function assignMissingDefault(obj, objDefault) {
 
 function fireEvent(element, event) {
     if (debug) {
-        console.log("RUN fireEvent() on: ");
+        if (debug) console.log("RUN %cfireEvent() ON:", "color: #bada55");
         console.log(event);
         console.log(element);
     }
@@ -10425,12 +10408,12 @@ function timeFormatLong(time) {
 // ################################################################################################
 // INIT AJAX CALLS AND INIT CALLS - Function calls after page LOAD
 
-window.addEventListener("load", function () {
+/*window.addEventListener("load", function () {
     if (window.frames['name'] != 'aswift_0') {
         if (debug) console.log('Running nobInit in ' + window.frames['name'] + ' frame.');
         nobInit();
     }
-}, false);
+}, false);*/
 
 function nobInit() {
     if (debug) console.log('RUN nobInit()');
