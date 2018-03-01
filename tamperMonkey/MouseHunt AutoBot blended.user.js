@@ -1004,8 +1004,10 @@ function exeScript() {
 }
 
 function GetTrapCheckTime() {
-    if (getStorage('TrapCheckTimeOffset') != "" && getStorage('TrapCheckTimeOffset') != -1)
-        return parseInt(getStorage('TrapCheckTimeOffset'));
+    // Check storage first
+    var trapCheckFromStorage = getStorageToVariableInt('TrapCheckTimeOffset', -1);
+    if (trapCheckFromStorage != -1)
+        return trapCheckFromStorage;
 
     try {
         var passiveElement = document.getElementsByClassName('passive');
@@ -5442,19 +5444,9 @@ function retrieveData() {
             }
         }
 
-        // get trap check time
-        /*if (enableTrapCheck) {
-            var today = new Date();
-            checkTimeDelay = checkTimeDelayMin + Math.round(Math.random() * (checkTimeDelayMax - checkTimeDelayMin));
-            checkTime = (today.getMinutes() >= trapCheckTimeDiff) ? 3600 + (trapCheckTimeDiff * 60) - (today.getMinutes() * 60 + today.getSeconds()) : (trapCheckTimeDiff * 60) - (today.getMinutes() * 60 + today.getSeconds());
-            checkTime += checkTimeDelay;
-            today = undefined;
-        }*/
-
         CalculateNextTrapCheckInMinute();
         getJournalDetail();
         eventLocationCheck('retrieveData()');
-        //specialFeature('retrieveData()');
         mapHunting();
     } catch (e) {
         if (debug) console.log("retrieveData() ERROR - " + e);
@@ -9132,7 +9124,11 @@ function soundHorn() {
         displayTimer("Ready to Blow The Horn...", "Ready to Blow The Horn...", "Ready to Blow The Horn...");
 
         var hornElement;
+
+        // lol what is this even for
         var scriptNode = document.getElementById("scriptNode");
+        if (debug) console.log("What is this: ");
+        if (debug) console.log(scriptNode);
         if (scriptNode) {
             scriptNode.setAttribute("soundedHornAtt", "false");
         }
@@ -9143,12 +9139,11 @@ function soundHorn() {
             var headerElement = document.getElementById(header);
 
             if (headerElement) {
-                //if (isNewUI)
                 headerElement = headerElement.firstChild;
-                // need to make sure that the horn image is ready before we can click on it
                 var headerStatus = headerElement.getAttribute('class');
-                if (headerStatus.indexOf(hornReady) != -1) {
+                if (headerStatus.indexOf(hornReady) !== -1) {
                     // found the horn image, let's sound the horn!
+                    if (debug) console.log("Header status prior to sounding horn: " + headerStatus);
 
                     // update timer
                     displayTimer("Blowing The Horn...", "Blowing The Horn...", "Blowing The Horn...");
@@ -9785,6 +9780,8 @@ function CalculateNextTrapCheckInMinute() {
         checkTimeDelay = checkTimeDelayMin + Math.round(Math.random() * (checkTimeDelayMax - checkTimeDelayMin));
         checkTime = (now.getMinutes() >= trapCheckTimeDiff) ? 3600 + temp : temp;
         checkTime += checkTimeDelay;
+
+        if (debug) console.log("CalcNextTrapCheck: " + checkTime);
         now = undefined;
         temp = undefined;
     }
