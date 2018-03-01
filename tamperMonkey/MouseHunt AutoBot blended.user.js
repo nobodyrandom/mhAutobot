@@ -10416,10 +10416,9 @@ function timeFormatLong(time) {
 }, false);*/
 
 function nobInit() {
-    if (debug) console.log('RUN nobInit()');
+    if (debug) console.log('RUN %cnobInit()', 'color: #00ff00');
     try {
         if (!NOBhasPuzzle) {
-            if (debug) console.log("RUN nobInit()");
             if (window.location.href == 'http://www.mousehuntgame.com/' ||
                 window.location.href == 'http://www.mousehuntgame.com/#' ||
                 window.location.href == 'http://www.mousehuntgame.com/?switch_to=standard' ||
