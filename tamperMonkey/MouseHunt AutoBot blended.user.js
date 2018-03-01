@@ -173,7 +173,7 @@ var objTrapList = {
 
 // // Trap Collection
 var objTrapCollection = {
-    weapon: ["Chrome Temporal Turbine", "Chrome Grand Arcanum Trap", "Rocket Propelled Gavel Trap", "Timesplit Dissonance Weapon", "Meteor Prison Core Trap", "Sprinkly Cupcake Surprise Trap", "New Horizon Trap", "New Year's Fireworks Trap", "Holiday Hydro Hailstone Trap", "Festive Forgotten Fir Trap", "Interdimensional Crossbow Trap", "Droid Archmagus Trap", "Sandcastle Shard", "Crystal Mineral Crusher Trap", "Biomolecular Re-atomizer Trap", "Chrome Arcane Capturing Rod", "Law Laser Trap", "Zugzwang's Ultimate Move", "2010 Blastoff Trap", "2012 Big Boom Trap", "500 Pound Spiked Crusher", "Ambrosial Portal", "Ambush", "Ancient Box Trap", "Ancient Gauntlet", "Ancient Spear Gun", "Arcane Blast Trap", "Arcane Capturing Rod Of Never Yielding Mystery", "Bandit Deflector", "Birthday Candle Kaboom", "Birthday Party Piñata Bonanza", "Blackstone Pass Trap", "Bottomless Grave", "Brain Extractor", "Bubbles: The Party Crasher Trap", "Cackle Lantern Trap", "Candy Crusher Trap", "Chesla's Revenge", "Christmas Cracker Trap", "Chrome DeathBot", "Chrome DrillBot", "Chrome MonstroBot", "Chrome Nannybot", "Chrome Oasis Water Node Trap", "Chrome Onyx Mallet", "Chrome Phantasmic Oasis Trap", "Chrome RhinoBot", "Chrome Sphynx Wrath", "Chrome Tacky Glue Trap", "Clockapult of Time", "Clockapult of Winter Past", "Clockwork Portal Trap", "Crystal Crucible Trap", "Crystal Tower", "Digby DrillBot", "Dimensional Chest Trap", "Double Diamond Adventure", "Dragon Lance", "Dreaded Totem Trap", "Endless Labyrinth Trap", "Engine Doubler", "Enraged RhinoBot", "Event Horizon", "Explosive Toboggan Ride", "Festive Gauntlet Crusher", "Fluffy DeathBot", "Focused Crystal Laser", "The Forgotten Art of Dance", "Forgotten Pressure Plate Trap", "Giant Speaker", "Gingerbread House Surprise", "Glacier Gatler", "Gorgon Trap", "Grand Arcanum Trap", "Grungy DeathBot", "Harpoon Gun", "Heat Bath", "High Tension Spring", "HitGrab Horsey", "HitGrab Rainbow Rockin' Horse", "HitGrab Rockin' Horse", "Horrific Venus Mouse Trap", "Ice Blaster", "Ice Maiden", "Icy RhinoBot", "Infinite Labyrinth Trap", "Isle Idol Trap", "Isle Idol Trap", "Isle Idol Trap", "Kraken Chaos", "The Law Draw", "Maniacal Brain Extractor", "Mouse DeathBot", "Mouse Hot Tub", "Mouse Mary O'Nette", "Mouse Rocketine", "Mouse Trebuchet", "Multi-Crystal Laser", "Mutated Venus Mouse Trap", "Mysteriously unYielding Null-Onyx Rampart of Cascading Amperes", "Mystic Pawn Pincher", "Nannybot", "Net Cannon", "Ninja Ambush Trap", "Nutcracker Nuisance Trap", "NVMRC Forcefield Trap", "Oasis Water Node Trap", "Obelisk of Incineration", "Obelisk of Slumber", "Obvious Ambush Trap", "Onyx Mallet", "PartyBot", "Phantasmic Oasis Trap", "Pneumatic Tube Trap", "Pumpkin Pummeler", "Reaper's Perch", "Rewers Riposte", "RhinoBot", "Rune Shark Trap", "S.A.M. F.E.D. DN-5", "S.L.A.C.", "S.L.A.C. II", "S.U.P.E.R. Scum Scrubber", "Sandstorm MonstroBot", "Sandtail Sentinel", "School of Sharks", "Scum Scrubber", "Shrink Ray Trap", "Sinister Portal", "Snow Barrage", "Snowglobe Trap", "Soul Catcher", "Soul Harvester", "Sphynx Wrath", "Stale Cupcake Golem Trap", "Steam Laser Mk. I", "Steam Laser Mk. II", "Steam Laser Mk. II (Broken!)", "Steam Laser Mk. III", "Supply Grabber", "Swiss Army Mouse Trap", "Tacky Glue Trap", "Tarannosaurus Rex Trap", "Technic Pawn Pincher", "Temporal Turbine", "Terrifying Spider Trap", "Thorned Venus Mouse Trap", "Ultra MegaMouser MechaBot Trap", "Veiled Vine Trap", "Venus Mouse Trap", "Warden Slayer Trap", "Warpath Thrasher", "Wrapped Gift Trap", "Zugzwang's First Move", "Zugzwang's Last Move", "Zurreal's Folly"],
+    weapon: ["Chrome Temporal Turbine", "Chrome Grand Arcanum Trap", "Rocket Propelled Gavel Trap", "Timesplit Dissonance Weapon", "Meteor Prison Core Trap", "Christmas Cactus Trap", "Sprinkly Cupcake Surprise Trap", "New Horizon Trap", "New Year's Fireworks Trap", "Holiday Hydro Hailstone Trap", "Festive Forgotten Fir Trap", "Interdimensional Crossbow Trap", "Droid Archmagus Trap", "Sandcastle Shard", "Crystal Mineral Crusher Trap", "Biomolecular Re-atomizer Trap", "Chrome Arcane Capturing Rod", "Law Laser Trap", "Zugzwang's Ultimate Move", "2010 Blastoff Trap", "2012 Big Boom Trap", "500 Pound Spiked Crusher", "Ambrosial Portal", "Ambush", "Ancient Box Trap", "Ancient Gauntlet", "Ancient Spear Gun", "Arcane Blast Trap", "Arcane Capturing Rod Of Never Yielding Mystery", "Bandit Deflector", "Birthday Candle Kaboom", "Birthday Party Piñata Bonanza", "Blackstone Pass Trap", "Bottomless Grave", "Brain Extractor", "Bubbles: The Party Crasher Trap", "Cackle Lantern Trap", "Candy Crusher Trap", "Chesla's Revenge", "Christmas Cracker Trap", "Chrome DeathBot", "Chrome DrillBot", "Chrome MonstroBot", "Chrome Nannybot", "Chrome Oasis Water Node Trap", "Chrome Onyx Mallet", "Chrome Phantasmic Oasis Trap", "Chrome RhinoBot", "Chrome Sphynx Wrath", "Chrome Tacky Glue Trap", "Clockapult of Time", "Clockapult of Winter Past", "Clockwork Portal Trap", "Crystal Crucible Trap", "Crystal Tower", "Digby DrillBot", "Dimensional Chest Trap", "Double Diamond Adventure", "Dragon Lance", "Dreaded Totem Trap", "Endless Labyrinth Trap", "Engine Doubler", "Enraged RhinoBot", "Event Horizon", "Explosive Toboggan Ride", "Festive Gauntlet Crusher", "Fluffy DeathBot", "Focused Crystal Laser", "The Forgotten Art of Dance", "Forgotten Pressure Plate Trap", "Giant Speaker", "Gingerbread House Surprise", "Glacier Gatler", "Gorgon Trap", "Grand Arcanum Trap", "Grungy DeathBot", "Harpoon Gun", "Heat Bath", "High Tension Spring", "HitGrab Horsey", "HitGrab Rainbow Rockin' Horse", "HitGrab Rockin' Horse", "Horrific Venus Mouse Trap", "Ice Blaster", "Ice Maiden", "Icy RhinoBot", "Infinite Labyrinth Trap", "Isle Idol Trap", "Isle Idol Trap", "Isle Idol Trap", "Kraken Chaos", "The Law Draw", "Maniacal Brain Extractor", "Mouse DeathBot", "Mouse Hot Tub", "Mouse Mary O'Nette", "Mouse Rocketine", "Mouse Trebuchet", "Multi-Crystal Laser", "Christmas Crystalabra Trap", "Mutated Venus Mouse Trap", "Mysteriously unYielding Null-Onyx Rampart of Cascading Amperes", "Mystic Pawn Pincher", "Nannybot", "Net Cannon", "Ninja Ambush Trap", "Nutcracker Nuisance Trap", "NVMRC Forcefield Trap", "Oasis Water Node Trap", "Obelisk of Incineration", "Obelisk of Slumber", "Obvious Ambush Trap", "Onyx Mallet", "PartyBot", "Phantasmic Oasis Trap", "Pneumatic Tube Trap", "Pumpkin Pummeler", "Reaper's Perch", "Rewers Riposte", "RhinoBot", "Rune Shark Trap", "S.A.M. F.E.D. DN-5", "S.L.A.C.", "S.L.A.C. II", "S.U.P.E.R. Scum Scrubber", "Sandstorm MonstroBot", "Sandtail Sentinel", "School of Sharks", "Scum Scrubber", "Shrink Ray Trap", "Sinister Portal", "Snow Barrage", "Snowglobe Trap", "Soul Catcher", "Soul Harvester", "Sphynx Wrath", "Stale Cupcake Golem Trap", "Steam Laser Mk. I", "Steam Laser Mk. II", "Steam Laser Mk. II (Broken!)", "Steam Laser Mk. III", "Supply Grabber", "Swiss Army Mouse Trap", "Tacky Glue Trap", "Tarannosaurus Rex Trap", "Technic Pawn Pincher", "Temporal Turbine", "Terrifying Spider Trap", "Thorned Venus Mouse Trap", "Ultra MegaMouser MechaBot Trap", "Veiled Vine Trap", "Venus Mouse Trap", "Warden Slayer Trap", "Warpath Thrasher", "Wrapped Gift Trap", "Zugzwang's First Move", "Zugzwang's Last Move", "Zurreal's Folly"],
     base: ["Ancient Booster Base", "Ultimate Iceberg Base", "Clockwork Base", "Sprinkly Sweet Cupcake Birthday Base", "Dog Jade Base", "Rooster Jade Base", "2017 New Year's Base", "Aqua Base", "Attuned Enerchi Induction Base", "Bacon Base", "Bamboozler Base", "Birthday Cake Base", "Birthday Dragée Cake Base", "Bronze Tournament Base", "Candy Cane Base", "Carrot Birthday Cake Base", "Cheesecake Base", "Chocolate Birthday Cake Base", "Claw Shot Base", "Crushed Birthday Cake Base", "Cupcake Birthday Base", "Deep Freeze Base", "Dehydration Base", "Depth Charge Base", "Dragon Jade Base", "Eerie Base", "Eerier Base", "Enerchi Induction Base", "Explosive Base", "Extra Sweet Cupcake Birthday Base", "Fan Base", "Firecracker Base", "Fissure Base", "Fracture Base", "Gingerbread Base", "Golden Tournament Base", "Hearthstone Base", "Horse Jade Base", "Hothouse Base", "Jade Base", "Labyrinth Base", "Living Base", "Magma Base", "Magnet Base", "Minotaur Base", "Molten Shrapnel Base", "Monkey Jade Base", "Monolith Base", "Papyrus Base", "Physical Brace Base", "Polar Base", "Polluted Base", "Refined Pollutinum Base", "Remote Detonator Base", "Rift Base", "Runic Base", "Seasonal Base", "Sheep Jade Base", "Silver Tournament Base", "Skello-ton Base", "Snake Jade Base", "Soiled Base", "Spellbook Base", "Spiked Base", "Stone Base", "Tidal Base", "Tiki Base", "Tribal Base", "Tribal Kaboom Base", "Washboard Base", "Wooden Base", "Wooden Base with Target"],
     bait: ["Magical Rancid Radioactive Blue Cheese", "Undead String Emmental", "Ancient String Cheese", "Runic String Cheese", "Sunrise Cheese", "Dumpling Cheese", "Crescent Cheese", "Ancient Cheese", "Arctic Asiago Cheese", "Ascended Cheese", "Brie Cheese", "Brie String Cheese", "Candy Corn Cheese", "Checkmate Cheese", "Cheddar Cheese", "Cherry Cheese", "Combat Cheese", "Creamy Havarti Cheese", "Crunchy Cheese", "Crunchy Havarti Cheese", "Cupcake Colby", "Dewthief Camembert", "Diamond Cheese", "Duskshade Camembert", "Extra Sweet Cupcake Colby", "Festive Feta", "Fishy Fromage", "Fusion Fondue", "Galleon Gouda", "Gauntlet Cheese Tier 2", "Gauntlet Cheese Tier 3", "Gauntlet Cheese Tier 4", "Gauntlet Cheese Tier 5", "Gauntlet Cheese Tier 6", "Gauntlet Cheese Tier 7", "Gauntlet Cheese Tier 8", "Gemstone Cheese", "Ghoulgonzola Cheese", "Gilded Cheese", "Gingerbread Cheese", "Glowing Gruyere Cheese", "Glutter Cheese", "Gnarled Cheese", "Gouda Cheese", "Graveblossom Camembert", "Grilled Cheese", "Gumbo Cheese", "Inferno Havarti Cheese", "Lactrodectus Lancashire Cheese", "Limelight Cheese", "Lunaria Camembert", "Magical Havarti Cheese", "Magical String Cheese", "Maki Cheese", "Maki String Cheese", "Marble Cheese", "Marble String Cheese", "Marshmallow Monterey", "Master Fusion Cheese", "Mineral Cheese", "Moon Cheese", "Mozzarella Cheese", "Null Onyx Gorgonzola", "Nutmeg Cheese", "Onyx Gorgonzola", "Polluted Parmesan Cheese", "Pungent Havarti Cheese", "Radioactive Blue Cheese", "Rancid Radioactive Blue Cheese", "Rift Combat Cheese", "Rift Glutter Cheese", "Rift Rumble Cheese", "Rift Susheese Cheese", "Riftiago Cheese", "Resonator Cheese", "Rockforth Cheese", "Rumble Cheese", "Runic Cheese", "Runny Cheese", "Seasoned Gouda", "Shell Cheese", "Snowball Bocconcini", "Spicy Havarti Cheese", "SUPER|brie+", "Susheese Cheese", "Sweet Havarti Cheese", "Swiss Cheese", "Swiss String Cheese", "Terre Ricotta Cheese", "Toxic Brie", "Toxic SUPER|brie+", "Undead Emmental", "Vanilla Stilton Cheese", "Vengeful Vanilla Stilton Cheese", "White Cheddar Cheese", "Wicked Gnarly Cheese"],
     trinket: ["Rift Airship Charm", "Ultimate Wealth Charm", "Super Enerchi Charm", "Rift Charm", "Nightlight Charm", "Rift Wealth Charm", "Rift Extreme Luck Charm", "Rift Luck Charm", "Rift Super Luck Charm", "Rift Antiskele Charm", "Realm Ripper Charm", "Timesplit Charm", "Lucky Valentine Charm", "Festive Anchor Charm", "2014 Charm", "2015 Charm", "2016 Charm", "2017 Charm", "Airship Charm", "Amplifier Charm", "Ancient Charm", "Antiskele Charm", "Artisan Charm", "Athlete Charm", "Attraction Charm", "Baitkeep Charm", "Black Powder Charm", "Blue Double Sponge Charm", "Brain Charm", "Bravery Charm", "Cackle Charm", "Cactus Charm", "Candy Charm", "Champion Charm", "Cherry Charm", "Chrome Charm", "Clarity Charm", "Compass Magnet Charm", "Crucible Cloning Charm", "Cupcake Charm", "Dark Chocolate Charm", "Derr Power Charm", "Diamond Boost Charm", "Door Guard Charm", "Dragonbane Charm", "Dragonbreath Charm", "Dreaded Charm", "Dusty Coal Charm", "Eggscavator Charge Charm", "Eggstra Charge Charm", "Eggstra Charm", "Elub Power Charm", "EMP400 Charm", "Empowered Anchor Charm", "Enerchi Charm", "Extra Spooky Charm", "Extra Sweet Cupcake Charm", "Extreme Ancient Charm", "Extreme Attraction Charm", "Extreme Luck Charm", "Extreme Polluted Charm", "Extreme Power Charm", "Extreme Wealth Charm", "Festive Ultimate Luck Charm", "Festive Ultimate Power Charm", "Firecracker Charm", "First Ever Charm", "Flamebane Charm", "Forgotten Charm", "Freshness Charm", "Gargantua Guarantee Charm", "Gemstone Boost Charm", "Gilded Charm", "Glowing Gourd Charm", "Gnarled Charm", "Golden Anchor Charm", "Greasy Glob Charm", "Growth Charm", "Grub Salt Charm", "Grub Scent Charm", "Grubling Bonanza Charm", "Grubling Chow Charm", "Haunted Ultimate Luck Charm", "Horsepower Charm", "Hydro Charm", "Lantern Oil Charm", "Luck Charm", "Lucky Power Charm", "Lucky Rabbit Charm", "Magmatic Crystal Charm", "Mining Charm", "Mobile Charm", "Monger Charm", "Monkey Fling Charm", "Nanny Charm", "Nerg Power Charm", "Nightshade Farming Charm", "Nitropop Charm", "Oxygen Burst Charm", "Party Charm", "Polluted Charm", "Power Charm", "Prospector's Charm", "Rainbow Luck Charm", "Ramming Speed Charm", "Red Double Sponge Charm", "Red Sponge Charm", "Regal Charm", "Rift Power Charm", "Rift Ultimate Luck Charm", "Rift Ultimate Lucky Power Charm", "Rift Ultimate Power Charm", "Rift Vacuum Charm", "Roof Rack Charm", "Rook Crumble Charm", "Rotten Charm", "Safeguard Charm", "Scholar Charm", "Scientist's Charm", "Searcher Charm", "Shadow Charm", "Shamrock Charm", "Shattering Charm", "Sheriff's Badge Charm", "Shielding Charm", "Shine Charm", "Shortcut Charm", "Smart Water Jet Charm", "Snakebite Charm", "Snowball Charm", "Soap Charm", "Softserve Charm", "Spellbook Charm", "Spiked Anchor Charm", "Sponge Charm", "Spooky Charm", "Spore Charm", "Stagnant Charm", "Sticky Charm", "Striker Charm", "Super Ancient Charm", "Super Attraction Charm", "Super Brain Charm", "Super Cactus Charm", "Super Luck Charm", "Super Nightshade Farming Charm", "Super Polluted Charm", "Super Power Charm", "Super Regal Charm", "Super Rift Vacuum Charm", "Super Rotten Charm", "Super Salt Charm", "Super Soap Charm", "Super Spore Charm", "Super Warpath Archer Charm", "Super Warpath Cavalry Charm", "Super Warpath Commander's Charm", "Super Warpath Mage Charm", "Super Warpath Scout Charm", "Super Warpath Warrior Charm", "Super Wealth Charm", "Supply Schedule Charm", "Tarnished Charm", "Taunting Charm", "Treasure Trawling Charm", "Ultimate Anchor Charm", "Ultimate Ancient Charm", "Ultimate Attraction Charm", "Ultimate Charm", "Ultimate Luck Charm", "Ultimate Lucky Power Charm", "Ultimate Polluted Charm", "Ultimate Power Charm", "Ultimate Spore Charm", "Uncharged Scholar Charm", "Unstable Charm", "Valentine Charm", "Warpath Archer Charm", "Warpath Cavalry Charm", "Warpath Commander's Charm", "Warpath Mage Charm", "Warpath Scout Charm", "Warpath Warrior Charm", "Water Jet Charm", "Wax Charm", "Wealth Charm", "Wild Growth Charm", "Winter Builder Charm", "Winter Charm", "Winter Hoarder Charm", "Winter Miser Charm", "Winter Screw Charm", "Winter Spring Charm", "Winter Wood Charm", "Yellow Double Sponge Charm", "Yellow Sponge Charm"]
@@ -186,9 +186,9 @@ var objBestTrap = {
         draconic: ['Dragonvine Ballista Trap', 'Harrowing Holiday Harpoon Harp', 'Dragon Lance', 'Ice Maiden'],
         forgotten: ['Infinite Labyrinth Trap', 'Endless Labyrinth Trap', 'Crystal Crucible Trap', 'Stale Cupcake Golem Trap', 'Tarannosaurus Rex Trap', 'Crystal Mineral Crusher Trap', 'The Forgotten Art of Dance'],
         hydro: ['School of Sharks', 'Rune Shark Trap', 'Chrome Phantasmic Oasis Trap', 'Phantasmic Oasis Trap', 'Oasis Water Node Trap', 'Steam Laser Mk. III', 'Steam Laser Mk. II', 'Steam Laser Mk. I', 'Ancient Spear Gun'],
-        law: ['Meteor Prison Core Trap', 'The Law Draw', 'Law Laser Trap', 'Engine Doubler', 'Bandit Deflector', 'Supply Grabber', 'S.L.A.C. II', 'S.L.A.C.'],
+        law: ['Meteor Prison Core Trap', 'The Law Draw', 'Christmas Cactus Trap', 'Law Laser Trap', 'Engine Doubler', 'Bandit Deflector', 'Supply Grabber', 'S.L.A.C. II', 'S.L.A.C.'],
         physical: ['Chrome MonstroBot', 'Sandstorm MonstroBot', 'Sandtail Sentinel', 'Enraged RhinoBot'],
-        rift: ['Mysteriously unYielding', 'Multi-Crystal Laser', 'Focused Crystal Laser', 'Biomolecular Re-atomizer Trap', 'Crystal Tower'],
+        rift: ['Mysteriously unYielding', 'Multi-Crystal Laser', 'Christmas Crystalabra Trap', 'Focused Crystal Laser', 'Biomolecular Re-atomizer Trap', 'Crystal Tower'],
         shadow: ['Temporal Turbine', 'Clockwork Portal Trap', 'Reaper\'s Perch', 'Dreaded Totem Trap', 'Candy Crusher Trap', 'Clockapult of Time', 'Clockapult of Winter Past'],
         tactical: ['Chrome Sphynx Wrath', 'Sphynx Wrath', 'Zugzwang\'s Ultimate Move', 'Zugzwang\'s First Move']
     },
@@ -1189,8 +1189,8 @@ function eventLocationCheck(caller) {
             break;
         case 'GES':
             // USING A SMARTER GES
-            gnawnianExpress(true);
-            //ges();
+            //gnawnianExpress(true);
+            ges();
             break;
         case 'Burroughs Rift(Red)':
             BurroughRift(true, 19, 20);
@@ -2000,12 +2000,15 @@ function gnawnianExpress(load) {
             if (charmArmed.indexOf('Supply Schedule') > -1 || charmArmed.indexOf('Roof Rack') > -1 || charmArmed.indexOf('Greasy Glob') > -1 || charmArmed.indexOf('Door Guard') > -1 || charmArmed.indexOf('Dusty Coal') > -1 || charmArmed.indexOf('Black Powder') > -1 || charmArmed.indexOf('Magmatic Crystal') > -1)
                 disarmTrap('trinket');
 
+            // TODO: Need to fix this
             if (trapArmed.indexOf('Supply Grabber') > -1 || trapArmed.indexOf('Bandit Deflector') > -1 || trapArmed.indexOf('Engine Doubler') > -1)
                 checkThenArm('best', 'weapon', ['S.L.A.C. II', 'The Law Draw', 'S.L.A.C.']);
         } else {
             var phase = document.getElementsByClassName('phaseName')[0].textContent;
             phase = phase.substr(7, phase.length);
-            console.debug('Current Active Train Phase: ' + phase);
+            var nPhaseSecLeft = parseInt(getPageVariable('user.quests.QuestTrainStation.phase_seconds_remaining'));
+            console.plog('Current Phase:', strCurrentPhase, 'Time Left (s):', nPhaseSecLeft);
+
             switch (phase) {
                 case 'Supply Depot':
                     checkThenArm('best', 'weapon', supplyDepotTrap);
@@ -2069,7 +2072,7 @@ function loadTrain(location) {
             case 'canyon':
                 var timeLeft = document.getElementsByClassName('phaseTimer')[0].textContent.substr(10);
                 // Fire only when time left is less than 16 mins :P (needs checking if works)
-                if (parseInt(timeLeft.substr(0, timeLeft.indexOf(':'))) == 0 && parseInt(timeLeft.substr(timeLeft.indexOf(':') + 1)) <= 16)
+                if ((parseInt(timeLeft.substr(0, timeLeft.indexOf(':'))) == 0 && parseInt(timeLeft.substr(timeLeft.indexOf(':') + 1)) <= 16))
                     fireEvent(document.getElementsByClassName('phaseButton')[0], 'click');
                 break;
             default:
@@ -2164,8 +2167,7 @@ function ges() {
                 }
                 else
                     checkThenArm(null, 'trinket', objGES.SD_BEFORE.trinket);
-            }
-            else {
+            } else {
                 strStage = 'SD_AFTER';
                 if (objGES.SD_AFTER.trinket.indexOf('Supply Schedule') > -1)
                     disarmTrap('trinket');
@@ -2180,13 +2182,11 @@ function ges() {
             if (Number.isInteger(nCrateQuantity) && nCrateQuantity >= objGES.nMinCrate)
                 fireEvent(document.getElementsByClassName('phaseButton')[0], 'click');
         }
-    }
-    else if (strCurrentPhase.indexOf('Raider River') > -1) {
+    } else if (strCurrentPhase.indexOf('Raider River') > -1) {
         if (nPhaseSecLeft <= nextActiveTime || (enableTrapCheck && trapCheckTimeDiff === 0 && nPhaseSecLeft <= 900)) { // total seconds left to next phase less than next active time or next trap check time
             strStage = 'DC';
             checkThenArm(null, 'trinket', objGES[strStage].trinket);
-        }
-        else {
+        } else {
             strStage = 'RR';
             if (objGES.RR.trinket == 'AUTO') {
                 // get raider status and arm respective charm
@@ -2223,13 +2223,11 @@ function ges() {
             if (Number.isInteger(nRepellentQuantity) && nRepellentQuantity >= objGES.nMinRepellent)
                 fireEvent(document.getElementsByClassName('phaseButton')[0], 'click');
         }
-    }
-    else if (strCurrentPhase.indexOf('Daredevil Canyon') > -1) {
+    } else if (strCurrentPhase.indexOf('Daredevil Canyon') > -1) {
         if (nPhaseSecLeft <= nextActiveTime || (enableTrapCheck && trapCheckTimeDiff === 0 && nPhaseSecLeft <= 900)) { // total seconds left to next phase less than next active time or next trap check time
             strStage = 'WAITING';
             checkThenArm(null, 'trinket', objGES[strStage].trinket);
-        }
-        else {
+        } else {
             strStage = 'DC';
             arrCharm = ['Magmatic Crystal Charm', 'Black Powder Charm', 'Dusty Coal Charm'];
             if (objGES.DC.trinket == 'AUTO')
@@ -2256,8 +2254,7 @@ function ges() {
             if (Number.isInteger(nFuelQuantity) && nFuelQuantity >= objGES.nMinFuelNugget)
                 fireEvent(document.getElementsByClassName('phaseButton')[0], 'click');
         }
-    }
-    else {
+    } else {
         strStage = 'WAITING';
         arrCharm = ['Supply Schedule', 'Roof Rack', 'Door Guard', 'Greasy Blob', 'Magmatic Crystal', 'Black Powder', 'Dusty Coal'];
         if (objGES.WAITING.trinket.indexOf(arrCharm) > -1)
@@ -2682,14 +2679,15 @@ function livingGarden(obj) {
     else
         strStatus = 'Filling';
     console.plog('Estimate Hunt:', estimateHunt, 'Status:', strStatus);
+
     if (obj.LG.trinket.after.indexOf('Sponge') > -1)
         obj.LG.trinket.after = 'None';
+
     if (strStatus == 'Poured') {
         checkThenArm(null, 'base', obj.LG.base.after);
         checkThenArm(null, 'trinket', obj.LG.trinket.after);
         checkThenArm(null, 'bait', obj.LG.bait.after);
-    }
-    else if (strStatus == 'Filled') {
+    } else if (strStatus == 'Filled') {
         var pourButton = document.getElementsByClassName('pour')[0];
         if (obj.LG.isAutoPour && !isNullOrUndefined(pourButton)) {
             fireEvent(pourButton, 'click');
@@ -2700,31 +2698,26 @@ function livingGarden(obj) {
                 checkThenArm(null, 'base', obj.LG.base.after);
                 checkThenArm(null, 'trinket', obj.LG.trinket.after);
                 checkThenArm(null, 'bait', obj.LG.bait.after);
-            }
-            else {
+            } else {
                 checkThenArm('best', 'base', bestLGBase);
                 if (charmArmed.indexOf('Sponge') > -1)
                     disarmTrap('trinket');
                 if (baitArmed.indexOf('Camembert') > -1)
                     checkThenArm(null, 'bait', 'Gouda');
             }
-        }
-        else {
+        } else {
             checkThenArm('best', 'base', bestLGBase);
             if (charmArmed.indexOf('Sponge') > -1)
                 disarmTrap('trinket');
             if (baitArmed.indexOf('Camembert') > -1)
                 checkThenArm(null, 'bait', 'Gouda');
         }
-    }
-    else if (strStatus == 'Filling') {
+    } else if (strStatus == 'Filling') {
         checkThenArm('best', 'base', bestLGBase);
         if (!obj.LG.isAutoFill) {
-            if (charmArmed.indexOf('Sponge') > -1 ||
-                obj.LG.trinket.after.indexOf(charmArmed) > -1 || charmArmed.indexOf(obj.LG.trinket.after) > -1)
+            if (charmArmed.indexOf('Sponge') > -1 || obj.LG.trinket.after.indexOf(charmArmed) > -1 || charmArmed.indexOf(obj.LG.trinket.after) > -1)
                 disarmTrap('trinket');
-        }
-        else {
+        } else {
             if (estimateHunt >= 28)
                 checkThenArm(null, 'trinket', 'Sponge');
             else
@@ -6858,6 +6851,7 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<option value="Focused Crystal Laser">FCL</option>';
                 preferenceHTMLStr += '<option value="Multi-Crystal Laser">MCL</option>';
                 preferenceHTMLStr += '<option value="Biomolecular Re-atomizer Trap">BRT</option>';
+                preferenceHTMLStr += '<option value="Christmas Crystalabra Trap">Christmas Crystalabra Trap</option>';
                 preferenceHTMLStr += '<option value="Crystal Tower">CT</option>';
                 preferenceHTMLStr += '</select>';
                 preferenceHTMLStr += '<select id="selectBWRiftBase" style="width: 75px;" onchange="saveBWRift();">';
@@ -6917,6 +6911,7 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<option value="Focused Crystal Laser">FCL</option>';
                 preferenceHTMLStr += '<option value="Multi-Crystal Laser">MCL</option>';
                 preferenceHTMLStr += '<option value="Biomolecular Re-atomizer Trap">BRT</option>';
+                preferenceHTMLStr += '<option value="Christmas Crystalabra Trap">Christmas Crystalabra Trap</option>';
                 preferenceHTMLStr += '<option value="Crystal Tower">CT</option>';
                 preferenceHTMLStr += '</select>';
                 preferenceHTMLStr += '<select id="selectBWRiftBaseSpecial" style="width: 75px;" onchange="saveBWRift();">';
@@ -7042,6 +7037,7 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<option value="Engine Doubler">Engine Doubler</option>';
                 preferenceHTMLStr += '<option value="The Law Draw">The Law Draw</option>';
                 preferenceHTMLStr += '<option value="Law Laser Trap">Law Laser Trap</option>';
+                preferenceHTMLStr += '<option value="Christmas Cactus Trap">Christmas Cactus Trap</option>';
                 preferenceHTMLStr += '<option value="Meteor Prison Core Trap">Meteor Prison Core Trap</option>';
                 preferenceHTMLStr += '</select>';
                 preferenceHTMLStr += '<select id="selectGESTrapBase" style="width: 75px" onchange="saveGES();">';
@@ -7144,6 +7140,7 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<option value="Focused Crystal Laser">FCL</option>';
                 preferenceHTMLStr += '<option value="Multi-Crystal Laser">MCL</option>';
                 preferenceHTMLStr += '<option value="Biomolecular Re-atomizer Trap">BRT</option>';
+                preferenceHTMLStr += '<option value="Christmas Crystalabra Trap">Christmas Crystalabra Trap</option>';
                 preferenceHTMLStr += '<option value="Crystal Tower">CT</option>';
                 preferenceHTMLStr += '</select>';
                 preferenceHTMLStr += '<select id="selectWWRiftTrapBase" style="width: 75px" onchange="saveWWRift();">';
@@ -7198,6 +7195,7 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<option value="Focused Crystal Laser">FCL</option>';
                 preferenceHTMLStr += '<option value="Multi-Crystal Laser">MCL</option>';
                 preferenceHTMLStr += '<option value="Biomolecular Re-atomizer Trap">BRT</option>';
+                preferenceHTMLStr += '<option value="Christmas Crystalabra Trap">Christmas Crystalabra Trap</option>';
                 preferenceHTMLStr += '<option value="Crystal Tower">CT</option>';
                 preferenceHTMLStr += '</select>';
                 preferenceHTMLStr += '<select id="selectWWRiftMBWTrapBase" style="width: 75px" onchange="saveWWRift();">';
@@ -7252,6 +7250,7 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<option value="Focused Crystal Laser">FCL</option>';
                 preferenceHTMLStr += '<option value="Multi-Crystal Laser">MCL</option>';
                 preferenceHTMLStr += '<option value="Biomolecular Re-atomizer Trap">BRT</option>';
+                preferenceHTMLStr += '<option value="Christmas Crystalabra Trap">Christmas Crystalabra Trap</option>';
                 preferenceHTMLStr += '<option value="Crystal Tower">CT</option>';
                 preferenceHTMLStr += '</select>';
                 preferenceHTMLStr += '<select id="selectFRTrapBase" onchange="saveFR();">';
@@ -7997,6 +7996,7 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<option value="Focused Crystal Laser">FCL</option>';
                 preferenceHTMLStr += '<option value="Multi-Crystal Laser">MCL</option>';
                 preferenceHTMLStr += '<option value="Biomolecular Re-atomizer Trap">BRT</option>';
+                preferenceHTMLStr += '<option value="Christmas Crystalabra Trap">Christmas Crystalabra Trap</option>';
                 preferenceHTMLStr += '<option value="Crystal Tower">CT</option>';
                 preferenceHTMLStr += '</select>';
                 preferenceHTMLStr += '<select id="selectBRTrapBase" style="width: 75px" onchange="saveBR();">';
