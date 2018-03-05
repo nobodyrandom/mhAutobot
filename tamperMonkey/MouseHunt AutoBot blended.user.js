@@ -9367,9 +9367,9 @@ function embedScript() {
 }
 
 function nobTestBetaUI() { // Return true if beta UI
-    header = 'mousehuntHud';
-    var testNewUI = document.getElementById(header);
-    if (testNewUI != null) {
+    campButton = 'mousehuntHud-campButton';
+    var testNewUI = document.getElementsByClassName(campButton);
+    if (testNewUI != undefined && testNewUI[0] != null) {
         if (debug) console.log("OLD UI DETECTED");
         // old UI
         hornButton = 'mousehuntHud-huntersHorn-container';
@@ -10406,14 +10406,6 @@ function timeFormatLong(time) {
 // ################################################################################################
 //   NOB Additional thing - Start
 // ################################################################################################
-// INIT AJAX CALLS AND INIT CALLS - Function calls after page LOAD
-
-/*window.addEventListener("load", function () {
-    if (window.frames['name'] != 'aswift_0') {
-        if (debug) console.log('Running nobInit in ' + window.frames['name'] + ' frame.');
-        nobInit();
-    }
-}, false);*/
 
 function nobInit() {
     if (debug) console.log('RUN %cnobInit()', 'color: #00ff00');
