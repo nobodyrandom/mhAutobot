@@ -9026,7 +9026,7 @@ function doubleCheckLocation() { //return true if location is camp page (this is
 
     var thePage = document.getElementById("mousehuntContainer");
     if (thePage) {
-        return (thePage.className == "PageCamp");
+        return (thePage.className.indexOf("PageCamp") > -1);
     } else {
         return false;
     }
@@ -11213,7 +11213,7 @@ function createClockArea() {
 }
 
 function clockTick() {
-    if (debug) console.log("RUN clockTick()");
+    if (debug) console.log('RUN %cclockTick()', 'color: #9cffbd');
     var temp = document.getElementById('NOBrelic');
     if (clockNeedOn && !clockTicking && temp) {
         // Clock needs to be on, but is not ticking
