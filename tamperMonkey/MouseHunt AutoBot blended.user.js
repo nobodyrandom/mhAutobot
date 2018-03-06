@@ -9812,6 +9812,53 @@ function ajaxPost(postURL, objData, callback, throwerror) {
     }
 }
 
+function versionCompare(v1, v2, options) {
+    var lexicographical = options && options.lexicographical,
+        zeroExtend = options && options.zeroExtend,
+        v1parts = v1.split('.'),
+        v2parts = v2.split('.');
+
+    function isValidPart(x) {
+        return (lexicographical ? /^\d+[A-Za-z]*$/ : /^\d+$/).test(x);
+    }
+
+    if (!v1parts.every(isValidPart) || !v2parts.every(isValidPart)) {
+        return NaN;
+    }
+
+    if (zeroExtend) {
+        while (v1parts.length < v2parts.length) v1parts.push("0");
+        while (v2parts.length < v1parts.length) v2parts.push("0");
+    }
+
+    if (!lexicographical) {
+        v1parts = v1parts.map(Number);
+        v2parts = v2parts.map(Number);
+    }
+
+    for (var i = 0; i < v1parts.length; ++i) {
+        if (v2parts.length == i) {
+            return 1;
+        }
+
+        if (v1parts[i] == v2parts[i]) {
+            continue;
+        }
+        else if (v1parts[i] > v2parts[i]) {
+            return 1;
+        }
+        else {
+            return -1;
+        }
+    }
+
+    if (v1parts.length != v2parts.length) {
+        return -1;
+    }
+
+    return 0;
+}
+
 function isNullOrUndefined(obj) {
     return (obj === null || obj === undefined || obj === 'null' || obj === 'undefined');
 }
@@ -10857,7 +10904,7 @@ function fetchGDocStuff() {
                 // UPDATE CHECK
                 checkVer = data.version;
                 if (debug) console.log('Current MH AutoBot version: ' + currVer + ' / Server MH AutoBot version: ' + checkVer);
-                if (checkVer > currVer) {
+                if (versionCompare(currVer, checkVer) < 0) {
                     var updateElement = document.getElementById('updateElement');
                     updateElement.innerHTML = "<a href=\"https://greasyfork.org/scripts/32971-mousehunt-autobot-enhanced-revamp/code/MouseHunt%20AutoBot%20ENHANCED%20+%20REVAMP.user.js\" target='_blank'><font color='red'>YOUR SCRIPT IS OUT OF DATE, PLEASE CLICK HERE TO UPDATE IMMEDIATELY</font></a>";
                 }
