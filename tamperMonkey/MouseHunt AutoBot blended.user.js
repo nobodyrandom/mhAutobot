@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Hazado, Ooi Keng Siang, CnN
-// @version    	2.3.6b
+// @version    	2.3.7b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require     https://code.jquery.com/jquery-2.2.2.min.js
@@ -5826,10 +5826,6 @@ function embedTimer(targetPage) {
             if (headerElement) {
                 var timerDivElement = document.createElement('div');
 
-                //var hr1Element = document.createElement('hr');
-                //timerDivElement.appendChild(hr1Element);
-                //hr1Element = null;
-
                 // show bot title and version
                 var titleElement = document.createElement('div');
                 titleElement.setAttribute('id', 'titleElement');
@@ -5981,8 +5977,24 @@ function embedTimer(targetPage) {
                     if (isNewUI || nobTestBetaUI()) {
                         // try check if ajax was called
                         if (doubleCheckLocation()) {
+                            document.getElementById('titleElement').parentNode.remove();
+                            embedTimer(true);
+                            embedScript();
                             action();
+                            nobInit();
                             return;
+                        } else {
+                            // Add ajax listener for when user is back onto camp page
+                            var campButtonDiv = document.getElementsByClassName(campButton)[0];
+                            campButtonDiv.addEventListener('click', function (event) {
+                                // Use timeout to make sure ajax finished
+                                window.setTimeout(function () {
+                                    if (doubleCheckLocation()) {
+                                        exeScript();
+                                        return;
+                                    }
+                                }, 1000);
+                            });
                         }
                     }
 
@@ -9012,7 +9024,7 @@ function doubleCheckLocation() { //return true if location is camp page (this is
         return true;
     }
 
-    var thePage = $('#mousehuntContainer')[0];
+    var thePage = document.getElementById("mousehuntContainer");
     if (thePage) {
         return (thePage.className == "PageCamp");
     } else {
