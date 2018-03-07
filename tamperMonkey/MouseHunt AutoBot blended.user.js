@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        MouseHunt AutoBot ENHANCED + REVAMP
 // @author      NobodyRandom, Hazado, Ooi Keng Siang, CnN
-// @version    	2.3.7b
+// @version    	2.3.8b
 // @description Currently the most advanced script for automizing MouseHunt and MH BETA UI. Supports ALL new areas and FIREFOX. Revamped of original by Ooi + Enhanced Version by CnN
 // @icon        https://raw.githubusercontent.com/nobodyrandom/mhAutobot/master/resource/mice.png
 // @require     https://code.jquery.com/jquery-2.2.2.min.js
@@ -436,7 +436,6 @@ var hornReady = 'hornready';
 var isNewUI = false;
 
 // NOB vars
-var NOBhasPuzzle;
 var NOBtickerTimout;
 var NOBtickerInterval;
 var NOBtraps = []; // Stores ALL traps, bases, cheese etc available to user
@@ -5173,7 +5172,8 @@ function retrieveDataFirst() {
                         // calculation base on the js in Mousehunt
                         var additionalDelayTime = Math.ceil(nextActiveTime * 0.1);
                         // Safety switch
-                        hornTimeDelay += additionalDelayTime + 5;
+                        //hornTimeDelay += additionalDelayTime + 5;
+                        hornTimeDelay += 5;
 
                         hornTime = nextActiveTime + hornTimeDelay;
                         if (nextActiveTime <= 0)
@@ -5374,7 +5374,7 @@ function retrieveData() {
         // get next horn time
         if (browser == "firefox" || browser == "opera" || browser == "chrome") {
             currentLocation = getCurrentLocation();
-            isKingReward = NOBhasPuzzle = getKingRewardStatus();
+            isKingReward = getKingRewardStatus();
             baitQuantity = getBaitQuantity();
             nextActiveTime = GetHornTime();
         } else {
@@ -6128,25 +6128,19 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '</td>';
                 preferenceHTMLStr += '</tr>';
 
-                /*
                 preferenceHTMLStr += '<tr>';
                 preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
                 preferenceHTMLStr += '<a title="Play sound when encounter king\'s reward"><b>Play King Reward Sound</b></a>&nbsp;&nbsp;:&nbsp;&nbsp;';
                 preferenceHTMLStr += '</td>';
                 preferenceHTMLStr += '<td style="height:24px">';
                 preferenceHTMLStr += '<select id="PlayKingRewardSoundInput" >';
-                if (isKingWarningSound) {
-                    preferenceHTMLStr += '<option value="false">False</option>';
-                    preferenceHTMLStr += '<option value="true" selected>True</option>';
-                }
-                else {
-                    preferenceHTMLStr += '<option value="false" selected>False</option>';
-                    preferenceHTMLStr += '<option value="true">True</option>';
-                }
-                preferenceHTMLStr += '</select>';
+                preferenceHTMLStr += '<option value="false"' + ((!isKingWarningSound) ? ' selected' : '') + '>False</option>';
+                preferenceHTMLStr += '<option value="true"' + ((isKingWarningSound) ? ' selected' : '') + '>True</option>';
+                preferenceHTMLStr += '</select>&nbsp;&nbsp;';
+                preferenceHTMLStr += '<a title="Link to MP3 sound to play, defaults NobodyRandom\'s awesome song if left blank"><b>Sound Link:</b></a>&emsp;';
+                preferenceHTMLStr += '<input type="text" id="kingWarningSoundInput" value="' + kingWarningSound + '">';
                 preferenceHTMLStr += '</td>';
                 preferenceHTMLStr += '</tr>';
-                */
 
                 preferenceHTMLStr += '<tr>';
                 preferenceHTMLStr += '<td style="height:24px; text-align:right;">';
@@ -6156,7 +6150,7 @@ function embedTimer(targetPage) {
                 preferenceHTMLStr += '<select id="autoPopKR">';
                 preferenceHTMLStr += '<option value="false"' + ((!autoPopupKR) ? ' selected' : '') + '>False</option>';
                 preferenceHTMLStr += '<option value="true"' + ((autoPopupKR) ? ' selected' : '') + '>True</option>';
-                preferenceHTMLStr += '</select>'
+                preferenceHTMLStr += '</select>';
                 preferenceHTMLStr += '</td>';
                 preferenceHTMLStr += '</tr>';
 
@@ -6285,6 +6279,8 @@ function embedTimer(targetPage) {
 				window.localStorage.setItem(\'TrapCheck\', 				document.getElementById(\'TrapCheckInput\').value);\
 				window.localStorage.setItem(\'TrapCheckTimeDelayMin\',	document.getElementById(\'TrapCheckTimeDelayMinInput\').value);\
 				window.localStorage.setItem(\'TrapCheckTimeDelayMax\', 	document.getElementById(\'TrapCheckTimeDelayMaxInput\').value);\
+				window.localStorage.setItem(\'AutoSolveKR\',            document.getElementById(\'AutoSolveKRInput\').value);\
+				window.localStorage.setItem(\'AutoSolveKR\', 			document.getElementById(\'AutoSolveKRInput\').value);\
 				window.localStorage.setItem(\'AutoSolveKR\', 			document.getElementById(\'AutoSolveKRInput\').value);\
 				window.localStorage.setItem(\'AutoSolveKRDelayMin\', 	document.getElementById(\'AutoSolveKRDelayMinInput\').value);\
 				window.localStorage.setItem(\'AutoSolveKRDelayMax\', 	document.getElementById(\'AutoSolveKRDelayMaxInput\').value);\
@@ -10469,7 +10465,7 @@ function timeFormatLong(time) {
 function nobInit() {
     if (debug) console.log('RUN %cnobInit()', 'color: #00ff00');
     try {
-        if (!NOBhasPuzzle) {
+        if (!isKingReward) {
             if (window.location.href == 'http://www.mousehuntgame.com/' ||
                 window.location.href == 'http://www.mousehuntgame.com/#' ||
                 window.location.href == 'http://www.mousehuntgame.com/?switch_to=standard' ||
@@ -10510,7 +10506,7 @@ function nobInit() {
 }
 
 function nobAjaxGet(url, callback, throwError) {
-    if (!NOBhasPuzzle) {
+    if (!isKingReward) {
         jQuery.ajax({
             url: url,
             type: "GET",
@@ -10528,7 +10524,7 @@ function nobAjaxGet(url, callback, throwError) {
 }
 
 function nobAjaxPost(url, data, callback, throwError, dataType) {
-    if (!NOBhasPuzzle) {
+    if (!isKingReward) {
         if (dataType == null || dataType == undefined) dataType = 'json';
 
         jQuery.ajax({
@@ -10920,10 +10916,8 @@ function fetchGDocStuff() {
                 }, 300000);
                 console.log(JSON.parse(error) + ' error - Parse is now not working qq... Retrying in 5 minutes');
             }
-        }).then(function (a) {
-
         }, function (error) {
-
+            if (debug) console.log("fetchGDocStuff Parse ERROR: " + error);
         });
     }
 }
@@ -11475,7 +11469,7 @@ function nobCalculateOfflineTimers(runOnly) {
 
 // Attempt to inject addonCode made by user
 function runAddonCode() {
-    if (!NOBhasPuzzle && addonCode != "") {
+    if (!isKingReward && addonCode != "") {
         console.log("%cRUNNING ADDON CODE, SCRIPT IS NOW NOT SAFE DEPENDING ON WHAT YOU DID.", "color: yellow; background: red; font-size: 50pt;");
         eval(addonCode);
     }
