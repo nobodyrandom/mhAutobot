@@ -9108,9 +9108,15 @@ function addGoogleAd() {
 // ################################################################################################
 
 function soundHorn() {
-    if (debug) console.log("RUN %csoundHorn()", "color: #bada55");
+    if (debug) console.log("RUN %csoundHorn()", "color: #FF7700");
+    if (debug) console.log("Time now is " + (new Date()));
+    if (debug) {
+        console.log(document.getElementById("mousehuntHud").cloneNode(true));
+        console.log("huntTimer:");
+        console.log(document.getElementById("huntTimer").cloneNode(true));
+    }
 
-    if (!isNewUI || doubleCheckLocation()) {
+    if (doubleCheckLocation()) {
         // update timer
         displayTimer("Ready to Blow The Horn...", "Ready to Blow The Horn...", "Ready to Blow The Horn...");
 

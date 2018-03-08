@@ -1,17 +1,23 @@
 // ==UserScript==
-// @name        MH Auto KR Solver
-// @author      Kevin Kwok, CnN
-// @version    	1.0.5
-// @namespace   https://devcnn.wordpress.com/, https://antimatter15.com/
+// @name        MH Auto KR Solver REVAMP
+// @author      NobodyRandom, Kevin Kwok, CnN
+// @version    	1.0.6
+// @namespace   https://greasyfork.org/users/6398, https://devcnn.wordpress.com/, https://antimatter15.com/
 // @description This is an auto MH KR Solver.
+// @license 	GPL-3.0+; http://www.gnu.org/copyleft/gpl.html
 // @include		http://*/puzzleimage.php*
 // @include		https://*/puzzleimage.php*
 // @include		http://*.dropbox.com/*
 // @include		https://*.dropbox.com/*
+// @grant		unsafeWindow
+// @grant		GM_info
+// @run-at		document-end
 // ==/UserScript==
 
 //if (window.top == window.self)  //don't run on the top window
 //return;
+
+var debug = true;
 
 function receiveMessage(event) {
     console.debug("Event origin: " + event.origin);
@@ -25,16 +31,6 @@ function receiveMessage(event) {
             event.source.postMessage("", event.origin);
         }
     }
-}
-
-if (window.location.href.indexOf("puzzleimage.php") > -1 || window.location.href.indexOf("newpuzzzle") > -1) {
-    window.addEventListener("message", receiveMessage, false);
-    var ocrDelayMin = 1;
-    var ocrDelayMax = 3;
-    var ocrDelay = ocrDelayMin + Math.floor(Math.random() * (ocrDelayMax - ocrDelayMin));
-    window.setTimeout(function () {
-        run();
-    }, ocrDelay * 1000);
 }
 
 function run() {
@@ -297,3 +293,16 @@ function getBaseImage(imgData) {
 
     return canvas.toDataURL("image/png");
 }
+
+if (window.location.href.indexOf("puzzleimage.php") > -1 || window.location.href.indexOf("newpuzzzle") > -1) {
+    if (debug) console.log("RUN KR OCR SCRIPT");
+
+    window.addEventListener("message", receiveMessage, false);
+    var ocrDelayMin = 1;
+    var ocrDelayMax = 3;
+    var ocrDelay = ocrDelayMin + Math.floor(Math.random() * (ocrDelayMax - ocrDelayMin));
+    window.setTimeout(function () {
+        run();
+    }, ocrDelay * 1000);
+}
+
