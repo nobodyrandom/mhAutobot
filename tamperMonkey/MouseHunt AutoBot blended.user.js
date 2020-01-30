@@ -5341,7 +5341,7 @@ function getKingRewardStatus() {
 }
 
 function getBaitQuantity() {
-    var hudBaitQuantity = document.getElementById('hud_baitQuantity');
+    var hudBaitQuantity = document.getElementsByClassName('hud_baitQuantity');
     if (hudBaitQuantity !== null) {
         return parseInt(hudBaitQuantity.textContent);
     } else {
